@@ -9,7 +9,7 @@ Imported from
 Z:\sites\chris.chiasson.name\Engineering_Optimization\pr3\Big_Rewrite.nb
 *)
 
-BeginPackage["EngineeringOptimization`","Utilities`FilterOptions`"]
+BeginPackage["EngineeringOptimization`",{"Utilities`FilterOptions`"}]
 (* Exported symbols added here with SymbolName::usage *) 
 
 FindMinimum::fdbh="The first unimodal line search hit its MaxDisplacement bound 
