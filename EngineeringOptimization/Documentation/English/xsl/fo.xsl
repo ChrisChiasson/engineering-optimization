@@ -10,5 +10,4 @@
 <xsl:param name="profile.condition">nonmathml;nonvideo</xsl:param>
 <xsl:param name="fop1.extensions">1</xsl:param>
 <!--<xsl:param name="fop.extensions">1</xsl:param>-->
-<xsl:param name="alignment">left</xsl:param>
 </xsl:stylesheet>

@@ -10,6 +10,6 @@
 <xsl:param name="chunker.output.doctype-public">-//W3C//DTD HTML 4.01 Transitional//EN</xsl:param>
 <xsl:param name="chunker.output.doctype-system">http://www.w3.org/TR/html4/loose.dtd</xsl:param>
 <xsl:param name="chunker.output.encoding">ISO-8859-1</xsl:param>
-<!--<xsl:import href="xhtml_chunk.xsl"/>
-<xsl:import href="http://www.w3.org/Math/XSL/mathml.xsl"/>-->
+<!--xsl:import href="xhtml_chunk.xsl"/>
+<xsl:import href="http://www.w3.org/Math/XSL/mathml.xsl"/-->
 </xsl:stylesheet>

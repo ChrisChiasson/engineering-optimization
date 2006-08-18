@@ -28,14 +28,14 @@
         <input type="hidden" name="hl" value="en"></input>
         </form><br/>
         <!-- SiteSearch Google -->
-    <script type="text/javascript" src="/js/alpha/related_links.js"/>
+    <script type="text/javascript" src="js/related_links.js"/>
     <script type="text/javascript" src="http://relcontent.googlesyndication.com/relcontent/show_rc.js"/><br/><br/>
-    <script type="text/javascript" src="/js/alpha/adsense_content.js"/>
+    <script type="text/javascript" src="js/adsense_content.js"/>
     <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"/><br/><br/>
-    <script type="text/javascript" src="/js/alpha/get_firefox_with_google_toolbar.js"/>
+    <script type="text/javascript" src="js/get_firefox_with_google_toolbar.js"/>
     <script type="text/javascript" src="http://pagead2.googlesyndication.com/pagead/show_ads.js"/>
     <script type="text/javascript" src="http://www.google-analytics.com/urchin.js"/>
-    <script type="text/javascript" src="/js/alpha/urchin_tracker.js"/>
+    <script type="text/javascript" src="js/urchin_tracker.js"/>
   </div>
 </xsl:template>
 

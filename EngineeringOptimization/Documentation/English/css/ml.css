@@ -1,0 +1,52 @@
+/** {padding:0, margin:0, border:none}*/
+
+html, math, body {
+                   font-family:Georgia, Verdana, Arial, Helvetica, sans-serif;
+                   font-size:1em;
+                   }
+
+h1, h2, h3, h4, h5, h6 {
+                         font-family:"Trebuchet MS", "Lucida Sans", Arial, sans-serif;
+                         }
+
+a img,:link img,:visited img {
+                               border:none;
+                               }
+
+/*#side_navigation_links {
+                         text-align: center;
+                         }*/
+
+/*credit for my columns layout:
+http://www.fu2k.org/alex/css/onetruelayout/example/interactive
+*/
+
+/*sidebar on right*/
+#block_1 {
+           float: left;
+           width: 80%;
+           }
+
+#block_2 {
+           text-align: right;
+           float: right;
+           width: 20%;
+           }
+
+#wrapper {
+           float: left;
+           display: block;
+           }
+
+
+#wrapper:after {
+                 content: "."; 
+                 display: block; 
+                 height: 0; 
+                 clear: both; 
+                 visibility: hidden;
+                 }
+
+#footer {
+          clear: both;
+          }
