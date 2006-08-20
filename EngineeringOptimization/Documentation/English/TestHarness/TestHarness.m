@@ -2,7 +2,7 @@ BeginPackage["TestHarness`",{"EngineeringOptimization`","XML`DocBook`"}];
 
 (*ToFileName[exportDirectory,"test_equation2.xml"]*)
 
-SetOptions[XMLDocument,ConversionOptions->{}];
+(*SetOptions[XMLDocument,ConversionOptions->{}];*)
 
 exportDirectory=ToFileName[{DirectoryName[First@FileNames[Last@StringSplit[$Input,
 	$PathnameSeparator|"/"],$Path,2],2],"mout"}];
