@@ -11,5 +11,7 @@
 		<para>test</para>
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/test_equation1.xml"/>
+		<include xmlns="http://www.w3.org/2001/XInclude"
+			href="mout/test_equation2.xml"/>
 	</article>
 </book>
