@@ -3,5 +3,5 @@ Resources[
     Sources[
         Directory["~"]
     ],
-    ExecutionBuildCommand["<<EngineeringOptimization`"]
+    ExecutionBuildCommand["<<EngineeringOptimization`;<<EngineeringOptimization`Documentation`"]
 ]

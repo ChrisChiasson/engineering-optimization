@@ -1,8 +1,25 @@
 (*Begin["`HW1`"];*)
 
-Attributes[X]={NHoldAll};
+(*set NHoldAll and argument subscript formatting for X and Y*)
 
-Format[X[i__Integer]]=Subscript[X,i];
+{Attributes[#]={NHoldAll},Format[#[i:__Integer|__Symbol]]=Subscript[#,i]}&/@
+	{X,Y};
+
+Block[{Power},
+	eqn[1][X_,Y_]=(X/2)^2+Y^2==4
+	];
+
+export[1]=Block[{Power},
+	XMLDocument["hw_1_ellipse.xml",
+		DocBookEquation["hw_1_ellipse","Ellipse",eqn[1][X[C],Y[C]]]
+		]
+	];
+
+spacemapping=Transpose@{
+	Prepend[Table[Unevaluated[Sequence[{X[C][i]},{Y[C][i]}]],{i,4}],
+		{"Corner (Geometric) Variable"}],
+	Prepend[Table[{X[O][i]},{i,8}],{"Optimization Variable"}]
+	};
 
 
 
