@@ -5,7 +5,7 @@ BeginPackage["TestHarness`",{"EngineeringOptimization`","XML`DocBook`"}];
 (*SetOptions[XMLDocument,ConversionOptions->{}];*)
 
 exportDirectory=ToFileName[{DirectoryName[First@FileNames[Last@StringSplit[
-	$Input,$PathnameSeparator|"/"],$Path,2],2],"mout"}];
+	$Input,$PathnameSeparator|"/"],$Path,2],2],"test_mout"}];
 
 If[FileType@exportDirectory===None,CreateDirectory@exportDirectory;
 	If[FileType@exportDirectory===None,Print["The destination directory can't \
