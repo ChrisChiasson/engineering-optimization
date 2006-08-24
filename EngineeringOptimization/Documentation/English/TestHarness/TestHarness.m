@@ -33,4 +33,11 @@ xpr[6]:=DocBookFigure["llamaId","llama title","llama description",
 xpr[7]:=XMLDocument["test_equation2.xml",xpr[6],PrependDirectory->
 	exportDirectory];
 
+xpr[8]:=DocBookTable["tableid","tabletitle","tabledescription",1+Map[Which[
+	#===C,Z/Pi,#===G,{C,G},True,#]&,ToExpression@Partition[CharacterRange["A",
+	"Z"],5],{2}],Caption->"captiontext"];
+
+xpr[9]:=XMLDocument["test_table1.xml",xpr[8],PrependDirectory->
+	exportDirectory];
+
 EndPackage[];
