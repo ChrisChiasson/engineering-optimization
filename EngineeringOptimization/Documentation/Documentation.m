@@ -10,8 +10,8 @@ If[FileType@exportDirectory===None,CreateDirectory@exportDirectory;
 	If[FileType@exportDirectory===None,Print["The destination directory can't \
 be created."];Quit[]]];
 
-<<Sources`HW1`
-
 End[];
+
+<<`HW1`
 
 EndPackage[];

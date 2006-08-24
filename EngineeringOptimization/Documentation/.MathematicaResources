@@ -3,5 +3,5 @@ Resources[
     Sources[
         Directory["~"]
     ],
-    ExecutionBuildCommand["<<TestHarness`"]
+    ExecutionBuildCommand["<<EngineeringOptimization`Documentation`"]
 ]
