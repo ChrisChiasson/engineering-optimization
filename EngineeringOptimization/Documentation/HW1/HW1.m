@@ -11,7 +11,8 @@ Block[{Power},
 
 export[1]=Block[{Power},
 	XMLDocument["hw_1_ellipse.xml",
-		DocBookEquation["hw_1_ellipse","Ellipse",eqn[1][X[C],Y[C]]]
+		DocBookEquation["hw_1_ellipse","Ellipse",eqn[1][X[C],Y[C]]],
+		PrependDirectory->exportDirectory
 		]
 	];
 
@@ -20,6 +21,13 @@ spacemapping=Transpose@{
 		{"Corner (Geometric) Variable"}],
 	Prepend[Table[{X[O][i]},{i,8}],{"Optimization Variable"}]
 	};
+
+export[2]=XMLDocument["hw_1_spacemapping.xml",DocBookTable["spacemapping",
+"Geometric to Optimization Variable Mapping","two column table with geometric \
+variables in the left column and optimization variables in the right column",
+spacemapping,TitleAbbrev->"Variable Mapping",Caption->"The rows show an \
+equivalence between a given geometric variable on the left and an optimization \
+variable on the right."],PrependDirectory->exportDirectory];
 
 
 
