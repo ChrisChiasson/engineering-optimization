@@ -2,7 +2,7 @@ BeginPackage["EngineeringOptimization`Documentation`",
 	{"EngineeringOptimization`","XML`DocBook`"}];
 
 exportDirectory=ToFileName[{DirectoryName[First@FileNames[Last@StringSplit[
-	$Input,$PathnameSeparator|"/"],$Path,3],2],"mout"}];
+	$Input,$PathnameSeparator|"/"],$Path,3],1],"mout"}];
 
 Begin["`Private`"];
 
