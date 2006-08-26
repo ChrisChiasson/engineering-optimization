@@ -67,7 +67,7 @@ displacementconstraints=MapIndexed[{#,i==First[#2]+5}&,
 	];
 
 (*in the language of optimization, these contraints are equality constraints, 
-h[i] that are required must be zero*)  
+h[i] that are required must be zero*)
 
 constraints={Sequence@@ellipseconstraints,rectangleconstraint,
 	Sequence@@displacementconstraints};
@@ -78,14 +78,33 @@ export[4]=XMLDocument["hw_1_hconstraints.xml",DocBookEquation[
 	"hw_1_hconstraints","Objective Function Equality Constraints",hconstraints,
 	TitleAbbrev->"Equality Constraints"],PrependDirectory->EODExportDirectory];
 
-(*lagrange multipliers*) 
+(*lagrange multipliers*)
 
 lagrangemultipliers=Del[F[X[O][j]]]==HoldForm[Sum[\[Lambda][i]*
 	Del[h[i][X[O][j]]],{i,7}]];
 
 export[5]=XMLDocument["hw_1_lagrangemultipliers.xml",DocBookEquation[
-	"hw_1_lagrangemultipliers","Lagrange Multipliers",lagrangemultipliers],
-	PrependDirectory->EODExportDirectory];
+	"hw_1_lagrangemultipliers","Definition of Lagrange Multipliers with \
+Respect to Objective Function F",
+	lagrangemultipliers,TitleAbbrev->"Lagrange Multipliers",Caption->
+	"The gradients of the objective and of the equality constraints are \
+parallel."],PrependDirectory->EODExportDirectory];
+
+rep[4]={F[__]->fmag[[2]],h[index_][_]:>(Last@hconstraints/.i->index)};
+
+xOList=Table[X[O][j],{j,8}];
+
+rep[5]={Del[stuff_]:>D[stuff,{xOList,1}]};
+
+lagrangeconstraints=Thread[ReleaseHold@lagrangemultipliers/.rep[4]/.rep[5]];
+
+Print["export 6"];
+
+export[6]=XMLDocument["hw_1_lagrangeconstraints.xml",DocBookEquation[
+	"lagrangeconstraints","Lagrange Constraints",DocBookEquationSequence@@
+	lagrangeconstraints,Caption->Sequence["These equations are the expanded \
+components of ",XMLElement["xref",{"linkend"->"hw_1_lagrangemultipliers"},{}],
+"."]]];
 
 (*Export@@@export[#]&/@Range[5];*)
 
