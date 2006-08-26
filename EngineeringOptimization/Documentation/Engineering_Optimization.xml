@@ -9,10 +9,16 @@
 	</info>
 	<chapter>
 		<title>Lagrange Multipliers — Homework 1</title>
-		<para>some text about lagrange multipliers</para>
+		<para>some para text</para>
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_ellipse.xml"/>
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_spacemapping.xml"/>
+		<include xmlns="http://www.w3.org/2001/XInclude"
+			href="mout/hw_1_fmag.xml"/>
+		<include xmlns="http://www.w3.org/2001/XInclude"
+			href="mout/hw_1_hconstraints.xml"/>
+		<include xmlns="http://www.w3.org/2001/XInclude"
+			href="mout/hw_1_lagrangemultipliers.xml"/>
 	</chapter>
 </book>
