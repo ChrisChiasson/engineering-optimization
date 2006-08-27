@@ -72,6 +72,11 @@ h[i] that are required must be zero*)
 constraints={Sequence@@ellipseconstraints,rectangleconstraint,
 	Sequence@@displacementconstraints};
 
+(*the equality constraints variable is just a restatement of constraints
+in a form that is useful further down*)
+
+equalityconstraints=#==0&/@constraints[[All,1]];
+
 hconstraints=h[i]==0==Piecewise[constraints];
 
 export[4]=XMLDocument["hw_1_hconstraints.xml",DocBookEquation[
@@ -90,22 +95,69 @@ Respect to Objective Function F",
 	"The gradients of the objective and of the equality constraints are \
 parallel."],PrependDirectory->EODExportDirectory];
 
+(*replace parts of lagrangemultipliers with their "equivalent" expansions*)
+
 rep[4]={F[__]->fmag[[2]],h[index_][_]:>(Last@hconstraints/.i->index)};
+
+(*list of objective variables*)
 
 xOList=Table[X[O][j],{j,8}];
 
+(*definition of the gradient*)
+
 rep[5]={Del[stuff_]:>D[stuff,{xOList,1}]};
+
+(*expand the lagrange multipliers definition*)
 
 lagrangeconstraints=Thread[ReleaseHold@lagrangemultipliers/.rep[4]/.rep[5]];
 
-Print["export 6"];
-
 export[6]=XMLDocument["hw_1_lagrangeconstraints.xml",DocBookEquation[
-	"lagrangeconstraints","Lagrange Constraints",DocBookEquationSequence@@
-	lagrangeconstraints,Caption->Sequence["These equations are the expanded \
-components of ",XMLElement["xref",{"linkend"->"hw_1_lagrangemultipliers"},{}],
-"."]]];
+	"hw_1_lagrangeconstraints","Lagrange Constraints",DocBookEquationSequence@@
+	lagrangeconstraints,Caption->XMLElement["para",{},{"These equations are \
+the expanded components of ",XMLElement["xref",{"linkend"->
+"hw_1_lagrangemultipliers"},{}],"."}]],PrependDirectory->EODExportDirectory];
 
-(*Export@@@export[#]&/@Range[5];*)
+(*solve for the possible optimum configurations of the four rectangle points
+(4 x 4 y 7 lagrange multipliers)*)
+
+(*turn off the warning that not all variables may have solutions returned*)
+
+Off[Solve::svars];
+
+sol[1]=Solve[
+	Join[equalityconstraints,lagrangeconstraints],
+	Join[Table[\[Lambda][i],{i,7}],xOList]
+	];
+
+(*reactivate the warning*)
+
+On[Solve::svars];
+
+(*let's narrow down to the solutions that have no variables in their
+right hand sides*)
+
+sol[2]=Sort/@Cases[sol[1],
+	x:List[rules__Rule]/;Variables[Part[{rules},All,2]]=={}]
+
+(*rule to change optimization variables into equalties with their corresponding 
+geometric variables*)
+
+rep[6]=#2->Reverse@Equal[##]&@@@rep[2];
+
+(*select a solution and turn it into equalties between the variables in the
+problem - also display the objective function and area values at this solution*)
+
+selectedsolution=Fold[Prepend,
+	Block[{Equal},Attributes[Equal]={Flat};Equal@@@sol[2][[4]]/.rep[6]],
+	{fmag,Area==-fmag[[2]]}/.sol[2][[4]]
+	];
+
+export[7]=XMLDocument["hw_1_selectedsolution.xml",DocBookEquation[
+	"hw_1_selectedsolution","Objective Function, F, Minimum",
+	DocBookEquationSequence@@selectedsolution,Caption->"The area is maximized \
+at the minimum (and negative) of the objective function, F.",
+TitleAbbrev->"Objective Minimum"],PrependDirectory->EODExportDirectory];
+
+If[EODExport===True,Export@@@#&/@ReleaseHold@DownValues[export][[All,1]]];
 
 End[];
