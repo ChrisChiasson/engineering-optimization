@@ -3,8 +3,10 @@
 	<info>
 		<title>Engineering Optimization</title>
 		<author>
-			<personname><firstname>Chris</firstname>
-			<surname>Chiasson</surname></personname>
+			<personname>
+				<firstname>Chris</firstname>
+				<surname>Chiasson</surname>
+			</personname>
 		</author>
 	</info>
 	<chapter>
@@ -20,5 +22,9 @@
 			href="mout/hw_1_hconstraints.xml"/>
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_lagrangemultipliers.xml"/>
+		<include xmlns="http://www.w3.org/2001/XInclude"
+			href="mout/hw_1_lagrangeconstraints.xml"/>
+		<include xmlns="http://www.w3.org/2001/XInclude"
+			href="mout/hw_1_selectedsolution.xml"/>
 	</chapter>
 </book>
