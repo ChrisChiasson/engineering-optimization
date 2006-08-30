@@ -8,22 +8,22 @@ Begin["`HW1`"];
 eqn[1][X_,Y_]=(X/2)^2+Y^2==4;
 
 export[1]=XMLDocument["hw_1_ellipse.xml",
-	DocBookEquation["hw_1_ellipse","Ellipse",HoldForm[(X/2)^2+Y^2==4]],
+	DocBookEquation["hw_1_ellipse","Ellipse",HoldForm[(X[C]/2)^2+Y[C]^2==4]],
 	PrependDirectory->EODExportDirectory
 	];
-
 spacemapping=Transpose@{
 	Prepend[Table[Unevaluated[Sequence[X[C][i],Y[C][i]]],{i,4}],
 		"Corner (Geometric) Variable"],
 	Prepend[Table[X[O][i],{i,8}],"Optimization Variable"]
 	};
 
-export[2]=XMLDocument["hw_1_spacemapping.xml",DocBookTable["spacemapping",
+export[2]:=XMLDocument["hw_1_spacemapping.xml",DocBookTable["hw_1_spacemapping",
 "Geometric to Optimization Variable Mapping","two column table with geometric \
 variables in the left column and optimization variables in the right column",
 spacemapping,TitleAbbrev->"Variable Mapping",Caption->"The rows show an \
 equivalence between a given geometric variable on the left and an optimization \
 variable on the right."],PrependDirectory->EODExportDirectory];
+
 
 rep[1]={pt[i_Integer]:>{X[C][i],Y[C][i],0}};
 
@@ -44,7 +44,7 @@ fmag=F==-Last[Cross[disp[1],disp[2]]/.rep[1]/.rep[2]];
 export[3]=XMLDocument["hw_1_fmag.xml",DocBookEquation["hw_1_fmag",
 	"Objective Function",fmag,Caption->"The objective function is the negative \
 of the area if the points increase in consecutive numbering in the \ 
-counter-clockwise direction"],PrependDirectory->EODExportDirectory];
+counter-clockwise direction."],PrependDirectory->EODExportDirectory];
 
 rep[3]=Equal[a_,b_]->b-a;
 
@@ -85,15 +85,33 @@ export[4]=XMLDocument["hw_1_hconstraints.xml",DocBookEquation[
 
 (*lagrange multipliers*)
 
-lagrangemultipliers=Del[F[X[O][j]]]==HoldForm[Sum[\[Lambda][i]*
-	Del[h[i][X[O][j]]],{i,7}]];
+lagrangemultipliers=Del[F[X[O]]]==HoldForm[Sum[\[Lambda][i]*
+	Del[h[i][X[O]]],{i,7}]];
 
-export[5]=XMLDocument["hw_1_lagrangemultipliers.xml",DocBookEquation[
-	"hw_1_lagrangemultipliers","Definition of Lagrange Multipliers with \
-Respect to Objective Function F",
-	lagrangemultipliers,TitleAbbrev->"Lagrange Multipliers",Caption->
-	"The gradients of the objective and of the equality constraints are \
-parallel."],PrependDirectory->EODExportDirectory];
+export[5]=XMLDocument[
+	"hw_1_lagrangemultipliers.xml",
+		DocBookEquation[
+			"hw_1_lagrangemultipliers",
+			XMLChain[Hold@
+				XMLElement[
+					"phrase",
+					{},
+					{"Definition of Lagrange Multipliers, ",
+					ToXML@DocBookInlineEquation[
+						"lagrangemultiplier",
+						\[Lambda][i],
+						SetIdAttribute->False
+						],
+					", with Respect to the Objective Function, F"
+						}
+					]
+				],
+			lagrangemultipliers,
+			TitleAbbrev->"Lagrange Multipliers",
+			Caption->"The gradients of the objective and of the equality "<>
+				"constraints are parallel."],
+	PrependDirectory->EODExportDirectory
+	];
 
 (*replace parts of lagrangemultipliers with their "equivalent" expansions*)
 
