@@ -4,7 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>DocBook_Export</project>
-		<project>Engineering_Optimization</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

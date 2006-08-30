@@ -11,19 +11,19 @@ export[1]=XMLDocument["hw_1_ellipse.xml",
 	DocBookEquation["hw_1_ellipse","Ellipse",HoldForm[(X[C]/2)^2+Y[C]^2==4]],
 	PrependDirectory->EODExportDirectory
 	];
+
 spacemapping=Transpose@{
 	Prepend[Table[Unevaluated[Sequence[X[C][i],Y[C][i]]],{i,4}],
 		"Corner (Geometric) Variable"],
 	Prepend[Table[X[O][i],{i,8}],"Optimization Variable"]
 	};
 
-export[2]:=XMLDocument["hw_1_spacemapping.xml",DocBookTable["hw_1_spacemapping",
+export[2]=XMLDocument["hw_1_spacemapping.xml",DocBookTable["hw_1_spacemapping",
 "Geometric to Optimization Variable Mapping","two column table with geometric \
 variables in the left column and optimization variables in the right column",
 spacemapping,TitleAbbrev->"Variable Mapping",Caption->"The rows show an \
 equivalence between a given geometric variable on the left and an optimization \
 variable on the right."],PrependDirectory->EODExportDirectory];
-
 
 rep[1]={pt[i_Integer]:>{X[C][i],Y[C][i],0}};
 
@@ -79,9 +79,24 @@ equalityconstraints=#==0&/@constraints[[All,1]];
 
 hconstraints=h[i]==0==Piecewise[constraints];
 
+(*adjust the formatting of the equality constraints so that they will fit
+on a printed page*)
+
+export4GridBoxOptions=Options@DocBookEquation/.
+	{Rule[
+		ToBoxesFunction->_,
+		ToBoxesFunction->
+			Function[
+				ToBoxes[#,FormatType/.#2]/.
+					{grd:GridBox[___]:>
+						Insert[grd,ColumnWidths->{20,4},2]}
+					]
+		]};
+
 export[4]=XMLDocument["hw_1_hconstraints.xml",DocBookEquation[
 	"hw_1_hconstraints","Objective Function Equality Constraints",hconstraints,
-	TitleAbbrev->"Equality Constraints"],PrependDirectory->EODExportDirectory];
+	TitleAbbrev->"Equality Constraints",Sequence@@export4GridBoxOptions],
+	PrependDirectory->EODExportDirectory];
 
 (*lagrange multipliers*)
 
