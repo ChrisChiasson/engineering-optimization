@@ -7,11 +7,20 @@ documentation should be exported";
 EODExportDirectory::usage="This is the export directory for the Engineering \
 Optimization Documentaiton.";
 
+$ImageSize::usage="This is the default image size for the Engineering \
+Optimization Documentation.";
+
 Begin["`Private`"];
 
 $TextStyle={FontSize->12,FontFamily->"Georgia"};
 
 $FormatType=TraditionalForm;
+
+$PageWidth=450;
+
+$ImageResolution=86;
+
+$ImageSize=450;
 
 If[!ValueQ[EODExport],EODExport=True];
 
