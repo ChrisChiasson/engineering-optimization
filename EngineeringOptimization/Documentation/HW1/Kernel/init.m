@@ -1,2 +1,2 @@
 (* Mathematica Init File *)
-Get["EngineeringOptimization`Documentation`HW1`HW1`"]
+Get["EngineeringOptimization`Documentation`HW1`HW1`"];

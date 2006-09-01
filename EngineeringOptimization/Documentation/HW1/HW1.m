@@ -1,4 +1,10 @@
-Begin["`HW1`"];
+BeginPackage["EngineeringOptimization`Documentation`HW1`",
+	{"EngineeringOptimization`Documentation`",
+		"XML`DocBook`",
+		"Graphics`Arrow`",
+		"Graphics`ImplicitPlot`"}];
+
+Begin["`Private`"];
 
 (*set NHoldAll and argument subscript formatting for X and Y*)
 
@@ -86,11 +92,10 @@ export4GridBoxOptions=Options@DocBookEquation/.
 	{Rule[
 		ToBoxesFunction->_,
 		ToBoxesFunction->
-			Function[
-				ToBoxes[#,FormatType/.#2]/.
-					{grd:GridBox[___]:>
-						Insert[grd,ColumnWidths->{20,4},2]}
-					]
+			($ToBoxesFunction[#]/.
+				{grd:GridBox[___]:>
+					Insert[grd,ColumnWidths->{20,4},2]}
+				&)
 		]};
 
 export[4]=XMLDocument["hw_1_hconstraints.xml",DocBookEquation[
@@ -181,8 +186,8 @@ rep[6]=#2->Reverse@Equal[##]&@@@rep[2];
 problem - also display the objective function and area values at this solution*)
 
 selectedsolution=Fold[Prepend,
-	Block[{Equal},Attributes[Equal]={Flat};Equal@@@sol[2][[4]]/.rep[6]],
-	{fmag,Area==-fmag[[2]]}/.sol[2][[4]]
+	Block[{Equal},Attributes[Equal]={Flat};Equal@@@sol[2][[12]]/.rep[6]],
+	{fmag,Area==-fmag[[2]]}/.sol[2][[12]]
 	];
 
 export[7]=XMLDocument["hw_1_selectedsolution.xml",DocBookEquation[
@@ -194,3 +199,5 @@ TitleAbbrev->"Objective Minimum"],PrependDirectory->EODExportDirectory];
 If[EODExport===True,Export@@@#&/@ReleaseHold@DownValues[export][[All,1]]];
 
 End[];
+
+EndPackage[];
