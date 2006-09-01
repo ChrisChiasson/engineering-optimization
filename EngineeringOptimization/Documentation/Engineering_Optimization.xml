@@ -11,9 +11,10 @@
 	</info>
 	<chapter>
 		<title>Lagrange Multipliers — Homework 1</title>
-		<para>some para text</para>
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_ellipse.xml"/>
+		<include xmlns="http://www.w3.org/2001/XInclude"
+			href="mout/hw_1_unbound_f.xml"/>
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_spacemapping.xml"/>
 		<include xmlns="http://www.w3.org/2001/XInclude"
@@ -21,10 +22,14 @@
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_hconstraints.xml"/>
 		<include xmlns="http://www.w3.org/2001/XInclude"
+			href="mout/hw_1_partially_constrained_f.xml"/>
+		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_lagrangemultipliers.xml"/>
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_lagrangeconstraints.xml"/>
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_selectedsolution.xml"/>
-	</chapter>
+		<include xmlns="http://www.w3.org/2001/XInclude"
+			href="mout/hw_1_minimum_constrained_f.xml"/>
+		</chapter>
 </book>
