@@ -9,17 +9,17 @@ Begin["`Private`"];
 (*set NHoldAll and argument subscript formatting for X and Y*)
 
 {Attributes[#]={NHoldAll},Format[#[i:__Integer|__Symbol]]=Subscript[#,i]}&/@
-	{X,Y,\[Lambda],h};
+	{X,Y,\[Lambda],h,P};
 
 eqn[1][X_,Y_]=(X/2)^2+Y^2==4;
 
 export[1]=XMLDocument["hw_1_ellipse.xml",
-	DocBookEquation["hw_1_ellipse","Ellipse",HoldForm[(X[C]/2)^2+Y[C]^2==4]],
+	DocBookEquation["hw_1_ellipse","Ellipse",HoldForm[(X[P]/2)^2+Y[P]^2==4]],
 	PrependDirectory->EODExportDirectory
 	];
 
 spacemapping=Transpose@{
-	Prepend[Table[Unevaluated[Sequence[X[C][i],Y[C][i]]],{i,4}],
+	Prepend[Table[Unevaluated[Sequence[X[P][i],Y[P][i]]],{i,4}],
 		"Corner (Geometric) Variable"],
 	Prepend[Table[X[O][i],{i,8}],"Optimization Variable"]
 	};
@@ -28,10 +28,10 @@ export[2]=XMLDocument["hw_1_spacemapping.xml",DocBookTable["hw_1_spacemapping",
 "Geometric to Optimization Variable Mapping","two column table with geometric \
 variables in the left column and optimization variables in the right column",
 spacemapping,TitleAbbrev->"Variable Mapping",Caption->"The rows show an \
-equivalence between a given geometric variable on the left and an optimization \
-variable on the right."],PrependDirectory->EODExportDirectory];
+equivalence between a given geometric point variable on the left and an \
+optimization variable on the right."],PrependDirectory->EODExportDirectory];
 
-rep[1]={pt[i_Integer]:>{X[C][i],Y[C][i],0}};
+rep[1]={pt[i_Integer]:>{X[P][i],Y[P][i],0}};
 
 rep[2]=Drop[Rule@@@spacemapping,1];
 
@@ -45,18 +45,33 @@ minimize the negative of the function we'd like to maximize - if the points are
 numbered in counter clockwise direction, then this will produce a negative F
 for a positive area*)
 
+fmagoriginal=F==Cross[P[4]-P[1],P[2]-P[1]];
+
 fmag=F==-Last[Cross[disp[1],disp[2]]/.rep[1]/.rep[2]];
 
-export[3]=XMLDocument["hw_1_fmag.xml",DocBookEquation["hw_1_fmag",
-	"Objective Function",fmag,Caption->"The objective function is the negative \
-of the area if the points increase in consecutive numbering in the \ 
-counter-clockwise direction."],PrependDirectory->EODExportDirectory];
+export[3]=XMLDocument["hw_1_fmag.xml",
+	DocBookEquation["hw_1_fmag",
+		"Objective Function",
+		DocBookEquationSequence[fmagoriginal,
+			fmag
+			],
+		Caption->XMLElement["para",{},{"This expression for the objective, F, ",
+			"comes from the assumption that it is created by the cross ",
+			"product of two adjacent sides of a parallelogram, as seen first ",
+			"in ",
+			XMLElement["xref",
+				{"linkend"->"hw_1_unbound_f"},
+				{}
+				],"."}]
+		],
+	PrependDirectory->EODExportDirectory
+	];
 
 rep[3]=Equal[a_,b_]->b-a;
 
 (*all four points must touch the ellipse*)
 
-ellipseconstraints=ReleaseHold@Table[{eqn[1][X[C][i],Y[C][i]]/.rep[1]/.rep[2]
+ellipseconstraints=ReleaseHold@Table[{eqn[1][X[P][i],Y[P][i]]/.rep[1]/.rep[2]
 	/.rep[3],Hold[i]==i},{i,4}];
 
 (*the rectangle must be defined by two perpendicular sides*)
@@ -73,7 +88,7 @@ displacementconstraints=MapIndexed[{#,i==First[#2]+5}&,
 	];
 
 (*in the language of optimization, these contraints are equality constraints, 
-h[i] that are required must be zero*)
+h[i] that are required to be zero*)
 
 constraints={Sequence@@ellipseconstraints,rectangleconstraint,
 	Sequence@@displacementconstraints};
@@ -118,7 +133,7 @@ export[5]=XMLDocument[
 					{},
 					{"Definition of Lagrange Multipliers, ",
 					ToXML@DocBookInlineEquation[
-						"lagrangemultiplier",
+						"hw_1_lagrangemultiplier",
 						\[Lambda][i],
 						SetIdAttribute->False
 						],
@@ -195,6 +210,110 @@ export[7]=XMLDocument["hw_1_selectedsolution.xml",DocBookEquation[
 	DocBookEquationSequence@@selectedsolution,Caption->"The area is maximized \
 at the minimum (and negative) of the objective function, F.",
 TitleAbbrev->"Objective Minimum"],PrependDirectory->EODExportDirectory];
+
+graphicsPrimitives[1]=ImplicitPlot[eqn[1][x,y],{x,-4,4}][[1]];
+
+graphicsPrimitives[2][xp1_?NumericQ,yp1_?NumericQ,xp2_?NumericQ,yp2_?NumericQ,
+	xp4_?NumericQ,yp4_?NumericQ,dir___]:=
+	Module[{pt1={xp1,yp1},pt2={xp2,yp2},pt3,pt4={xp4,yp4}},
+		pt3=pt2+pt4-pt1;
+		{Red,
+			Polygon[{pt1,pt2,pt3,pt4}],
+			Black,
+			Arrow[pt1,pt2,HeadCenter->0.6],
+			Arrow[pt1,pt4,HeadCenter->0.6],
+			Text[P[1],pt1,{1.5,-1.5}],
+			Text[P[2],pt2,{1.5,1.5}],
+			Text[P[3],pt3,{-1.5,1.5}],
+			Text[P[4],pt4,{-1.5,-1.5}],
+			Text[fmagoriginal,
+				pt1+(pt2-pt1+pt4-pt1)/2,{0,0},dir]
+		}];
+
+graphicsOptions=Sequence[PlotRange->All,Axes->True,AspectRatio->Automatic,
+	ImageSize->$ImageSize];
+
+graph[1]=Graphics[
+	{graphicsPrimitives[1],
+		graphicsPrimitives[2][-3,2,0,0,1,1,{2.5,-1}]/.rep[2]/.sol[2][[12]]
+		},
+	graphicsOptions];
+
+export[8]=XMLDocument[
+	"hw_1_unbound_f.xml",
+	DocBookFigure[
+		"hw_1_unbound_f",
+		"Unbound F",
+		"A four point parallelogram, with area -F is formed by the cross "<>
+			"product of the displacement from point 1 to 4 and point 1 to 2. "<>
+			"The parallelogram is drawn over the ellipse.",
+		graph[1],
+		Caption->XMLChain[Hold@XMLElement[
+			"para",
+			{},
+			{"The red parallelogram is not constrained to the ellipse in ",
+				"any way. It could grow without bound, meaning that F could ",
+				"decrease without bound because F is the cross product of two ",
+				"sides of the parallelogram. The single active constraint in ",
+				"this figure is ",
+				ToXML@DocBookInlineEquation[
+					"hw_1_point_3",
+					HoldForm[P[3]==P[1]+(P[2]-P[1])+(P[4]-P[1])],
+					SetIdAttribute->False
+					],
+				". Otherwise, the figure wouldn't necessairily have a ",
+				"parallelogram."
+				}]]
+		],
+	PrependDirectory->EODExportDirectory];
+
+xy[x_?NumericQ,f:Min|Max]:=Sequence[x,f[y/.Solve[eqn[1][x,y],y]]];
+
+graph[2]=Graphics[
+	{graphicsPrimitives[1],
+		graphicsPrimitives[2][xy[-3.8,Max],xy[-2,Min],xy[2,Max],{1,0}]
+		},
+	graphicsOptions];
+
+export[9]=XMLDocument[
+	"hw_1_partially_constrained_f.xml",
+	DocBookFigure[
+		"hw_1_partially_constrained_f",
+		"Partially Constrained F",
+		"This is the same as the last graph, but with some constraints.",
+		graph[2],
+		Caption->"The parallelogram whose area gives the magnitude of F is "<>
+			"now constrained to a finite area by affixing all four corner "<>
+			"points to the ellipse. The figure shows an intermediate "<>
+			"magnitude of F. The minimum would be attained by a diamond "<>
+			"with corner points on the positive and negative X and Y axes."
+		],
+	PrependDirectory->EODExportDirectory];
+
+graph[3]=Graphics[
+	{graphicsPrimitives[1],
+		graphicsPrimitives[2][X[P][1],Y[P][1],X[P][2],Y[P][2],X[P][4],
+			Y[P][4]]/.rep[2]/.sol[2][[12]]
+		},
+	graphicsOptions];
+
+export[10]=XMLDocument[
+	"hw_1_minimum_constrained_f.xml",
+	DocBookFigure[
+		"hw_1_minimum_constrained_f",
+		"Maximum Area Rectangle Scribed by Given Ellipse and "<>
+			"Minimum Constrained F",
+		"This is the same as the last graph, but with all constraints.",
+		graph[3],
+		TitleAbbrev->"Minimum Constrained F",
+		Caption->"To make the parallelogram a rectange, two adjacent sides "<>
+			"are set perpendicular in addition to using the constraints from "<>
+			"the previous figures. The optimum configuration is shown. This "<>
+			"maximum area rectange has long sides parallel to and on either "<>
+			"side of the major axis of the ellipse; the short rectangle "<>
+			"has a similar relation to the minor axis."
+		],
+	PrependDirectory->EODExportDirectory];
 
 If[EODExport===True,Export@@@#&/@ReleaseHold@DownValues[export][[All,1]]];
 
