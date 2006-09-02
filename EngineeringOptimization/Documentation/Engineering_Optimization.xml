@@ -11,6 +11,7 @@
 	</info>
 	<chapter>
 		<title>Lagrange Multipliers — Homework 1</title>
+		<para>yadda yadda</para>
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_ellipse.xml"/>
 		<include xmlns="http://www.w3.org/2001/XInclude"
@@ -31,5 +32,19 @@
 			href="mout/hw_1_selectedsolution.xml"/>
 		<include xmlns="http://www.w3.org/2001/XInclude"
 			href="mout/hw_1_minimum_constrained_f.xml"/>
-		</chapter>
+	</chapter>
+	<appendix>
+		<title>Homework 1 Code Listing</title>
+		<para>This is the code for the homework 1 calculations.</para>
+
+		<!--putting brackets like this allows for the literal
+			nature of programlisting while maintaining my nesting-->
+
+		<programlisting xml:id="hw_1_code"
+		><include xmlns="http://www.w3.org/2001/XInclude"
+				href="HW1/HW1.txt" parse="text"
+		/></programlisting>
+
+		<!---->
+	</appendix>
 </book>
