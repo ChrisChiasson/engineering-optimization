@@ -231,7 +231,7 @@ graphicsPrimitives[2][xp1_?NumericQ,yp1_?NumericQ,xp2_?NumericQ,yp2_?NumericQ,
 		}];
 
 graphicsOptions=Sequence[PlotRange->All,Axes->True,AspectRatio->Automatic,
-	ImageSize->$ImageSize];
+	ImageSize->$ExportWidth];
 
 graph[1]=Graphics[
 	{graphicsPrimitives[1],
@@ -306,7 +306,7 @@ export[10]=XMLDocument[
 		"This is the same as the last graph, but with all constraints.",
 		graph[3],
 		TitleAbbrev->"Minimum Constrained F",
-		Caption->"To make the parallelogram a rectange, two adjacent sides "<>
+		Caption->"To make the parallelogram a rectangle, two adjacent sides "<>
 			"are set perpendicular in addition to using the constraints from "<>
 			"the previous figures. The optimum configuration is shown. This "<>
 			"maximum area rectange has long sides parallel to and on either "<>
