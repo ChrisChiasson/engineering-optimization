@@ -7,8 +7,11 @@ documentation should be exported";
 EODExportDirectory::usage="This is the export directory for the Engineering \
 Optimization Documentaiton.";
 
-$ImageSize::usage="This is the default image size for the Engineering \
-Optimization Documentation.";
+System`$ExportWidth::usage="putting this in an exposed context";
+
+System`$PrintResolution::usage="putting this in an exposed context";
+
+System`$ScreenResolution::usage="putting this in an exposed context";
 
 Begin["`Private`"];
 
@@ -16,11 +19,11 @@ $TextStyle={FontSize->12,FontFamily->"Georgia"};
 
 $FormatType=TraditionalForm;
 
-$PageWidth=450;
+$ExportWidth=Round[5.*72]; (*printers points*)
 
-$ImageResolution=86;
+$PrintResolution=300; (*dpi*)
 
-$ImageSize=450;
+$ScreenResolution=86; (*dpi*)
 
 If[!ValueQ[EODExport],EODExport=True];
 
@@ -47,7 +50,5 @@ If[FileType@EODExportDirectory===None,CreateDirectory@EODExportDirectory;
 can't be created."];Quit[]]];
 
 End[];
-
-(*<<`HW1`*)
 
 EndPackage[];
