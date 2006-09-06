@@ -6,7 +6,7 @@
 		<title>Homework 1 Code</title>
 		<para>This is the code for the homework 1 calculations.</para>
 		<programlisting><include xmlns="http://www.w3.org/2001/XInclude" 
-						href="../HW1/HW1.txt"
+						href="mout/HW1.m"
 						parse="text"/></programlisting>
 	</example>
 </appendix>
