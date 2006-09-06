@@ -1,6 +1,5 @@
 BeginPackage["EngineeringOptimization`Documentation`HW1`",
 	{"EngineeringOptimization`Documentation`",
-		"XML`DocBook`",
 		"Graphics`Arrow`",
 		"Graphics`ImplicitPlot`"}];
 

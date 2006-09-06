@@ -1,17 +1,12 @@
 BeginPackage["EngineeringOptimization`Documentation`",
-	{"EngineeringOptimization`"}];
+	{"EngineeringOptimization`",
+		"XML`DocBook`"}];
 
 EODExport::usage"EODExport is a boolean variable that indicates wether the \
 documentation should be exported";
 
 EODExportDirectory::usage="This is the export directory for the Engineering \
 Optimization Documentaiton.";
-
-System`$ExportWidth::usage="putting this in an exposed context";
-
-System`$PrintResolution::usage="putting this in an exposed context";
-
-System`$ScreenResolution::usage="putting this in an exposed context";
 
 Begin["`Private`"];
 
@@ -30,17 +25,8 @@ If[!ValueQ[EODExport],EODExport=True];
 If[!ValueQ[EODExportDirectory],
 	EODExportDirectory=
 		ToFileName[{
-			DirectoryName[
-				First@
-					FileNames[
-						Last@
-							StringSplit[
-								$Input,
-								$PathnameSeparator|"/"
-								],
-						$Path,
-						3],
-				1],
+			InputDirectoryName[],
+			"src",
 			"mout"
 			}]
 	];
