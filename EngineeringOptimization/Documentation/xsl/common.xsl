@@ -7,4 +7,6 @@
   <!--xsl:param name="use.role.for.mediaobject">0</xsl:param-->
   <xsl:param name="keep.relative.image.uris">0</xsl:param>
   <xsl:param name="collect.xref.targets">yes</xsl:param>
+  <xsl:param name="draft.watermark.image">draft.png</xsl:param>
+  <xsl:param name="draft.mode">no</xsl:param>
 </xsl:stylesheet>
