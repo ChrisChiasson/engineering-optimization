@@ -14,7 +14,7 @@
 		<screenshot>
 			<mediaobject>
 				<imageobject>
-					<imagedata fileref="../HW1/hw_1_screenshot.png" />
+					<imagedata fileref="mout/hw_1_screenshot.png" />
 				</imageobject>
 				<textobject>
 					<phrase>1-5 Given the ellipse (X/2)^2+Y^2=4, it is required 
@@ -39,15 +39,15 @@
 		Design by Garret N. Vanderplaats. The block quotation gives the
 		problem statement in its entirety.
 	</para>
-	<xi:include href="../mout/hw_1_ellipse.xml"/>
-	<xi:include href="../mout/hw_1_unbound_f.xml"/>
-	<xi:include href="../mout/hw_1_spacemapping.xml"/>
-	<xi:include href="../mout/hw_1_fmag.xml"/>
-	<xi:include href="../mout/hw_1_hconstraints.xml"/>
-	<xi:include href="../mout/hw_1_partially_constrained_f.xml"/>
-	<xi:include href="../mout/hw_1_lagrangemultipliers.xml"/>
-	<xi:include href="../mout/hw_1_lagrangeconstraints.xml"/>
-	<xi:include href="../mout/hw_1_selectedsolution.xml"/>
-	<xi:include href="../mout/hw_1_minimum_constrained_f.xml"/>
+	<xi:include href="mout/hw_1_ellipse.xml"/>
+	<xi:include href="mout/hw_1_unbound_f.xml"/>
+	<xi:include href="mout/hw_1_spacemapping.xml"/>
+	<xi:include href="mout/hw_1_fmag.xml"/>
+	<xi:include href="mout/hw_1_hconstraints.xml"/>
+	<xi:include href="mout/hw_1_partially_constrained_f.xml"/>
+	<xi:include href="mout/hw_1_lagrangemultipliers.xml"/>
+	<xi:include href="mout/hw_1_lagrangeconstraints.xml"/>
+	<xi:include href="mout/hw_1_selectedsolution.xml"/>
+	<xi:include href="mout/hw_1_minimum_constrained_f.xml"/>
 </chapter>
 	
