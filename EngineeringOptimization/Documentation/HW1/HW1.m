@@ -1,5 +1,6 @@
 BeginPackage["EngineeringOptimization`Documentation`HW1`",
 	{"EngineeringOptimization`Documentation`",
+		"XML`DocBook`",
 		"Graphics`Arrow`",
 		"Graphics`ImplicitPlot`"}];
 
@@ -314,7 +315,27 @@ export[10]=XMLDocument[
 		],
 	PrependDirectory->EODExportDirectory];
 
-If[EODExport===True,Export@@@#&/@ReleaseHold@DownValues[export][[All,1]]];
+If[EODExport===True,
+	Export@@@#&/@ReleaseHold@DownValues[export][[All,1]];
+		pwd=InputDirectoryName[];
+		Module[{screenshot="hw_1_screenshot.png"},
+			CopyFile[
+				ToFileName[
+					pwd,
+					screenshot
+					],
+				ToFileName[
+					EODExportDirectory,
+					screenshot
+					],
+				Overwrite->True
+				]
+			];
+		CopyFile[InputFileName[],
+			ToFileName[EODExportDirectory,InputFileBaseName[]],
+			Overwrite->True
+			]
+	];
 
 End[];
 
