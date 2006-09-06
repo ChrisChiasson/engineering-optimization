@@ -14,7 +14,7 @@ Begin["`Private`"];
 eqn[1][X_,Y_]=(X/2)^2+Y^2==4;
 
 export[1]=XMLDocument["hw_1_ellipse.xml",
-	DocBookEquation["hw_1_ellipse","Ellipse",HoldForm[(X[P]/2)^2+Y[P]^2==4]],
+	DocBookEquation["hw_1_ellipse","Ellipse",HoldForm[(X/2)^2+Y^2==4]],
 	PrependDirectory->EODExportDirectory
 	];
 
