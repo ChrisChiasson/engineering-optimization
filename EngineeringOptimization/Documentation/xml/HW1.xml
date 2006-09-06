@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="HW1"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xl="http://www.w3.org/1999/xlink"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	version="5">
+	<title>Lagrange Multipliers — Homework 1</title>
+	<para><xref linkend="hw_1_screenshot"/> below shows our first homework
+		assignment as given by Dr. Mohamed El-Sayed.
+	</para>
+	<figure xml:id="hw_1_screenshot">
+		<title>Homework 1 Assignment</title>
+		<screenshot>
+			<mediaobject>
+				<imageobject>
+					<imagedata fileref="../HW1/hw_1_screenshot.png" />
+				</imageobject>
+				<textobject>
+					<phrase>1-5 Given the ellipse (X/2)^2+Y^2=4, it is required 
+						to find the rectangle of greatest area which will fit 
+						inside the ellipse. a. State this mathematically as a
+						constrained	minimization problem. b. Analytically
+						determine the optimimum	dimensions of the rectangle
+						and the area. c. Draw the ellipse and the rectangle on
+						the same figure.
+					</phrase>
+				</textobject>
+			</mediaobject>
+		</screenshot>
+		<caption>
+			<para>This is a video screen capture from the end of the first
+				session.
+			</para>
+		</caption>
+	</figure>
+	<para>As <xref linkend="hw_1_screenshot"/> shows, I am to solve
+		problem 1-5 of Numerical Optimization Techniques for Engineering
+		Design by Garret N. Vanderplaats. The block quotation gives the
+		problem statement in its entirety.
+	</para>
+	<xi:include href="../mout/hw_1_ellipse.xml"/>
+	<xi:include href="../mout/hw_1_unbound_f.xml"/>
+	<xi:include href="../mout/hw_1_spacemapping.xml"/>
+	<xi:include href="../mout/hw_1_fmag.xml"/>
+	<xi:include href="../mout/hw_1_hconstraints.xml"/>
+	<xi:include href="../mout/hw_1_partially_constrained_f.xml"/>
+	<xi:include href="../mout/hw_1_lagrangemultipliers.xml"/>
+	<xi:include href="../mout/hw_1_lagrangeconstraints.xml"/>
+	<xi:include href="../mout/hw_1_selectedsolution.xml"/>
+	<xi:include href="../mout/hw_1_minimum_constrained_f.xml"/>
+</chapter>
+	

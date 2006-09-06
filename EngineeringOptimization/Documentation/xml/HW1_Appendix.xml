@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix xml:id="HW1_Appendix" xmlns="http://docbook.org/ns/docbook"
+	version="5">
+	<title>Homework 1 Appendix</title>
+	<example xml:id="HW1_code">
+		<title>Homework 1 Code</title>
+		<para>This is the code for the homework 1 calculations.</para>
+		<programlisting><include xmlns="http://www.w3.org/2001/XInclude" 
+						href="../HW1/HW1.txt"
+						parse="text"/></programlisting>
+	</example>
+</appendix>
