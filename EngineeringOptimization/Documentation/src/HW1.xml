@@ -13,8 +13,12 @@
 		<title>Homework 1 Assignment</title>
 		<screenshot>
 			<mediaobject>
-				<imageobject>
-					<imagedata fileref="mout/hw_1_screenshot.png" />
+				<imageobject role="html">
+					<imagedata fileref="mout/hw_1_screenshot.png"/>
+				</imageobject>
+				<imageobject role="fo">
+					<imagedata contentwidth="5in"
+						fileref="mout/hw_1_screenshot.png"/>
 				</imageobject>
 				<textobject>
 					<phrase>1-5 Given the ellipse (X/2)^2+Y^2=4, it is required 
@@ -35,11 +39,53 @@
 		</caption>
 	</figure>
 	<para>As <xref linkend="hw_1_screenshot"/> shows, I am to solve
-		problem 1-5 of Numerical Optimization Techniques for Engineering
-		Design by Garret N. Vanderplaats. The block quotation gives the
-		problem statement in its entirety.
+		problem 1-5 of <citation>GNVNOTED</citation>. The block quotation
+		gives the problem statement in its entirety.
 	</para>
-	<xi:include href="mout/hw_1_ellipse.xml"/>
+	<blockquote>
+		<attribution><citation>GNVNOTED</citation>, p30</attribution>
+		<para><emphasis role="strong">1-5</emphasis> Given the
+			ellipse <!--xi:include href="mout/hw_1_ellipse_inline.xml"/-->, it is
+			desired to find the rectangle of greatest area which
+			will fit inside the ellipse.
+		<!--orderedlist numeration="loweralpha">
+			<listitem>
+				<para>State this mathematically as a constrained minimization
+					problem. That is, set up the problem for solution using
+					numerical optimization.
+				</para>
+			</listitem>
+			<listitem>
+				<para>Analytically determine the optimum dimensions of the
+					rectangle and its corresponding area.
+				</para>
+			</listitem>
+			<listitem>
+				<para>Draw the ellipse and the rectangle on the same
+					figure.
+				</para>
+			</listitem>
+		</orderedlist-->
+		</para>
+	</blockquote>
+	<para>Since the question is given in three alphabetical	parts, I respond in
+		kind. I also provide my computer solution program in the
+		<!--olink targetdoc="self" targetptr="HW1_Appendix"/-->.
+	<!--orderedlist>
+		<listitem>
+			<para>The question requires that the problem be restated in the
+				language of numerical optimization as given in the book. To
+				differentiate between the geometric variables given in the book
+				and the variables I will use for solving the optimization
+				problem, I introduce the symbol P (for point) to indicate
+				geometric variables and the symbol O to indicate optimization
+				variables. Thus, the equation given in the question is recast
+				as <xref linkend="hw_1_ellipse"/>.
+			</para>
+			<xi:include href="mout/hw_1_ellipse.xml"/>
+		</listitem>
+	</orderedlist-->
+	</para>
 	<xi:include href="mout/hw_1_unbound_f.xml"/>
 	<xi:include href="mout/hw_1_spacemapping.xml"/>
 	<xi:include href="mout/hw_1_fmag.xml"/>
@@ -49,5 +95,4 @@
 	<xi:include href="mout/hw_1_lagrangeconstraints.xml"/>
 	<xi:include href="mout/hw_1_selectedsolution.xml"/>
 	<xi:include href="mout/hw_1_minimum_constrained_f.xml"/>
-</chapter>
-	
+</chapter>	
