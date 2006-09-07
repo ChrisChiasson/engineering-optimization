@@ -14,9 +14,15 @@ Begin["`Private`"];
 eqn[1][X_,Y_]=(X/2)^2+Y^2==4;
 
 export[1]=XMLDocument["hw_1_ellipse.xml",
-	DocBookEquation["hw_1_ellipse","Ellipse",HoldForm[(X/2)^2+Y^2==4]],
+	DocBookEquation["hw_1_ellipse","Ellipse",eqn[1][X[P],Y[P]]],
 	PrependDirectory->EODExportDirectory
 	];
+
+export[inline1]=XMLDocument["hw_1_ellipse_inline.xml",
+	DocBookInlineEquation["hw_1_ellipse_inline",HoldForm[(X/2)^2+Y^2==4]],
+	PrependDirectory->EODExportDirectory
+	];
+
 
 spacemapping=Transpose@{
 	Prepend[Table[Unevaluated[Sequence[X[P][i],Y[P][i]]],{i,4}],
