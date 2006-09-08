@@ -39,16 +39,16 @@
 		</caption>
 	</figure>
 	<para>As <xref linkend="hw_1_screenshot"/> shows, I am to solve
-		problem 1-5 of <citation>GNVNOTED</citation>. The block quotation
+		problem 1-5 of <citation>GNVNOTED</citation>. The block quotation below
 		gives the problem statement in its entirety.
 	</para>
 	<blockquote>
 		<attribution><citation>GNVNOTED</citation>, p30</attribution>
 		<para><emphasis role="strong">1-5</emphasis> Given the
-			ellipse <!--xi:include href="mout/hw_1_ellipse_inline.xml"/-->, it is
+			ellipse <xi:include href="mout/hw_1_ellipse_inline.xml"/>, it is
 			desired to find the rectangle of greatest area which
 			will fit inside the ellipse.
-		<!--orderedlist numeration="loweralpha">
+		<orderedlist numeration="loweralpha">
 			<listitem>
 				<para>State this mathematically as a constrained minimization
 					problem. That is, set up the problem for solution using
@@ -65,13 +65,13 @@
 					figure.
 				</para>
 			</listitem>
-		</orderedlist-->
+		</orderedlist>
 		</para>
 	</blockquote>
 	<para>Since the question is given in three alphabetical	parts, I respond in
 		kind. I also provide my computer solution program in the
-		<!--olink targetdoc="self" targetptr="HW1_Appendix"/-->.
-	<!--orderedlist>
+		<olink targetdoc="self" targetptr="HW1_Appendix"/>.
+	<orderedlist numeration="loweralpha">
 		<listitem>
 			<para>The question requires that the problem be restated in the
 				language of numerical optimization as given in the book. To
@@ -81,14 +81,50 @@
 				geometric variables and the symbol O to indicate optimization
 				variables. Thus, the equation given in the question is recast
 				as <xref linkend="hw_1_ellipse"/>.
+				<xref linkend="hw_1_unbound_f"/> shows the geometry of the
+				problem and the geometric variables (but not the optimization
+				variables).
 			</para>
 			<xi:include href="mout/hw_1_ellipse.xml"/>
+			<xi:include href="mout/hw_1_unbound_f.xml"/>
+			<para>By intuition, if the ellipse circumscribes the rectangle,
+				all four corners of the rectangle will lie on the ellipse. Since
+				the rectangle has four points and is a two dimensional geometric
+				object, eight design variables are needed. Let odd numbered
+				ordinals of the design vector,
+				<xi:include href="mout/hw_1_XO.xml"/>,
+				designate rectangle coordinates along the 
+				<xi:include href="mout/hw_1_XP.xml"/> axis. Let even
+				numbered ordinals of the design vector designate rectangle
+				coordinates along the <xi:include href="mout/hw_1_YP.xml"/>
+				axis. The counterpart for each variable is shown in
+				<xref linkend="hw_1_spacemapping"/>.
+			</para>
+			<xi:include href="mout/hw_1_spacemapping.xml"/>			
+				<para>A rectangle's area is the magnitude of the cross product
+					of the displacement vectors to the two nearest corners from
+					a common corner. Let F be the negative of the area of the
+					rectangle, such that minimizing F maximizes the rectangular
+					area. The negative of a cross product in regular Cartesian
+					space is simply the same product in reverse order. Choosing
+						<xi:include href="mout/hw_1_P1.xml"/> as the location of
+					the common corner and assuming the rectangular point
+					designation, i in <xi:include href="mout/hw_1_Pi.xml"/>,
+					increases sequentially in a counter-clockwise direction
+					along the perimeter of the rectangle from that corner, the
+					equation defining F is as follows in <xref
+						linkend="hw_1_fmag"/>. Substituting the optimization
+					variables gives the last equation in that set. Notice that
+					in this definition of F, <xi:include
+						href="mout/hw_1_XO5.xml"/>/<xi:include
+						href="mout/hw_1_XP3.xml"/> and <xi:include
+						href="mout/hw_1_XO6.xml"/>/<xi:include
+						href="mout/hw_1_YP3.xml"/> do not appear.
+				</para>
+			<xi:include href="mout/hw_1_fmag.xml"/>
 		</listitem>
-	</orderedlist-->
+	</orderedlist>
 	</para>
-	<xi:include href="mout/hw_1_unbound_f.xml"/>
-	<xi:include href="mout/hw_1_spacemapping.xml"/>
-	<xi:include href="mout/hw_1_fmag.xml"/>
 	<xi:include href="mout/hw_1_hconstraints.xml"/>
 	<xi:include href="mout/hw_1_partially_constrained_f.xml"/>
 	<xi:include href="mout/hw_1_lagrangemultipliers.xml"/>
