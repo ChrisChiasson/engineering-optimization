@@ -31,7 +31,7 @@
 		<author>
 			<personname 
 				xl:href="http://www2.isye.gatech.edu/~spyros/index.html">
-				<honorific>Dr.</honorific>
+				<honorific>Dr</honorific>
 				<firstname>Spiridon</firstname>
 				<surname>Reveliotis</surname>
 			</personname>
@@ -49,7 +49,7 @@
 		<abbrev xml:id="GNVNOTED_abbrev">GNVNOTED</abbrev>
 		<author>
 			<personname>
-				<honorific>Dr.</honorific>
+				<honorific>Dr</honorific>
 				<firstname>Garret</firstname>
 				<othername role="mi">N.</othername>
 				<surname>Vanderplaats</surname>
