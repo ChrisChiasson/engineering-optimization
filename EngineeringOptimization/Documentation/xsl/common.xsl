@@ -10,8 +10,8 @@
 	<xsl:param name="section.autolabel">1</xsl:param>
 	<!--follow xml:base-->
 	<xsl:param name="keep.relative.image.uris">0</xsl:param>
-	<!--olinking on-->
-	<xsl:param name="collect.xref.targets">no</xsl:param>
+	<!--olinking on (defaluts to no)-->
+	<xsl:param name="collect.xref.targets">yes</xsl:param>
 	<!--the single entry in target.xml points to target.db-->
 	<xsl:param name="target.database.document">target.xml</xsl:param>
 	<!--set the doc id to self to match target.xml-->
