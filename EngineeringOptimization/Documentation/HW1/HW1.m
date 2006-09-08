@@ -23,6 +23,50 @@ export[inline1]=XMLDocument["hw_1_ellipse_inline.xml",
 	PrependDirectory->EODExportDirectory
 	];
 
+export[XP]=XMLDocument["hw_1_XP.xml",
+	DocBookInlineEquation["hw_1_XP",X[P],SetIdAttribute->False],
+	PrependDirectory->EODExportDirectory
+	];
+
+export[YP]=XMLDocument["hw_1_YP.xml",
+	DocBookInlineEquation["hw_1_YP",Y[P],SetIdAttribute->False],
+	PrependDirectory->EODExportDirectory
+	];
+
+export[XO]=XMLDocument["hw_1_XO.xml",
+	DocBookInlineEquation["hw_1_XO",X[O],SetIdAttribute->False],
+	PrependDirectory->EODExportDirectory
+	];
+
+export[P1]=XMLDocument["hw_1_P1.xml",
+	DocBookInlineEquation["hw_1_P1",P[1],SetIdAttribute->False],
+	PrependDirectory->EODExportDirectory
+	];
+
+export[Pi]=XMLDocument["hw_1_Pi.xml",
+	DocBookInlineEquation["hw_1_Pi",P[i],SetIdAttribute->False],
+	PrependDirectory->EODExportDirectory
+	];
+
+export[XO5]=XMLDocument["hw_1_XO5.xml",
+	DocBookInlineEquation["hw_1_XO5",X[O][5],SetIdAttribute->False],
+	PrependDirectory->EODExportDirectory
+	];
+
+export[XP3]=XMLDocument["hw_1_XP3.xml",
+	DocBookInlineEquation["hw_1_XP3",X[P][3],SetIdAttribute->False],
+	PrependDirectory->EODExportDirectory
+	];
+
+export[XO6]=XMLDocument["hw_1_XO6.xml",
+	DocBookInlineEquation["hw_1_XO6",X[O][6],SetIdAttribute->False],
+	PrependDirectory->EODExportDirectory
+	];
+
+export[YP3]=XMLDocument["hw_1_YP3.xml",
+	DocBookInlineEquation["hw_1_YP3",Y[P][3],SetIdAttribute->False],
+	PrependDirectory->EODExportDirectory
+	];
 
 spacemapping=Transpose@{
 	Prepend[Table[Unevaluated[Sequence[X[P][i],Y[P][i]]],{i,4}],
@@ -59,6 +103,7 @@ export[3]=XMLDocument["hw_1_fmag.xml",
 	DocBookEquation["hw_1_fmag",
 		"Objective Function",
 		DocBookEquationSequence[fmagoriginal,
+			fmag/.(Reverse/@rep[2]),
 			fmag
 			],
 		Caption->XMLElement["para",{},{"This expression for the objective, F, ",
@@ -236,8 +281,8 @@ graphicsPrimitives[2][xp1_?NumericQ,yp1_?NumericQ,xp2_?NumericQ,yp2_?NumericQ,
 				pt1+(pt2-pt1+pt4-pt1)/2,{0,0},dir]
 		}];
 
-graphicsOptions=Sequence[PlotRange->All,Axes->True,AspectRatio->Automatic,
-	ImageSize->$ExportWidth];
+graphicsOptions=Sequence[PlotRange->All,Axes->True,AxesLabel->{X[P],Y[P]},
+	AspectRatio->Automatic,ImageSize->$ExportWidth];
 
 graph[1]=Graphics[
 	{graphicsPrimitives[1],
