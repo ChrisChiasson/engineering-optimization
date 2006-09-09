@@ -266,14 +266,15 @@ otherwise be prone to copy/paste error*)
 Get[StringReplace[Context[],{"`"->"","Private"->""}]<>
 	"/cubicCriticalDomainLocations.m"];
 
-(*reFindMinimum is used to call FindMinimum again, often because the search
-direction needs to go in a negative direction. Since the algorithm does not work
+(*reFindMinimum is used to call FindMinimum from itself, often because the frame
+search needs to go in a negative direction. Since the algorithm does not work
 when moving the frame in a negative directory, reFindMinimum aliases the
 independant variable using Block so that the search frame will always move in
 the positive direction. Since Block is used, reports from StepMonitor and
 EvaluationMonitor give the correct coordinates (including those from controling
 routines like ALMFindMinimum) even though the FindMinimum
-routine is working with the negative of the independant variable.*)
+routine is working with the negative of the independant variable. It also
+handles the oddball case of the displacement limit being equal to zero.*)
 
 reFindMinimum[function_,variable_,
 	origin:nonComplexNumberPatternObject,
