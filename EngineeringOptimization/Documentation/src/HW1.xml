@@ -101,34 +101,73 @@
 				<xref linkend="hw_1_spacemapping"/>.
 			</para>
 			<xi:include href="mout/hw_1_spacemapping.xml"/>			
-				<para>A rectangle's area is the magnitude of the cross product
-					of the displacement vectors to the two nearest corners from
-					a common corner. Let F be the negative of the area of the
-					rectangle, such that minimizing F maximizes the rectangular
-					area. The negative of a cross product in regular Cartesian
-					space is simply the same product in reverse order. Choosing
-						<xi:include href="mout/hw_1_P1.xml"/> as the location of
-					the common corner and assuming the rectangular point
-					designation, i in <xi:include href="mout/hw_1_Pi.xml"/>,
-					increases sequentially in a counter-clockwise direction
-					along the perimeter of the rectangle from that corner, the
-					equation defining F is as follows in <xref
-						linkend="hw_1_fmag"/>. Substituting the optimization
-					variables gives the last equation in that set. Notice that
-					in this definition of F, <xi:include
-						href="mout/hw_1_XO5.xml"/>/<xi:include
-						href="mout/hw_1_XP3.xml"/> and <xi:include
-						href="mout/hw_1_XO6.xml"/>/<xi:include
-						href="mout/hw_1_YP3.xml"/> do not appear.
-				</para>
+			<para>A rectangle's area is the magnitude of the cross product
+				of the displacement vectors to the two nearest corners from
+				a common corner. Let F be the negative of the area of the
+				rectangle, such that minimizing F maximizes the rectangular
+				area. The negative of a cross product in regular Cartesian
+				space is simply the same product in reverse order. Choosing
+				<xi:include href="mout/hw_1_P1.xml"/> as the location of
+				the common corner and assuming the rectangular point
+				designation, i in <xi:include href="mout/hw_1_Pi.xml"/>,
+				increases sequentially in a counter-clockwise direction
+				along the perimeter of the rectangle from that corner, the
+				equation defining F is as follows in <xref
+				linkend="hw_1_fmag"/>. Substituting the optimization
+				variables gives the last equation in that set. Notice that
+				in this definition of F, <xi:include
+				href="mout/hw_1_XO5.xml"/>/<xi:include
+				href="mout/hw_1_XP3.xml"/> and <xi:include
+				href="mout/hw_1_XO6.xml"/>/<xi:include
+				href="mout/hw_1_YP3.xml"/> do not appear.
+			</para>
 			<xi:include href="mout/hw_1_fmag.xml"/>
+			<para>For the ellipse to circumscribe the rectangle, the equation
+				of the ellipse serves an as en equality constraint between the
+				<xi:include href="mout/hw_1_XP.xml"/> and
+				<xi:include href="mout/hw_1_YP.xml"/> components of each point.
+				This restriction yield the first four constraints on the
+				optimization variables in <xref linkend="hw_1_hconstraints"/>.
+				These constraints give rise to the parallelogram pictured in
+				<xref linkend="hw_1_partially_constrained_f"/>.				
+			</para>
+			<xi:include href="mout/hw_1_partially_constrained_f.xml"/>			
+			<para>More information about the geometry of the rectangle is
+				required. By intuition, the orthogonality of the two vectors
+				used to express the area must be guaranteed. This is
+				accomplished by setting the dot product of the two vectors to
+				zero in the fifth constraint. The last two constraints were
+				implicit in the definition of the rectangle area as the cross
+				product of two adjacent	legs of a parallelogram. The restriction
+				is that both <xi:include href="mout/hw_1_XP.xml"/> and
+				<xi:include href="mout/hw_1_YP.xml"/> components of
+				<xi:include href="mout/hw_1_P3.xml"/> must be formed by the
+				vector addition of the two displacements in the cross product.
+				All seven constraints are shown in
+				<xref linkend="hw_1_hconstraints"/>.
+			</para>
+			<xi:include href="mout/hw_1_hconstraints.xml"/>
+			<para>The problem is now in the numeric optimization form
+				specified by <citation>GNVNOTED</citation>. Part a of the
+				problem is complete.</para>
+		</listitem>
+		<listitem>
+			<para>This seven-constraint single-objective optimization problem
+				may be solved by the method of Lagrange multipliers from 
+				calculus as shown, for example, in <citation>JSCET</citation>,
+				p 805. <xref linkend="hw_1_lagrangemultipliers"/> shows the
+				method as it applies to this problem. The solution is a linear
+				combination of the gradients of the constraints. in my
+				understanding, the solution vector lies	on the hyperplane formed
+				by the constraint gradients. Expanding all components of the
+				solution and constraint gradients gives
+				<xref linkend="hw_1_lagrangeconstraints"/>.
+			</para>
+			<xi:include href="mout/hw_1_lagrangemultipliers.xml"/>
+			<xi:include href="mout/hw_1_lagrangeconstraints.xml"/>
 		</listitem>
 	</orderedlist>
 	</para>
-	<xi:include href="mout/hw_1_hconstraints.xml"/>
-	<xi:include href="mout/hw_1_partially_constrained_f.xml"/>
-	<xi:include href="mout/hw_1_lagrangemultipliers.xml"/>
-	<xi:include href="mout/hw_1_lagrangeconstraints.xml"/>
 	<xi:include href="mout/hw_1_selectedsolution.xml"/>
 	<xi:include href="mout/hw_1_minimum_constrained_f.xml"/>
 </chapter>	
