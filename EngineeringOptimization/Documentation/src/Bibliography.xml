@@ -4,6 +4,55 @@
 	xmlns:xl="http://www.w3.org/1999/xlink" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="5">
+	<biblioentry xml:id="GNVNOTED">
+		<abbrev xml:id="GNVNOTED_abbrev">GNVNOTED</abbrev>
+		<author>
+			<personname>
+				<honorific>Dr</honorific>
+				<firstname>Garret</firstname>
+				<othername role="mi">N.</othername>
+				<surname>Vanderplaats</surname>
+			</personname>
+			<email>vanderplaats@vrand.com</email>
+		</author>
+		<title>Numerical Optimization Techniques for Engineering Design</title>
+		<subtitle>With Applications</subtitle>
+		<biblioid class="isbn">0-944956-01-7</biblioid>
+		<copyright>
+			<year>2001</year>
+		</copyright>
+		<publisher>
+			<publishername xl:href="http://www.vrand.com">Vanderplaats Research
+				&amp; Development, Inc.
+			</publishername>
+			<address><street>1767 S. 8th Street</street>
+				<city>Colorado Springs</city>, <state>Colorado</state>, <postcode>80906</postcode>
+				<phone>+1 (719) 473-4611</phone></address>
+		</publisher>
+	</biblioentry>
+	<biblioentry xml:id="JSCET">
+		<abbrev xml:id="JSCET_abbrev">JSCET</abbrev>
+		<author>
+			<personname>
+				<honorific>Dr</honorific>
+				<firstname>James</firstname>
+				<surname>Stewart</surname>
+			</personname>
+		</author>
+		<title>Calculus</title>
+		<subtitle>Early Transcendentals</subtitle>
+		<biblioid class="isbn">0-534-25158-7</biblioid>
+		<copyright>
+			<year>1995</year>
+		</copyright>
+		<publisher>
+			<publishername>Books/Cole Publishing
+				Company
+			</publishername>
+			<address><street>511 Forest Lodge Road</street>
+				<city>Pacific Grove</city>, <state>California</state>, <postcode>93950</postcode></address>
+		</publisher>
+	</biblioentry>
 	<biblioentry xml:id="MHEM">
 		<abbrev xml:id="MHEM_abbrev">MHEM</abbrev>
 		<editor>
@@ -44,31 +93,5 @@
 		<copyright>
 			<year>1997</year>
 		</copyright>
-	</biblioentry>
-	<biblioentry xml:id="GNVNOTED">
-		<abbrev xml:id="GNVNOTED_abbrev">GNVNOTED</abbrev>
-		<author>
-			<personname>
-				<honorific>Dr</honorific>
-				<firstname>Garret</firstname>
-				<othername role="mi">N.</othername>
-				<surname>Vanderplaats</surname>
-			</personname>
-			<email>vanderplaats@vrand.com</email>
-		</author>
-		<title>Numerical Optimization Techniques for Engineering Design</title>
-		<subtitle>With Applications</subtitle>
-		<biblioid class="isbn">0-944956-01-7</biblioid>
-		<copyright>
-			<year>2001</year>
-		</copyright>
-		<publisher>
-			<publishername xl:href="http://www.vrand.com">Vanderplaats Research
-				&amp; Development, Inc.
-			</publishername>
-			<address><street>1767 S. 8th Street</street>
-  				<city>Colorado Springs</city>, <state>Colorado</state>, <postcode>80906</postcode>
-  				<phone>+1 (719) 473-4611</phone></address>
-		</publisher>
 	</biblioentry>
 </bibliography>
