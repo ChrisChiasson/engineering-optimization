@@ -1,1 +1,1 @@
-Get["EngineeringOptimization`Test`Test"];
+Get["EngineeringOptimization`Test`Test`"];
