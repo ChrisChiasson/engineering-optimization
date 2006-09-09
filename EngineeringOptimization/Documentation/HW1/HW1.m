@@ -366,7 +366,7 @@ export[10]=XMLDocument[
 		Caption->"To make the parallelogram a rectangle, two adjacent sides "<>
 			"are set perpendicular in addition to using the constraints from "<>
 			"the previous figures. The optimum configuration is shown. This "<>
-			"maximum area rectange has long sides parallel to and on either "<>
+			"maximum area rectangle has long sides parallel to and on either "<>
 			"side of the major axis of the ellipse; the short rectangle "<>
 			"has a similar relation to the minor axis."
 		],
