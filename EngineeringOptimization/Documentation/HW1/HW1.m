@@ -24,12 +24,12 @@ export[inline1]=XMLDocument["hw_1_ellipse_inline.xml",
 	];
 
 export[XP]=XMLDocument["hw_1_XP.xml",
-	DocBookInlineEquation["hw_1_XP",X[P],SetIdAttribute->False],
+	xpinline=DocBookInlineEquation["hw_1_XP",X[P],SetIdAttribute->False],
 	PrependDirectory->EODExportDirectory
 	];
 
 export[YP]=XMLDocument["hw_1_YP.xml",
-	DocBookInlineEquation["hw_1_YP",Y[P],SetIdAttribute->False],
+	ypinline=DocBookInlineEquation["hw_1_YP",Y[P],SetIdAttribute->False],
 	PrependDirectory->EODExportDirectory
 	];
 
@@ -40,6 +40,11 @@ export[XO]=XMLDocument["hw_1_XO.xml",
 
 export[P1]=XMLDocument["hw_1_P1.xml",
 	DocBookInlineEquation["hw_1_P1",P[1],SetIdAttribute->False],
+	PrependDirectory->EODExportDirectory
+	];
+
+export[P3]=XMLDocument["hw_1_P3.xml",
+	DocBookInlineEquation["hw_1_P3",P[3],SetIdAttribute->False],
 	PrependDirectory->EODExportDirectory
 	];
 
@@ -333,11 +338,12 @@ export[9]=XMLDocument[
 		"Partially Constrained F",
 		"This is the same as the last graph, but with some constraints.",
 		graph[2],
-		Caption->"The parallelogram whose area gives the magnitude of F is "<>
-			"now constrained to a finite area by affixing all four corner "<>
-			"points to the ellipse. The figure shows an intermediate "<>
-			"magnitude of F. The minimum would be attained by a diamond "<>
-			"with corner points on the positive and negative X and Y axes."
+		Caption->XMLElement["para",{},{"The parallelogram whose area gives ",
+			"the magnitude of F is now constrained to a finite area by ",
+			"affixing all four corner points to the ellipse. The figure shows ",
+			"an intermediate magnitude of F. The minimum would be attained by ",
+			"a diamond with corner points on the positive and negative ",
+			ToXML@xpinline," and ",ToXML@ypinline," axes."}]
 		],
 	PrependDirectory->EODExportDirectory];
 
