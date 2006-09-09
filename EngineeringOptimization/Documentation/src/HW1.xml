@@ -107,12 +107,12 @@
 			<xi:include href="mout/hw_1_spacemapping.xml"/>			
 			<para>A rectangle's area is the magnitude of the cross product
 				of the displacement vectors to the two nearest corners from
-				a common corner. As above, F is the negative of the area of the
-				rectangle, such that minimizing F maximizes the rectangular
-				area. The negative of a cross product in regular Cartesian
-				space is simply the same product in reverse order. Choosing
-				<xi:include href="mout/hw_1_P1.xml"/> as the location of
-				the common corner and assuming the rectangular point
+				a common corner. As stated above, F is the negative of the area
+				of the rectangle, such that minimizing F maximizes the
+				rectangular	area. The negative of a cross product in regular
+				Cartesian space is simply the same product in reverse order.
+				Choosing <xi:include href="mout/hw_1_P1.xml"/> as the location
+				of the common corner and assuming the rectangular point
 				designation, i in <xi:include href="mout/hw_1_Pi.xml"/>,
 				increases sequentially in a counter-clockwise direction
 				along the perimeter of the rectangle from that corner, the
