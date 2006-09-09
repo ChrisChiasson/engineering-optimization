@@ -74,13 +74,17 @@
 	<orderedlist numeration="loweralpha">
 		<listitem>
 			<para>The question requires that the problem be restated in the
-				language of numerical optimization as given in the book. To
-				differentiate between the geometric variables given in the book
-				and the variables I will use for solving the optimization
-				problem, I introduce the symbol P (for point) to indicate
-				geometric variables and the symbol O to indicate optimization
-				variables. Thus, the equation given in the question is recast
-				as <xref linkend="hw_1_ellipse"/>.
+				language of numerical optimization as given in the book. Using
+				that language, maximization of the rectangle area is interpreted
+				as the minimization of, F, the negative of the area. Also, all
+				optimization variables are considered to be part of one solution
+				vector, separate from any physical variable naming scheme that
+				may be present in the problem at hand. To differentiate between
+				the	geometric variables given in the book and the variables I
+				use for solving the optimization problem, I introduce the symbol
+				P (for point) to indicate geometric variables and the symbol O
+				to indicate optimization variables. Thus, the equation given in
+				the question is recast as <xref linkend="hw_1_ellipse"/>.
 				<xref linkend="hw_1_unbound_f"/> shows the geometry of the
 				problem and the geometric variables (but not the optimization
 				variables).
@@ -103,7 +107,7 @@
 			<xi:include href="mout/hw_1_spacemapping.xml"/>			
 			<para>A rectangle's area is the magnitude of the cross product
 				of the displacement vectors to the two nearest corners from
-				a common corner. Let F be the negative of the area of the
+				a common corner. As above, F is the negative of the area of the
 				rectangle, such that minimizing F maximizes the rectangular
 				area. The negative of a cross product in regular Cartesian
 				space is simply the same product in reverse order. Choosing
@@ -157,17 +161,34 @@
 				calculus as shown, for example, in <citation>JSCET</citation>,
 				p 805. <xref linkend="hw_1_lagrangemultipliers"/> shows the
 				method as it applies to this problem. The solution is a linear
-				combination of the gradients of the constraints. in my
+				combination of the gradients of the constraints. In my
 				understanding, the solution vector lies	on the hyperplane formed
-				by the constraint gradients. Expanding all components of the
-				solution and constraint gradients gives
+				by the constraint gradients. Expanding all eight components of
+				the	solution and constraint gradients gives
 				<xref linkend="hw_1_lagrangeconstraints"/>.
 			</para>
 			<xi:include href="mout/hw_1_lagrangemultipliers.xml"/>
 			<xi:include href="mout/hw_1_lagrangeconstraints.xml"/>
+			<para>By combining the solutions to
+				<xref linkend="hw_1_hconstraints"/> and
+				<xref linkend="hw_1_hconstraints"/>, sixteen constrained
+				critical states of <xref linkend="hw_1_fmag"></xref> are found.
+				These states correspond to mirrors and rotations of two basic
+				minimum and maximum area configurations. One basic layout forms
+				a rectangle with zero area, of which there are eight possible
+				configurations. The other basic layout is that of maximum area
+				and minimum objective. One such solution is shown below in
+				<xref linkend="hw_1_selectedsolution"/>. The objective
+				function (F) minimum value is -16. The maximum area value is
+				16. This answers part b of the problem.
+			</para>
+			<xi:include href="mout/hw_1_selectedsolution.xml"/>
+			<para>The last part, c, of the homework only requests a graph of the
+				optimum solution, which I provide in
+				<xref linkend="hw_1_minimum_constrained_f"/>.
+			</para>
+			<xi:include href="mout/hw_1_minimum_constrained_f.xml"/>
 		</listitem>
 	</orderedlist>
 	</para>
-	<xi:include href="mout/hw_1_selectedsolution.xml"/>
-	<xi:include href="mout/hw_1_minimum_constrained_f.xml"/>
-</chapter>	
+</chapter>
