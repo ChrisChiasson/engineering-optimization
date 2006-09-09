@@ -341,9 +341,10 @@ export[9]=XMLDocument[
 		Caption->XMLElement["para",{},{"The parallelogram whose area gives ",
 			"the magnitude of F is now constrained to a finite area by ",
 			"affixing all four corner points to the ellipse. The figure shows ",
-			"an intermediate magnitude of F. The minimum would be attained by ",
-			"a diamond with corner points on the positive and negative ",
-			ToXML@xpinline," and ",ToXML@ypinline," axes."}]
+			"an intermediate magnitude of F. With only these constraints, I ",
+			"think the minimum would be attained by a non-square rhombus with ",
+			"corner points on the positive and negative ",ToXML@xpinline,
+			" and ",ToXML@ypinline," axes."}]
 		],
 	PrependDirectory->EODExportDirectory];
 
