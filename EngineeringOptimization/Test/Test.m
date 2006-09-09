@@ -20,27 +20,23 @@ xpr[1]={b[1]*h[1]+b[2]*h[2]+b[3]*h[3]+b[4]*h[4]+b[5]*h[5],
 xpr[2]={b[1],b[2],b[3],b[4],b[5],h[1],h[2],h[3],h[4],h[5]};
 rep[1]={b[_]->2/100,h[_]->500/100};
 rep[2]={b[num_]:>ToExpression["b"<>ToString[num]],
-	h[num_]:>ToExpression["h"<>ToString[num]]}
+	h[num_]:>ToExpression["h"<>ToString[num]]};
 
 test[1]:=Module[{stepCount=0,evaluationCount=0},
 	NMinimize[xpr[1]/.rep[2],Transpose@{xpr[2],xpr[2]-1/1000/.rep[1],
 		xpr[2]+1/1000/.rep[1]}/.rep[2],Method->{"AugmentedLagrangeMultiplier",
-		"MaximumPenaltyMultiplier"->Infinity},WorkingPrecision->32]]
+		"MaximumPenaltyMultiplier"->Infinity},WorkingPrecision->32]];
 
 test[2]:=Module[{stepCount=0,evaluationCount=0},
 	NMinimize[xpr[1]/.rep[2],Transpose@{xpr[2],xpr[2]-1/1000/.rep[1],
 		xpr[2]+1/1000/.rep[1]}/.rep[2],Method->{"AugmentedLagrangeMultiplier",
-		"MaximumPenaltyMultiplier"->Infinity,Method->Automatic}]]
+		"MaximumPenaltyMultiplier"->Infinity,Method->Automatic}]];
 
 test[3]:=Module[{stepCount=0,evaluationCount=0},
 	NMinimize[{x^2+(y-1/2)^2,y>=0&&y>=x+1},{{x,0,1},{y,0,1}},MaxIterations->10,
 		Method->"AugmentedLagrangeMultiplier",
 		StepMonitor:>Print[{"step",++stepCount,x,y}],
-		EvaluationMonitor:>Print[{"evaluation",++evaluationCount,x,y}]]]
-
-test[4]:=FindMinimum[(x-10)^2,{x,1},Method->{"Unimodal",
-	"MaxNarrowingIterations"->30},StepMonitor:>Print[{"step",x}],
-	EvaluationMonitor:>Print[{"eval",x}]]
+		EvaluationMonitor:>Print[{"evaluation",++evaluationCount,x,y}]]];
 
 End[];
 
