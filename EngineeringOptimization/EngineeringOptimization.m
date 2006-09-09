@@ -264,7 +264,16 @@ four given points. The reason the file is loaded this way is that the
 function was (time consumingly) generated from other Mathematica input and would
 otherwise be prone to copy/paste error*)
 Get[StringReplace[Context[],{"`"->"","Private"->""}]<>
-	"/cubicCriticalDomainLocations.m"]
+	"/cubicCriticalDomainLocations.m"];
+
+(*reFindMinimum is used to call FindMinimum again, often because the search
+direction needs to go in a negative direction. Since the algorithm does not work
+when moving the frame in a negative directory, reFindMinimum aliases the
+independant variable using Block so that the search frame will always move in
+the positive direction. Since Block is used, reports from StepMonitor and
+EvaluationMonitor give the correct coordinates (including those from controling
+routines like ALMFindMinimum) even though the FindMinimum
+routine is working with the negative of the independant variable.*)
 
 reFindMinimum[function_,variable_,
 	origin:nonComplexNumberPatternObject,
