@@ -3,7 +3,7 @@
 	<name>Engineering_Optimization</name>
 	<comment></comment>
 	<projects>
-		<project>DocBook_Export</project>
+		<project>mmade</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
