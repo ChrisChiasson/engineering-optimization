@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<targetset>
+	<sitemap>
+		<dir name=".">
+			<document targetdoc="self">
+				<include 
+					xmlns="http://www.w3.org/2001/XInclude"
+					href="target.db"/>
+			</document>
+		</dir>
+	</sitemap>
+</targetset>
