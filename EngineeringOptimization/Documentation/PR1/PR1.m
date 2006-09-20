@@ -1,4 +1,4 @@
-BeginPackage["EngineeringOptimization`Documentation`Pr1`",
+BeginPackage["EngineeringOptimization`Documentation`PR1`",
 	{"EngineeringOptimization`"}];
 
 Begin["`Private`"];
