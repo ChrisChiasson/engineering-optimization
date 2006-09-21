@@ -3,7 +3,7 @@
 	<name>engineering-optimization</name>
 	<comment></comment>
 	<projects>
-		<project>MMADE</project>
+		<project>mmade</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
