@@ -117,9 +117,14 @@ vMMethodString="VariableMetric";
 vMMethodRulePatternObject=
 Method->vMMethodString|{vMMethodString,sequenceRulePatternObject};
 
+fMCommonConvergenceTestPatternObject=
+	{multipleNonComplexNumberRulePatternObject,
+		vectorNonComplexNumberPatternObject,__}..;
+	
 vMMKernelConvergenceTestPatternObject=
 	{multipleNonComplexNumberRulePatternObject,
-	vectorNonComplexNumberPatternObject,matrixNonComplexNumberPatternObject}..;
+		vectorNonComplexNumberPatternObject,
+		matrixNonComplexNumberPatternObject}..;
 
 multipleSymbolPatternObject={__Symbol};
 
@@ -137,9 +142,23 @@ boundMinimumConvergenceTestPatternObject={nonComplexNumberPatternObject,
 	nonComplexNumberPatternObject,
 	nonComplexNumberPatternObject}..;
 
+(*argument debugging*)
+
+defineBadArgs[symbol_Symbol]:=Module[{args},symbol[args__]:=(Message[
+	General::badargs,symbol,HoldForm[symbol[args]]];Abort[])];
+
+defineDebugArgs[symbol_Symbol]:=Module[{args,debugString,debugSymbol,result,
+	rules},rules={debugString->"debug`"<>SymbolName[symbol]};
+	AppendTo[rules,debugSymbol->ToExpression[debugString/.rules]];
+	result=ReleaseHold[Hold[symbol[args__]:=Dialog[DialogProlog:>Print[
+		debugString],DialogSymbols:>{debugSymbol=Hold[symbol[args]]}]]/.rules];
+	If[MatchQ[{result},{$Failed}],Abort[],result]];
+
 ruleNumeric[workingPrecision:(_?NumericQ|MachinePrecision):MachinePrecision]:=
 	Module[{rule},rule:rulePatternObject:>rule[[0]][rule[[1]],N[rule[[2]],
 		workingPrecision]]]
+
+defineBadArgs@ruleNumeric;
 
 ruleLhsUnion[rules___]:=
 	Sequence@@Module[{encounteredLhses=Alternatives[],Lhs,rule,ruleParser},
@@ -149,10 +168,14 @@ ruleLhsUnion[rules___]:=
 			AppendTo[encounteredLhses,Lhs];rule];
 	ruleParser/@{rules}];
 
+defineBadArgs@ruleLhsUnion;
+
 (*options are not optional for monitorRules - lol - if options are not passed, 
 there is no reason to call this function - it only serves to execute delayed
 monitoring expressions*)
+
 Options@parseOptions={excludedOptions->{}};
+
 parseOptions[argumentOptionList:multipleNullRulePatternObject,
 	optionSymbolList:multipleSymbolPatternObject,opts___?OptionQ]:=
 	Module[{option,excludedOptionsAlternatives=Alternatives@@Flatten@
@@ -160,12 +183,17 @@ parseOptions[argumentOptionList:multipleNullRulePatternObject,
 		Sequence@@DeleteCases[Join[argumentOptionList,Sequence@@@
 			(Options/@optionSymbolList)],option:excludedOptionsAlternatives]];
 
+defineBadArgs@parseOptions;
+
 monitorRules[variables:multipleExpressionPatternObject,
 spotRules:multipleNonComplexNumberRulePatternObject,monitor_,opts__?OptionQ]:=
 	CompoundExpression[Block[variables,Set@@@spotRules;monitor/.{opts}],
 		spotRules];
 
+defineBadArgs@monitorRules;
+
 Options@optionsListValidQ={excludedOptions->{}};
+
 optionsListValidQ[optionsCheckSymbol_Symbol,
 	optionPossibleList:multipleNullRulePatternObject,opts___?OptionQ]:=
 	Module[{option,excludedOptionsAlternatives=
@@ -174,6 +202,8 @@ optionsListValidQ[optionsCheckSymbol_Symbol,
 		MatchQ[optionPossibleList[[All,1]],{Alternatives@@DeleteCases[Options[
 			optionsCheckSymbol][[All,1]],option:excludedOptionsAlternatives]...}
 			]];
+
+defineBadArgs@optionsListValidQ;
 
 frameMinimum[function_,variable_,
 	functionStart:nonComplexNumberPatternObject,
@@ -195,8 +225,11 @@ frameMinimum[function_,variable_,
 			function/.monitorRules[{variable},{variable->
 				solutionTemp2},EvaluationMonitor,opts],solutionTemp2}];
 
+defineBadArgs@frameMinimum;
+
 (*frameMinimumStopTest must have Or Applied to List rather than wrapping the
 arguments directly in Or because all three Stop conditions must be assigned*)
+
 frameMinimumStopTest[functionStart:nonComplexNumberPatternObject,
 	solutionStart:nonComplexNumberPatternObject,
 	functionIntermediate:nonComplexNumberPatternObject,
@@ -215,12 +248,20 @@ frameMinimumStopTest[blah___]:=Dialog[
 	DialogProlog:>Print["debug`frameMinimumStopTest"],
 	DialogSymbols:>{debug`frameMinimumStopTest={blah}}];
 
+defineBadArgs@frameMinimumStopTest;
+
 frameMinimumBoundMessages[domainBound_Symbol,dbtag_Symbol,
 	iterationBound_Symbol,ibtag_Symbol]:=Block[{Message,MessageName},
 		{If[domainBound,Message@MessageName[FindMinimum,SymbolName@dbtag]],
 		If[iterationBound,Message@MessageName[FindMinimum,SymbolName@ibtag]]}];	
 	
+defineBadArgs@frameMinimumBoundMessages;
+
 noValueFalse[symbol:unTrueFalseSymbol]:=If[!ValueQ@symbol,symbol=False];
+
+noValueFalse[symbol_Symbol]:=symbol;
+
+defineBadArgs@noValueFalse;
 
 selectMinimum[variable_Symbol,
 	frame:multipleNonComplexNumberPatternObject]:=Module[{
@@ -230,6 +271,8 @@ selectMinimum[variable_Symbol,
 		MapAt[{variable->#}&,First@Sort@Pick[partitionedFrame,
 			partitionedFrameFunctionValues,
 			Min@partitionedFrameFunctionValues],2]];
+
+defineBadArgs@selectMinimum;
 
 frameMinimumNarrow[function_,variable_,
 	functionStart:nonComplexNumberPatternObject,
@@ -256,6 +299,8 @@ frameMinimumNarrow[function_,variable_,
 			solutionIntermediateNew,functionIntermediate1,solutionIntermediate1,
 			functionIntermediate2,solutionIntermediate2}]];
 
+defineBadArgs@frameMinimumNarrow;
+
 (*The file loaded here defines a function, cubicCriticalDomainLocations, which
 is a function of four points y1,x1,y2,x2,y3,x3,y4,x4 (function value before
 domain value). The outputs are a list of two critical (in the calculus senese)
@@ -266,6 +311,8 @@ otherwise be prone to copy/paste error*)
 
 Get[StringReplace[Context[],{"`"->"","Private"->""}]<>
 	"/cubicCriticalDomainLocations.m"];
+
+defineBadArgs@cubicCriticalDomainLocations;
 
 (*reFindMinimum is used to call FindMinimum from itself, often because the frame
 search needs to go in a negative direction. Since the algorithm does not work
@@ -297,6 +344,8 @@ reFindMinimum[function_,variable_,
 			Block[{FindMinimum},FindMinimum[function,{variable,-origin},opts,
 				Method->{uMethodString,"MaxDisplacement"->maxDisplacement,
 				methodOptions}]]]];
+
+defineBadArgs@reFindMinimum;
 
 Options@FindMinimum`Unimodal={"MaxDisplacement"->{100,-100},"GrowthFactor"->
 	GoldenRatio,"ShrinkFactor"->2-GoldenRatio,"MaxNarrowingIterations"->12};
@@ -372,9 +421,10 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 				frameBound,		
 (*the framebound&&Not@@lowerlist is a necessary but insufficient condition for
  the unimodal minimum to be in the other direction*)
-				If[Not[Or@@lowerList],
-				Sow[reFindMinimum[function,variable,boundOrigin,
-					Drop[maxDisplacementList,1],{methodOptions},{opts1,opts2}]
+				If[Not[Or@@lowerList]&&recursable,
+					Sow[reFindMinimum[function,variable,boundOrigin,
+						Drop[maxDisplacementList,1],
+						{methodOptions},{opts1,opts2}]
 					,sewingTag]];
 (*if the minimum was framed, narrow the frame*)
 				frame=Flatten@{frame[[{1,2}]],Map[{function/.monitorRules[
@@ -404,8 +454,12 @@ lineSearchRules[solutionRules:multipleNonComplexNumberRulePatternObject,
 		MapAt[#+searchDirectionComponent*displacement&,variableRule,2]],
 		{solutionRules,searchDirection}]
 
+defineBadArgs@lineSearchRules;
+
 singleElementScalar[singleElement:unThreadableNonComplexNumberPatternObject]:=
 	First@First@singleElement;
+
+defineBadArgs@singleElementScalar;
 
 (*
 checkFindMinimumResult[result:{nonComplexNumberPatternObject,
@@ -421,7 +475,19 @@ easier to write and probably faster to calculate*)
 (*the p (displacementVector) and y (gradientChange) comments in the margin
  indicate the names of the variables as they appear in Garret N. Vanderplaats'
  Numerical Optimization Techniques for Engineering Design*)
-vMMKernel[function_,variables:multipleSymbolPatternObject,
+
+unprotectedSymbols[variables:multipleExpressionPatternObject]:=
+	Module[{symbol},
+		Union@Reap[variables/.
+			symbol_Symbol/;
+				FreeQ[Attributes@symbol,Protected]:>
+					Sow[symbol]
+			][[2,1]]
+		];
+
+defineBadArgs@unprotectedSymbols;
+
+vMMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
 	gradientNumeric:vectorNonComplexNumberPatternObject,
@@ -436,7 +502,8 @@ vMMKernel[function_,variables:multipleSymbolPatternObject,
 		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
 			Sequence@@Cases[{opts},Except[vMMethodRulePatternObject,
 				commonOptionsPatternObject]]];
-		displacementRule=Block[Evaluate[variables],solutionRulesNew/.rulesSets;
+		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
+			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
 				{displacement,0},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
@@ -456,17 +523,22 @@ vMMKernel[function_,variables:multipleSymbolPatternObject,
 				displacementVector.Transpose[gamma]);		
 		{solutionRulesNew,gradientNumericNew,inverseHessianApproximationNew}];
 
+defineBadArgs@vMMKernel;
+
 (*I want this convergence to generate a message if solutionRules indexes
  a part of {arguments} that doesn't exist, so I am not putting a condition
  here on solutionRules - Chris Chiasson 2006-08-01*)
-vMMConvergenceTest[variables:multipleSymbolPatternObject,
-	arguments:vMMKernelConvergenceTestPatternObject]:=
+ 
+fMCommonConvergenceTest[variables:multipleExpressionPatternObject,
+	arguments:fMCommonConvergenceTestPatternObject]:=
 	Module[{solutionRules,solution},
 		solutionRules[solution_Integer]:={arguments}[[solution,1]];
 		SameQ[variables/.solutionRules[1],variables/.solutionRules[2]]];
 
+defineBadArgs@fMCommonConvergenceTest;
+
 Options@FindMinimum`VariableMetric={"Theta"->1,Method->{uMethodString,
-		"MaxDisplacement"->{12,-12},"MaxNarrowingIterations"->8}}
+		"MaxDisplacement"->{12,-12},"MaxNarrowingIterations"->8}};
 
 FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 	opts1___?OptionQ,Method->vMMethodString|
@@ -483,9 +555,56 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			#2,#3,options]&,#]&,
 			{solutionRules,gradient/.solutionRules,
 				IdentityMatrix[Length[variableStarts]]},
-			Not@vMMConvergenceTest[variables,##]&,2,
+			Not@fMCommonConvergenceTest[variables,##]&,2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}];
+
+Options@FindMinimum`SteepestDescent={};
+
+sDMethodString="SteepestDescent";
+
+sDMethodRulePatternObject=
+Method->sDMethodString|{sDMethodString,sequenceRulePatternObject};
+
+sDKernel[function_,variables:multipleExpressionPatternObject,
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	gradientSymbolic:vectorExpressionPatternObject,
+	gradientNumeric:vectorNonComplexNumberPatternObject,
+	opts___?OptionQ]:=Module[{displacement,displacementRule,displacementVector,
+		findMinimumOptions,gradientChange,gradientNumericNew,
+		searchDirection,solutionRulesNew},
+		searchDirection=-gradientNumeric;
+		solutionRulesNew=lineSearchRules[solutionRules,
+			Sequence@@@searchDirection,displacement];
+		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
+			Sequence@@Cases[{opts},Except[sDMethodRulePatternObject,
+				commonOptionsPatternObject]]];
+		displacementRule=Block[Evaluate[variables],solutionRulesNew/.rulesSets;
+			Block[{FindMinimum},FindMinimum[function,
+				{displacement,0},findMinimumOptions]]][[2]];
+		solutionRulesNew=solutionRulesNew/.displacementRule;
+		gradientNumericNew=gradientSymbolic/.solutionRulesNew;
+		{solutionRulesNew,gradientNumericNew}];
+
+defineBadArgs@sDKernel;
+
+FindMinimum[function_,
+	variableStarts:multipleGuessPseudoPatternObject,
+	opts1__?OptionQ,
+	Method->sDMethodString|{sDMethodString,methodOptions__?OptionQ},
+	opts2__?OptionQ]/;
+		optionsListValidQ[FindMinimum`SteepestDescent,{methodOptions}]:=
+	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]]},
+		options=parseOptions[{methodOptions,opts1,opts2},
+			{FindMinimum`SteepestDescent,FindMinimum}];
+		gradient=List/@D[function,{variables,1}];
+		solutionRules=Rule@@@variableStarts;
+		solutionRules=NestWhile[Apply[sDKernel[function,variables,#1,gradient,
+			#2,options]&,#]&,
+			{solutionRules,gradient/.solutionRules},
+			Not@fMCommonConvergenceTest[variables,##]&,2,
+			MaxIterations/.{options}][[1]];
+		];
 
 aLMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
@@ -515,6 +634,8 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 			List@@@solutionRules,findMinimumOptions]],StepMonitor,opts],
 			penaltyMultiplierNewRule,lagrangeMultiplierNewRules}]
 
+defineBadArgs@aLMKernel;
+
 constraintRateMultiplier[function_,variables:multipleExpressionPatternObject,
 	constraintValue_,opts___?OptionQ]:=
 	constraintRateMultiplierContainer@Divide[
@@ -524,6 +645,8 @@ constraintRateMultiplier[function_,variables:multipleExpressionPatternObject,
 				],
 		Norm@D[constraintValue,{variables,1}]
 		];
+
+defineBadArgs@constraintRateMultiplier;
 
 constraintPenaltyTransformation[function_,
 	variables:multipleExpressionPatternObject,
@@ -554,6 +677,8 @@ constraintPenaltyTransformation[function_,
 			scaledEquivalentConstraintValue,lagrangeMultiplier}
 		];
 
+defineBadArgs@constraintPenaltyTransformation;
+
 chooseMethod[method_Symbol,methodRulePatternObject_Rule,
 	methodOptions_Symbol,opts___?OptionQ]:=
 	Module[{methodOptionPossibleList,methodRuleList=Cases[{opts},
@@ -562,6 +687,8 @@ chooseMethod[method_Symbol,methodRulePatternObject_Rule,
 			methodRuleList[[1,2]];If[optionsListValidQ[method,
 				methodOptionPossibleList],methodOptions=Sequence@@
 					methodOptionPossibleList;True,False]]]
+
+defineBadArgs@chooseMethod;
 
 Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
 	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->10^5,
