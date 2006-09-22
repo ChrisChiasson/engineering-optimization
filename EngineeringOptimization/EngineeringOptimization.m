@@ -506,21 +506,25 @@ vMMKernel[function_,variables:multipleExpressionPatternObject,
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
 				{displacement,0},findMinimumOptions]]][[2]];
-		solutionRulesNew=solutionRulesNew/.displacementRule;
-		gradientNumericNew=gradientSymbolic/.solutionRulesNew;
-(*p*)	displacementVector=Map[List,solutionRulesNew[[All,2]]
-			-solutionRules[[All,2]]];
-(*y*)	gradientChange=gradientNumericNew-gradientNumeric;
-		sigma=Transpose[displacementVector].gradientChange//singleElementScalar;
-		tau=Transpose[gradientChange].inverseHessianApproximation.
-			gradientChange//singleElementScalar;
-		gamma=inverseHessianApproximation.gradientChange;
-		inverseHessianApproximationNew=inverseHessianApproximation+
-			(sigma+theta*tau)/sigma^2*
-				displacementVector.Transpose[displacementVector]+
-			(theta-1)/tau*gamma.Transpose[gamma]-
-			theta/sigma*(gamma.Transpose[displacementVector]+
-				displacementVector.Transpose[gamma]);		
+		If[(displacement/.displacementRule)===0.,
+			gradientNumericNew=gradientNumeric;
+				solutionRulesNew=solutionRules,
+			solutionRulesNew=solutionRulesNew/.displacementRule;
+				gradientNumericNew=gradientSymbolic/.solutionRulesNew;
+(*p*)			displacementVector=Map[List,solutionRulesNew[[All,2]]
+					-solutionRules[[All,2]]];
+(*y*)			gradientChange=gradientNumericNew-gradientNumeric;
+				sigma=Transpose[displacementVector].gradientChange
+					//singleElementScalar;
+				tau=Transpose[gradientChange].inverseHessianApproximation.
+					gradientChange//singleElementScalar;
+				gamma=inverseHessianApproximation.gradientChange;
+				inverseHessianApproximationNew=inverseHessianApproximation+
+					(sigma+theta*tau)/sigma^2*
+						displacementVector.Transpose[displacementVector]+
+					(theta-1)/tau*gamma.Transpose[gamma]-
+					theta/sigma*(gamma.Transpose[displacementVector]+
+						displacementVector.Transpose[gamma])];		
 		{solutionRulesNew,gradientNumericNew,inverseHessianApproximationNew}];
 
 defineBadArgs@vMMKernel;
@@ -579,7 +583,8 @@ sDKernel[function_,variables:multipleExpressionPatternObject,
 		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
 			Sequence@@Cases[{opts},Except[sDMethodRulePatternObject,
 				commonOptionsPatternObject]]];
-		displacementRule=Block[Evaluate[variables],solutionRulesNew/.rulesSets;
+		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
+			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
 				{displacement,0},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
