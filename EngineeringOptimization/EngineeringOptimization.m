@@ -263,6 +263,7 @@ domain locations (x values) obtained from a cubic polynomial fit through the
 four given points. The reason the file is loaded this way is that the
 function was (time consumingly) generated from other Mathematica input and would
 otherwise be prone to copy/paste error*)
+
 Get[StringReplace[Context[],{"`"->"","Private"->""}]<>
 	"/cubicCriticalDomainLocations.m"];
 
@@ -275,6 +276,11 @@ EvaluationMonitor give the correct coordinates (including those from controling
 routines like ALMFindMinimum) even though the FindMinimum
 routine is working with the negative of the independant variable. It also
 handles the oddball case of the displacement limit being equal to zero.*)
+
+(*given the value of maxDisplacement and MaxIterations on an initial call, it
+may be possible to work out precisely how many iterations are possible for each
+run - and instead of passing extra information, use the length of
+MaxDisplacement to normalize however many iterations are left - we'll see*)
 
 reFindMinimum[function_,variable_,
 	origin:nonComplexNumberPatternObject,
