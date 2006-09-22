@@ -117,9 +117,14 @@ vMMethodString="VariableMetric";
 vMMethodRulePatternObject=
 Method->vMMethodString|{vMMethodString,sequenceRulePatternObject};
 
+sDMethodString="SteepestDescent";
+
+sDMethodRulePatternObject=
+Method->sDMethodString|{sDMethodString,sequenceRulePatternObject};
+
 fMCommonConvergenceTestPatternObject=
 	{multipleNonComplexNumberRulePatternObject,
-		vectorNonComplexNumberPatternObject,__}..;
+		vectorNonComplexNumberPatternObject,___}..;
 	
 vMMKernelConvergenceTestPatternObject=
 	{multipleNonComplexNumberRulePatternObject,
@@ -563,13 +568,6 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}];
 
-Options@FindMinimum`SteepestDescent={};
-
-sDMethodString="SteepestDescent";
-
-sDMethodRulePatternObject=
-Method->sDMethodString|{sDMethodString,sequenceRulePatternObject};
-
 sDKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
@@ -593,12 +591,15 @@ sDKernel[function_,variables:multipleExpressionPatternObject,
 
 defineBadArgs@sDKernel;
 
+Options@FindMinimum`SteepestDescent={};
+
 FindMinimum[function_,
 	variableStarts:multipleGuessPseudoPatternObject,
-	opts1__?OptionQ,
+	opts1___?OptionQ,
 	Method->sDMethodString|{sDMethodString,methodOptions__?OptionQ},
-	opts2__?OptionQ]/;
-		optionsListValidQ[FindMinimum`SteepestDescent,{methodOptions}]:=
+	opts2___?OptionQ]/;
+		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
+			optionsListValidQ[FindMinimum`SteepestDescent,{methodOptions}]:=
 	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]]},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`SteepestDescent,FindMinimum}];
@@ -609,6 +610,7 @@ FindMinimum[function_,
 			{solutionRules,gradient/.solutionRules},
 			Not@fMCommonConvergenceTest[variables,##]&,2,
 			MaxIterations/.{options}][[1]];
+		{function/.solutionRules,solutionRules}
 		];
 
 aLMKernel[function_,variables:multipleExpressionPatternObject,
