@@ -65,7 +65,9 @@ beamLoad[X_]=eqn[4][[2]]/.Rule@@eqn[3]/.rep[1]/.rep[2]//PiecewiseExpand;
 
 (*Plot the function and the 20000 N load line.*)
 
-gr[1]=Plot[{beamLoad[X]/.dropSIUnitsRep,20000},
+loadLine=20000;
+
+gr[1]=Plot[{beamLoad[X]/.dropSIUnitsRep,loadLine},
 	{X,0,25/100},
 	PlotStyle->{Black,Red},
 	AxesLabel->{
@@ -76,11 +78,93 @@ gr[1]=Plot[{beamLoad[X]/.dropSIUnitsRep,20000},
 
 (*Solve the problem in the standard Mathematica way.*)
 
-xpr[1]={beamLoad[X],0<X<=H/.rep[1]/.rep[2]}/.dropSIUnitsRep;
-
 (*This is the maximum load given to 10 digits of precision.*)
 
+xpr[1]=N[Maximize[{beamLoad[X],0<X<=H/.rep[1]/.rep[2]}/.dropSIUnitsRep,{X}],10];
 
+(*These are the x locations, shown to 10 digits of precision,
+where the load is 20000 Newtons.*)
+
+
+
+eqn[5]=N[
+	Refine@
+		Reduce[
+			Refine@
+				Reduce[
+					loadLine*Newton==
+						eqn[4][[2]]&&
+							0*Meter<X<=H/.
+								Rule@@eqn[3]/.
+									rep[1]/.
+										rep[2]/.
+											deUnitizeVariablesRep,
+					X
+					]/.
+						unitizeVariablesRep,
+			X
+			],
+	10
+	];
+
+(*Minimize the negative of the function we wish to maximize.*)
+
+(*Outside the range of X from 0 to H, the load function is unbound
+and unphysical.
+Since the default MaxDisplacment for the Unimodal line search is
++ or - 100, the function wouldn't find the real optimum with the default
+settings. It would instead run up against the MaxDisplacement limit and stop.
+To get the correct answer, the MaxDisplacement option must be set to restrict
+the load function to its physical range. If the starting guess is 0.1, and
+the range is 0 to H (0 to 0.25), then MaxDisplacement must be set to
+{0.25-.1,0-.1}. Using that method, the optimim X location answer is correct to
+four significant figures. If one increases the MaxNarrowingIterations option
+to 20 from its default 12, then six digits are correct.*)
+
+
+
+xpr[2]=FindMinimum[
+	Evaluate[-beamLoad[X]/.dropSIUnitsRep],
+	{X,0.1},
+	Method->{"Unimodal",
+		"MaxDisplacement"->{25/100-.1,0-.1},
+		"MaxNarrowingIterations"->20
+		},
+	StepMonitor:>Sow[{"step",X}],
+	EvaluationMonitor:>Sow[{"step",X}]
+	];
+
+(*I use the results of finding the maximum load to split my
+search domains for the 20000 N intersections.
+I increase the MaxNarrowingIterations option to 30 to ensure that the six
+significant digits shown are correct.*)
+
+(*Minimize the absolute value of the difference between the function and its
+desired value. Restrict the range to the first part of the domain.*)
+
+xpr[3]=FindMinimum[
+	Evaluate[Abs[beamLoad[X]-loadLine/.dropSIUnitsRep]],
+	{X,0},
+	Method->{"Unimodal",
+		"MaxDisplacement"->{xpr[2][[2,1,2]]},
+		"MaxNarrowingIterations"->30
+		},
+	StepMonitor:>Sow[{"step",X}],
+	EvaluationMonitor:>Sow[{"step",X}]
+	];
+
+(*This time, restrict the range to the last part of the domain.*)
+
+xpr[4]=FindMinimum[
+	Evaluate[Abs[beamLoad[X]-loadLine/.dropSIUnitsRep]],
+	{X,xpr[2][[2,1,2]]},
+	Method->{"Unimodal",
+		"MaxDisplacement"->{25/100-xpr[2][[2,1,2]]},
+		"MaxNarrowingIterations"->30
+		},
+	StepMonitor:>Sow[{"step",X}],
+	EvaluationMonitor:>Sow[{"step",X}]
+	];
 
 End[];
 
