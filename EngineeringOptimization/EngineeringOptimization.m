@@ -457,10 +457,15 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 					Min["MaxNarrowingIterations"/.{options},maxIterations
 						-iterations-2]];
 (*fit a polynomail to the frame and see if any critical points are inside*)
-				criticalDomainLocations=Cases[cubicCriticalDomainLocations@@
-					Rationalize[frame,0],case:nonComplexNumberPatternObject/;
-						Function[Less[#1,case,#2]]@@Sort[{frame[[2]],
-							frame[[8]]}]];
+				Block[{Message},
+					criticalDomainLocations=Cases[
+						cubicCriticalDomainLocations@@
+							Rationalize[frame,0],
+						case:nonComplexNumberPatternObject/;
+							Function[Less[#1,case,#2]]@@Sort[{frame[[2]],
+								frame[[8]]}]
+						]
+					];
 (*if so, add them to the frame*)
 				frame=Flatten@{frame,Map[{function/.monitorRules[{variable},
 					{variable->#},EvaluationMonitor,options],#}&,
