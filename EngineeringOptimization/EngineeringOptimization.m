@@ -515,16 +515,16 @@ vMMKernel[function_,variables:multipleExpressionPatternObject,
 	opts___?OptionQ]:=Module[{displacement,displacementRule,displacementVector,
 		findMinimumOptions,gradientChange,gradientNumericNew,
 		inverseHessianApproximationNew,searchDirection,solutionRulesNew,gamma,
-		sigma,tau,theta="Theta"/.{opts},temp1,temp2,temp3,temp4},
+		sigma,tau,theta="Theta"/.{opts}},
 		searchDirection=-inverseHessianApproximation.gradientNumeric;
 		solutionRulesNew=lineSearchRules[solutionRules,
 			Sequence@@@searchDirection,displacement];
 		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
 			Sequence@@Cases[{opts},Except[vMMethodRulePatternObject,
 				commonOptionsPatternObject]]];
-		displacementRule=(temp2=Block[Evaluate[unprotectedSymbols@variables],
+		displacementRule=(Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
-			temp3=Block[{FindMinimum},temp4=FindMinimum[function,
+			Block[{FindMinimum},FindMinimum[function,
 				{displacement,0},findMinimumOptions]]])[[2]];
 		If[(displacement/.displacementRule)===0.,
 			gradientNumericNew=gradientNumeric;
