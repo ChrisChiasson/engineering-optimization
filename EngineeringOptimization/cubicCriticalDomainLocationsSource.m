@@ -7,12 +7,28 @@ bracket at MachinePrecision*)
 rep[3]=(*Simplify[*)rep[2]/.rep[1][[1]](*]*);
 xpr[1]=x/.rep[3]/.{Pattern[coord,x|y][num_]:>ToExpression[SymbolName[coord]<>
 	ToString[num]]};
-cubicCriticalDomainLocations[y1_?NumericQ,x1_?NumericQ,y2_?NumericQ,
-	x2_?NumericQ,y3_?NumericQ,x3_?NumericQ,y4_?NumericQ,x4_?NumericQ]:=
-    Evaluate[xpr[1]]
-(*First@$Path only works from Workbench, because the top Path is changed to that
- of the Project folder.*)
-cubicOutFileName=ToFileName[First@$Path<>"/"<>DirectoryName[$Input],
+(*the following line is commented out because conflicts are unlikely in this
+context*)
+(*$ModuleNumber=10^10*$SessionID;*)
+xpr[2]=Experimental`OptimizeExpression[xpr[1]];
+Block[{Block,Set,CompoundExpression},
+	SetDelayed[
+		cubicCriticalDomainLocations[
+			y1_?NumericQ,
+			x1_?NumericQ,
+			y2_?NumericQ,
+			x2_?NumericQ,
+			y3_?NumericQ,
+			x3_?NumericQ,
+			y4_?NumericQ,
+			x4_?NumericQ
+			],
+		#]&@@xpr[2]
+	];
+(*the XML`DocBook` context is needed becuse it defines the InputDirectoryName[]
+function*)
+Needs["XML`DocBook`"];
+cubicOutFileName=ToFileName[InputDirectoryName[],
 	"cubicCriticalDomainLocations.m"];
-DeleteFile[cubicOutFileName];
+If[FileType[cubicOutFileName]==File,DeleteFile[cubicOutFileName]];
 Save[cubicOutFileName,cubicCriticalDomainLocations];
