@@ -15,29 +15,30 @@ BeginPackage["EngineeringOptimization`",{"Utilities`FilterOptions`"}]
 
 FindMinimum::fdbh="The first unimodal line search hit its MaxDisplacement bound 
 and did not find any points with a lower function value than the origin of the 
-line search. The algorithm will move on to the second search."
+line search. The algorithm will move on to the second search.";
 FindMinimum::fibh="The first unimodal line search hit its MaxIterations bound 
 and did not find any points with a lower function value than the origin of the 
-line search. The algorithm will move on to the second search."
+line search. The algorithm will move on to the second search.";
 FindMinimum::fdbl="The first unimodal line search hit its MaxDisplacement bound,
  but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned."
+ of the line search. The point with the lowest value will be returned.";
 FindMinimum::fibl="The first unimodal line search hit its MaxIterations bound,
  but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned."
+ of the line search. The point with the lowest value will be returned.";
 FindMinimum::sdbh="The second unimodal line search hit its MaxDisplacement bound
  and did not find any points with a lower function value than the origin of the 
- line search. The algorithm will return the origin."
+ line search. The algorithm will return the origin.";
 FindMinimum::sibh="The second unimodal line search hit its MaxIterations bound 
 and did not find any points with a lower function value than the origin of the 
-line search. The algorithm will return the origin."
+line search. The algorithm will return the origin.";
 FindMinimum::sdbl="The second unimodal line search hit its MaxDisplacement bound
 , but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned."
+ of the line search. The point with the lowest value will be returned.";
 FindMinimum::sibl="The second unimodal line search hit its MaxIterations bound,
  but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned."
-	 
+ of the line search. The point with the lowest value will be returned.";
+General::badopts="Received bad options: `1`.";
+
 Begin["`Private`"]
 (* Implementation of the package *)
 
@@ -122,6 +123,11 @@ sDMethodString="SteepestDescent";
 sDMethodRulePatternObject=
 Method->sDMethodString|{sDMethodString,sequenceRulePatternObject};
 
+fRMethodString="FletcherReeves";
+
+fRMethodRulePatternObject=
+Method->fRMethodString|{fRMethodString,sequenceRulePatternObject};
+
 fMCommonConvergenceTestPatternObject=
 	{multipleNonComplexNumberRulePatternObject,
 		vectorNonComplexNumberPatternObject,___}..;
@@ -204,9 +210,19 @@ optionsListValidQ[optionsCheckSymbol_Symbol,
 	Module[{option,excludedOptionsAlternatives=
 		Alternatives@@Flatten@{ReplaceAll[excludedOptions/.{opts},
 			Options@optionsListValidQ]}},
-		MatchQ[optionPossibleList[[All,1]],{Alternatives@@DeleteCases[Options[
-			optionsCheckSymbol][[All,1]],option:excludedOptionsAlternatives]...}
-			]];
+		If[MatchQ[optionPossibleList[[All,1]],
+				{Alternatives@@
+					DeleteCases[Options[optionsCheckSymbol][[All,1]],
+						option:excludedOptionsAlternatives]...
+					}
+				],
+			True,
+			Message[optionsCheckSymbol::"badopts",
+				optionPossibleList[[All,1]]
+				];
+			Abort[]
+			]
+		];
 
 defineBadArgs@optionsListValidQ;
 
@@ -500,17 +516,17 @@ vMMKernel[function_,variables:multipleExpressionPatternObject,
 	opts___?OptionQ]:=Module[{displacement,displacementRule,displacementVector,
 		findMinimumOptions,gradientChange,gradientNumericNew,
 		inverseHessianApproximationNew,searchDirection,solutionRulesNew,gamma,
-		sigma,tau,theta="Theta"/.{opts}},
+		sigma,tau,theta="Theta"/.{opts},temp1,temp2,temp3,temp4},
 		searchDirection=-inverseHessianApproximation.gradientNumeric;
 		solutionRulesNew=lineSearchRules[solutionRules,
 			Sequence@@@searchDirection,displacement];
 		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
 			Sequence@@Cases[{opts},Except[vMMethodRulePatternObject,
 				commonOptionsPatternObject]]];
-		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
+		displacementRule=(temp2=Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
-			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]][[2]];
+			temp3=Block[{FindMinimum},temp4=FindMinimum[function,
+				{displacement,0},findMinimumOptions]]])[[2]];
 		If[(displacement/.displacementRule)===0.,
 			gradientNumericNew=gradientNumeric;
 				solutionRulesNew=solutionRules,
@@ -546,8 +562,10 @@ fMCommonConvergenceTest[variables:multipleExpressionPatternObject,
 
 defineBadArgs@fMCommonConvergenceTest;
 
-Options@FindMinimum`VariableMetric={"Theta"->1,Method->{uMethodString,
-		"MaxDisplacement"->{12,-12},"MaxNarrowingIterations"->8}};
+fMSubMethodDefaultOption=Method->{uMethodString,
+		"MaxDisplacement"->{12,-12},"MaxNarrowingIterations"->8};
+
+Options@FindMinimum`VariableMetric={"Theta"->1,fMSubMethodDefaultOption};
 
 FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 	opts1___?OptionQ,Method->vMMethodString|
@@ -591,7 +609,7 @@ sDKernel[function_,variables:multipleExpressionPatternObject,
 
 defineBadArgs@sDKernel;
 
-Options@FindMinimum`SteepestDescent={};
+Options@FindMinimum`SteepestDescent={fMSubMethodDefaultOption};
 
 FindMinimum[function_,
 	variableStarts:multipleGuessPseudoPatternObject,
@@ -608,6 +626,60 @@ FindMinimum[function_,
 		solutionRules=NestWhile[Apply[sDKernel[function,variables,#1,gradient,
 			#2,options]&,#]&,
 			{solutionRules,gradient/.solutionRules},
+			Not@fMCommonConvergenceTest[variables,##]&,2,
+			MaxIterations/.{options}][[1]];
+		{function/.solutionRules,solutionRules}
+		];
+
+fRKernel[function_,variables:multipleExpressionPatternObject,
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	gradientSymbolic:vectorExpressionPatternObject,
+	gradientNumeric:vectorNonComplexNumberPatternObject,
+	searchDirectionOld:vectorNonComplexNumberPatternObject,
+	beta:nonComplexNumberPatternObject,
+	opts___?OptionQ]:=Module[{betaNew,displacement,displacementRule,
+		displacementVector,findMinimumOptions,gradientChange,gradientNumericNew,
+		searchDirection,solutionRulesNew},
+		searchDirection=-gradientNumeric+beta*searchDirectionOld;
+		solutionRulesNew=lineSearchRules[solutionRules,
+			Sequence@@@searchDirection,displacement];
+		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
+			Sequence@@Cases[{opts},Except[fRMethodRulePatternObject,
+				commonOptionsPatternObject]]];
+		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
+			solutionRulesNew/.rulesSets;
+			Block[{FindMinimum},FindMinimum[function,
+				{displacement,0},findMinimumOptions]]][[2]];
+		solutionRulesNew=solutionRulesNew/.displacementRule;
+		gradientNumericNew=gradientSymbolic/.solutionRulesNew;
+		betaNew=Transpose[gradientNumericNew].gradientNumericNew/
+			Transpose[gradientNumeric].gradientNumeric//singleElementScalar;
+		{solutionRulesNew,gradientNumericNew,searchDirection,betaNew}];
+
+defineDebugArgs@fRKernel;
+
+(*http://www.library.cornell.edu/nr/bookcpdf/c10-6.pdf*)
+
+Options@FindMinimum`FletcherReeves={fMSubMethodDefaultOption};
+
+FindMinimum[function_,
+	variableStarts:multipleGuessPseudoPatternObject,
+	opts1___?OptionQ,
+	Method->fRMethodString|{fRMethodString,methodOptions__?OptionQ},
+	opts2___?OptionQ]/;
+		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
+			optionsListValidQ[FindMinimum`FletcherReeves,{methodOptions}]:=
+	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]]},
+		options=parseOptions[{methodOptions,opts1,opts2},
+			{FindMinimum`FletcherReeves,FindMinimum}];
+		gradient=List/@D[function,{variables,1}];
+		solutionRules=Rule@@@variableStarts;
+		solutionRules=NestWhile[Apply[fRKernel[function,variables,#1,gradient,
+			##2,options]&,#]&,
+			{solutionRules,
+				gradient/.solutionRules,
+				Table[{0},{Length@variables}],
+				0},
 			Not@fMCommonConvergenceTest[variables,##]&,2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}
