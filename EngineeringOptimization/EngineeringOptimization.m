@@ -487,12 +487,6 @@ singleElementScalar[singleElement:unThreadableNonComplexNumberPatternObject]:=
 
 defineBadArgs@singleElementScalar;
 
-(*
-checkFindMinimumResult[result:{nonComplexNumberPatternObject,
-	multipleNonComplexNumberRulePatternObject}]:=result;
-checkFindMinimumResult[result_]:=(Message@General::badFindMinimumResult;result)
-*)
-
 (*theta is the parameter that scales the hessian or inverse hessian update
 between the Davidon Fletcher Powell (DFP) and Broyden Fletcher Goldfarb Shanno
 (BFGS) methods on an interval of zero (DFP) to one (BFGS)*)
