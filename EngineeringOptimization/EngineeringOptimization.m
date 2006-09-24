@@ -376,6 +376,14 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 		{uMethodString,methodOptions__?OptionQ},
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
+		{methodOptions}]&&FreeQ[function,variableStart[[1]]]:=
+		{function,Rule@@variableStart};
+
+FindMinimum[function_,variableStart:guessPseudoPatternObject,
+	opts1___?OptionQ,Method->uMethodString|
+		{uMethodString,methodOptions__?OptionQ},
+	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
+		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
 		{methodOptions}]:=
 	Module[{boundDivisor=3,boundForward,boundOrigin,
 		case,criticalDomainLocations,domainBound,frameBound,frame,
@@ -679,6 +687,82 @@ FindMinimum[function_,
 				gradient/.solutionRules,
 				Table[{0},{Length@variables}],
 				0},
+			Not@fMCommonConvergenceTest[variables,##]&,2,
+			MaxIterations/.{options}][[1]];
+		{function/.solutionRules,solutionRules}
+		];
+
+PowKernelKernel[function_,
+	variables:multipleExpressionPatternObject,
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	searchDirection:vectorNonComplexNumberPatternObject,
+	opts___?OptionQ]:=
+	Module[{displacement,displacementRule,solutionRulesNew},
+		solutionRulesNew=lineSearchRules[solutionRules,
+			Sequence@@@searchDirection,displacement];
+		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
+			solutionRulesNew/.rulesSets;
+			Block[{FindMinimum},FindMinimum[function,
+				{displacement,0},opts]]][[2]];
+		{solutionRulesNew/.displacementRule}
+		];
+
+defineDebugArgs@PowKernelKernel;
+
+(*http://www.library.cornell.edu/nr/bookcpdf/c10-5.pdf*)
+
+PowKernel[function_,variables:multipleExpressionPatternObject,
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	searchDirections:multipleVectorNonComplexNumberPatternObject,
+	iteration_Integer,
+	opts___?OptionQ]:=Module[{displacement,displacementRule,displacementVector,
+		findMinimumOptions,searchDirection,solutionRulesNew,
+		variablesLength=Length@variables},
+		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
+			Sequence@@Cases[{opts},Except[PowMethodRulePatternObject,
+				commonOptionsPatternObject]]];
+		solutionRulesNew=Fold[
+			PowKernelKernel[
+				function,
+				variables,
+				##,
+				findMinimumOptions]&,
+			solutionRules,
+			searchDirections];
+		searchDirection=List/@
+			(solutionRulesNew[[All,2]]-solutionRules[[All,2]]);
+		solutionRulesNew=lineSearchRules[solutionRules,
+			Sequence@@@searchDirection,displacement];
+		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
+			solutionRulesNew/.rulesSets;
+			Block[{FindMinimum},FindMinimum[function,
+				{displacement,0},findMinimumOptions]]][[2]];
+		solutionRulesNew=solutionRulesNew/.displacementRule;
+		{solutionRulesNew,
+			If[Mod[iteration,variablesLength+1]===0,
+				IdentityMatrix[variablesLength],
+  				Rest@searchDirections~Join~searchDirection],
+			iteration+1}];
+
+defineDebugArgs@PowKernel;
+
+FindMinimum[function_,
+	variableStarts:multipleGuessPseudoPatternObject,
+	opts1___?OptionQ,
+	Method->PowMethodString|{PowMethodString,methodOptions__?OptionQ},
+	opts2___?OptionQ]/;
+		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
+			optionsListValidQ[FindMinimum`Powell,{methodOptions}]:=
+	Module[{options,solutionRules,variables=variableStarts[[All,1]]},
+		options=parseOptions[{methodOptions,opts1,opts2},
+			{FindMinimum`Powell,FindMinimum}];
+		solutionRules=Rule@@@variableStarts;
+		solutionRules=NestWhile[Apply[PowKernel[function,variables,##,options]&,
+			#]&,
+			{solutionRules,
+				Map[List,IdentityMatrix[Length[variableStarts]],{2}],
+				1
+				},
 			Not@fMCommonConvergenceTest[variables,##]&,2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}
