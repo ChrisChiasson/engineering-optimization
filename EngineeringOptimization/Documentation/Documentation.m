@@ -22,13 +22,18 @@ $ScreenResolution=86; (*dpi*)
 
 If[!ValueQ[EODExport],EODExport=True];
 
+mout="mout";
+
 If[!ValueQ[EODExportDirectory],
 	EODExportDirectory=
-		ToFileName[{
-			InputDirectoryName[],
-			"src",
-			"mout"
-			}]
+		If[ValueQ[Global`$MMADEBuildDirectory],
+			ToFileName[{Global`$MMADEBuildDirectory,mout}],
+			ToFileName[{
+				InputDirectoryName[],
+				"src",
+				mout
+				}]
+			]
 	];
 
 If[FileType@EODExportDirectory===None,CreateDirectory@EODExportDirectory;
@@ -36,5 +41,4 @@ If[FileType@EODExportDirectory===None,CreateDirectory@EODExportDirectory;
 can't be created."];Quit[]]];
 
 End[];
-
 EndPackage[];
