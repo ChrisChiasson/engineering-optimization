@@ -66,6 +66,9 @@ vectorNonComplexNumberPatternObject={{nonComplexNumberPatternObject}..};
 
 matrixNonComplexNumberPatternObject={multipleNonComplexNumberPatternObject..};
 
+multipleVectorNonComplexNumberPatternObject=
+	{vectorNonComplexNumberPatternObject..};
+
 constraintPatternObject=(Less|LessEqual|Greater|GreaterEqual|Equal)[__];
 
 multipleConstraintPatternObject=(And|List)[constraintPatternObject..];
@@ -128,9 +131,14 @@ fRMethodString="FletcherReeves";
 fRMethodRulePatternObject=
 Method->fRMethodString|{fRMethodString,sequenceRulePatternObject};
 
+PowMethodString="Powell";
+
+PowMethodRulePatternObject=
+Method->PowMethodString|{PowMethodString,sequenceRulePatternObject};
+
+
 fMCommonConvergenceTestPatternObject=
-	{multipleNonComplexNumberRulePatternObject,
-		vectorNonComplexNumberPatternObject,___}..;
+	{multipleNonComplexNumberRulePatternObject,___}..;
 	
 vMMKernelConvergenceTestPatternObject=
 	{multipleNonComplexNumberRulePatternObject,
@@ -704,7 +712,7 @@ PowKernelKernel[function_,
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
 				{displacement,0},opts]]][[2]];
-		{solutionRulesNew/.displacementRule}
+		solutionRulesNew/.displacementRule
 		];
 
 defineDebugArgs@PowKernelKernel;
@@ -740,11 +748,13 @@ PowKernel[function_,variables:multipleExpressionPatternObject,
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		{solutionRulesNew,
 			If[Mod[iteration,variablesLength+1]===0,
-				IdentityMatrix[variablesLength],
-  				Rest@searchDirections~Join~searchDirection],
+				Map[List,IdentityMatrix[variablesLength],{2}],
+  				Rest@searchDirections~Join~{searchDirection}],
 			iteration+1}];
 
 defineDebugArgs@PowKernel;
+
+Options@FindMinimum`Powell={fMSubMethodDefaultOption};
 
 FindMinimum[function_,
 	variableStarts:multipleGuessPseudoPatternObject,
