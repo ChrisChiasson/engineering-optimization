@@ -136,6 +136,10 @@ PowMethodString="Powell";
 PowMethodRulePatternObject=
 Method->PowMethodString|{PowMethodString,sequenceRulePatternObject};
 
+INMethodString="IsaacNewton";
+
+INMethodRulePatternObject=
+Method->INMethodString|{INMethodString,sequenceRulePatternObject};
 
 fMCommonConvergenceTestPatternObject=
 	{multipleNonComplexNumberRulePatternObject,___}..;
@@ -671,7 +675,7 @@ fRKernel[function_,variables:multipleExpressionPatternObject,
 			Transpose[gradientNumeric].gradientNumeric//singleElementScalar;
 		{solutionRulesNew,gradientNumericNew,searchDirection,betaNew}];
 
-defineDebugArgs@fRKernel;
+defineBadArgs@fRKernel;
 
 (*http://www.library.cornell.edu/nr/bookcpdf/c10-6.pdf*)
 
@@ -715,7 +719,7 @@ PowKernelKernel[function_,
 		solutionRulesNew/.displacementRule
 		];
 
-defineDebugArgs@PowKernelKernel;
+defineBadArgs@PowKernelKernel;
 
 (*http://www.library.cornell.edu/nr/bookcpdf/c10-5.pdf*)
 
@@ -752,7 +756,7 @@ PowKernel[function_,variables:multipleExpressionPatternObject,
   				Rest@searchDirections~Join~{searchDirection}],
 			iteration+1}];
 
-defineDebugArgs@PowKernel;
+defineBadArgs@PowKernel;
 
 Options@FindMinimum`Powell={fMSubMethodDefaultOption};
 
@@ -777,6 +781,53 @@ FindMinimum[function_,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}
 		];
+
+INKernel[function_,variables:multipleExpressionPatternObject,
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	gradientSymbolic:vectorExpressionPatternObject,
+	gradientNumeric:vectorNonComplexNumberPatternObject,
+	hessian_Experimental`OptimizedExpression,
+	opts___?OptionQ]:=Module[{displacement,displacementRule,displacementVector,
+		findMinimumOptions,gradientChange,gradientNumericNew,
+		searchDirection,solutionRulesNew},
+		searchDirection=-LinearSolve[
+			Normal[hessian/.solutionRules],
+			gradientNumeric];
+		solutionRulesNew=lineSearchRules[solutionRules,
+			Sequence@@@searchDirection,displacement];
+		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
+			Sequence@@Cases[{opts},Except[INethodRulePatternObject,
+				commonOptionsPatternObject]]];
+		displacementRule=(Block[Evaluate[unprotectedSymbols@variables],
+			solutionRulesNew/.rulesSets;
+			Block[{FindMinimum},FindMinimum[function,
+				{displacement,0},findMinimumOptions]]])[[2]];
+		solutionRulesNew=solutionRulesNew/.displacementRule;
+		{solutionRulesNew,gradientSymbolic/.solutionRulesNew}];
+
+defineDebugArgs@INKernel;
+
+Options@FindMinimum`IsaacNewton={fMSubMethodDefaultOption};
+
+FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
+	opts1___?OptionQ,Method->INMethodString|
+		{INMethodString,methodOptions__?OptionQ},
+	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
+		excludedOptions->Method]&&optionsListValidQ[FindMinimum`IsaacNewton,
+		{methodOptions}]:=
+	Module[{gradient,hessian,options,solutionRules,
+		variables=variableStarts[[All,1]]},
+		options=parseOptions[{methodOptions,opts1,opts2},
+			{FindMinimum`IsaacNewton,FindMinimum}];
+		gradient=List/@D[function,{variables,1}];
+		solutionRules=Rule@@@variableStarts;
+		hessian=Experimental`OptimizeExpression[D[function,{variables,2}]];
+		solutionRules=NestWhile[Apply[INKernel[function,variables,#1,gradient,
+			#2,hessian,options]&,#]&,
+			{solutionRules,gradient/.solutionRules},
+			Not@fMCommonConvergenceTest[variables,##]&,2,
+			MaxIterations/.{options}][[1]];
+		{function/.solutionRules,solutionRules}];
 
 aLMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
