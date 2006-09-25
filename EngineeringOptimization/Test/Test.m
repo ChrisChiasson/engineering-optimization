@@ -38,6 +38,9 @@ test[3]:=Module[{stepCount=0,evaluationCount=0},
 		StepMonitor:>Print[{"step",++stepCount,x,y}],
 		EvaluationMonitor:>Print[{"evaluation",++evaluationCount,x,y}]]];
 
+(*the results of these three tests tell me that I still need to improve
+my algorithms on the intermediate homeworks and projects*)
+
 End[];
 
 EndPackage[];
