@@ -29,16 +29,16 @@ rep[5]={dL[i_Integer]->Sqrt[(X[i+1][t]-X[i][t])^2+(Y[i+1][t]-Y[i][t])^2]
 
 eqn[2]=Equal@@@rep[5]/.rep[4];
 
-varz[all]=Flatten[{X[#][t],Y[#][t]}&/@Range[num@P/.rep[2]]];
+var[all]=Flatten[{X[#][t],Y[#][t]}&/@Range[num@P/.rep[2]]];
 
-varz[1]=Take[varz[all],{3,-3}];
+var[1]=Take[var[all],{3,-3}];
 
-varz[2]=Complement[varz[all],varz[1]];
+var[2]=Complement[var[all],var[1]];
 
 (*boundary conditions*)
 rep[6]={X[1]->(0&),X[num[P]/.rep[2]]->(num[S]*L[naught]&),Y[1|7]->(0&)};
 
-eqn[2]=Thread[varz[2]==(varz[2]/.rep[6]/.rep[2]/.rep[3])];
+eqn[2]=Thread[var[2]==(var[2]/.rep[6]/.rep[2]/.rep[3])];
 
 (*potential energy*)
 eqn[3]=PE==Sum[(1/2)*K@i*dL@i^2,{i,num@S}]+Sum[W@j*Y[j+1][t],{j,num@W}];
@@ -49,11 +49,11 @@ eqn[4]=eqn[3]//.Join@@rep/@{1,3,5,6};
 (*initial conditions*)
 rep[7]={X[i_Integer][0]->L[naught]*(i-1),Y[i_Integer][0]->0};
 
-varz[3]=varz[1]/.t->0/.rep[7]/.rep[3];
+var[3]=var[1]/.t->0/.rep[7]/.rep[3];
 
 (*reference answer from Mathematica's routines*)
 Off[FindMinimum::lstol];
-sol[1]=FindMinimum[eqn[4][[2]],Transpose@{varz[1],varz[3]}];
+sol[1]=FindMinimum[eqn[4][[2]],Transpose@{var[1],var[3]}];
 On[FindMinimum::lstol];
 
 (*turns off the messages about hitting the MaxDisplacement bound and turning
@@ -68,7 +68,7 @@ displacement were changed from the default)*)
 (*BFGS*)
 sol[2]=Block[{FindMinimum},
 	FindMinimum[eqn[4][[2]],
-		Transpose@{varz[1],varz[3]},
+		Transpose@{var[1],var[3]},
 		Method->{"VariableMetric",
 			"Theta"->1,
 			Method->{"Unimodal",
@@ -82,7 +82,7 @@ sol[2]=Block[{FindMinimum},
 (*DFP*)
 sol[3]=Block[{FindMinimum},
 	FindMinimum[eqn[4][[2]],
-		Transpose@{varz[1],varz[3]},
+		Transpose@{var[1],var[3]},
 		Method->{"VariableMetric",
 			"Theta"->0,
 			Method->{"Unimodal",
