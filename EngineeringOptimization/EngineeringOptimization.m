@@ -385,7 +385,7 @@ Options@FindMinimum`Unimodal={"MaxDisplacement"->{100,-100},"GrowthFactor"->
 
 FindMinimum[function_,variableStart:guessPseudoPatternObject,
 	opts1___?OptionQ,Method->uMethodString|
-		{uMethodString,methodOptions__?OptionQ},
+		{uMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
 		{methodOptions}]&&FreeQ[function,variableStart[[1]]]:=
@@ -393,7 +393,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 
 FindMinimum[function_,variableStart:guessPseudoPatternObject,
 	opts1___?OptionQ,Method->uMethodString|
-		{uMethodString,methodOptions__?OptionQ},
+		{uMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
 		{methodOptions}]:=
@@ -588,7 +588,7 @@ Options@FindMinimum`VariableMetric={"Theta"->1,fMSubMethodDefaultOption};
 
 FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 	opts1___?OptionQ,Method->vMMethodString|
-		{vMMethodString,methodOptions__?OptionQ},
+		{vMMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`VariableMetric,
 		{methodOptions}]:=
@@ -633,7 +633,7 @@ Options@FindMinimum`SteepestDescent={fMSubMethodDefaultOption};
 FindMinimum[function_,
 	variableStarts:multipleGuessPseudoPatternObject,
 	opts1___?OptionQ,
-	Method->sDMethodString|{sDMethodString,methodOptions__?OptionQ},
+	Method->sDMethodString|{sDMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`SteepestDescent,{methodOptions}]:=
@@ -684,7 +684,7 @@ Options@FindMinimum`FletcherReeves={fMSubMethodDefaultOption};
 FindMinimum[function_,
 	variableStarts:multipleGuessPseudoPatternObject,
 	opts1___?OptionQ,
-	Method->fRMethodString|{fRMethodString,methodOptions__?OptionQ},
+	Method->fRMethodString|{fRMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`FletcherReeves,{methodOptions}]:=
@@ -763,7 +763,7 @@ Options@FindMinimum`Powell={fMSubMethodDefaultOption};
 FindMinimum[function_,
 	variableStarts:multipleGuessPseudoPatternObject,
 	opts1___?OptionQ,
-	Method->PowMethodString|{PowMethodString,methodOptions__?OptionQ},
+	Method->PowMethodString|{PowMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`Powell,{methodOptions}]:=
@@ -811,7 +811,7 @@ Options@FindMinimum`IsaacNewton={fMSubMethodDefaultOption};
 
 FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 	opts1___?OptionQ,Method->INMethodString|
-		{INMethodString,methodOptions__?OptionQ},
+		{INMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`IsaacNewton,
 		{methodOptions}]:=
@@ -947,6 +947,259 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 			,MaxIterations/.{options}])/;
 		chooseMethod[NMinimize`AugmentedLagrangeMultiplier,
 			aLMMethodRulePatternObject,methodOptions,opts]]
+
+Options@penaltyKernel`Basic={wrapper->Identity};
+
+BaPMethodString="Basic";
+
+penaltyKernel[constraint:constraintPatternObject,
+	Method->BaPMethodString|{BaPMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penaltyKernel`Basic,{methodOptions}]:=
+	(wrapper/.{methodOptions}/.Options@penaltyKernel`Basic)[
+		Which[
+			MatchQ[Head[constraint],Less|LessEqual|Equal],
+			Subtract@@constraint,
+			MatchQ[Head[constraint],Greater|GreaterEqual],
+			Subtract@@Reverse@constraint,
+			True,
+			Abort[]
+			]
+		];
+
+Options@penaltyKernel`Exterior={Method->BaPMethodString};
+
+exPMethodString="Exterior";
+
+penaltyKernel[constraint:constraintPatternObject,
+	Method->exPMethodString|{exPMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penaltyKernel`Exterior,{methodOptions}]:=
+	Module[{
+		options=ruleLhsUnion@Sequence[
+			methodOptions,
+			Sequence@@Options@penaltyKernel`Exterior]
+		},
+		Which[
+			MatchQ[Head[constraint],Less|LessEqual|Greater|GreaterEqual],
+			Max[0,penaltyKernel[constraint,options]]^2,
+			MatchQ[Head[constraint],Equal],
+			penaltyKernel[constraint,options]^2,
+			True,
+			Abort[]
+			]
+		];
+
+Options@penaltyKernel`InteriorInversion={Method->BaPMethodString};
+
+inInvPMethodString="InteriorInversion";
+
+penaltyKernel[constraint:constraintPatternObject,
+	Method->inInvPMethodString|{inInvPMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penaltyKernel`InteriorInversion,{methodOptions}]:=
+	Module[{
+		options=ruleLhsUnion@Sequence[
+			methodOptions,
+			Sequence@@Options@penaltyKernel`InteriorInversion]
+		},
+		Which[
+			MatchQ[Head[constraint],Less|LessEqual|Greater|GreaterEqual],
+			Divide[-1,penaltyKernel[constraint,options]],
+			MatchQ[Head[constraint],Equal],
+			penaltyKernel[constraint,options]^2,
+			True,
+			Abort[]
+			]
+		];
+
+Options@penaltyKernel`InteriorLogarithm={Method->BaPMethodString};
+
+inLogPMethodString="InteriorLogarithm";
+
+penaltyKernel[constraint:constraintPatternObject,
+	Method->inLogPMethodString|{inLogPMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penaltyKernel`InteriorLogarithm,{methodOptions}]:=
+	Module[{
+		options=ruleLhsUnion@Sequence[
+			methodOptions,
+			Sequence@@Options@penaltyKernel`InteriorLogarithm]
+		},
+		Which[
+			MatchQ[Head[constraint],Less|LessEqual|Greater|GreaterEqual],
+			-Log[-penaltyKernel[constraint,options]],
+			MatchQ[Head[constraint],Equal],
+			penaltyKernel[constraint,options]^2,
+			True,
+			Abort[]
+			]
+		];
+
+eLPMethodString="ExtendedLinear";
+
+Options@penaltyKernel`ExtendedLinear={Method->BaPMethodString};
+
+penaltyKernel[constraint:constraintPatternObject,border_,
+	Method->eLPMethodString|{eLPMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penaltyKernel`ExtendedLinear,{methodOptions}]:=
+	Module[{
+		options=ruleLhsUnion@Sequence[
+			methodOptions,
+			Sequence@@Options@penaltyKernel`ExtendedLinear]
+		},
+		Which[
+			MatchQ[Head[constraint],Less|LessEqual|Greater|GreaterEqual],
+			Module[{g=penaltyKernel[constraint,options]},
+				Piecewise[{{-1/g,g<=border}},
+					-(2*border-g)/border^2
+					]
+				],
+			MatchQ[Head[constraint],Equal],
+			penaltyKernel[constraint,options]^2,
+			True,
+			Abort[]
+			]
+		];
+
+eQPMethodString="ExtendedQuadratic";
+
+Options@penaltyKernel`ExtendedQuadratic={Method->BaPMethodString};
+
+penaltyKernel[constraint:constraintPatternObject,border_,
+	Method->eQPMethodString|{eQPMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penaltyKernel`ExtendedQuadratic,{methodOptions}]:=
+	Module[{
+		options=ruleLhsUnion@Sequence[
+			methodOptions,
+			Sequence@@Options@penaltyKernel`ExtendedQuadratic]
+		},
+		Which[
+			MatchQ[Head[constraint],Less|LessEqual|Greater|GreaterEqual],
+			Module[{g=penaltyKernel[constraint,options]},
+				Piecewise[{{-1/g,g<=border}},
+					(*-(2*border-g)/border^2*)
+					-((g/border)^2-3*g/border+3)/border
+					]
+				],
+			MatchQ[Head[constraint],Equal],
+			penaltyKernel[constraint,options]^2,
+			True,
+			Abort[]
+			]
+		];
+
+defineBadArgs@penaltyKernel;
+
+Options@penalty`Exterior={Method->exPMethodString};
+
+penalty[constraints:multipleConstraintPatternObject,
+	exteriorPenaltyFactor_,
+	Method->exPMethodString|{exPMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penalty`Exterior,{methodOptions}]:=
+	Module[{
+		options=ruleLhsUnion@
+			Sequence[methodOptions,Sequence@@Options@penalty`Exterior]
+		},
+		exteriorPenaltyFactor*Plus@@(penaltyKernel[#,options]&)/@constraints
+		];
+
+Options@penalty`Interior={Method->inInvPMethodString};
+
+inPMethodString="Interior";
+
+penalty[constraints:multipleConstraintPatternObject,
+	exteriorPenaltyFactor_,
+	interiorPenaltyFactor_,
+	Method->inPMethodString|{inPMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penalty`Interior,{methodOptions}]:=
+	Module[{
+		case,
+		equalityConstraints,
+		inequalityConstraints,
+		options=ruleLhsUnion@
+			Sequence[methodOptions,Sequence@@Options@penalty`Interior]
+		},
+		equalityConstraints=Cases[constraints,case:HoldPattern[Equal[__]]];
+		inequalityConstraints=Complement[List@@constraints,equalityConstraints];
+		Plus[
+			exteriorPenaltyFactor*
+				Plus@@(penaltyKernel[#,options]&)/@equalityConstraints,
+			interiorPenaltyFactor*
+				Plus@@(penaltyKernel[#,options]&)/@inequalityConstraints
+			]
+		];
+
+Options@penalty`ExtendedLinear={Method->eLPMethodString};
+
+penalty[constraints:multipleConstraintPatternObject,
+	exteriorPenaltyFactor_,
+	interiorPenaltyFactor_,
+	border_,
+	Method->eLPMethodString|{eLPMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penalty`ExtendedLinear,{methodOptions}]:=
+	Module[{
+		case,
+		equalityConstraints,
+		inequalityConstraints,
+		options=ruleLhsUnion@
+			Sequence[methodOptions,Sequence@@Options@penalty`ExtendedLinear]
+		},
+		equalityConstraints=Cases[constraints,case:HoldPattern[Equal[__]]];
+		inequalityConstraints=Complement[List@@constraints,equalityConstraints];
+		Plus[
+			exteriorPenaltyFactor*
+				Plus@@(penaltyKernel[#,border,options]&)/@equalityConstraints,
+			interiorPenaltyFactor*
+				Plus@@(penaltyKernel[#,border,options]&)/@inequalityConstraints
+			]
+		];
+
+Options@penalty`ExtendedQuadratic={Method->eQPMethodString};
+
+penalty[constraints:multipleConstraintPatternObject,
+	exteriorPenaltyFactor_,
+	interiorPenaltyFactor_,
+	border_,
+	Method->eQPMethodString|{eQPMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penalty`ExtendedQuadratic,{methodOptions}]:=
+	Module[{
+		case,
+		equalityConstraints,
+		inequalityConstraints,
+		options=ruleLhsUnion@
+			Sequence[methodOptions,Sequence@@Options@penalty`ExtendedQuadratic]
+		},
+		equalityConstraints=Cases[constraints,case:HoldPattern[Equal[__]]];
+		inequalityConstraints=Complement[List@@constraints,equalityConstraints];
+		Plus[
+			exteriorPenaltyFactor*
+				Plus@@(penaltyKernel[#,border,options]&)/@equalityConstraints,
+			interiorPenaltyFactor*
+				Plus@@(penaltyKernel[#,border,options]&)/@inequalityConstraints
+			]
+		];
+
+defineBadArgs@penalty;
+
+(*this is an attempt to reformulate NMinimize in the calling structure I used
+in FindMinimum*)
+NMinimize[function_,
+	variableStarts:multipleGuessRangePseudoPatternObject,
+	opts1___?OptionQ,
+	Method->exPMethodString|{exPMethodString,methodOptions___?OptionQ},
+	opts2___?OptionQ]/;
+		optionsListValidQ[NMinimize,{opts1,opts2},excludedOptions->Method]&&
+		optionsListValidQ[NMinimize`ExteriorPenalty,{methodOptions}]:=
+	Module[{gradient,hessian,options,solutionRules,
+		variables=variableStarts[[All,1]]},
+		options=parseOptions[{methodOptions,opts1,opts2},
+			{FindMinimum`IsaacNewton,FindMinimum}];
+		gradient=List/@D[function,{variables,1}];
+		solutionRules=Rule@@@variableStarts;
+		hessian=Experimental`OptimizeExpression[D[function,{variables,2}]];
+		solutionRules=NestWhile[Apply[INKernel[function,variables,#1,gradient,
+			#2,hessian,options]&,#]&,
+			{solutionRules,gradient/.solutionRules},
+			Not@fMCommonConvergenceTest[variables,##]&,2,
+			MaxIterations/.{options}][[1]];
+		{function/.solutionRules,solutionRules}];
 
 Attributes[FindMinimum]=oldAttributesFindMinimum;
 Protect[NMinimize,FindMinimum];
