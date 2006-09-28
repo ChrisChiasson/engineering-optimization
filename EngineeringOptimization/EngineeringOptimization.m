@@ -69,7 +69,9 @@ matrixNonComplexNumberPatternObject={multipleNonComplexNumberPatternObject..};
 multipleVectorNonComplexNumberPatternObject=
 	{vectorNonComplexNumberPatternObject..};
 
-constraintPatternObject=(Less|LessEqual|Greater|GreaterEqual|Equal)[__];
+inequalityHeadAlternatives=Less|LessEqual|Greater|GreaterEqual;
+
+constraintPatternObject=(inequalityHeadAlternatives|Equal)[__];
 
 multipleConstraintPatternObject=(And|List)[constraintPatternObject..];
 
@@ -979,7 +981,7 @@ penaltyKernel[constraint:constraintPatternObject,
 			Sequence@@Options@penaltyKernel`Exterior]
 		},
 		Which[
-			MatchQ[Head[constraint],Less|LessEqual|Greater|GreaterEqual],
+			MatchQ[Head[constraint],inequalityHeadAlternatives],
 			Max[0,penaltyKernel[constraint,options]]^2,
 			MatchQ[Head[constraint],Equal],
 			penaltyKernel[constraint,options]^2,
@@ -1001,7 +1003,7 @@ penaltyKernel[constraint:constraintPatternObject,
 			Sequence@@Options@penaltyKernel`InteriorInversion]
 		},
 		Which[
-			MatchQ[Head[constraint],Less|LessEqual|Greater|GreaterEqual],
+			MatchQ[Head[constraint],inequalityHeadAlternatives],
 			Divide[-1,penaltyKernel[constraint,options]],
 			MatchQ[Head[constraint],Equal],
 			penaltyKernel[constraint,options]^2,
@@ -1023,7 +1025,7 @@ penaltyKernel[constraint:constraintPatternObject,
 			Sequence@@Options@penaltyKernel`InteriorLogarithm]
 		},
 		Which[
-			MatchQ[Head[constraint],Less|LessEqual|Greater|GreaterEqual],
+			MatchQ[Head[constraint],inequalityHeadAlternatives],
 			-Log[-penaltyKernel[constraint,options]],
 			MatchQ[Head[constraint],Equal],
 			penaltyKernel[constraint,options]^2,
@@ -1045,7 +1047,7 @@ penaltyKernel[constraint:constraintPatternObject,border_,
 			Sequence@@Options@penaltyKernel`ExtendedLinear]
 		},
 		Which[
-			MatchQ[Head[constraint],Less|LessEqual|Greater|GreaterEqual],
+			MatchQ[Head[constraint],inequalityHeadAlternatives],
 			Module[{g=penaltyKernel[constraint,options]},
 				Piecewise[{{-1/g,g<=border}},
 					-(2*border-g)/border^2
@@ -1071,10 +1073,9 @@ penaltyKernel[constraint:constraintPatternObject,border_,
 			Sequence@@Options@penaltyKernel`ExtendedQuadratic]
 		},
 		Which[
-			MatchQ[Head[constraint],Less|LessEqual|Greater|GreaterEqual],
+			MatchQ[Head[constraint],inequalityHeadAlternatives],
 			Module[{g=penaltyKernel[constraint,options]},
 				Piecewise[{{-1/g,g<=border}},
-					(*-(2*border-g)/border^2*)
 					-((g/border)^2-3*g/border+3)/border
 					]
 				],
@@ -1083,6 +1084,48 @@ penaltyKernel[constraint:constraintPatternObject,border_,
 			True,
 			Abort[]
 			]
+		];
+
+Options@penaltyKernel`AugmentedLagrangeMultiplier={Method->BaPMethodString};
+
+
+augmentInequalityConstraint[constraint:inequalityHeadAlternatives[__],
+	exteriorPenaltyFactor_,
+	lagrangeMultiplier_,
+	opts___?OptionQ]=
+	Max[penaltyKernel[constraint,opts],
+		-lagrangeMultiplier/(2*exteriorPenaltyFactor)
+		];
+
+defineBadArgs@augmentConstraint;
+
+penaltyKernel[constraint:constraintPatternObject,
+	exteriorPenaltyFactor_,
+	lagrangeMultiplier_,
+	Method->aLMMethodString|{aLMMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[
+			penaltyKernel`AugmentedLagrangeMultiplier,{methodOptions}]:=
+	Module[{
+		options=ruleLhsUnion@Sequence[
+			methodOptions,
+			Sequence@@Options@penaltyKernel`AugmentedLagrangeMultiplier],
+		psi
+		},
+		psi=Which[
+			MatchQ[Head[constraint],inequalityHeadAlternatives],
+			augmentInequalityConstraint[
+					constraint,
+					exteriorPenaltyFactor,
+					lagrangeMultiplier,
+					options],
+			MatchQ[Head[constraint],Equal],
+			penaltyKernel[constraint,options],
+			True,
+			Abort[]
+			];
+		(*it's interesting that the parser didn't warn me about the previously
+			missing semicolon on the Which statement above*)
+		lagrangeMultiplier*psi+exteriorPenaltyFactor*psi^2
 		];
 
 defineBadArgs@penaltyKernel;
@@ -1176,6 +1219,26 @@ penalty[constraints:multipleConstraintPatternObject,
 			]
 		];
 
+Options@penalty`AugmentedLagrangeMultipliers={Method->aLMMethodString};
+
+penalty[constraints:multipleConstraintPatternObject,
+	exteriorPenaltyFactor_,
+	lagrangeMultiplierList_List,
+	Method->aLMMethodString|{aLMMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[penalty`AugmentedLagrangeMultipliers,
+			{methodOptions}]&&
+		Length[lagrangeMultiplierList]===Length[constraints]:=
+	Module[{
+		options=ruleLhsUnion@
+			Sequence[methodOptions,
+				Sequence@@Options@penalty`AugmentedLagrangeMultipliers]
+		},
+		Plus@@MapThread[penaltyKernel[#,exteriorPenaltyFactor,#2,options]&,
+			{List@@constraints,
+				lagrangeMultiplierList}
+			]
+		];
+
 defineBadArgs@penalty;
 
 (*this is an attempt to reformulate NMinimize in the calling structure I used
@@ -1186,7 +1249,7 @@ NMinimize[function_,
 	Method->exPMethodString|{exPMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;
 		optionsListValidQ[NMinimize,{opts1,opts2},excludedOptions->Method]&&
-		optionsListValidQ[NMinimize`ExteriorPenalty,{methodOptions}]:=
+			optionsListValidQ[NMinimize`ExteriorPenalty,{methodOptions}]:=
 	Module[{gradient,hessian,options,solutionRules,
 		variables=variableStarts[[All,1]]},
 		options=parseOptions[{methodOptions,opts1,opts2},
