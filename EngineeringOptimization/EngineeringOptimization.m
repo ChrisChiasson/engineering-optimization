@@ -461,7 +461,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 				Not@frameBound&&Or@@lowerList,
 				frameMinimumBoundMessages[domainBound,fdbl,iterationBound,fibl];
 				Sow[selectMinimum[variable,frame],sewingTag],
-				frameBound,		
+				frameBound,
 (*the framebound&&Not@@lowerlist is a necessary but insufficient condition for
  the unimodal minimum to be in the other direction*)
 				If[Not[Or@@lowerList]&&recursable,
@@ -831,9 +831,9 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}];
 
-aLMKernel[function_,variables:multipleExpressionPatternObject,
+(*aLMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
-	penalties:multipleExpressionPatternObject,
+	penalties_,
 	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,
 		nonComplexNumberPatternObject],
 	penaltyMultiplierGrowthFactor:nonComplexNumberPatternObject,
@@ -854,12 +854,12 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 			penaltyMultiplierNewRule=MapAt[Min[#*penaltyMultiplierGrowthFactor,
 				"MaximumPenaltyMultiplier"/.{opts}]&,penaltyMultiplierRule,2]},
 		{monitorRules[variables,Last@Block[{FindMinimum},FindMinimum[
-			function+Apply[Plus,penalties/.constraintRateMultiplierRule
-				/.lagrangeMultiplierNewRules/.penaltyMultiplierNewRule],
+			function+(penalties/.constraintRateMultiplierRule
+				/.lagrangeMultiplierNewRules/.penaltyMultiplierNewRule),
 			List@@@solutionRules,findMinimumOptions]],StepMonitor,opts],
-			penaltyMultiplierNewRule,lagrangeMultiplierNewRules}]
+			penaltyMultiplierNewRule,lagrangeMultiplierNewRules}]*)
 
-defineBadArgs@aLMKernel;
+defineDebugArgs@aLMKernel;
 
 constraintRateMultiplier[function_,variables:multipleExpressionPatternObject,
 	constraintValue_,opts___?OptionQ]:=
@@ -917,11 +917,19 @@ defineBadArgs@chooseMethod;
 
 Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
 	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->10^5,
+	"LagrangeMultiplierHead"->Automatic,
 	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
 	Method->{vMMethodString,Method->{uMethodString,
 		"MaxDisplacement"->{10,-10},"MaxNarrowingIterations"->6}}}
 
-NMinimize[{function_,constraints:multipleConstraintPatternObject},
+Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
+	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->Infinity,
+	"LagrangeMultiplierHead"->Automatic,
+	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
+	Method->{vMMethodString,Method->{uMethodString,
+		"MaxDisplacement"->{10,-10},"MaxNarrowingIterations"->30}}}
+
+(*NMinimize[{function_,constraints:multipleConstraintPatternObject},
 	variableStartRanges:multipleGuessRangePseudoPatternObject,opts___?OptionQ]:=
 	Module[{constraintsList=List@@constraints,lagrangeMultiplierRules,
 		lagrangeMultipliers,lagrangeMultiplierUpdates,methodOptions,
@@ -948,7 +956,123 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 				ruleNumeric[workingPrecision]
 			,MaxIterations/.{options}])/;
 		chooseMethod[NMinimize`AugmentedLagrangeMultiplier,
-			aLMMethodRulePatternObject,methodOptions,opts]]
+			aLMMethodRulePatternObject,methodOptions,opts]]*)
+
+aLMKernel[function_,variables:multipleExpressionPatternObject,
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	penalties_,
+	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,
+		nonComplexNumberPatternObject],
+	penaltyMultiplierGrowthFactor:nonComplexNumberPatternObject,
+	lagrangeMultiplierRules:multipleNonComplexNumberRulePatternObject,
+	lagrangeMultiplierUpdates:multipleExpressionPatternObject,opts___?OptionQ]:=
+	Module[{
+		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
+			Sequence@@Cases[{opts},Except[aLMMethodRulePatternObject,
+				commonOptionsPatternObject]]],
+		lagrangeMultiplierNewRules,
+		penaltyMultiplierNewRule,
+		solutionNewRules},
+		solutionNewRules=monitorRules[
+			variables,
+			Last@
+				Block[{FindMinimum},
+					FindMinimum[
+						function+
+							(penalties/.lagrangeMultiplierRules/.
+								penaltyMultiplierRule),
+						List@@@solutionRules,
+						findMinimumOptions
+						]
+					],
+			StepMonitor,
+			opts
+			];
+		penaltyMultiplierNewRule=MapAt[Min[#*penaltyMultiplierGrowthFactor,
+			"MaximumPenaltyMultiplier"/.{opts}]&,penaltyMultiplierRule,2];
+		lagrangeMultiplierNewRules=MapThread[
+			Function[{rule,update},MapAt[#+update&,rule,2]],
+				{lagrangeMultiplierRules,lagrangeMultiplierUpdates
+					/.penaltyMultiplierRule
+					/.lagrangeMultiplierRules
+					/.solutionNewRules}];
+		{solutionNewRules,penaltyMultiplierNewRule,lagrangeMultiplierNewRules}];
+
+(*this is an attempt to reformulate NMinimize in the calling structure I used
+in FindMinimum*)
+NMinimize[{function_,constraints:multipleConstraintPatternObject},
+	variableStartRanges:multipleGuessRangePseudoPatternObject,
+	opts1___?OptionQ,
+	Method->aLMMethodString|{aLMMethodString,methodOptions___?OptionQ},
+	opts2___?OptionQ]/;
+		optionsListValidQ[NMinimize,{opts1,opts2},excludedOptions->Method]&&
+			optionsListValidQ[
+				NMinimize`AugmentedLagrangeMultiplier,
+				{methodOptions}]:=
+	Module[{
+		lagrangeMultiplierHead,
+		gradient,
+		hessian,
+		lagrangeMultipliers,
+		lagrangeMultiplierRules,
+		lagrangeMultiplierUpdates,
+		lambda,
+		options,
+		penalties,
+		penaltyMultiplier,
+		penaltyMultiplierRule,
+		penaltyMultiplierGrowthFactor,
+		solutionRules,
+		variables=variableStartRanges[[All,1]],
+		workingPrecision},
+		options=parseOptions[{methodOptions,opts1,opts2},
+			{NMinimize`AugmentedLagrangeMultiplier,FindMinimum}];
+		workingPrecision=WorkingPrecision/.{options};
+		penaltyMultiplierGrowthFactor="PenaltyMultiplierGrowthFactor"/.
+			{options};
+		penaltyMultiplierRule=penaltyMultiplier->
+			ReplaceAll["InitialPenaltyMultiplier",{options}];
+		lagrangeMultiplierHead="LagrangeMultiplierHead"/.{options};
+		If[lagrangeMultiplierHead===Automatic,
+			lagrangeMultiplierHead=lambda];
+		lagrangeMultipliers=lagrangeMultiplierHead/@
+			Range[Length@constraints];
+		penalties=penalty[constraints,
+			penaltyMultiplier,
+			lagrangeMultipliers,
+			Method->aLMMethodString
+			];
+		lagrangeMultiplierUpdates=
+			MapThread[2*penaltyMultiplier*
+				augmentInequalityConstraint[#,
+					penaltyMultiplier,
+					#2,
+					Method->BaPMethodString]&,
+				{List@@constraints,lagrangeMultipliers}];
+		lagrangeMultiplierRules=Thread[lagrangeMultipliers->
+			"InitialLagrangeMultipliers"/.{options}];
+		solutionRules=#1->Mean@{##2}&@@@variableStartRanges;
+		solutionRules=NestWhile[
+			Apply[
+				aLMKernel[
+					function,
+					variables,
+					#1,
+					penalties,
+					#2,
+					N[penaltyMultiplierGrowthFactor,workingPrecision],
+					#3,
+					lagrangeMultiplierUpdates,
+					options]&,
+				#]&,
+			{monitorRules[variables,solutionRules,StepMonitor,options],
+				penaltyMultiplierRule,lagrangeMultiplierRules}/.
+				ruleNumeric[workingPrecision],
+			Not@fMCommonConvergenceTest[variables,##]&,
+			2,
+			MaxIterations/.{options}
+			][[1]];
+		{function/.solutionRules,solutionRules}];
 
 Options@penaltyKernel`Basic={wrapper->Identity};
 
@@ -1088,7 +1212,6 @@ penaltyKernel[constraint:constraintPatternObject,border_,
 
 Options@penaltyKernel`AugmentedLagrangeMultiplier={Method->BaPMethodString};
 
-
 augmentInequalityConstraint[constraint:inequalityHeadAlternatives[__],
 	exteriorPenaltyFactor_,
 	lagrangeMultiplier_,
@@ -1112,17 +1235,17 @@ penaltyKernel[constraint:constraintPatternObject,
 		psi
 		},
 		psi=Which[
-			MatchQ[Head[constraint],inequalityHeadAlternatives],
-			augmentInequalityConstraint[
+				MatchQ[Head[constraint],inequalityHeadAlternatives],
+				augmentInequalityConstraint[
 					constraint,
 					exteriorPenaltyFactor,
 					lagrangeMultiplier,
 					options],
-			MatchQ[Head[constraint],Equal],
-			penaltyKernel[constraint,options],
-			True,
-			Abort[]
-			];
+				MatchQ[Head[constraint],Equal],
+				penaltyKernel[constraint,options],
+				True,
+				Abort[]
+				];
 		(*it's interesting that the parser didn't warn me about the previously
 			missing semicolon on the Which statement above*)
 		lagrangeMultiplier*psi+exteriorPenaltyFactor*psi^2
@@ -1240,29 +1363,6 @@ penalty[constraints:multipleConstraintPatternObject,
 		];
 
 defineBadArgs@penalty;
-
-(*this is an attempt to reformulate NMinimize in the calling structure I used
-in FindMinimum*)
-NMinimize[function_,
-	variableStarts:multipleGuessRangePseudoPatternObject,
-	opts1___?OptionQ,
-	Method->exPMethodString|{exPMethodString,methodOptions___?OptionQ},
-	opts2___?OptionQ]/;
-		optionsListValidQ[NMinimize,{opts1,opts2},excludedOptions->Method]&&
-			optionsListValidQ[NMinimize`ExteriorPenalty,{methodOptions}]:=
-	Module[{gradient,hessian,options,solutionRules,
-		variables=variableStarts[[All,1]]},
-		options=parseOptions[{methodOptions,opts1,opts2},
-			{FindMinimum`IsaacNewton,FindMinimum}];
-		gradient=List/@D[function,{variables,1}];
-		solutionRules=Rule@@@variableStarts;
-		hessian=Experimental`OptimizeExpression[D[function,{variables,2}]];
-		solutionRules=NestWhile[Apply[INKernel[function,variables,#1,gradient,
-			#2,hessian,options]&,#]&,
-			{solutionRules,gradient/.solutionRules},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
-			MaxIterations/.{options}][[1]];
-		{function/.solutionRules,solutionRules}];
 
 Attributes[FindMinimum]=oldAttributesFindMinimum;
 Protect[NMinimize,FindMinimum];
