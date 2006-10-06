@@ -345,7 +345,7 @@ brentOrdinateAbscissaVWXSequence[
 		Sequence@@Sequence@@@Take[ordinateReverseSortPairs,-3](*fv,v,fw,w,fx,x*)
 		];
 
-defineBadArgs@brentOrdinateAbscissaSequence;
+defineBadArgs@brentOrdinateAbscissaVWXSequence;
 
 acceptableBrentLocation[location:nonComplexNumberPatternObject(*an abscissa*),
 	x:nonComplexNumberPatternObject(*minimum ordinate's abscissa*),
