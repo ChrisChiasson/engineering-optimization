@@ -37,6 +37,9 @@ FindMinimum::sdbl="The second unimodal line search hit its MaxDisplacement bound
 FindMinimum::sibl="The second unimodal line search hit its MaxIterations bound,
  but did find at least one point with a lower function value than the origin
  of the line search. The point with the lowest value will be returned.";
+FindMinimum::nfv="`1` is not a function of the given variable `2`.";
+General::badargs="Bad arguments were supplied to `1`. The call was as follows: \
+`2`";
 General::badopts="Received bad options: `1`.";
 
 Begin["`Private`"]
@@ -309,6 +312,124 @@ selectMinimum[variable_Symbol,
 
 defineBadArgs@selectMinimum;
 
+nSameQ[currVal:nonComplexNumberPatternObject,
+	prevVal:nonComplexNumberPatternObject,
+	accuracyGoal:nonComplexNumberPatternObject,
+	precisionGoal:nonComplexNumberPatternObject]:=
+	Abs[currVal-prevVal]<=10^-accuracyGoal+Abs[prevVal]*10^-precisionGoal;
+
+(*The file loaded here defines a function, criticalDomainLocations, which
+is a function of three or four points y1,x1,y2,x2,y3,x3,(y4,x4) (function value
+before domain value). The outputs are a list of critical (in the calculus
+senese) domain locations (x values) obtained from a polynomial fit through the
+given points. The reason the file is loaded this way is that the function was
+(time consumingly) generated from other Mathematica input and would
+otherwise be prone to copy/paste error.*)
+
+Get[StringReplace[Context[],{"`"->"","Private"->""}]<>
+	"/criticalDomainLocations.m"];
+
+defineBadArgs@criticalDomainLocations;
+
+brentOrdinateAbscissaSequence[
+	pointsFlatYX:multipleNonComplexNumberPatternObject(*
+	coordinates in a flat list, ordinate first, abscissa second*)
+	]/;EvenQ[Length@pointsFlatYX]:=
+	Module[
+		{abscissaSortPairs(*coordinatePairs sorted by increasing abscissa*),
+			coordinatePairs=Partition[pointsFlatYX,2]
+			(*coordinates paired in a list via Parition*),
+			ordinateReverseSortPairs(*coordinatePairs sorted
+			by decreasing ordinate*)
+			},
+		abscissaSortPairs=Sort[coordinatePairs,OrderedQ[Reverse/@{#1,#2}]&];
+		ordinateReverseSortPairs=Sort[coordinatePairs,OrderedQ[{#2,#1}]&];
+		Identity[Sequence][
+			Sequence@@First@abscissaSortPairs(*fa,a*),
+			Sequence@@Last@abscissaSortPairs(*fb,b*),
+			Sequence@@Sequence@@@Take[ordinateReverseSortPairs,-3]
+			(*fv,v,fw,w,fx,x*)
+			]
+		];
+
+defineBadArgs@brentOrdinateAbscissaSequence;
+
+frameMinimumNarrowBrent[function_,variable_,
+	fa:nonComplexNumberPatternObject(*ordinate at a*),
+	a:nonComplexNumberPatternObject(*interval boundary lhs*),
+	fb:nonComplexNumberPatternObject(*ordinate at b*),
+	b:nonComplexNumberPatternObject(*interval boundary rhs*),
+	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
+	v:nonComplexNumberPatternObject(*fv's abscissa*),
+	fw:nonComplexNumberPatternObject(*2nd lowest ordinate*),
+	w:nonComplexNumberPatternObject(*fw's abscissa*),
+	fx:nonComplexNumberPatternObject(*minimum ordinate*),
+	x:nonComplexNumberPatternObject(*fx's abscissa*),
+	maxAcceptableDisplacement:nonComplexNumberPatternObject(*
+	the maximum distance the algorithm can move via polynomial interpolation*),
+	opts__?OptionQ(*options*)]/;OrderedQ[{a,b}]:=
+	Module[
+		{accuracyGoal=AccuracyGoal/.{opts}(*digits of accuracy requested*),
+			brentSequence(*sequence of values suitable for next iteration*),
+			displacement(*displacement from x to the newAbscissa*),
+			newAbscissa(*abscissa from interpolation or golden section*),
+			newOrdinate(*function value at newAbscissa*),
+			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*),
+			xm=(a+b)/2(*[a,b] interval midpoint*)
+			},
+		(*guess the location(s) of the minimum from v, w, and x
+		using the critical point(s) of an interpolating polynomial*)
+		newAbscissa=
+			Select[
+				Append[
+					Block[{Message},
+						criticalDomainLocations[fv,v,fw,w,fx,x]
+						],
+					
+					],
+				(*subject to these criteria*)
+				And[Element[#,Reals],
+					LessEqual[a,#,b],
+					Less[Abs[#-x],maxAcceptableDisplacement]
+					
+					]&,
+				1];
+		(*if the critical value(s) of the polynomial was(were) no good*)
+		If[newAbscissa==={},
+			(*take the golden step into the larger of the two intervals*)
+			displacement=If[x>=xm,a-x,b-x]*"ShrinkFactor"/.{opts};
+			newAbscissa=x+displacement;
+			Print["golden step to: ",newAbscissa];,
+			(*otherwise, make it a number instead of a number in a list*)
+			newAbscissa=First@newAbscissa;
+			Print["interpolation step to: ",newAbscissa];
+			displacement=newAbscissa-x
+			];
+		(*If the newAbscissa is within tolerance to a,b,v,w, or x, set 
+		newOrdinate and newAbscissa to "nothing". Otherwise, set newOrdinate to
+		the function value at newAbscissa.*)
+		newOrdinate=Catch[
+			debug`llamain;
+			Map[
+				If[nSameQ[newAbscissa,#,accuracyGoal,precisionGoal],
+					newAbscissa=Sequence[];Throw[Unevaluated@Sequence[]]]&,
+				{a,b,v,w,x}
+				];
+			debug`llamaout;
+			function/.monitorRules[{variable},
+				{variable->newAbscissa},EvaluationMonitor,opts]
+			];
+		(*arguments for a new iteration*)
+		brentSequence=brentOrdinateAbscissaSequence[
+			{fa,a,fb,b,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
+			];
+		(*return all arguments in a list needed for the stop test and/or a
+		new iteration*)
+		{brentSequence,Abs@displacement/2}
+		];
+
+defineBadArgs@frameMinimumNarrowBrent;
+
 frameMinimumNarrow[function_,variable_,
 	functionStart:nonComplexNumberPatternObject,
 	solutionStart:nonComplexNumberPatternObject,
@@ -335,19 +456,6 @@ frameMinimumNarrow[function_,variable_,
 			functionIntermediate2,solutionIntermediate2}]];
 
 defineBadArgs@frameMinimumNarrow;
-
-(*The file loaded here defines a function, cubicCriticalDomainLocations, which
-is a function of four points y1,x1,y2,x2,y3,x3,y4,x4 (function value before
-domain value). The outputs are a list of two critical (in the calculus senese)
-domain locations (x values) obtained from a cubic polynomial fit through the
-four given points. The reason the file is loaded this way is that the
-function was (time consumingly) generated from other Mathematica input and would
-otherwise be prone to copy/paste error*)
-
-Get[StringReplace[Context[],{"`"->"","Private"->""}]<>
-	"/cubicCriticalDomainLocations.m"];
-
-defineBadArgs@cubicCriticalDomainLocations;
 
 (*reFindMinimum is used to call FindMinimum from itself, often because the frame
 search needs to go in a negative direction. Since the algorithm does not work
@@ -383,7 +491,7 @@ reFindMinimum[function_,variable_,
 defineBadArgs@reFindMinimum;
 
 Options@FindMinimum`Unimodal={"MaxDisplacement"->{100,-100},"GrowthFactor"->
-	GoldenRatio,"ShrinkFactor"->2-GoldenRatio,"MaxNarrowingIterations"->12};
+	GoldenRatio,"ShrinkFactor"->2-GoldenRatio,"MaxNarrowingIterations"->100};
 
 FindMinimum[function_,variableStart:guessPseudoPatternObject,
 	opts1___?OptionQ,Method->uMethodString|
@@ -391,7 +499,8 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
 		{methodOptions}]&&FreeQ[function,variableStart[[1]]]:=
-		{function,Rule@@variableStart};
+		(Message[FindMinimum::nfv,function,variableStart[[1]]];
+		{function,Rule@@variableStart});
 
 FindMinimum[function_,variableStart:guessPseudoPatternObject,
 	opts1___?OptionQ,Method->uMethodString|
@@ -401,8 +510,8 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 		{methodOptions}]:=
 	Module[{boundDivisor=3,boundForward,boundOrigin,
 		case,criticalDomainLocations,domainBound,frameBound,frame,
-		functionOrigin,growthFactor,iterationBound,iterations,lowerList,
-		maxDisplacementList,maxIterations,options,recursable,sewingTag,
+		functionOrigin,growthFactor,lowerList,
+		maxDisplacementList,options,recursable,sewingTag,
 		shrinkFactor,solutionIntermediate,variable=variableStart[[1]],
 		workingPrecision},First@Sort@Reap[
 		options=parseOptions[{methodOptions,opts1,opts2},
@@ -425,12 +534,9 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 			Sow[selectMinimum[variable,{functionOrigin,boundOrigin}],
 				sewingTag],
 			True,
-			maxIterations=MaxIterations/.{options};
 			growthFactor=N["GrowthFactor"/.{options},workingPrecision];
 			shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
 			boundForward=maxDisplacementList[[1]]+boundOrigin;
-			iterations=0;
-			++iterations;
 			functionOrigin=function/.monitorRules[{variable},{variable->
 				boundOrigin},EvaluationMonitor,options];
 (*first frame*)
@@ -444,22 +550,21 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 			frame=NestWhile[Apply[frameMinimum[function,variable,##,
 				growthFactor,boundOrigin,boundForward,options]&,#]&,frame,
 				Apply[Not@frameMinimumStopTest[##,boundForward,frameBound,
-					domainBound,++iterations,IntegerPart[maxIterations/3],
-					iterationBound]&,#]&];
+					domainBound]&,#]&];
 			lowerList=(#<functionOrigin&)/@frame[[{1,3,5}]];
-			noValueFalse/@{frameBound,domainBound,iterationBound};
+			noValueFalse/@{frameBound,domainBound};
 (*was the minimum framed? if not, attempt contengencies*)
 			Which[Not@frameBound&&Not[Or@@lowerList]&&recursable,
-				frameMinimumBoundMessages[domainBound,fdbh,iterationBound,fibh];
+				frameMinimumBoundMessages[domainBound,fdbh];
 				Sow[reFindMinimum[function,variable,boundOrigin,
 					Drop[maxDisplacementList,1],{methodOptions},{opts1,opts2}]
 					,sewingTag],
 				Not@frameBound&&Not[Or@@lowerList]&&Not@recursable,
-				frameMinimumBoundMessages[domainBound,sdbh,iterationBound,sibh];
+				frameMinimumBoundMessages[domainBound,sdbh];
 				Sow[selectMinimum[variable,{functionOrigin,boundOrigin}],
 					sewingTag],
 				Not@frameBound&&Or@@lowerList,
-				frameMinimumBoundMessages[domainBound,fdbl,iterationBound,fibl];
+				frameMinimumBoundMessages[domainBound,fdbl];
 				Sow[selectMinimum[variable,frame],sewingTag],
 				frameBound,
 (*the framebound&&Not@@lowerlist is a necessary but insufficient condition for
@@ -467,18 +572,16 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 				If[Not[Or@@lowerList]&&recursable,
 					Sow[reFindMinimum[function,variable,boundOrigin,
 						Drop[maxDisplacementList,1],
-						{methodOptions},{opts1,opts2}]
-					,sewingTag]];
+						{methodOptions},{opts1,opts2}],
+					sewingTag]];
 (*if the minimum was framed, narrow the frame*)
 				frame=Flatten@{frame[[{1,2}]],Map[{function/.monitorRules[
 					{variable},{variable->#},EvaluationMonitor,options],#}&,
 					{{1-shrinkFactor,shrinkFactor},{shrinkFactor,
 						1-shrinkFactor}}.frame[[{2,6}]]],frame[[{5,6}]]};
 				frame=FixedPoint[Apply[frameMinimumNarrow[function,variable,##,
-					shrinkFactor,options]&,#]&,frame,
-					Min["MaxNarrowingIterations"/.{options},maxIterations
-						-iterations-2]];
-(*fit a polynomail to the frame and see if any critical points are inside*)
+					shrinkFactor,options]&,#]&,frame];
+(*fit a polynomial to the frame and see if any critical points are inside*)
 				Block[{Message},
 					criticalDomainLocations=Cases[
 						cubicCriticalDomainLocations@@
@@ -495,7 +598,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 (*choose the minimum point in the frame*)
 				Sow[selectMinimum[variable,frame],sewingTag]]]
 		,sewingTag][[2,1]]];
-		
+
 lineSearchRules[solutionRules:multipleNonComplexNumberRulePatternObject,
 	searchDirection:multipleNonComplexNumberPatternObject,displacement_Symbol]:=
 	MapThread[Function[{variableRule,searchDirectionComponent},
@@ -1215,7 +1318,7 @@ Options@penaltyKernel`AugmentedLagrangeMultiplier={Method->BaPMethodString};
 augmentInequalityConstraint[constraint:inequalityHeadAlternatives[__],
 	exteriorPenaltyFactor_,
 	lagrangeMultiplier_,
-	opts___?OptionQ]=
+	opts___?OptionQ]:=
 	Max[penaltyKernel[constraint,opts],
 		-lagrangeMultiplier/(2*exteriorPenaltyFactor)
 		];
