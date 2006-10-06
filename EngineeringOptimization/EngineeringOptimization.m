@@ -331,34 +331,51 @@ Get[StringReplace[Context[],{"`"->"","Private"->""}]<>
 
 defineBadArgs@criticalDomainLocations;
 
-brentOrdinateAbscissaSequence[
+brentOrdinateAbscissaVWXSequence[
 	pointsFlatYX:multipleNonComplexNumberPatternObject(*
 	coordinates in a flat list, ordinate first, abscissa second*)
 	]/;EvenQ[Length@pointsFlatYX]:=
-	Module[
-		{abscissaSortPairs(*coordinatePairs sorted by increasing abscissa*),
-			coordinatePairs=Partition[pointsFlatYX,2]
-			(*coordinates paired in a list via Parition*),
-			ordinateReverseSortPairs(*coordinatePairs sorted
-			by decreasing ordinate*)
+	Module[(*coordinatePairs sorted by decreasing ordinate*)
+		{ordinateReverseSortPairs=
+			Sort[
+				Union@Partition[pointsFlatYX,2],
+				OrderedQ[{#2,#1}]&
+				]
 			},
-		abscissaSortPairs=Sort[coordinatePairs,OrderedQ[Reverse/@{#1,#2}]&];
-		ordinateReverseSortPairs=Sort[coordinatePairs,OrderedQ[{#2,#1}]&];
-		Identity[Sequence][
-			Sequence@@First@abscissaSortPairs(*fa,a*),
-			Sequence@@Last@abscissaSortPairs(*fb,b*),
-			Sequence@@Sequence@@@Take[ordinateReverseSortPairs,-3]
-			(*fv,v,fw,w,fx,x*)
-			]
+		Sequence@@Sequence@@@Take[ordinateReverseSortPairs,-3](*fv,v,fw,w,fx,x*)
 		];
 
 defineBadArgs@brentOrdinateAbscissaSequence;
 
+acceptableBrentLocation[location:nonComplexNumberPatternObject(*an abscissa*),
+	x:nonComplexNumberPatternObject(*minimum ordinate's abscissa*),
+	a:nonComplexNumberPatternObject(*interval boundary lhs*),
+	b:nonComplexNumberPatternObject(*interval boundary rhs*),
+	additionalUnSameLocations:multipleNonComplexNumberPatternObject(*an
+	acceptable location isn't numerically the same as one of these locations or
+	x, a, or b*),
+	maxAcceptableDisplacement:nonComplexNumberPatternObject(*
+	the maximum distance the algorithm can move via polynomial interpolation*),	
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
+	And[Element[location,Reals],
+		LessEqual[a,location,b],
+		Less[Abs[location-x],maxAcceptableDisplacement],
+		!If[Scan[If[nSameQ[location,#,accuracyGoal,precisionGoal],Throw[True]]&,
+				Flatten[{x,a,b,additionalUnSameLocations}]	
+				]===True,
+			True,
+			False
+			]
+		];
+
+defineBadArgs@acceptableBrentLocation;
+
 frameMinimumNarrowBrent[function_,variable_,
 	fa:nonComplexNumberPatternObject(*ordinate at a*),
-	a:nonComplexNumberPatternObject(*interval boundary lhs*),
+	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
 	fb:nonComplexNumberPatternObject(*ordinate at b*),
-	b:nonComplexNumberPatternObject(*interval boundary rhs*),
+	b:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
 	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
 	v:nonComplexNumberPatternObject(*fv's abscissa*),
 	fw:nonComplexNumberPatternObject(*2nd lowest ordinate*),
@@ -370,62 +387,58 @@ frameMinimumNarrowBrent[function_,variable_,
 	opts__?OptionQ(*options*)]/;OrderedQ[{a,b}]:=
 	Module[
 		{accuracyGoal=AccuracyGoal/.{opts}(*digits of accuracy requested*),
-			brentSequence(*sequence of values suitable for next iteration*),
-			displacement(*displacement from x to the newAbscissa*),
+			vwxSequence(*sequence of coordinate values for fv,v,fw,w,fx,x
+			for the next iteration*),
 			newAbscissa(*abscissa from interpolation or golden section*),
+			newMaxDisplacement(*maxAcceptableDisplacement for next iteration*),
 			newOrdinate(*function value at newAbscissa*),
 			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*),
-			xm=(a+b)/2(*[a,b] interval midpoint*)
 			},
-		(*guess the location(s) of the minimum from v, w, and x
-		using the critical point(s) of an interpolating polynomial*)
+		(*Guess the location(s) of the minimum from v, w, and x using the
+		critical point(s) of an interpolating polynomial and the golden section.
+		Only keep the first point that matches the criteria.*)
 		newAbscissa=
 			Select[
 				Append[
+					(*try to interpolate for a critical point*)
 					Block[{Message},
 						criticalDomainLocations[fv,v,fw,w,fx,x]
 						],
-					
+					(*step into the larger interval using the golden section*)
+					x+If[x>=(a+b)/2,a-x,b-x]*"ShrinkFactor"/.{opts}
 					],
-				(*subject to these criteria*)
-				And[Element[#,Reals],
-					LessEqual[a,#,b],
-					Less[Abs[#-x],maxAcceptableDisplacement]
-					
-					]&,
+				(*subject the candidate abscissas to these criteria*)
+				acceptableBrentLocation[#,x,a,b,{v,w},maxAcceptableDisplacement,
+					accuracyGoal,precisionGoal]&,
+				(*take only one abscissa, with precedence to interpolation*)
 				1];
+		Print@newAbscissa;
 		(*if the critical value(s) of the polynomial was(were) no good*)
 		If[newAbscissa==={},
-			(*take the golden step into the larger of the two intervals*)
-			displacement=If[x>=xm,a-x,b-x]*"ShrinkFactor"/.{opts};
-			newAbscissa=x+displacement;
-			Print["golden step to: ",newAbscissa];,
-			(*otherwise, make it a number instead of a number in a list*)
+			(*return all arguments in a list needed for the stop test*)
+			{fa,a,fb,b,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
 			newAbscissa=First@newAbscissa;
-			Print["interpolation step to: ",newAbscissa];
-			displacement=newAbscissa-x
-			];
-		(*If the newAbscissa is within tolerance to a,b,v,w, or x, set 
-		newOrdinate and newAbscissa to "nothing". Otherwise, set newOrdinate to
-		the function value at newAbscissa.*)
-		newOrdinate=Catch[
-			debug`llamain;
-			Map[
-				If[nSameQ[newAbscissa,#,accuracyGoal,precisionGoal],
-					newAbscissa=Sequence[];Throw[Unevaluated@Sequence[]]]&,
-				{a,b,v,w,x}
+			newOrdinate=function/.monitorRules[{variable},
+				{variable->newAbscissa},EvaluationMonitor,opts];
+			newMaxDisplacement=Abs[newAbscissa-x]/2;
+			(*arguments for a new iteration*)
+			vwxSequence=brentOrdinateAbscissaVWXSequence[
+				{fa,a,fb,b,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
 				];
-			debug`llamaout;
-			function/.monitorRules[{variable},
-				{variable->newAbscissa},EvaluationMonitor,opts]
-			];
-		(*arguments for a new iteration*)
-		brentSequence=brentOrdinateAbscissaSequence[
-			{fa,a,fb,b,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
-			];
-		(*return all arguments in a list needed for the stop test and/or a
-		new iteration*)
-		{brentSequence,Abs@displacement/2}
+			(*return all arguments in a list needed for a new iteration*)
+			If[newOrdinate<=fx,
+				If[newAbscissa>=x,
+					{fx,x,fb,b,vwxSequence,newMaxDisplacement},
+					{fa,a,fx,x,vwxSequence,newMaxDisplacement}
+					],
+				If[newAbscissa>=x,
+					{fa,a,newOrdinate,newAbscissa,vwxSequence,
+						newMaxDisplacement},
+					{newOrdinate,newAbscissa,fb,b,vwxSequence,
+						newMaxDisplacement}
+					]			
+				]
+			]
 		];
 
 defineBadArgs@frameMinimumNarrowBrent;
