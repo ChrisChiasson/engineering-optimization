@@ -361,9 +361,20 @@ acceptableBrentLocation[location:nonComplexNumberPatternObject(*an abscissa*),
 	And[Element[location,Reals],
 		LessEqual[a,location,b],
 		Less[Abs[location-x],maxAcceptableDisplacement],
-		!If[Scan[If[nSameQ[location,#,accuracyGoal,precisionGoal],Throw[True]]&,
-				Flatten[{x,a,b,additionalUnSameLocations}]	
-				]===True,
+		!If[
+			Catch@
+				Scan[
+					If[
+						nSameQ[
+							location,
+							#,
+							accuracyGoal,
+							precisionGoal
+							],
+						Throw[True]
+						]&,
+					Flatten[{x,a,b,additionalUnSameLocations}]
+					]===True,
 			True,
 			False
 			]
