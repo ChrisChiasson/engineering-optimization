@@ -392,7 +392,7 @@ frameMinimumNarrowBrent[function_,variable_,
 			newAbscissa(*abscissa from interpolation or golden section*),
 			newMaxDisplacement(*maxAcceptableDisplacement for next iteration*),
 			newOrdinate(*function value at newAbscissa*),
-			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*),
+			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*)
 			},
 		(*Guess the location(s) of the minimum from v, w, and x using the
 		critical point(s) of an interpolating polynomial and the golden section.
