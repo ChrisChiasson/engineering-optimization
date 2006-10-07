@@ -357,7 +357,7 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 	x:nonComplexNumberPatternObject(*minimum ordinate's abscissa*),
 	additionalUnSameLocations:multipleNonComplexNumberPatternObject(*acceptable
 	location that isn't numerically the same as one of these locations or x*),
-	xm:nonComplexNumberPatternObject(*[a,b] interval midpoint*)
+	xm:nonComplexNumberPatternObject(*[a,b] interval midpoint*),
 	eSign:nonComplexNumberPatternObject(*golden step large interval sign*),	
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
@@ -366,20 +366,22 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 			Function[loc(*a location*),
 				rhs=10^-accuracyGoal+Abs[loc]*10^-precisionGoal;
 				If[nSameQ[loc,x,rhs],
-					loc+2*Sign[eSign]*rhs,
-					Catch@Scan[
-						(If[nSameQ[loc,#,rhs],
-							Throw[loc+2*Sign[eSign(*maybe try xm-x*)]*rhs]
-							];#)&,
-						additionalUnSameLocations
-						]
+					loc+2*eSign*rhs,
+					Catch@(
+						Scan[
+							If[nSameQ[loc,#,rhs],
+								Throw[loc+2*eSign(*maybe try Sign[xm-x]*)*rhs]
+								]&,
+							additionalUnSameLocations
+							];
+						loc)
 					]
 				],
 			location
 			]
 		]
 
-defineBadArgs@acceptableBrentLocation;
+defineBadArgs@perturbBrentLocation;
 
 frameMinimumNarrowBrent[function_,variable_,
 	fa:nonComplexNumberPatternObject(*ordinate at a*),
@@ -416,10 +418,10 @@ frameMinimumNarrowBrent[function_,variable_,
 			{(*try to interpolate for critical point(s)*)
 				Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
 				(*step into the larger interval using the golden section*)
-				x+e*"ShrinkFactor"/.{opts},
+				x+e*"ShrinkFactor"/.{opts}
 				};
 		newAbscissa=perturbBrentLocation[#,x,{a,b,v,w},
-			xm,eSign,accuracyGoal,precisionGoal]/@newAbscissa;
+			xm,eSign,accuracyGoal,precisionGoal]&/@newAbscissa;
 		(*use only the first point that matches these criteria*)
 		newAbscissa=Select[newAbscissa,
 			And[Element[#,Reals],
