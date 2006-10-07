@@ -358,7 +358,7 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 	additionalUnSameLocations:multipleNonComplexNumberPatternObject(*acceptable
 	location that isn't numerically the same as one of these locations or x*),
 	xm:nonComplexNumberPatternObject(*[a,b] interval midpoint*),
-	eSign:nonComplexNumberPatternObject(*golden step large interval sign*),	
+	perturbSign:nonComplexNumberPatternObject(*direction to perturb locations*),	
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
 	Module[{rhs(*the tolerance used in the right hand side of nSameQ*)},
@@ -366,11 +366,11 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 			Function[loc(*a location*),
 				rhs=10^-accuracyGoal+Abs[loc]*10^-precisionGoal;
 				If[nSameQ[loc,x,rhs],
-					loc+2*eSign*rhs,
+					loc+2*perturbSign*rhs,
 					Catch@(
 						Scan[
 							If[nSameQ[loc,#,rhs],
-								Throw[loc+2*eSign(*maybe try Sign[xm-x]*)*rhs]
+								Throw[loc+2*perturbSign*rhs]
 								]&,
 							additionalUnSameLocations
 							];
@@ -407,46 +407,45 @@ frameMinimumNarrowBrent[function_,variable_,
 			newOrdinate(*function value at newAbscissa*),
 			perturbSign(*sign of direction to perturb locations*),
 			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*),
-			xm=(a+b)/2(*[a,b] interval midpoint*)
+			xm=(a+b)/2(*[a,b] interval midpoint*),
+			xtol(*tolerance for comparison with a and b*)
 			},
-		(*Guess the location(s) of the minimum from v, w, and x using the
-		critical point(s) of an interpolating polynomial.*)
-		newAbscissa=Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]];
-		(*it is likely that parabolic interpolation will quickly put one
-		border ofthe bracketing interval close to x, so perturbation should be
-		in the direction of the other interval endpoint*)
-		perturbSign=Sign[xm-x];
-		newAbscissa=perturbBrentLocation[#,x,{a,b,v,w},
-			xm,perturbSign,accuracyGoal,precisionGoal]&/@newAbscissa;
-		(*use only the first point that matches these criteria*)
-		newAbscissa=Select[newAbscissa,
-			And[Element[#,Reals],
-			LessEqual[a,#,b],
-			Less[Abs[#-x],maxAcceptableDisplacement]
-				]&,
-			1];
-		(*Guess another point via the golden section if interpolation fails.*)
-		If[newAbscissa==={},
-			e=If[x>=xm,a-x,b-x];
-			(*if needed, perturb further into the large interval*)
-			perturbSign=Sign@e;
-			newAbscissa={
+		xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal;
+		(*if x is within tolerance to a and b, then no better guess is likely*)
+		If[nSameQ[#,x,xtol]&/@And[a,b],
+			(*return all arguments in a list needed for the stop test*)
+			{fa,a,fb,b,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
+			(*otherwise, continue with the algorithm*)
+			(*Guess the location(s) of the minimum from v, w, and x using the
+			critical point(s) of an interpolating polynomial.*)
+			newAbscissa=Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]];
+			(*it is likely that parabolic interpolation will quickly put one
+			border ofthe bracketing interval close to x, so perturbation should
+			be in the direction of the other interval endpoint*)
+			perturbSign=Sign[xm-x];
+			newAbscissa=perturbBrentLocation[#,x,{a,b,v,w},
+				xm,perturbSign,accuracyGoal,precisionGoal]&/@newAbscissa;
+			(*use only the first point that matches these criteria*)
+			newAbscissa=Select[newAbscissa,
+				And[Element[#,Reals],
+				LessEqual[a,#,b],
+				Less[Abs[#-x],maxAcceptableDisplacement]
+					]&,
+				1];
+			(*if inverse polynomial interpolation gives (a) viable point(s)*)
+			newAbscissa=If[newAbscissa=!={},
+				(*return the first element*)
+				First@newAbscissa,
+				(*otherwise, guess another point from golden section*)
+				e=If[x>=xm,a-x,b-x];
+				(*if needed, perturb further into the large interval*)
+				perturbSign=Sign@e;
+				(*the result is a number, not a list*)
 				perturbBrentLocation[
 					x+e*"ShrinkFactor"/.{opts},x,{a,b,v,w},
 					xm,perturbSign,accuracyGoal,precisionGoal
 					]
-				};
-			newAbscissa=Select[
-				newAbscissa,
-				And[Element[#,Reals],LessEqual[a,#,b]]&
 				];
-			];
-		(*if polynomial interpolation and golden section failed*)
-		If[newAbscissa==={},
-			(*return all arguments in a list needed for the stop test*)
-			{fa,a,fb,b,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
-			(*otherwise, make newAbscissa into a number instead of a list*)
-			newAbscissa=First@newAbscissa;
 			(*perform the single function evaluation*)
 			newOrdinate=function/.monitorRules[{variable},
 				{variable->newAbscissa},EvaluationMonitor,opts];
