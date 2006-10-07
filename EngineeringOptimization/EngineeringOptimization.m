@@ -400,28 +400,24 @@ frameMinimumNarrowBrent[function_,variable_,
 	Module[
 		{accuracyGoal=AccuracyGoal/.{opts}(*digits of accuracy requested*),
 			e(*golden step signed large interval length*),
-			eSign(*sign of e*),
 			vwxSequence(*sequence of coordinate values for fv,v,fw,w,fx,x
 			for the next iteration*),
 			newAbscissa(*abscissa from interpolation or golden section*),
 			newMaxDisplacement(*maxAcceptableDisplacement for next iteration*),
 			newOrdinate(*function value at newAbscissa*),
+			perturbSign(*sign of direction to perturb locations*),
 			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*),
 			xm=(a+b)/2(*[a,b] interval midpoint*)
 			},
-		e=If[x>=xm,a-x,b-x];
-		eSign=Sign@e;
 		(*Guess the location(s) of the minimum from v, w, and x using the
-		critical point(s) of an interpolating polynomial. Guess another point
-		via the golden section.*)
-		newAbscissa=Flatten@
-			{(*try to interpolate for critical point(s)*)
-				Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
-				(*step into the larger interval using the golden section*)
-				x+e*"ShrinkFactor"/.{opts}
-				};
+		critical point(s) of an interpolating polynomial.*)
+		newAbscissa=Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]];
+		(*it is likely that parabolic interpolation will quickly put one
+		border ofthe bracketing interval close to x, so perturbation should be
+		in the direction of the other interval endpoint*)
+		perturbSign=Sign[xm-x];
 		newAbscissa=perturbBrentLocation[#,x,{a,b,v,w},
-			xm,eSign,accuracyGoal,precisionGoal]&/@newAbscissa;
+			xm,perturbSign,accuracyGoal,precisionGoal]&/@newAbscissa;
 		(*use only the first point that matches these criteria*)
 		newAbscissa=Select[newAbscissa,
 			And[Element[#,Reals],
@@ -429,7 +425,23 @@ frameMinimumNarrowBrent[function_,variable_,
 			Less[Abs[#-x],maxAcceptableDisplacement]
 				]&,
 			1];
-		(*if the critical value(s) of the polynomial was(were) no good*)
+		(*Guess another point via the golden section if interpolation fails.*)
+		If[newAbscissa==={},
+			e=If[x>=xm,a-x,b-x];
+			(*if needed, perturb further into the large interval*)
+			perturbSign=Sign@e;
+			newAbscissa={
+				perturbBrentLocation[
+					x+e*"ShrinkFactor"/.{opts},x,{a,b,v,w},
+					xm,perturbSign,accuracyGoal,precisionGoal
+					]
+				};
+			newAbscissa=Select[
+				newAbscissa,
+				And[Element[#,Reals],LessEqual[a,#,b]]&
+				];
+			];
+		(*if polynomial interpolation and golden section failed*)
 		If[newAbscissa==={},
 			(*return all arguments in a list needed for the stop test*)
 			{fa,a,fb,b,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
