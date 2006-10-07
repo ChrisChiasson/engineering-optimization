@@ -354,10 +354,7 @@ defineBadArgs@brentOrdinateAbscissaVWXSequence;
 
 perturbBrentLocation[location:nonComplexNumberPatternObject(*
 	abscissa that may or may not be perturbed by this proceedure*),
-	x:nonComplexNumberPatternObject(*minimum ordinate's abscissa*),
-	additionalUnSameLocations:multipleNonComplexNumberPatternObject(*acceptable
-	location that isn't numerically the same as one of these locations or x*),
-	xm:nonComplexNumberPatternObject(*[a,b] interval midpoint*),
+	unSameLocations:multipleNonComplexNumberPatternObject(*banned locations*),
 	perturbSign:nonComplexNumberPatternObject(*direction to perturb locations*),	
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
@@ -365,17 +362,15 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 		FixedPoint[
 			Function[loc(*a location*),
 				rhs=10^-accuracyGoal+Abs[loc]*10^-precisionGoal;
-				If[nSameQ[loc,x,rhs],
-					loc+2*perturbSign*rhs,
-					Catch@(
-						Scan[
-							If[nSameQ[loc,#,rhs],
-								Throw[loc+2*perturbSign*rhs]
-								]&,
-							additionalUnSameLocations
-							];
-						loc)
-					]
+				Catch@(
+					Scan[
+						If[nSameQ[loc,#,rhs],
+							Throw[loc+11/10*perturbSign*rhs]
+							]&,
+						unSameLocations
+						];
+					loc
+					)
 				],
 			location
 			]
@@ -420,11 +415,12 @@ frameMinimumNarrowBrent[function_,variable_,
 			critical point(s) of an interpolating polynomial.*)
 			newAbscissa=Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]];
 			(*it is likely that parabolic interpolation will quickly put one
-			border ofthe bracketing interval close to x, so perturbation should
+			border of the bracketing interval close to x, so perturbation should
 			be in the direction of the other interval endpoint*)
-			perturbSign=Sign[xm-x];
-			newAbscissa=perturbBrentLocation[#,x,{a,b,v,w},
-				xm,perturbSign,accuracyGoal,precisionGoal]&/@newAbscissa;
+			e=If[x>=xm,a-x,b-x];
+			perturbSign=Sign[e];
+			newAbscissa=perturbBrentLocation[#,{x,a,b,v,w},
+				perturbSign,accuracyGoal,precisionGoal]&/@newAbscissa;
 			(*use only the first point that matches these criteria*)
 			newAbscissa=Select[newAbscissa,
 				And[Element[#,Reals],
@@ -434,16 +430,14 @@ frameMinimumNarrowBrent[function_,variable_,
 				1];
 			(*if inverse polynomial interpolation gives (a) viable point(s)*)
 			newAbscissa=If[newAbscissa=!={},
+				Print["parabolic"];
 				(*return the first element*)
 				First@newAbscissa,
 				(*otherwise, guess another point from golden section*)
-				e=If[x>=xm,a-x,b-x];
-				(*if needed, perturb further into the large interval*)
-				perturbSign=Sign@e;
 				(*the result is a number, not a list*)
 				perturbBrentLocation[
 					x+e*"ShrinkFactor"/.{opts},x,{a,b,v,w},
-					xm,perturbSign,accuracyGoal,precisionGoal
+					perturbSign,accuracyGoal,precisionGoal
 					]
 				];
 			(*perform the single function evaluation*)
