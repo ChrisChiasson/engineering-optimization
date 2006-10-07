@@ -360,7 +360,7 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
 	Module[{rhs(*the tolerance used in the right hand side of nSameQ*)},
 		FixedPoint[
-			Function[loc(*a location*),
+			Function[{loc(*a location*),initialPerturbation},
 				rhs=10^-accuracyGoal+Abs[loc]*10^-precisionGoal;
 				Catch@(
 					Scan[
@@ -372,8 +372,8 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 						];
 					loc
 					)
-				],
-			location
+				]&@@#&,
+			{location,0}
 			]
 		]
 
@@ -394,14 +394,15 @@ frameMinimumNarrowBrent[function_,variable_,
 	the maximum distance the algorithm can move via polynomial interpolation*),
 	opts__?OptionQ(*options*)]/;OrderedQ[{a,b}]:=
 	Module[
-		{accuracyGoal=AccuracyGoal/.{opts}(*digits of accuracy requested*),
+		{candidateAbscissa(*candidate newAbscissa(s)*),
+			accuracyGoal=AccuracyGoal/.{opts}(*digits of accuracy requested*),
 			e(*golden step signed large interval length*),
 			vwxSequence(*sequence of coordinate values for fv,v,fw,w,fx,x
 			for the next iteration*),
 			newAbscissa(*abscissa from interpolation or golden section*),
 			newMaxDisplacement(*maxAcceptableDisplacement for next iteration*),
 			newOrdinate(*function value at newAbscissa*),
-			perturbed(*has one of the selectedl locations been perturbed?*),
+			perturbed=0(*perturbation distance(s)*),
 			perturbFactor(*factor of perturbation tolerance locations*),
 			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*),
 			xm=(a+b)/2(*[a,b] interval midpoint*),
@@ -415,20 +416,17 @@ frameMinimumNarrowBrent[function_,variable_,
 			(*otherwise, continue with the algorithm*)
 			(*Guess the location(s) of the minimum from v, w, and x using the
 			critical point(s) of an interpolating polynomial.*)
-			newAbscissa=Block[{Message},
+			candidateAbscissa=Block[{Message},
 				criticalDomainLocations[fv,v,fw,w,fx,x]];
 			(*it is likely that parabolic interpolation will quickly put one
 			border of the bracketing interval close to x, so perturbation should
 			be in the direction of the other interval endpoint*)
 			e=If[x>=xm,a-x,b-x];
 			perturbFactor=11/10*Sign[e];
-			If[newAbscissa=!=(newAbscissa=perturbBrentLocation[#,{x,a,b,v,w},
-				perturbFactor,accuracyGoal,precisionGoal]&/@newAbscissa),
-				perturbed=True,
-				perturbed=False
-				];
+			perturbed=perturbBrentLocation[#,{x,a,b,v,w},
+				perturbFactor,accuracyGoal,precisionGoal]&/@newAbscissa;
 			(*use only the first point that matches these criteria*)
-			newAbscissa=Select[newAbscissa,
+			newAbscissa=Select[perturbed,
 				And[Element[#,Reals],
 				LessEqual[a,#,b],
 				If[Less[Abs[#-x],maxAcceptableDisplacement],True,Print[#," is too far from ",x,". It must be less than ",maxAcceptableDisplacement," from it."];False]
@@ -438,22 +436,24 @@ frameMinimumNarrowBrent[function_,variable_,
 			If[newAbscissa=!={},
 				Print["parabolic"];
 				(*return the first element*)
-				newAbscissa=First@newAbscissa,
+				newAbscissa=First@newAbscissa;
+				candidateAbscissa=
+					Extract[candidateAbscissa,
+						Position[perturbed,
+							newAbscissa][[1]]],
 				(*otherwise, guess another point from golden section*)
 				(*the result is a number, not a list*)
-				newAbscissa=x+e*"ShrinkFactor"/.{opts};
+				candidateAbscissa=x+e*"ShrinkFactor"/.{opts};
 				(*if necessary, perturb in the direction of the golden section*)
-				If[newAbscissa=!=(newAbscissa=perturbBrentLocation[newAbscissa,
-					{x,a,b,v,w},perturbFactor,accuracyGoal,precisionGoal]),
-					perturbed=True,
-					perturbed=False
-					]
+				newAbscissa=perturbBrentLocation[newAbscissa,
+					{x,a,b,v,w},perturbFactor,accuracyGoal,precisionGoal]
 				];
 			(*perform the single function evaluation*)
 			newOrdinate=function/.monitorRules[{variable},
 				{variable->newAbscissa},EvaluationMonitor,opts];
 			(*the new maximum displacement is half this one*)
-			newMaxDisplacement=Abs[newAbscissa-x]/If[perturbed,1,2];
+			newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
+				newAbscissa-candidateAbscissa}];
 			(*some arguments for a new iteration*)
 			vwxSequence=brentOrdinateAbscissaVWXSequence[
 				{fa,a,fb,b,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
