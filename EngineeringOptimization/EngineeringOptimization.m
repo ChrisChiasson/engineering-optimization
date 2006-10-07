@@ -424,7 +424,8 @@ frameMinimumNarrowBrent[function_,variable_,
 			perturbFactor=11/10*Sign[e];
 			If[newAbscissa=!=(newAbscissa=perturbBrentLocation[#,{x,a,b,v,w},
 				perturbFactor,accuracyGoal,precisionGoal]&/@newAbscissa),
-				perturbed=True
+				perturbed=True,
+				perturbed=False
 				];
 			(*use only the first point that matches these criteria*)
 			newAbscissa=Select[newAbscissa,
@@ -440,7 +441,7 @@ frameMinimumNarrowBrent[function_,variable_,
 				newAbscissa=First@newAbscissa,
 				(*otherwise, guess another point from golden section*)
 				(*the result is a number, not a list*)
-				newAbscissa=x+e*"ShrinkFactor"/.{opts}
+				newAbscissa=x+e*"ShrinkFactor"/.{opts};
 				(*if necessary, perturb in the direction of the golden section*)
 				If[newAbscissa=!=(newAbscissa=perturbBrentLocation[newAbscissa,
 					{x,a,b,v,w},perturbFactor,accuracyGoal,precisionGoal]),
