@@ -282,10 +282,6 @@ frameMinimumStopTest[functionStart:nonComplexNumberPatternObject,
 		If[solutionEnd===solutionEndBound,domainBound=True,False],
 		If[iteration>=maxIterations,iterationBound=True,False]},True,False];
 
-frameMinimumStopTest[blah___]:=Dialog[
-	DialogProlog:>Print["debug`frameMinimumStopTest"],
-	DialogSymbols:>{debug`frameMinimumStopTest={blah}}];
-
 defineBadArgs@frameMinimumStopTest;
 
 frameMinimumBoundMessages[domainBound_Symbol,dbtag_Symbol,
@@ -318,6 +314,15 @@ nSameQ[currVal:nonComplexNumberPatternObject,
 	precisionGoal:nonComplexNumberPatternObject]:=
 	Abs[currVal-prevVal]<=10^-accuracyGoal+Abs[prevVal]*10^-precisionGoal;
 
+nSameQ[currVal:nonComplexNumberPatternObject,
+	prevVal:nonComplexNumberPatternObject,
+	rhs:nonComplexNumberPatternObject(*the pre-calculated right hand side of the
+	above definition*)]:=
+	Abs[currVal-prevVal]<=rhs;
+
+
+defineBadArgs@nSameQ;
+
 (*The file loaded here defines a function, criticalDomainLocations, which
 is a function of three or four points y1,x1,y2,x2,y3,x3,(y4,x4) (function value
 before domain value). The outputs are a list of critical (in the calculus
@@ -347,61 +352,32 @@ brentOrdinateAbscissaVWXSequence[
 
 defineBadArgs@brentOrdinateAbscissaVWXSequence;
 
-perturbBrentLocations[location:multipleNonComplexNumberPatternObject(*
-	abscissas that may or may not be perturbed by this proceedure*),
+perturbBrentLocation[location:nonComplexNumberPatternObject(*
+	abscissa that may or may not be perturbed by this proceedure*),
 	x:nonComplexNumberPatternObject(*minimum ordinate's abscissa*),
-	a:nonComplexNumberPatternObject(*interval boundary lhs*),
-	b:nonComplexNumberPatternObject(*interval boundary rhs*),
-	additionalUnSameLocations:multipleNonComplexNumberPatternObject(*an
-	acceptable location isn't numerically the same as one of these locations or
-	x, a, or b*),
-	maxAcceptableDisplacement:nonComplexNumberPatternObject(*
-	the maximum distance the algorithm can move via polynomial interpolation*),
-	e:nonComplexNumberPatternObject,	
-	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
-	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=	
-	Module[{notXLocation=If[nSameQ[location,x,accuracyGoal,precisionGoal],
-		x+2*Sign[e]*(10^-accuracyGoal+Abs[x]*10^-precisionGoal),
-		location]},If[nSameQ[notXLocation,#,accuracyGoal,precisionGoal]]];
-
-(*this needs to be changed to repeatedly increase any variable if it isn't viable - if the variable is equal to x, it must be increased in a special way*)
-
-acceptableBrentLocation[location:nonComplexNumberPatternObject(*an abscissa*),
-	x:nonComplexNumberPatternObject(*minimum ordinate's abscissa*),
-	a:nonComplexNumberPatternObject(*interval boundary lhs*),
-	b:nonComplexNumberPatternObject(*interval boundary rhs*),
-	additionalUnSameLocations:multipleNonComplexNumberPatternObject(*an
-	acceptable location isn't numerically the same as one of these locations or
-	x, a, or b*),
-	maxAcceptableDisplacement:nonComplexNumberPatternObject(*
-	the maximum distance the algorithm can move via polynomial interpolation*),	
+	additionalUnSameLocations:multipleNonComplexNumberPatternObject(*acceptable
+	location that isn't numerically the same as one of these locations or x*),
+	xm:nonComplexNumberPatternObject(*[a,b] interval midpoint*)
+	eSign:nonComplexNumberPatternObject(*golden step large interval sign*),	
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
-	And[Element[location,Reals],
-		LessEqual[a,location,b],
-		Less[Abs[location-x],maxAcceptableDisplacement],
-		!If[
-			Catch@
-				Scan[
-					If[
-						nSameQ[
-							location,
-							#,
-							accuracyGoal,
-							precisionGoal
-							],
-						Throw[True]
-						]&,
-					Flatten[
-						{x,a,b,
-							DeleteCases[additionalUnSameLocations,x|a|b]
-							}
+	Module[{rhs(*the tolerance used in the right hand side of nSameQ*)},
+		FixedPoint[
+			Function[loc(*a location*),
+				rhs=10^-accuracyGoal+Abs[loc]*10^-precisionGoal;
+				If[nSameQ[loc,x,rhs],
+					loc+2*Sign[eSign]*rhs,
+					Catch@Scan[
+						(If[nSameQ[loc,#,rhs],
+							Throw[loc+2*Sign[eSign(*maybe try xm-x*)]*rhs]
+							];#)&,
+						additionalUnSameLocations
 						]
-					]===True,
-			True,
-			False
+					]
+				],
+			location
 			]
-		];
+		]
 
 defineBadArgs@acceptableBrentLocation;
 
@@ -421,58 +397,48 @@ frameMinimumNarrowBrent[function_,variable_,
 	opts__?OptionQ(*options*)]/;OrderedQ[{a,b}]:=
 	Module[
 		{accuracyGoal=AccuracyGoal/.{opts}(*digits of accuracy requested*),
+			e(*golden step signed large interval length*),
+			eSign(*sign of e*),
 			vwxSequence(*sequence of coordinate values for fv,v,fw,w,fx,x
 			for the next iteration*),
 			newAbscissa(*abscissa from interpolation or golden section*),
 			newMaxDisplacement(*maxAcceptableDisplacement for next iteration*),
 			newOrdinate(*function value at newAbscissa*),
 			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*),
-			e=If[x>=(a+b)/2,a-x,b-x](*golden step signed large interval length*)
+			xm=(a+b)/2(*[a,b] interval midpoint*)
 			},
+		e=If[x>=xm,a-x,b-x];
+		eSign=Sign@e;
 		(*Guess the location(s) of the minimum from v, w, and x using the
-		critical point(s) of an interpolating polynomial and the golden section.
-		*)
+		critical point(s) of an interpolating polynomial. Guess another point
+		via the golden section.*)
 		newAbscissa=Flatten@
-			{
-				(*try to interpolate for a critical point*)
-				Block[{Message},
-					criticalDomainLocations[fv,v,fw,w,fx,x]
-					],
+			{(*try to interpolate for critical point(s)*)
+				Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
 				(*step into the larger interval using the golden section*)
 				x+e*"ShrinkFactor"/.{opts},
 				};
-					(*also prepare a small displacement as a fall back*)
-				x+2*Sign[e]*(10^-accuracyGoal+Abs[x]*10^-precisionGoal)
-	
-		newAbscissa=
-			Select[
-				Flatten@{
-					(*try to interpolate for a critical point*)
-					Block[{Message},
-						criticalDomainLocations[fv,v,fw,w,fx,x]
-						],
-					(*step into the larger interval using the golden section*)
-					x+e*"ShrinkFactor"/.{opts},
-					(*also prepare a small displacement as a fall back*)
-					x+Sign[e]*(10^-accuracyGoal+Abs[x]*10^-precisionGoal)
-					},
-				(*subject the candidate abscissas to these criteria*)
-				acceptableBrentLocation[#,x,a,b,{v,w},maxAcceptableDisplacement,
-					accuracyGoal,precisionGoal]&,
-				(*take only one abscissa, with precedence to interpolation,
-				then golden step, and then small steps*)
-				1];
-		(*Only keep the first point that matches the criteria.*)
-		Print@newAbscissa;
+		newAbscissa=perturbBrentLocation[#,x,{a,b,v,w},
+			xm,eSign,accuracyGoal,precisionGoal]/@newAbscissa;
+		(*use only the first point that matches these criteria*)
+		newAbscissa=Select[newAbscissa,
+			And[Element[#,Reals],
+			LessEqual[a,#,b],
+			Less[Abs[#-x],maxAcceptableDisplacement]
+				]&,
+			1];
 		(*if the critical value(s) of the polynomial was(were) no good*)
 		If[newAbscissa==={},
 			(*return all arguments in a list needed for the stop test*)
 			{fa,a,fb,b,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
+			(*otherwise, make newAbscissa into a number instead of a list*)
 			newAbscissa=First@newAbscissa;
+			(*perform the single function evaluation*)
 			newOrdinate=function/.monitorRules[{variable},
 				{variable->newAbscissa},EvaluationMonitor,opts];
+			(*the new maximum displacement is half this one*)
 			newMaxDisplacement=Abs[newAbscissa-x]/2;
-			(*arguments for a new iteration*)
+			(*some arguments for a new iteration*)
 			vwxSequence=brentOrdinateAbscissaVWXSequence[
 				{fa,a,fb,b,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
 				];
