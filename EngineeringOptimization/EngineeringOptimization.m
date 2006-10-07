@@ -308,6 +308,10 @@ selectMinimum[variable_Symbol,
 
 defineBadArgs@selectMinimum;
 
+unsortedUnion[x_]:=Reap[Sow[1,x],_,#1&][[2]]
+
+defineBadArgs@unsortedUnion;
+
 nSameQ[currVal:nonComplexNumberPatternObject,
 	prevVal:nonComplexNumberPatternObject,
 	accuracyGoal:nonComplexNumberPatternObject,
@@ -355,25 +359,25 @@ defineBadArgs@brentOrdinateAbscissaVWXSequence;
 perturbBrentLocation[location:nonComplexNumberPatternObject(*
 	abscissa that may or may not be perturbed by this proceedure*),
 	unSameLocations:multipleNonComplexNumberPatternObject(*banned locations*),
-	perturbSign:nonComplexNumberPatternObject(*direction to perturb locations*),	
+	perturbFactor:nonComplexNumberPatternObject(*perturbation factor*),	
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
 	Module[{rhs(*the tolerance used in the right hand side of nSameQ*)},
 		FixedPoint[
-			Function[{loc(*a location*),initialPerturbation},
+			Function[loc(*a location*),
 				rhs=10^-accuracyGoal+Abs[loc]*10^-precisionGoal;
 				Catch@(
 					Scan[
 						If[nSameQ[loc,#,rhs],
-							Print["perturbing: ",perturbSign];
-							Throw[loc+perturbSign*rhs]
+							Print["perturbing: ",Sign@perturbFactor];
+							Throw[loc+perturbFactor*rhs]
 							]&,
 						unSameLocations
 						];
 					loc
 					)
-				]&@@#&,
-			{location,0}
+				],
+			location
 			]
 		]
 
@@ -384,6 +388,8 @@ frameMinimumNarrowBrent[function_,variable_,
 	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
 	fb:nonComplexNumberPatternObject(*ordinate at b*),
 	b:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
+	fu:nonComplexNumberPatternObject,(*ordinate at last evaluation*)
+	u:nonComplexNumberPatternObject,(*fu's abscissa*)
 	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
 	v:nonComplexNumberPatternObject(*fv's abscissa*),
 	fw:nonComplexNumberPatternObject(*2nd lowest ordinate*),
@@ -405,6 +411,8 @@ frameMinimumNarrowBrent[function_,variable_,
 			perturbed=0(*perturbation distance(s)*),
 			perturbFactor(*factor of perturbation tolerance locations*),
 			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*),
+			sameTestAbscissas=unsortedUnion@{x,u,a,b,v,w}(*points to perturb
+			away from*),
 			xm=(a+b)/2(*[a,b] interval midpoint*),
 			xtol(*tolerance for comparison with a and b*)
 			},
@@ -423,13 +431,13 @@ frameMinimumNarrowBrent[function_,variable_,
 			be in the direction of the other interval endpoint*)
 			e=If[x>=xm,a-x,b-x];
 			perturbFactor=11/10*Sign[e];
-			perturbed=perturbBrentLocation[#,{x,a,b,v,w},
-				perturbFactor,accuracyGoal,precisionGoal]&/@newAbscissa;
+			perturbed=perturbBrentLocation[#,sameTestAbscissas,
+				perturbFactor,accuracyGoal,precisionGoal]&/@candidateAbscissa;
 			(*use only the first point that matches these criteria*)
 			newAbscissa=Select[perturbed,
 				And[Element[#,Reals],
 				LessEqual[a,#,b],
-				If[Less[Abs[#-x],maxAcceptableDisplacement],True,Print[#," is too far from ",x,". It must be less than ",maxAcceptableDisplacement," from it."];False]
+				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",x,". It must be less than ",maxAcceptableDisplacement," from it."];False]
 					]&,
 				1];
 			(*if inverse polynomial interpolation gives (a) viable point(s)*)
@@ -445,8 +453,8 @@ frameMinimumNarrowBrent[function_,variable_,
 				(*the result is a number, not a list*)
 				candidateAbscissa=x+e*"ShrinkFactor"/.{opts};
 				(*if necessary, perturb in the direction of the golden section*)
-				newAbscissa=perturbBrentLocation[newAbscissa,
-					{x,a,b,v,w},perturbFactor,accuracyGoal,precisionGoal]
+				newAbscissa=perturbBrentLocation[candidateAbscissa,
+					sameTestAbscissas,perturbFactor,accuracyGoal,precisionGoal]
 				];
 			(*perform the single function evaluation*)
 			newOrdinate=function/.monitorRules[{variable},
@@ -456,19 +464,21 @@ frameMinimumNarrowBrent[function_,variable_,
 				newAbscissa-candidateAbscissa}];
 			(*some arguments for a new iteration*)
 			vwxSequence=brentOrdinateAbscissaVWXSequence[
-				{fa,a,fb,b,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
+				{fa,a,fb,b,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
 				];
 			(*return all arguments in a list needed for a new iteration*)
 			If[newOrdinate<=fx,
 				If[newAbscissa>=x,
-					{fx,x,fb,b,vwxSequence,newMaxDisplacement},
-					{fa,a,fx,x,vwxSequence,newMaxDisplacement}
+					{fx,x,fb,b,newOrdinate,newAbscissa,vwxSequence,
+						newMaxDisplacement},
+					{fa,a,fx,x,,newOrdinate,newAbscissa,vwxSequence,
+						newMaxDisplacement}
 					],
 				If[newAbscissa>=x,
-					{fa,a,newOrdinate,newAbscissa,vwxSequence,
-						newMaxDisplacement},
-					{newOrdinate,newAbscissa,fb,b,vwxSequence,
-						newMaxDisplacement}
+					{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
+						vwxSequence,newMaxDisplacement},
+					{newOrdinate,newAbscissa,fb,b,newOrdinate,newAbscissa,
+						vwxSequence,newMaxDisplacement}
 					]			
 				]
 			]
