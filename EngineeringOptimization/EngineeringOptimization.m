@@ -347,7 +347,7 @@ brentOrdinateAbscissaVWXSequence[
 	Module[(*coordinatePairs sorted by decreasing ordinate*)
 		{ordinateReverseSortPairs=
 			Sort[
-				Union@Partition[pointsFlatYX,2],
+				unsortedUnion@Partition[pointsFlatYX,2],
 				OrderedQ[{#2,#1}]&
 				]
 			},
@@ -413,6 +413,7 @@ frameMinimumNarrowBrent[function_,variable_,
 			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*),
 			sameTestAbscissas=unsortedUnion@{x,u,a,b,v,w}(*points to perturb
 			away from*),
+			workingPrecision=WorkingPrecision/.{opts}(*working precision*),
 			xm=(a+b)/2(*[a,b] interval midpoint*),
 			xtol(*tolerance for comparison with a and b*)
 			},
@@ -430,14 +431,15 @@ frameMinimumNarrowBrent[function_,variable_,
 			border of the bracketing interval close to x, so perturbation should
 			be in the direction of the other interval endpoint*)
 			e=If[x>=xm,a-x,b-x];
-			perturbFactor=11/10*Sign[e];
+			perturbFactor=2*Sign[e];
 			perturbed=perturbBrentLocation[#,sameTestAbscissas,
-				perturbFactor,accuracyGoal,precisionGoal]&/@candidateAbscissa;
+				perturbFactor,workingPrecision,workingPrecision]&/@
+					candidateAbscissa;
 			(*use only the first point that matches these criteria*)
 			newAbscissa=Select[perturbed,
 				And[Element[#,Reals],
 				LessEqual[a,#,b],
-				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",x,". It must be less than ",maxAcceptableDisplacement," from it."];False]
+				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",u,". It must be less than ",maxAcceptableDisplacement," from it."];False]
 					]&,
 				1];
 			(*if inverse polynomial interpolation gives (a) viable point(s)*)
@@ -448,20 +450,21 @@ frameMinimumNarrowBrent[function_,variable_,
 				candidateAbscissa=
 					Extract[candidateAbscissa,
 						Position[perturbed,
-							newAbscissa][[1]]],
+							newAbscissa][[1]]];
+				(*the new maximum displacement is half this one*)
+				newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
+					newAbscissa-candidateAbscissa}],
 				(*otherwise, guess another point from golden section*)
 				(*the result is a number, not a list*)
 				candidateAbscissa=x+e*"ShrinkFactor"/.{opts};
 				(*if necessary, perturb in the direction of the golden section*)
 				newAbscissa=perturbBrentLocation[candidateAbscissa,
-					sameTestAbscissas,perturbFactor,accuracyGoal,precisionGoal]
+					sameTestAbscissas,perturbFactor,accuracyGoal,precisionGoal];
+				newMaxDisplacement=$MaxMachineNumber;
 				];
 			(*perform the single function evaluation*)
 			newOrdinate=function/.monitorRules[{variable},
 				{variable->newAbscissa},EvaluationMonitor,opts];
-			(*the new maximum displacement is half this one*)
-			newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
-				newAbscissa-candidateAbscissa}];
 			(*some arguments for a new iteration*)
 			vwxSequence=brentOrdinateAbscissaVWXSequence[
 				{fa,a,fb,b,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
@@ -471,7 +474,7 @@ frameMinimumNarrowBrent[function_,variable_,
 				If[newAbscissa>=x,
 					{fx,x,fb,b,newOrdinate,newAbscissa,vwxSequence,
 						newMaxDisplacement},
-					{fa,a,fx,x,,newOrdinate,newAbscissa,vwxSequence,
+					{fa,a,fx,x,newOrdinate,newAbscissa,vwxSequence,
 						newMaxDisplacement}
 					],
 				If[newAbscissa>=x,
