@@ -324,7 +324,6 @@ nSameQ[currVal:nonComplexNumberPatternObject,
 	above definition*)]:=
 	Abs[currVal-prevVal]<=rhs;
 
-
 defineBadArgs@nSameQ;
 
 (*The file loaded here defines a function, criticalDomainLocations, which
@@ -379,7 +378,7 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 				],
 			location
 			]
-		]
+		];
 
 defineBadArgs@perturbBrentLocation;
 
