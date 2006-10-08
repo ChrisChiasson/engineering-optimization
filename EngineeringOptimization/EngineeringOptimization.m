@@ -640,7 +640,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 				frame=Most@
 					FixedPoint[
 						Apply[
-							frameMinimumNarrow[
+							frameMinimumNarrowBrent[
 								function,
 								variable,
 								##,
@@ -652,8 +652,8 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 						{Sequence@@frame[[{1,2}]](*fa,a*),
 							Sequence@@frame[[{5,6}]](*fb,b*),
 							Sequence@@frame[[{5,6}]](*fu,uu*),
-							brentOrdinateAbscissaVWXSequence@
-								Sequence@@@frame(*fv,v,fw,w,fx,x*),
+							brentOrdinateAbscissaVWXSequence[
+								Sequence@@@frame](*fv,v,fw,w,fx,x*),
 							$MaxMachineNumber(*max move distance*)
 							},
 						"MaxNarrowingIterations"/.{options}
