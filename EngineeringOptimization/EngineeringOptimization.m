@@ -397,10 +397,13 @@ frameMinimumNarrowBrent[function_,variable_,
 	x:nonComplexNumberPatternObject(*fx's abscissa*),
 	maxAcceptableDisplacement:nonComplexNumberPatternObject(*
 	the maximum distance the algorithm can move via polynomial interpolation*),
+	shrinkFactor:nonComplexNumberPatternObject(*golden ratio 0.38 etc*)
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
+	workingPrecision:nonComplexNumberPatternObject(*working precision*),
 	opts__?OptionQ(*options*)]/;OrderedQ[{a,b}]:=
 	Module[
 		{candidateAbscissa(*candidate newAbscissa(s)*),
-			accuracyGoal=AccuracyGoal/.{opts}(*digits of accuracy requested*),
 			e(*golden step signed large interval length*),
 			vwxSequence(*sequence of coordinate values for fv,v,fw,w,fx,x
 			for the next iteration*),
@@ -409,14 +412,12 @@ frameMinimumNarrowBrent[function_,variable_,
 			newOrdinate(*function value at newAbscissa*),
 			perturbed=0(*perturbation distance(s)*),
 			perturbFactor(*factor of perturbation tolerance locations*),
-			precisionGoal=PrecisionGoal/.{opts}(*requested precision digits*),
 			sameTestAbscissas=unsortedUnion@{x,u,a,b,v,w}(*points to perturb
 			away from*),
-			workingPrecision=WorkingPrecision/.{opts}(*working precision*),
 			xm=(a+b)/2(*[a,b] interval midpoint*),
-			xtol(*tolerance for comparison with a and b*)
+			xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal(*tolerance for
+			comparison with a and b*)
 			},
-		xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal;
 		(*if x is within tolerance to a and b, then no better guess is likely*)
 		If[nSameQ[#,x,xtol]&/@And[a,b],
 			(*return all arguments in a list needed for the stop test*)
@@ -428,7 +429,7 @@ frameMinimumNarrowBrent[function_,variable_,
 			e=If[x>=xm,a-x,b-x];
 			candidateAbscissa=Flatten@{
 				Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
-				x+e*"ShrinkFactor"/.{opts},xm};
+				x+e*shrinkFactor,xm};
 			(*perturbation should be in the direction of the larger interval*)
 			perturbFactor=Sign[e];
 			perturbed=perturbBrentLocation[#,sameTestAbscissas,
@@ -485,6 +486,8 @@ frameMinimumNarrowBrent[function_,variable_,
 		];
 
 defineBadArgs@frameMinimumNarrowBrent;
+
+(*golden section only version - currently unused*)
 
 frameMinimumNarrow[function_,variable_,
 	functionStart:nonComplexNumberPatternObject,
@@ -630,7 +633,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 						Drop[maxDisplacementList,1],
 						{methodOptions},{opts1,opts2}],
 					sewingTag]];
-(*if the minimum was framed, narrow the frame*)
+(*if the minimum was framed, narrow the frame via Brent's method*)
 				frame=Flatten@{frame[[{1,2}]],Map[{function/.monitorRules[
 					{variable},{variable->#},EvaluationMonitor,options],#}&,
 					{{1-shrinkFactor,shrinkFactor},{shrinkFactor,
