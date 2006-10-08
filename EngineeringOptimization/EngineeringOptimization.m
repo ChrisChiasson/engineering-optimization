@@ -278,7 +278,8 @@ frameMinimumStopTest[functionStart:nonComplexNumberPatternObject,
 	frameBound_Symbol,
 	domainBound_Symbol]:=
 	(*all of these conditions need to be evaluated, thus the apply is needed*)
-	If[Or@@{If[functionEnd>functionIntermediate,frameBound=True,False],
+	If[Or@@{If[functionEnd>functionIntermediate&&solutionStart!=
+		solutionIntermediate,frameBound=True,False],
 		If[solutionEnd===solutionEndBound,domainBound=True,False]},True,False];
 
 defineBadArgs@frameMinimumStopTest;
@@ -608,10 +609,12 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 				solutionIntermediate},EvaluationMonitor,options],
 				solutionIntermediate};
 (*attempt to frame the minimum*)
+			Print["before framing"];
 			frame=NestWhile[Apply[frameMinimum[function,variable,##,
 				growthFactor,boundOrigin,boundForward,options]&,#]&,frame,
 				Apply[Not@frameMinimumStopTest[##,boundForward,frameBound,
 					domainBound]&,#]&];
+			Print["after framing"];
 			lowerList=(#<functionOrigin&)/@frame[[{1,3,5}]];
 			noValueFalse/@{frameBound,domainBound};
 (*was the minimum framed? if not, attempt contengencies*)
@@ -628,9 +631,10 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 				frameMinimumBoundMessages[domainBound,fdbl];
 				Sow[selectMinimum[variable,frame],sewingTag],
 				frameBound,
+				Print["after while"];
 (*the framebound&&Not@@lowerlist is a necessary but insufficient condition for
  the unimodal minimum to be in the other direction*)
-				If[Not[Or@@lowerList]&&recursable,
+				If[(Print@#;#)&[Not[Or@@lowerList]&&recursable],
 					Sow[reFindMinimum[function,variable,boundOrigin,
 						Drop[maxDisplacementList,1],
 						{methodOptions},{opts1,opts2}],
