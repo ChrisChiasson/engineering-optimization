@@ -363,6 +363,7 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
 	Module[{rhs(*the tolerance used in the right hand side of nSameQ*)},
+(*perturb the point until it is "different" from any of the unSameLocations*)
 		FixedPoint[
 			Function[loc(*a location*),
 				rhs=10^-accuracyGoal+Abs[loc]*10^-precisionGoal;
