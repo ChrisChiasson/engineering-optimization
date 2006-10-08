@@ -369,7 +369,7 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 				Catch@(
 					Scan[
 						If[nSameQ[loc,#,rhs],
-							Print["perturbing: ",Sign@perturbFactor];
+							Print["perturbing ",perturbFactor*rhs," from loc (",loc,") to avoid ",#];
 							Throw[loc+perturbFactor*rhs]
 							]&,
 						unSameLocations
@@ -422,6 +422,7 @@ frameMinimumNarrowBrent[function_,variable_,
 		If[nSameQ[#,x,xtol]&/@And[a,b],
 			(*return all arguments in a list needed for the stop test*)
 			{fa,a,fb,b,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
+			Print["x (",x,") is ",x-a," from a (",a"), and ",x-b," from b (",b,"). xtol is ",xtol];
 			(*otherwise, continue with the algorithm*)
 			(*Guess the location(s) of the minimum from v, w, and x using the
 			critical point(s) of an interpolating polynomial.*)
