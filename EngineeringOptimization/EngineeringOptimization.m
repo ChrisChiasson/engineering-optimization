@@ -422,18 +422,18 @@ frameMinimumNarrowBrent[function_,variable_,
 		Print["new iteration: ",++debug`i];
 		If[nSameQ[#,x,xtol]&/@And[a,b],
 			(*return all arguments in a list needed for the stop test*)
-			{fa,a,fb,b,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
+			{fa,a,fb,b,fu,u,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
 			Print["x (",x,") is ",x-a," from a (",a"), and ",x-b," from b (",b,"). xtol is ",xtol];
 			(*otherwise, continue with the algorithm*)
 			(*Guess the location(s) of the minimum from v, w, and x using the
-			critical point(s) of an interpolating polynomial.*)
-			candidateAbscissa=Block[{Message},
-				criticalDomainLocations[fv,v,fw,w,fx,x]];
-			(*it is likely that parabolic interpolation will quickly put one
-			border of the bracketing interval close to x, so perturbation should
-			be in the direction of the other interval endpoint*)
+			critical point(s) of an interpolating polynomial, the golden
+			section and xm as a fall back.*)
 			e=If[x>=xm,a-x,b-x];
-			perturbFactor=2*Sign[e];
+			candidateAbscissa=Flatten@{
+				Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
+				x+e*"ShrinkFactor"/.{opts},xm};
+			(*perturbation should be in the direction of the larger interval*)
+			perturbFactor=Sign[e];
 			perturbed=perturbBrentLocation[#,sameTestAbscissas,
 				perturbFactor,workingPrecision,workingPrecision]&/@
 					candidateAbscissa;
@@ -444,9 +444,9 @@ frameMinimumNarrowBrent[function_,variable_,
 				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",u," It must be less than ",maxAcceptableDisplacement," from it."];False]
 					]&,
 				1];
-			(*if inverse polynomial interpolation gives (a) viable point(s)*)
+			(*if we get a viable point*)
 			If[newAbscissa=!={},
-				Print["parabolic"];
+				Print["perturbed point used"];
 				(*return the first element*)
 				newAbscissa=First@newAbscissa;
 				candidateAbscissa=
@@ -456,13 +456,10 @@ frameMinimumNarrowBrent[function_,variable_,
 				(*the new maximum displacement is half this one*)
 				newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
 					newAbscissa-candidateAbscissa}],
-				Print["golden"];
 				(*otherwise, guess another point from golden section*)
+				Print["unperturbed golden section point taken"];
 				(*the result is a number, not a list*)
-				candidateAbscissa=x+e*"ShrinkFactor"/.{opts};
-				(*if necessary, perturb in the direction of the golden section*)
-				newAbscissa=perturbBrentLocation[candidateAbscissa,
-					sameTestAbscissas,perturbFactor,accuracyGoal,precisionGoal];
+				newAbscissa=candidateAbscissa=candidateAbscissa[[-2]];
 				newMaxDisplacement=$MaxMachineNumber;
 				];
 			(*perform the single function evaluation*)
