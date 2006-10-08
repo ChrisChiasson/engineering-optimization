@@ -484,7 +484,7 @@ frameMinimumNarrowBrent[function_,variable_,
 			]
 		];
 
-defineBadArgs@frameMinimumNarrowBrent;
+defineDebugArgs@frameMinimumNarrowBrent;
 
 (*golden section only version - currently unused*)
 
@@ -576,9 +576,11 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 			{FindMinimum`Unimodal,FindMinimum}];
 		workingPrecision=WorkingPrecision/.{options};
 		accuracyGoal=AccuracyGoal/.{options};
-		If[accuracyGoal===Automatic,accuracyGoal=workingPrecision/2];
+		If[accuracyGoal===Automatic,accuracyGoal=workingPrecision/2/.
+			MachinePrecision->$MachinePrecision];
 		precisionGoal=PrecisionGoal/.{options};
-		If[precisionGoal===Automatic,precisionGoal=workingPrecision/2];
+		If[precisionGoal===Automatic,precisionGoal=workingPrecision/2/.
+			MachinePrecision->$MachinePrecision];
 		boundOrigin=N[variableStart[[2]],workingPrecision];
 		maxDisplacementList=Flatten@{N["MaxDisplacement"/.{options}
 			,workingPrecision]};
