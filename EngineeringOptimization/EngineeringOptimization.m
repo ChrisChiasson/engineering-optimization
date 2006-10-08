@@ -636,10 +636,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 						{methodOptions},{opts1,opts2}],
 					sewingTag]];
 (*if the minimum was framed, narrow the frame via Brent's method*)
-				frame=Flatten@{frame[[{1,2}]],Map[{function/.monitorRules[
-					{variable},{variable->#},EvaluationMonitor,options],#}&,
-					{{1-shrinkFactor,shrinkFactor},{shrinkFactor,
-						1-shrinkFactor}}.frame[[{2,6}]]],frame[[{5,6}]]};
+				Print[frame];
 				frame=Most@
 					FixedPoint[
 						Apply[
@@ -655,7 +652,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 						{Sequence@@frame[[{1,2}]](*fa,a*),
 							Sequence@@frame[[{5,6}]](*fb,b*),
 							Sequence@@frame[[{5,6}]](*fu,uu*),
-							brentOrdinateAbscissaVWXSequence@@
+							brentOrdinateAbscissaVWXSequence@
 								Sequence@@@frame(*fv,v,fw,w,fx,x*),
 							$MaxMachineNumber(*max move distance*)
 							},
