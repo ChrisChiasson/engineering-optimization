@@ -400,7 +400,6 @@ frameMinimumNarrowBrent[function_,variable_,
 	shrinkFactor:nonComplexNumberPatternObject(*golden ratio 0.38 etc*)
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
-	workingPrecision:nonComplexNumberPatternObject(*working precision*),
 	opts__?OptionQ(*options*)]/;OrderedQ[{a,b}]:=
 	Module[
 		{candidateAbscissa(*candidate newAbscissa(s)*),
@@ -567,15 +566,19 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
 		{methodOptions}]:=
-	Module[{boundDivisor=3,boundForward,boundOrigin,
+	Module[{accuracyGoal,boundDivisor=3,boundForward,boundOrigin,
 		case,criticalDomainLocations,domainBound,frameBound,frame,
 		functionOrigin,growthFactor,lowerList,
-		maxDisplacementList,options,recursable,sewingTag,
+		maxDisplacementList,options,precisionGoal,recursable,sewingTag,
 		shrinkFactor,solutionIntermediate,variable=variableStart[[1]],
 		workingPrecision},First@Sort@Reap[
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`Unimodal,FindMinimum}];
 		workingPrecision=WorkingPrecision/.{options};
+		accuracyGoal=AccuracyGoal/.{options};
+		If[accuracyGoal===Automatic,accuracyGoal=workingPrecision/2];
+		precisionGoal=PrecisionGoal/.{options};
+		If[precisionGoal===Automatic,precisionGoal=workingPrecision/2];
 		boundOrigin=N[variableStart[[2]],workingPrecision];
 		maxDisplacementList=Flatten@{N["MaxDisplacement"/.{options}
 			,workingPrecision]};
@@ -638,22 +641,27 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 					{variable},{variable->#},EvaluationMonitor,options],#}&,
 					{{1-shrinkFactor,shrinkFactor},{shrinkFactor,
 						1-shrinkFactor}}.frame[[{2,6}]]],frame[[{5,6}]]};
-				frame=FixedPoint[Apply[frameMinimumNarrow[function,variable,##,
-					shrinkFactor,options]&,#]&,frame];
-(*fit a polynomial to the frame and see if any critical points are inside*)
-				Block[{Message},
-					criticalDomainLocations=Cases[
-						cubicCriticalDomainLocations@@
-							Rationalize[frame,0],
-						case:nonComplexNumberPatternObject/;
-							Function[Less[#1,case,#2]]@@Sort[{frame[[2]],
-								frame[[8]]}]
-						]
-					];
-(*if so, add them to the frame*)
-				frame=Flatten@{frame,Map[{function/.monitorRules[{variable},
-					{variable->#},EvaluationMonitor,options],#}&,
-					criticalDomainLocations]};
+				frame=Most@
+					FixedPoint[
+						Apply[
+							frameMinimumNarrow[
+								function,
+								variable,
+								##,
+								shrinkFactor,
+								accuracyGoal,
+								precisionGoal,
+								options]&,
+							#]&,
+						{Sequence@@frame[[{1,2}]](*fa,a*),
+							Sequence@@frame[[{5,6}]](*fb,b*),
+							Sequence@@frame[[{5,6}]](*fu,uu*),
+							brentOrdinateAbscissaVWXSequence@@
+								Sequence@@@frame(*fv,v,fw,w,fx,x*),
+							$MaxMachineNumber(*max move distance*)
+							},
+						"MaxNarrowingIterations"/.{options}
+						];
 (*choose the minimum point in the frame*)
 				Sow[selectMinimum[variable,frame],sewingTag]]]
 		,sewingTag][[2,1]]];
