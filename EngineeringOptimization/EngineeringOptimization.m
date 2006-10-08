@@ -437,9 +437,9 @@ frameMinimumNarrowBrent[function_,variable_,
 					candidateAbscissa;
 			(*use only the first point that matches these criteria*)
 			newAbscissa=Select[perturbed,
-				And[Element[#,Reals],
-				LessEqual[a,#,b],
-				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",u,". It must be less than ",maxAcceptableDisplacement," from it."];False]
+				And[If[Element[#,Reals],True,Print[#,"is not a real number."];False],
+				If[LessEqual[a,#,b],True,Print[#," is not between ",a," and ",b];False,
+				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",u," It must be less than ",maxAcceptableDisplacement," from it."];False]
 					]&,
 				1];
 			(*if inverse polynomial interpolation gives (a) viable point(s)*)
@@ -454,6 +454,7 @@ frameMinimumNarrowBrent[function_,variable_,
 				(*the new maximum displacement is half this one*)
 				newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
 					newAbscissa-candidateAbscissa}],
+				Print["golden"];
 				(*otherwise, guess another point from golden section*)
 				(*the result is a number, not a list*)
 				candidateAbscissa=x+e*"ShrinkFactor"/.{opts};
