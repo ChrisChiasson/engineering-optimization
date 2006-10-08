@@ -419,6 +419,7 @@ frameMinimumNarrowBrent[function_,variable_,
 			},
 		xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal;
 		(*if x is within tolerance to a and b, then no better guess is likely*)
+		Print["new iteration: ",++debug`i];
 		If[nSameQ[#,x,xtol]&/@And[a,b],
 			(*return all arguments in a list needed for the stop test*)
 			{fa,a,fb,b,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
