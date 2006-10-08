@@ -438,12 +438,14 @@ frameMinimumNarrowBrent[function_,variable_,
 				perturbFactor,workingPrecision,workingPrecision]&/@
 					candidateAbscissa;
 			(*use only the first point that matches these criteria*)
-			newAbscissa=Select[perturbed,
-				And[If[Element[#,Reals],True,Print[#,"is not a real number."];False],
-				If[LessEqual[a,#,b],True,Print[#," is not between ",a," and ",b];False],
-				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",u," It must be less than ",maxAcceptableDisplacement," from it."];False]
-					]&,
+			newAbscissa=Select[perturbed[[1,-3]],
+				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",u," It must be less than ",maxAcceptableDisplacement," from it."];False]&,
 				1];
+			newAbscissa=Select[Flatten@{newAbscissa,perturbed[[-2,-1]]},
+				And[If[Element[#,Reals],True,Print[#,"is not a real number."];False],
+					If[LessEqual[a,#,b],True,Print[#," is not between ",a," and ",b];False]
+					]&
+				];
 			(*if we get a viable point*)
 			If[newAbscissa=!={},
 				Print["perturbed point used"];
