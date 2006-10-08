@@ -438,7 +438,7 @@ frameMinimumNarrowBrent[function_,variable_,
 			(*use only the first point that matches these criteria*)
 			newAbscissa=Select[perturbed,
 				And[If[Element[#,Reals],True,Print[#,"is not a real number."];False],
-				If[LessEqual[a,#,b],True,Print[#," is not between ",a," and ",b];False,
+				If[LessEqual[a,#,b],True,Print[#," is not between ",a," and ",b];False],
 				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",u," It must be less than ",maxAcceptableDisplacement," from it."];False]
 					]&,
 				1];
@@ -663,7 +663,7 @@ lineSearchRules[solutionRules:multipleNonComplexNumberRulePatternObject,
 	searchDirection:multipleNonComplexNumberPatternObject,displacement_Symbol]:=
 	MapThread[Function[{variableRule,searchDirectionComponent},
 		MapAt[#+searchDirectionComponent*displacement&,variableRule,2]],
-		{solutionRules,searchDirection}]
+		{solutionRules,searchDirection}];
 
 defineBadArgs@lineSearchRules;
 
@@ -1074,7 +1074,7 @@ chooseMethod[method_Symbol,methodRulePatternObject_Rule,
 		If[methodRuleList==={},False,methodOptionPossibleList=Rest@Flatten@List@
 			methodRuleList[[1,2]];If[optionsListValidQ[method,
 				methodOptionPossibleList],methodOptions=Sequence@@
-					methodOptionPossibleList;True,False]]]
+					methodOptionPossibleList;True,False]]];
 
 defineBadArgs@chooseMethod;
 
@@ -1083,14 +1083,14 @@ Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
 	"LagrangeMultiplierHead"->Automatic,
 	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
 	Method->{vMMethodString,Method->{uMethodString,
-		"MaxDisplacement"->{10,-10},"MaxNarrowingIterations"->6}}}
+		"MaxDisplacement"->{10,-10},"MaxNarrowingIterations"->6}}};
 
 Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
 	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->Infinity,
 	"LagrangeMultiplierHead"->Automatic,
 	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
 	Method->{vMMethodString,Method->{uMethodString,
-		"MaxDisplacement"->{10,-10},"MaxNarrowingIterations"->30}}}
+		"MaxDisplacement"->{10,-10},"MaxNarrowingIterations"->30}}};
 
 (*NMinimize[{function_,constraints:multipleConstraintPatternObject},
 	variableStartRanges:multipleGuessRangePseudoPatternObject,opts___?OptionQ]:=
