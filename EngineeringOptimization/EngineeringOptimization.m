@@ -567,7 +567,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 		(Message[FindMinimum::nfv,function,variableStart[[1]]];
 		{function,Rule@@variableStart});
 
-FindMinimum[function_,variableStart:guessPseudoPatternObject,
+FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 	opts1___?OptionQ,Method->uMethodString|
 		{uMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
@@ -577,7 +577,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 		case,criticalDomainLocations,domainBound,frameBound,frame,
 		functionOrigin,growthFactor,lowerList,
 		maxDisplacementList,options,precisionGoal,recursable,sewingTag,
-		shrinkFactor,solutionIntermediate,variable=variableStart[[1]],
+		shrinkFactor,solutionIntermediate,variable=variableStartRange[[1]],
 		workingPrecision},First@Sort@Reap[
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`Unimodal,FindMinimum}];
@@ -588,7 +588,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 		precisionGoal=PrecisionGoal/.{options};
 		If[precisionGoal===Automatic,precisionGoal=workingPrecision/2/.
 			MachinePrecision->$MachinePrecision];
-		boundOrigin=N[variableStart[[2]],workingPrecision];
+		boundOrigin=N[variableStartRange[[2]],workingPrecision];
 		maxDisplacementList=Flatten@{N["MaxDisplacement"/.{options}
 			,workingPrecision]};
 		recursable=If[Length[maxDisplacementList]>=2,True,False];
@@ -611,8 +611,7 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 			functionOrigin=function/.monitorRules[{variable},{variable->
 				boundOrigin},EvaluationMonitor,options];
 (*first frame*)
-			solutionIntermediate=boundOrigin+maxDisplacementList[[1]]
-				/boundDivisor;
+			solutionIntermediate=N[variableStartRange[[3]],workingPrecision];
 			frame={functionOrigin,boundOrigin,functionOrigin,boundOrigin,
 				function/.monitorRules[{variable},{variable->
 				solutionIntermediate},EvaluationMonitor,options],
