@@ -369,7 +369,6 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 				Catch@(
 					Scan[
 						If[nSameQ[loc,#,rhs],
-							Print["perturbing ",perturbFactor*rhs," from loc (",loc,") to avoid ",#];
 							Throw[loc+perturbFactor*rhs]
 							]&,
 						unSameLocations
@@ -419,11 +418,9 @@ frameMinimumNarrowBrent[function_,variable_,
 			},
 		xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal;
 		(*if x is within tolerance to a and b, then no better guess is likely*)
-		Print["new iteration: ",++debug`i];
 		If[nSameQ[#,x,xtol]&/@And[a,b],
 			(*return all arguments in a list needed for the stop test*)
 			{fa,a,fb,b,fu,u,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
-			Print["x (",x,") is ",x-a," from a (",a"), and ",x-b," from b (",b,"). xtol is ",xtol];
 			(*otherwise, continue with the algorithm*)
 			(*Guess the location(s) of the minimum from v, w, and x using the
 			critical point(s) of an interpolating polynomial, the golden
@@ -439,16 +436,15 @@ frameMinimumNarrowBrent[function_,variable_,
 					candidateAbscissa;
 			(*use only the first point that matches these criteria*)
 			newAbscissa=Select[Drop[perturbed,-2],
-				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",u," It must be less than ",maxAcceptableDisplacement," from it."];False]&,
+				Less[Abs[#-u],maxAcceptableDisplacement]&,
 				1];
 			newAbscissa=Select[Flatten@{newAbscissa,Take[perturbed,-2]},
-				And[If[Element[#,Reals],True,Print[#,"is not a real number."];False],
-					If[LessEqual[a,#,b],True,Print[#," is not between ",a," and ",b];False]
+				And[Element[#,Reals],
+					LessEqual[a,#,b]
 					]&
 				];
 			(*if we get a viable point*)
 			If[newAbscissa=!={},
-				Print["perturbed point used"];
 				(*return the first element*)
 				newAbscissa=First@newAbscissa;
 				candidateAbscissa=
@@ -459,7 +455,6 @@ frameMinimumNarrowBrent[function_,variable_,
 				newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
 					newAbscissa-candidateAbscissa}],
 				(*otherwise, guess another point from golden section*)
-				Print["unperturbed golden section point taken"];
 				(*the result is a number, not a list*)
 				newAbscissa=candidateAbscissa=candidateAbscissa[[-2]];
 				newMaxDisplacement=$MaxMachineNumber;
