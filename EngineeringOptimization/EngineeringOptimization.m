@@ -435,13 +435,13 @@ frameMinimumNarrowBrent[function_,variable_,
 			(*perturbation should be in the direction of the larger interval*)
 			perturbFactor=Sign[e];
 			perturbed=perturbBrentLocation[#,sameTestAbscissas,
-				perturbFactor,workingPrecision,workingPrecision]&/@
+				perturbFactor,accuracyGoal,precisionGoal]&/@
 					candidateAbscissa;
 			(*use only the first point that matches these criteria*)
-			newAbscissa=Select[perturbed[[1,-3]],
+			newAbscissa=Select[Drop[perturbed,-2],
 				If[Less[Abs[#-u],maxAcceptableDisplacement],True,Print[#," is too far from ",u," It must be less than ",maxAcceptableDisplacement," from it."];False]&,
 				1];
-			newAbscissa=Select[Flatten@{newAbscissa,perturbed[[-2,-1]]},
+			newAbscissa=Select[Flatten@{newAbscissa,Take[perturbed,-2]},
 				And[If[Element[#,Reals],True,Print[#,"is not a real number."];False],
 					If[LessEqual[a,#,b],True,Print[#," is not between ",a," and ",b];False]
 					]&
