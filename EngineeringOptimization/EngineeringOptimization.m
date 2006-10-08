@@ -396,7 +396,7 @@ frameMinimumNarrowBrent[function_,variable_,
 	x:nonComplexNumberPatternObject(*fx's abscissa*),
 	maxAcceptableDisplacement:nonComplexNumberPatternObject(*
 	the maximum distance the algorithm can move via polynomial interpolation*),
-	shrinkFactor:nonComplexNumberPatternObject(*golden ratio 0.38 etc*)
+	shrinkFactor:nonComplexNumberPatternObject(*golden ratio 0.38 etc*),
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
 	opts__?OptionQ(*options*)]/;OrderedQ[{a,b}]:=
