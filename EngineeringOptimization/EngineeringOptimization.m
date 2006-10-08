@@ -380,6 +380,13 @@ perturbBrentLocation[location:nonComplexNumberPatternObject(*
 			]
 		];
 
+perturbBrentLocation[location_(*an "erroneous" argument to this function*),
+	unSameLocations:multipleNonComplexNumberPatternObject(*banned locations*),
+	perturbFactor:nonComplexNumberPatternObject(*perturbation factor*),	
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
+	$MaxMachineNumber;
+
 defineBadArgs@perturbBrentLocation;
 
 frameMinimumNarrowBrent[function_,variable_,
@@ -484,7 +491,7 @@ frameMinimumNarrowBrent[function_,variable_,
 			]
 		];
 
-defineDebugArgs@frameMinimumNarrowBrent;
+defineBadArgs@frameMinimumNarrowBrent;
 
 (*golden section only version - currently unused*)
 
@@ -611,12 +618,10 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 				solutionIntermediate},EvaluationMonitor,options],
 				solutionIntermediate};
 (*attempt to frame the minimum*)
-			Print["before framing"];
 			frame=NestWhile[Apply[frameMinimum[function,variable,##,
 				growthFactor,boundOrigin,boundForward,options]&,#]&,frame,
 				Apply[Not@frameMinimumStopTest[##,boundForward,frameBound,
 					domainBound]&,#]&];
-			Print["after framing"];
 			lowerList=(#<functionOrigin&)/@frame[[{1,3,5}]];
 			noValueFalse/@{frameBound,domainBound};
 (*was the minimum framed? if not, attempt contengencies*)
@@ -633,16 +638,14 @@ FindMinimum[function_,variableStart:guessPseudoPatternObject,
 				frameMinimumBoundMessages[domainBound,fdbl];
 				Sow[selectMinimum[variable,frame],sewingTag],
 				frameBound,
-				Print["after while"];
 (*the framebound&&Not@@lowerlist is a necessary but insufficient condition for
  the unimodal minimum to be in the other direction*)
-				If[(Print@#;#)&[Not[Or@@lowerList]&&recursable],
+				If[Not[Or@@lowerList]&&recursable,
 					Sow[reFindMinimum[function,variable,boundOrigin,
 						Drop[maxDisplacementList,1],
 						{methodOptions},{opts1,opts2}],
 					sewingTag]];
 (*if the minimum was framed, narrow the frame via Brent's method*)
-				Print[frame];
 				frame=Most@
 					FixedPoint[
 						Apply[
