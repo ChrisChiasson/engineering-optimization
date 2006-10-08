@@ -276,18 +276,17 @@ frameMinimumStopTest[functionStart:nonComplexNumberPatternObject,
 	solutionEnd:nonComplexNumberPatternObject,
 	solutionEndBound:nonComplexNumberPatternObject,
 	frameBound_Symbol,
-	domainBound_Symbol,iteration_Integer,
-	maxIterations_Integer,iterationBound_Symbol]:=
+	domainBound_Symbol]:=
+	(*all of these conditions need to be evaluated, thus the apply is needed*)
 	If[Or@@{If[functionEnd>functionIntermediate,frameBound=True,False],
-		If[solutionEnd===solutionEndBound,domainBound=True,False],
-		If[iteration>=maxIterations,iterationBound=True,False]},True,False];
+		If[solutionEnd===solutionEndBound,domainBound=True,False]},True,False];
 
 defineBadArgs@frameMinimumStopTest;
 
-frameMinimumBoundMessages[domainBound_Symbol,dbtag_Symbol,
-	iterationBound_Symbol,ibtag_Symbol]:=Block[{Message,MessageName},
-		{If[domainBound,Message@MessageName[FindMinimum,SymbolName@dbtag]],
-		If[iterationBound,Message@MessageName[FindMinimum,SymbolName@ibtag]]}];	
+frameMinimumBoundMessages[domainBound_Symbol,dbtag_Symbol]:=
+	Block[{Message,MessageName},
+		If[domainBound,Message@MessageName[FindMinimum,SymbolName@dbtag]]
+		];	
 	
 defineBadArgs@frameMinimumBoundMessages;
 
