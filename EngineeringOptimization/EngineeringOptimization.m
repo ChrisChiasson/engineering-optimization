@@ -784,8 +784,7 @@ fMCommonConvergenceTest[variables:multipleExpressionPatternObject,
 
 defineBadArgs@fMCommonConvergenceTest;
 
-fMSubMethodDefaultOption=Method->{uMethodString,
-		"MaxDisplacement"->{12,-12},"MaxNarrowingIterations"->8};
+fMSubMethodDefaultOption=Method->uMethodString;
 
 Options@FindMinimum`VariableMetric={"Theta"->1,fMSubMethodDefaultOption};
 
@@ -1102,15 +1101,13 @@ Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
 	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->10^5,
 	"LagrangeMultiplierHead"->Automatic,
 	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
-	Method->{vMMethodString,Method->{uMethodString,
-		"MaxDisplacement"->{10,-10},"MaxNarrowingIterations"->6}}};
+	Method->{vMMethodString,Method->uMethodString}};
 
 Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
 	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->Infinity,
 	"LagrangeMultiplierHead"->Automatic,
 	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
-	Method->{vMMethodString,Method->{uMethodString,
-		"MaxDisplacement"->{10,-10},"MaxNarrowingIterations"->30}}};
+	Method->{vMMethodString,Method->uMethodString}};
 
 (*NMinimize[{function_,constraints:multipleConstraintPatternObject},
 	variableStartRanges:multipleGuessRangePseudoPatternObject,opts___?OptionQ]:=
