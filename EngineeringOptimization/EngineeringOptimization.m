@@ -593,14 +593,14 @@ defineBadArgs@reFindMinimum;
 Options@FindMinimum`Unimodal={"MaxDisplacement"->10^6*{1,-1},"GrowthFactor"->
 	GoldenRatio,"ShrinkFactor"->2-GoldenRatio,"MaxNarrowingIterations"->100};
 
-FindMinimum[function_,variableStart:guessPseudoPatternObject,
+FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 	opts1___?OptionQ,Method->uMethodString|
 		{uMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
 		{methodOptions}]&&FreeQ[function,variableStart[[1]]]:=
-		(Message[FindMinimum::nfv,function,variableStart[[1]]];
-		{function,Rule@@variableStart});
+		(Message[FindMinimum::nfv,function,variableStartRange[[1]]];
+		{function,Rule[variableStartRange[[1]],Mean@Rest@variableStartRange]});
 
 FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 	opts1___?OptionQ,Method->uMethodString|
