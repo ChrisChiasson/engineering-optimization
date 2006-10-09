@@ -607,7 +607,7 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 		{uMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
-		{methodOptions}]:=
+		{methodOptions}]&&OrderedQ[Rest@variableStartRange]:=
 	Module[{accuracyGoal,boundForward,boundOrigin,
 		case,criticalDomainLocations,domainBound,frameBound,frame,
 		functionOrigin,growthFactor,lowerList,
