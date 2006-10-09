@@ -537,25 +537,57 @@ may be possible to work out precisely how many iterations are possible for each
 run - and instead of passing extra information, use the length of
 MaxDisplacement to normalize however many iterations are left - we'll see*)
 
-reFindMinimum[function_,variable_,
-	origin:nonComplexNumberPatternObject,
+unprotectedSymbols[variables:multipleExpressionPatternObject]:=
+	Module[{symbol},
+		Union@Reap[variables/.
+			symbol_Symbol/;
+				FreeQ[Attributes@symbol,Protected]:>
+					Sow[symbol]
+			][[2,1]]
+		];
+
+reFindMinimum[function_,variableStartRange:guessPseudoPatternObject,
 	maxDisplacement:multipleNonComplexNumberPatternObject,
 	{methodOptions___?OptionQ},{opts___?OptionQ}]:=
 	Module[{num,
 		reverseNeeded=If[Negative[maxDisplacement[[1]]],True,False],
+		variable=variableStartRange[[1]],
 		variableReverse},
-		If[reverseNeeded,Block[{variable=-variableReverse},Block[{FindMinimum},
-			FindMinimum[function,{variableReverse,-origin},opts,Method->
-				{uMethodString,"MaxDisplacement"->-maxDisplacement,
-				methodOptions}]]]/.{Rule[variableReverse,num:
-					nonComplexNumberPatternObject]->Rule[variable,-num]},
-			Block[{FindMinimum},FindMinimum[function,{variable,-origin},opts,
-				Method->{uMethodString,"MaxDisplacement"->maxDisplacement,
-				methodOptions}]]]];
+		If[reverseNeeded,
+			Block[Evaluate[unprotectedSymbols@variable],
+				Evaluate[variable]=-variableReverse;
+				Block[{FindMinimum},
+					FindMinimum[function,
+						{variableReverse,
+							Sequence@@-variableStartRange[[{2,3}]]
+							},
+						opts,
+						Method->
+							{uMethodString,
+								"MaxDisplacement"->-maxDisplacement,
+								methodOptions
+								}
+						]
+					]
+				]/.{Rule[variableReverse,num:nonComplexNumberPatternObject]->
+						Rule[variable,-num]},
+			Block[{FindMinimum},
+				FindMinimum[function,
+					variableStartRange,
+					opts,
+					Method->
+						{uMethodString,
+							"MaxDisplacement"->maxDisplacement,
+							methodOptions
+							}
+					]
+				]
+			]
+		];
 
 defineBadArgs@reFindMinimum;
 
-Options@FindMinimum`Unimodal={"MaxDisplacement"->{100,-100},"GrowthFactor"->
+Options@FindMinimum`Unimodal={"MaxDisplacement"->10^6*{1,-1},"GrowthFactor"->
 	GoldenRatio,"ShrinkFactor"->2-GoldenRatio,"MaxNarrowingIterations"->100};
 
 FindMinimum[function_,variableStart:guessPseudoPatternObject,
@@ -589,16 +621,17 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 		If[precisionGoal===Automatic,precisionGoal=workingPrecision/2/.
 			MachinePrecision->$MachinePrecision];
 		boundOrigin=N[variableStartRange[[2]],workingPrecision];
+		solutionIntermediate=N[variableStartRange[[3]],workingPrecision];
 		maxDisplacementList=Flatten@{N["MaxDisplacement"/.{options}
 			,workingPrecision]};
 		recursable=If[Length[maxDisplacementList]>=2,True,False];
 		Which[Negative[maxDisplacementList[[1]]],
-			Sow[reFindMinimum[function,variable,boundOrigin,maxDisplacementList,
+			Sow[reFindMinimum[function,variableStartRange,maxDisplacementList,
 				{methodOptions},{opts1,opts2}],sewingTag],
 (*the combination of the first condition and these two proceeding conditions
  means that maxDisplacementList[[1]] would need to be == 0 for execution*)
 			NonPositive[maxDisplacementList[[1]]]&&recursable,
-			Sow[reFindMinimum[function,variable,boundOrigin,
+			Sow[reFindMinimum[function,variableStartRange,
 				Drop[maxDisplacementList,1],{methodOptions},{opts1,opts2}],
 				sewingTag],
 			NonPositive[maxDisplacementList[[1]]]&&Not@recursable,
@@ -607,11 +640,11 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 			True,
 			growthFactor=N["GrowthFactor"/.{options},workingPrecision];
 			shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
-			boundForward=maxDisplacementList[[1]]+boundOrigin;
+			boundForward=maxDisplacementList[[1]]+
+				Max[boundOrigin,solutionIntermediate];
 			functionOrigin=function/.monitorRules[{variable},{variable->
 				boundOrigin},EvaluationMonitor,options];
 (*first frame*)
-			solutionIntermediate=N[variableStartRange[[3]],workingPrecision];
 			frame={functionOrigin,boundOrigin,functionOrigin,boundOrigin,
 				function/.monitorRules[{variable},{variable->
 				solutionIntermediate},EvaluationMonitor,options],
@@ -626,7 +659,7 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 (*was the minimum framed? if not, attempt contengencies*)
 			Which[Not@frameBound&&Not[Or@@lowerList]&&recursable,
 				frameMinimumBoundMessages[domainBound,fdbh];
-				Sow[reFindMinimum[function,variable,boundOrigin,
+				Sow[reFindMinimum[function,variableStartRange,
 					Drop[maxDisplacementList,1],{methodOptions},{opts1,opts2}]
 					,sewingTag],
 				Not@frameBound&&Not[Or@@lowerList]&&Not@recursable,
@@ -640,7 +673,7 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 (*the framebound&&Not@@lowerlist is a necessary but insufficient condition for
  the unimodal minimum to be in the other direction*)
 				If[Not[Or@@lowerList]&&recursable,
-					Sow[reFindMinimum[function,variable,boundOrigin,
+					Sow[reFindMinimum[function,variableStartRange,
 						Drop[maxDisplacementList,1],
 						{methodOptions},{opts1,opts2}],
 					sewingTag]];
@@ -691,15 +724,6 @@ easier to write and probably faster to calculate*)
 (*the p (displacementVector) and y (gradientChange) comments in the margin
  indicate the names of the variables as they appear in Garret N. Vanderplaats'
  Numerical Optimization Techniques for Engineering Design*)
-
-unprotectedSymbols[variables:multipleExpressionPatternObject]:=
-	Module[{symbol},
-		Union@Reap[variables/.
-			symbol_Symbol/;
-				FreeQ[Attributes@symbol,Protected]:>
-					Sow[symbol]
-			][[2,1]]
-		];
 
 defineBadArgs@unprotectedSymbols;
 
