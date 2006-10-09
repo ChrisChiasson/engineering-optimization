@@ -546,7 +546,7 @@ unprotectedSymbols[variables:multipleExpressionPatternObject]:=
 			][[2,1]]
 		];
 
-reFindMinimum[function_,variableStartRange:guessPseudoPatternObject,
+reFindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 	maxDisplacement:multipleNonComplexNumberPatternObject,
 	{methodOptions___?OptionQ},{opts___?OptionQ}]:=
 	Module[{num,
