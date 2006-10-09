@@ -719,6 +719,8 @@ singleElementScalar[singleElement:unThreadableNonComplexNumberPatternObject]:=
 
 defineBadArgs@singleElementScalar;
 
+(*variable metric method*)
+
 (*theta is the parameter that scales the hessian or inverse hessian update
 between the Davidon Fletcher Powell (DFP) and Broyden Fletcher Goldfarb Shanno
 (BFGS) methods on an interval of zero (DFP) to one (BFGS)*)
@@ -746,7 +748,7 @@ vMMKernel[function_,variables:multipleExpressionPatternObject,
 		displacementRule=(Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]])[[2]];
+				{displacement,0,1},findMinimumOptions]]])[[2]];
 		If[(displacement/.displacementRule)===0.,
 			gradientNumericNew=gradientNumeric;
 				solutionRulesNew=solutionRules,
@@ -806,6 +808,8 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}];
 
+(*steepest descent*)
+
 sDKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
@@ -822,7 +826,7 @@ sDKernel[function_,variables:multipleExpressionPatternObject,
 		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]][[2]];
+				{displacement,0,1},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		gradientNumericNew=gradientSymbolic/.solutionRulesNew;
 		{solutionRulesNew,gradientNumericNew}];
@@ -851,6 +855,8 @@ FindMinimum[function_,
 		{function/.solutionRules,solutionRules}
 		];
 
+(*Fletcher-Reeves*)
+
 fRKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
@@ -869,7 +875,7 @@ fRKernel[function_,variables:multipleExpressionPatternObject,
 		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]][[2]];
+				{displacement,0,1},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		gradientNumericNew=gradientSymbolic/.solutionRulesNew;
 		betaNew=Transpose[gradientNumericNew].gradientNumericNew/
@@ -878,7 +884,7 @@ fRKernel[function_,variables:multipleExpressionPatternObject,
 
 defineBadArgs@fRKernel;
 
-(*http://www.library.cornell.edu/nr/bookcpdf/c10-6.pdf*)
+(*reference http://www.library.cornell.edu/nr/bookcpdf/c10-6.pdf*)
 
 Options@FindMinimum`FletcherReeves={fMSubMethodDefaultOption};
 
@@ -905,6 +911,8 @@ FindMinimum[function_,
 		{function/.solutionRules,solutionRules}
 		];
 
+(*Powell*)
+
 PowKernelKernel[function_,
 	variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
@@ -916,13 +924,13 @@ PowKernelKernel[function_,
 		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},opts]]][[2]];
+				{displacement,0,1},opts]]][[2]];
 		solutionRulesNew/.displacementRule
 		];
 
 defineBadArgs@PowKernelKernel;
 
-(*http://www.library.cornell.edu/nr/bookcpdf/c10-5.pdf*)
+(*reference http://www.library.cornell.edu/nr/bookcpdf/c10-5.pdf*)
 
 PowKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
@@ -949,7 +957,7 @@ PowKernel[function_,variables:multipleExpressionPatternObject,
 		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]][[2]];
+				{displacement,0,1},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		{solutionRulesNew,
 			If[Mod[iteration,variablesLength+1]===0,
@@ -983,6 +991,8 @@ FindMinimum[function_,
 		{function/.solutionRules,solutionRules}
 		];
 
+(*Isaac Newton*)
+
 INKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
@@ -1002,7 +1012,7 @@ INKernel[function_,variables:multipleExpressionPatternObject,
 		displacementRule=(Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]])[[2]];
+				{displacement,0,1},findMinimumOptions]]])[[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		{solutionRulesNew,gradientSymbolic/.solutionRulesNew}];
 
@@ -1030,33 +1040,7 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}];
 
-(*aLMKernel[function_,variables:multipleExpressionPatternObject,
-	solutionRules:multipleNonComplexNumberRulePatternObject,
-	penalties_,
-	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,
-		nonComplexNumberPatternObject],
-	penaltyMultiplierGrowthFactor:nonComplexNumberPatternObject,
-	lagrangeMultiplierRules:multipleNonComplexNumberRulePatternObject,
-	lagrangeMultiplierUpdates:multipleExpressionPatternObject,opts___?OptionQ]:=
-	Module[{case,constraintRateMultiplierRule=
-		constraintRateMultiplierContainer->(ReplaceAll[#,solutionRules]&),
-		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
-			Sequence@@Cases[{opts},Except[aLMMethodRulePatternObject,
-				commonOptionsPatternObject]]],
-		lagrangeMultiplierNewRules=MapThread[
-			Function[{rule,update},MapAt[#+update&,rule,2]],
-				{lagrangeMultiplierRules,lagrangeMultiplierUpdates
-					/.constraintRateMultiplierContainer->Identity
-					/.penaltyMultiplierRule
-					/.lagrangeMultiplierRules
-					/.solutionRules}],
-			penaltyMultiplierNewRule=MapAt[Min[#*penaltyMultiplierGrowthFactor,
-				"MaximumPenaltyMultiplier"/.{opts}]&,penaltyMultiplierRule,2]},
-		{monitorRules[variables,Last@Block[{FindMinimum},FindMinimum[
-			function+(penalties/.constraintRateMultiplierRule
-				/.lagrangeMultiplierNewRules/.penaltyMultiplierNewRule),
-			List@@@solutionRules,findMinimumOptions]],StepMonitor,opts],
-			penaltyMultiplierNewRule,lagrangeMultiplierNewRules}]*)
+(*augmented Lagrange multiplier*) 
 
 defineDebugArgs@aLMKernel;
 
