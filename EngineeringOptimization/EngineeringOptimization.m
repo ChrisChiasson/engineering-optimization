@@ -343,7 +343,8 @@ brentOrdinateAbscissaVWXSequence[
 	pointsFlatYX:multipleNonComplexNumberPatternObject(*
 	coordinates in a flat list, ordinate first, abscissa second*)
 	]/;EvenQ[Length@pointsFlatYX]:=
-	Module[(*coordinatePairs sorted by decreasing ordinate*)
+	Module[
+(*coordinatePairs sorted by decreasing ordinate*)
 		{ordinateReverseSortPairs=
 			Sort[
 				unsortedUnion@Partition[pointsFlatYX,2],
@@ -424,24 +425,24 @@ frameMinimumNarrowBrent[function_,variable_,
 			xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal(*tolerance for
 			comparison with a and b*)
 			},
-		(*if x is within tolerance to a and b, then no better guess is likely*)
+(*if x is within tolerance to a and b, then no better guess is likely*)
 		If[nSameQ[#,x,xtol]&/@And[a,b],
-			(*return all arguments in a list needed for the stop test*)
+(*return all arguments in a list needed for the stop test*)
 			{fa,a,fb,b,fu,u,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
-			(*otherwise, continue with the algorithm*)
-			(*Guess the location(s) of the minimum from v, w, and x using the
-			critical point(s) of an interpolating polynomial, the golden
-			section and xm as a fall back.*)
+(*otherwise, continue with the algorithm*)
+(*Guess the location(s) of the minimum from v, w, and x using the
+critical point(s) of an interpolating polynomial, the golden
+section and xm as a fall back.*)
 			e=If[x>=xm,a-x,b-x];
 			candidateAbscissa=Flatten@{
 				Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
 				x+e*shrinkFactor,xm};
-			(*perturbation should be in the direction of the larger interval*)
+(*perturbation should be in the direction of the larger interval*)
 			perturbFactor=Sign[e];
 			perturbed=perturbBrentLocation[#,sameTestAbscissas,
 				perturbFactor,accuracyGoal,precisionGoal]&/@
 					candidateAbscissa;
-			(*use only the first point that matches these criteria*)
+(*use only the first point that matches these criteria*)
 			newAbscissa=Select[Drop[perturbed,-2],
 				Less[Abs[#-u],maxAcceptableDisplacement]&,
 				1];
@@ -450,30 +451,30 @@ frameMinimumNarrowBrent[function_,variable_,
 					LessEqual[a,#,b]
 					]&
 				];
-			(*if we get a viable point*)
+(*if we get a viable point*)
 			If[newAbscissa=!={},
-				(*return the first element*)
+(*return the first element*)
 				newAbscissa=First@newAbscissa;
 				candidateAbscissa=
 					Extract[candidateAbscissa,
 						Position[perturbed,
 							newAbscissa][[1]]];
-				(*the new maximum displacement is half this one*)
+(*the new maximum displacement is half this one*)
 				newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
 					newAbscissa-candidateAbscissa}],
-				(*otherwise, guess another point from golden section*)
-				(*the result is a number, not a list*)
+(*otherwise, guess another point from golden section*)
+(*the result is a number, not a list*)
 				newAbscissa=candidateAbscissa=candidateAbscissa[[-2]];
 				newMaxDisplacement=$MaxMachineNumber;
 				];
-			(*perform the single function evaluation*)
+(*perform the single function evaluation*)
 			newOrdinate=function/.monitorRules[{variable},
 				{variable->newAbscissa},EvaluationMonitor,opts];
-			(*some arguments for a new iteration*)
+(*some arguments for a new iteration*)
 			vwxSequence=brentOrdinateAbscissaVWXSequence[
 				{fa,a,fb,b,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
 				];
-			(*return all arguments in a list needed for a new iteration*)
+(*return all arguments in a list needed for a new iteration*)
 			If[newOrdinate<=fx,
 				If[newAbscissa>=x,
 					{fx,x,fb,b,newOrdinate,newAbscissa,vwxSequence,
