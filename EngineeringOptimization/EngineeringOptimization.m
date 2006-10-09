@@ -598,7 +598,7 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 		{uMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
-		{methodOptions}]&&FreeQ[function,variableStart[[1]]]:=
+		{methodOptions}]&&FreeQ[function,variableStartRange[[1]]]:=
 		(Message[FindMinimum::nfv,function,variableStartRange[[1]]];
 		{function,Rule[variableStartRange[[1]],Mean@Rest@variableStartRange]});
 
