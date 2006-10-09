@@ -547,6 +547,8 @@ unprotectedSymbols[variables:multipleExpressionPatternObject]:=
 			][[2,1]]
 		];
 
+defineBadArgs@unprotectedSymbols;
+
 reFindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 	maxDisplacement:multipleNonComplexNumberPatternObject,
 	{methodOptions___?OptionQ},{opts___?OptionQ}]:=
@@ -725,8 +727,6 @@ easier to write and probably faster to calculate*)
 (*the p (displacementVector) and y (gradientChange) comments in the margin
  indicate the names of the variables as they appear in Garret N. Vanderplaats'
  Numerical Optimization Techniques for Engineering Design*)
-
-defineBadArgs@unprotectedSymbols;
 
 vMMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
