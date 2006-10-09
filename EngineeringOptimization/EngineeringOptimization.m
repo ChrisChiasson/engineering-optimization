@@ -555,7 +555,7 @@ reFindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 		variable=variableStartRange[[1]],
 		variableReverse},
 		If[reverseNeeded,
-			Block[Evaluate[unprotectedSymbols@variable],
+			Block[Evaluate[unprotectedSymbols@List@variable],
 				Evaluate[variable]=-variableReverse;
 				Block[{FindMinimum},
 					FindMinimum[function,
