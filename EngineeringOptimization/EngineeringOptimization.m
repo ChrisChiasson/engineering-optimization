@@ -562,7 +562,7 @@ reFindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 				Block[{FindMinimum},
 					FindMinimum[function,
 						{variableReverse,
-							Sequence@@-variableStartRange[[{2,3}]]
+							Sequence@@-variableStartRange[[{3,2}]]
 							},
 						opts,
 						Method->
