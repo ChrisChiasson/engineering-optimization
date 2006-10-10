@@ -643,8 +643,7 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 			True,
 			growthFactor=N["GrowthFactor"/.{options},workingPrecision];
 			shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
-			boundForward=maxDisplacementList[[1]]+
-				Max[boundOrigin,solutionIntermediate];
+			boundForward=maxDisplacementList[[1]]+solutionIntermediate;
 			functionOrigin=function/.monitorRules[{variable},{variable->
 				boundOrigin},EvaluationMonitor,options];
 (*first frame*)
