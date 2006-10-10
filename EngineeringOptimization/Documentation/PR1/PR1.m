@@ -85,8 +85,6 @@ xpr[1]=N[Maximize[{beamLoad[X],0<X<=H/.rep[1]/.rep[2]}/.dropSIUnitsRep,{X}],10];
 (*These are the x locations, shown to 10 digits of precision,
 where the load is 20000 Newtons.*)
 
-
-
 eqn[5]=N[
 	Refine@
 		Reduce[
@@ -121,18 +119,11 @@ the range is 0 to H (0 to 0.25), then MaxDisplacement must be set to
 four significant figures. If one increases the MaxNarrowingIterations option
 to 20 from its default 12, then six digits are correct.*)
 
-
-
-xpr[2]=FindMinimum[
+(*xpr[2]=FindMinimum[
 	Evaluate[-beamLoad[X]/.dropSIUnitsRep],
-	{X,0.1},
-	Method->{"Unimodal",
-		"MaxDisplacement"->{25/100-.1,0-.1},
-		"MaxNarrowingIterations"->20
-		},
-	StepMonitor:>Sow[{"step",X}],
-	EvaluationMonitor:>Sow[{"step",X}]
-	];
+	{X,0,0.01,0,25/100},
+	Method->"Unimodal"
+	];*)
 
 (*I use the results of finding the maximum load to split my
 search domains for the 20000 N intersections.
@@ -142,7 +133,7 @@ significant digits shown are correct.*)
 (*Minimize the absolute value of the difference between the function and its
 desired value. Restrict the range to the first part of the domain.*)
 
-xpr[3]=FindMinimum[
+(*xpr[3]=FindMinimum[
 	Evaluate[Abs[beamLoad[X]-loadLine/.dropSIUnitsRep]],
 	{X,0},
 	Method->{"Unimodal",
@@ -151,11 +142,11 @@ xpr[3]=FindMinimum[
 		},
 	StepMonitor:>Sow[{"step",X}],
 	EvaluationMonitor:>Sow[{"step",X}]
-	];
+	];*)
 
 (*This time, restrict the range to the last part of the domain.*)
 
-xpr[4]=FindMinimum[
+(*xpr[4]=FindMinimum[
 	Evaluate[Abs[beamLoad[X]-loadLine/.dropSIUnitsRep]],
 	{X,xpr[2][[2,1,2]]},
 	Method->{"Unimodal",
@@ -164,7 +155,7 @@ xpr[4]=FindMinimum[
 		},
 	StepMonitor:>Sow[{"step",X}],
 	EvaluationMonitor:>Sow[{"step",X}]
-	];
+	];*)
 
 End[];
 
