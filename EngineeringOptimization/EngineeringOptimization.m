@@ -442,8 +442,8 @@ defineBadArgs@perturbBrentLocation;
 frameMinimumNarrowBrent[function_,variable_,
 	fa:nonComplexNumberPatternObject(*ordinate at a*),
 	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
-	fb:nonComplexNumberPatternObject(*ordinate at b*),
-	b:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
+	fc:nonComplexNumberPatternObject(*ordinate at c*),
+	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
 	fu:nonComplexNumberPatternObject,(*ordinate at last evaluation*)
 	u:nonComplexNumberPatternObject,(*fu's abscissa*)
 	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
@@ -457,7 +457,7 @@ frameMinimumNarrowBrent[function_,variable_,
 	shrinkFactor:nonComplexNumberPatternObject(*golden ratio 0.38 etc*),
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
-	opts__?OptionQ(*options*)]/;OrderedQ[{a,b}]:=
+	opts__?OptionQ(*options*)]/;OrderedQ[{a,c}]:=
 	Module[
 		{candidateAbscissa(*candidate newAbscissa(s)*),
 			e(*golden step signed large interval length*),
@@ -468,21 +468,21 @@ frameMinimumNarrowBrent[function_,variable_,
 			newOrdinate(*function value at newAbscissa*),
 			perturbed=0(*perturbation distance(s)*),
 			perturbFactor(*factor of perturbation tolerance locations*),
-			sameTestAbscissas=unsortedUnion@{x,u,a,b,v,w}(*points to perturb
+			sameTestAbscissas=unsortedUnion@{x,u,a,c,v,w}(*points to perturb
 			away from*),
-			xm=(a+b)/2(*[a,b] interval midpoint*),
+			xm=(a+c)/2(*[a,c] interval midpoint*),
 			xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal(*tolerance for
-			comparison with a and b*)
+			comparison with a and c*)
 			},
-(*if x is within tolerance to a and b, then no better guess is likely*)
-		If[nSameQ[#,x,xtol]&/@And[a,b],
+(*if x is within tolerance to a and c, then no better guess is likely*)
+		If[nSameQ[#,x,xtol]&/@And[a,c],
 (*return all arguments in a list needed for the stop test*)
-			{fa,a,fb,b,fu,u,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
+			{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
 (*otherwise, continue with the algorithm*)
 (*Guess the location(s) of the minimum from v, w, and x using the
 critical point(s) of an interpolating polynomial, the golden
 section and xm as a fall back.*)
-			e=If[x>=xm,a-x,b-x];
+			e=If[x>=xm,a-x,c-x];
 			candidateAbscissa=Flatten@{
 				Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
 				x+e*shrinkFactor,xm};
@@ -497,7 +497,7 @@ section and xm as a fall back.*)
 				1];
 			newAbscissa=Select[Flatten@{newAbscissa,Take[perturbed,-2]},
 				And[Element[#,Reals],
-					LessEqual[a,#,b]
+					LessEqual[a,#,c]
 					]&
 				];
 (*if we get a viable point*)
@@ -521,12 +521,12 @@ section and xm as a fall back.*)
 				{variable->newAbscissa},EvaluationMonitor,opts];
 (*some arguments for a new iteration*)
 			vwxSequence=brentOrdinateAbscissaVWXSequence[
-				{fa,a,fb,b,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
+				{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
 				];
 (*return all arguments in a list needed for a new iteration*)
 			If[newOrdinate<=fx,
 				If[newAbscissa>=x,
-					{fx,x,fb,b,newOrdinate,newAbscissa,vwxSequence,
+					{fx,x,fc,c,newOrdinate,newAbscissa,vwxSequence,
 						newMaxDisplacement},
 					{fa,a,fx,x,newOrdinate,newAbscissa,vwxSequence,
 						newMaxDisplacement}
@@ -534,7 +534,7 @@ section and xm as a fall back.*)
 				If[newAbscissa>=x,
 					{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
 						vwxSequence,newMaxDisplacement},
-					{newOrdinate,newAbscissa,fb,b,newOrdinate,newAbscissa,
+					{newOrdinate,newAbscissa,fc,c,newOrdinate,newAbscissa,
 						vwxSequence,newMaxDisplacement}
 					]			
 				]
