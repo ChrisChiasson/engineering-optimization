@@ -258,7 +258,7 @@ frameMinimum[function_,
 	growthFactor:nonComplexNumberPatternObject(*usually the golden ratio 1.68*),
 	limitLeft:nonComplexNumberPatternObject(*the minimum value of an abscissa*),
 	limitRight:nonComplexNumberPatternObject(*the maximum value of an abscissa*),
-	workingPrecision:nonComplexNumberPatternObject(*abscissa precision*),
+	workingPrecision_(*abscissa precision*),
 	opts___?OptionQ]:=
 	Module[
 		{newAbscissa(*newest abscissa*),
