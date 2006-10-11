@@ -603,6 +603,22 @@ unprotectedSymbols[variables:multipleExpressionPatternObject]:=
 
 defineBadArgs@unprotectedSymbols;
 
+definePrecisionAndAccuracy[workingPrecision_Symbol,
+	accuracyGoal_Symbol,
+	precisionGoal_Symbol,
+	opts__?OptionQ]:=
+	(workingPrecision=WorkingPrecision/.{opts};
+		If[workingPrecision===Automatic,workingPrecision=MachinePrecision];
+		Block[{MachinePrecision=$MachinePrecision},
+			accuracyGoal=AccuracyGoal/.{opts};
+			If[accuracyGoal===Automatic,accuracyGoal=workingPrecision/2];
+			precisionGoal=PrecisionGoal/.{opts};
+			If[precisionGoal===Automatic,precisionGoal=workingPrecision/2];
+			]
+	);
+
+defineBadArgs@definePrecisionAndAccuracy;
+
 Options@FindMinimum`Unimodal={
 	"GrowthFactor"->GoldenRatio,
 	"ShrinkFactor"->2-GoldenRatio,
@@ -619,20 +635,6 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 		{methodOptions}]&&FreeQ[function,variableStartRange[[1]]]:=
 		(Message[FindMinimum::nfv,function,variableStartRange[[1]]];
 		{function,variableStartRange[[1]]->Mean@variableStartRange[[{2,3}]]});
-
-definePrecisionAndAccuracy[workingPrecision_Symbol,
-	accuracyGoal_Symbol,
-	precisionGoal_Symbol,
-	opts__OptionQ]:=
-	(workingPrecision=WorkingPrecision/.{opts};
-		If[workingPrecision===Automatic,workingPrecision=MachinePrecision];
-		Block[{MachinePrecision=$MachinePrecision},
-			accuracyGoal=AccuracyGoal/.{opts};
-			If[accuracyGoal===Automatic,accuracyGoal=workingPrecision/2];
-			precisionGoal=PrecisionGoal/.{opts};
-			If[precisionGoal===Automatic,precisionGoal=workingPrecision/2];
-			]
-	);
 
 (*reference for this new version:
 	http://www.library.cornell.edu/nr/bookcpdf/c10-1.pdf*)
