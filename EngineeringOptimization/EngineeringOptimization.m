@@ -649,7 +649,7 @@ FindMinimum[function_,
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`Unimodal,{methodOptions}]&&
-				OrderedQ[Rest@variableStartRange]:=
+				OrderedQ[{startLeft,startRight}]:=
 	Module[
 		{a,
 			accuracyGoal,
