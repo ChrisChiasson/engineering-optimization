@@ -269,19 +269,16 @@ frameMinimum[function_,
 	Module[
 		{newAbscissa(*newest abscissa*),
 			newOrdinate(*newest ordinate*)},
-		If[c===limitLeft||c===limitRight,
-			{fa,a,fb,b,fc,c},
-			newAbscissa=N[
-				clipAbscissa[c+growthFactor*(c-b),
-					limitLeft,
-					limitRight
-					],
-				workingPrecision
-				];
-			newOrdinate=function/.monitorRules[{variable},
-				{variable->newAbscissa},EvaluationMonitor,opts];
-			{fb,b,fc,c,newOrdinate,newAbscissa}
-			]
+		newAbscissa=N[
+			clipAbscissa[c+growthFactor*(c-b),
+				limitLeft,
+				limitRight
+				],
+			workingPrecision
+			];
+		newOrdinate=function/.monitorRules[{variable},
+			{variable->newAbscissa},EvaluationMonitor,opts];
+		{fb,b,fc,c,newOrdinate,newAbscissa}
 		];
 
 defineBadArgs@frameMinimum;
@@ -643,7 +640,8 @@ reFindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 defineBadArgs@reFindMinimum;
 
 Options@FindMinimum`Unimodal={"MaxDisplacement"->10^6*{1,-1},"GrowthFactor"->
-	GoldenRatio,"ShrinkFactor"->2-GoldenRatio,"MaxNarrowingIterations"->100};
+	GoldenRatio,"ShrinkFactor"->2-GoldenRatio,"MaxNarrowingIterations"->100,
+	"Reverse"->False};
 
 FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 	opts1___?OptionQ,Method->uMethodString|
@@ -724,11 +722,12 @@ FindMinimum[function_,
 		fb=function/.monitorRules[{variable},{variable->b},
 			EvaluationMonitor,options];
 (*The line search is always performed in the downward direction. This is a
-departure from the method described in class, but it will save many evaluations.
+departure from the method described in class, but it can save many evaluations.
 I still think of a, b, and c as being right to left, but if the function is
 initially decreasing, this next line of code completely reverses that order.*)
 		If[fb>fa,{fa,a,fb,b}={fb,b,fa,a}];
-(*This next line of code allows the reverse direction to be searched.*)
+(*This code allows the reverse direction to be searched.*)
+		reverse="Reverse"/.{options};
 		If[reverse,{fa,a,fb,b}={fb,b,fa,a}];
 		growthFactor=N["GrowthFactor"/.{options},workingPrecision];
 		c=b+growthFactor*(b-a);
@@ -769,21 +768,26 @@ initially decreasing, this next line of code completely reverses that order.*)
 					#
 					]&
 				];
+(*It's inefficient to use Min[fa,fb] in a pure function because its result may
+be calculated for each of the three elements in the list. However, I don't feel
+like creating a variable for it.*)
 		anyLowerOrdinates=(#<Min[fa,fb]&)/@Or@@frame[[{1,3,5}]];
 		noValueFalse/@{frameBound,domainBound,wideningIterationBound};
 		frameMinimumBoundMessages[anyLowerOrdinates,
 			domainBound,wideningIterationBound,reverse];
+(*was the minimum framed? if not, attempt contengencies*)
 		If[Not@frameBound&&!reverse,
-			FindMinimum[function,
-				{variable,startLeft,startRight,limitLeft,limitRight
-					},
-				opts1,
-				Method->uMethodString|
-					{uMethodString,"Reverse"->True,methodOptions},
-				opts2
+			Sow[FindMinimum[function,
+					{variable,startLeft,startRight,limitLeft,limitRight
+						},
+					opts1,
+					Method->uMethodString|
+						{uMethodString,"Reverse"->True,methodOptions},
+					opts2
+					],
+				sewingTag
 				]
 			];
-		If[anyLowerOrdinates,Sow[selectMinimum[variable,frame],sewingTag]];
 (*if the minimum was framed*)
 		If[frameBound,		
 (*narrow the frame via Brent's method - interpolation & golden section*)
@@ -802,8 +806,8 @@ initially decreasing, this next line of code completely reverses that order.*)
 							options]&,
 						#]&,
 					{Sequence@@frame[[{1,2}]](*fa,a*),
-						Sequence@@frame[[{5,6}]](*fb,b (different b)*),
-						Sequence@@frame[[{5,6}]](*fu,uu*),
+						Sequence@@frame[[{5,6}]](*fc,c*),
+						Sequence@@frame[[{5,6}]](*fu,u*),
 						brentOrdinateAbscissaVWXSequence[
 							Sequence@@@frame](*fv,v,fw,w,fx,x*),
 						$MaxMachineNumber(*max move distance*)
@@ -819,52 +823,14 @@ initially decreasing, this next line of code completely reverses that order.*)
 						maxWideningIterations,
 						wideningIterationBound
 						]&,
-					#
+						#
+						]
 					]
-					];
+			]
 (*choose the minimum point in the frame*)
-			Sow[selectMinimum[variable,frame],sewingTag]]]
-
-		Which[(*if maxdisplacement is negative, turn around*),
-			Sow[reFindMinimum[function,variableStartRange,maxDisplacementList,
-				{methodOptions},{opts1,opts2}],sewingTag],
-(*the combination of the first condition and these two proceeding conditions
- means that maxDisplacementList[[1]] would need to be == 0 for execution*)
-			NonPositive[maxDisplacementList[[1]]]&&recursable,
-			Sow[reFindMinimum[function,variableStartRange,
-				Drop[maxDisplacementList,1],{methodOptions},{opts1,opts2}],
-				sewingTag],
-			NonPositive[maxDisplacementList[[1]]]&&Not@recursable,
-			Sow[selectMinimum[variable,{functionOrigin,boundOrigin}],
-				sewingTag],
-			True,
-			frame=NestWhile[Apply[frameMinimum[function,variable,##,
-				growthFactor,boundOrigin,boundForward,options]&,#]&,frame,
-				Apply[Not@frameMinimumStopTest[##,boundForward,frameBound,
-					domainBound]&,#]&];
-			lowerList=(#<functionOrigin&)/@frame[[{1,3,5}]];
-(*was the minimum framed? if not, attempt contengencies*)
-			Which[Not@frameBound&&Not[Or@@lowerList]&&recursable,
-				frameMinimumBoundMessages[domainBound,fdbh];
-				Sow[reFindMinimum[function,variableStartRange,
-					Drop[maxDisplacementList,1],{methodOptions},{opts1,opts2}]
-					,sewingTag],
-				Not@frameBound&&Not[Or@@lowerList]&&Not@recursable,
-				frameMinimumBoundMessages[domainBound,sdbh];
-				Sow[selectMinimum[variable,{functionOrigin,boundOrigin}],
-					sewingTag],
-				Not@frameBound&&Or@@lowerList,
-				frameMinimumBoundMessages[domainBound,fdbl];
-				Sow[selectMinimum[variable,frame],sewingTag],
-				frameBound,
-(*the framebound&&Not@@lowerlist is a necessary but insufficient condition for
- the unimodal minimum to be in the other direction*)
-				If[Not[Or@@lowerList]&&recursable,
-					Sow[reFindMinimum[function,variableStartRange,
-						Drop[maxDisplacementList,1],
-						{methodOptions},{opts1,opts2}],
-					sewingTag]];
-		,sewingTag][[2,1]]];
+		Sow[selectMinimum[variable,frame],sewingTag],
+		sewingTag][[2,1]]
+	];
 
 lineSearchRules[solutionRules:multipleNonComplexNumberRulePatternObject,
 	searchDirection:multipleNonComplexNumberPatternObject,displacement_Symbol]:=
