@@ -1,27 +1,27 @@
 BeginPackage["EngineeringOptimization`",{"Utilities`FilterOptions`"}]
 
-FindMinimum::fdbh="The first unimodal line search hit its MaxDisplacement "<>
+FindMinimum::fdbh="The first unimodal line search hit its max displacement "<>
 "bound and did not find any points with a lower function value than the "<>
 "origin of the line search. The algorithm will move on to the second search.";
 FindMinimum::fibh="The first unimodal line search hit its "<>
 "MaxWideningIterations bound and did not find any points with a lower "<>
 "function value than the origin of the line search. The algorithm will move "<>
 "on to the second search.";
-FindMinimum::fdbl="The first unimodal line search hit its MaxDisplacement "<>
+FindMinimum::fdbl="The first unimodal line search hit its max displacement "<>
 "bound, but did find at least one point with a lower function value than the "<>
 "origin of the line search. The point with the lowest value will be returned.";
 FindMinimum::fibl="The first unimodal line search hit its "<>
 "MaxWideningIterations bound, but did find at least one point with a lower "<>
 "function value than the origin of the line search. The point with the "<>
 "lowest value will be returned.";
-FindMinimum::sdbh="The second unimodal line search hit its MaxDisplacement "<>
+FindMinimum::sdbh="The second unimodal line search hit its max displacement "<>
 "bound and did not find any points with a lower function value than the "<>
 "origin of the line search. The algorithm will return the origin.";
 FindMinimum::sibh="The second unimodal line search hit its "<>
 "MaxWideningIterations bound and did not find any points with a lower "<>
 "function value than the origin of the line search. The algorithm will "<>
 "return the origin.";
-FindMinimum::sdbl="The second unimodal line search hit its MaxDisplacement "<>
+FindMinimum::sdbl="The second unimodal line search hit its max displacement "<>
 "bound, but did find at least one point with a lower function value than the "<>
 "origin of the line search. The point with the lowest value will be returned.";
 FindMinimum::sibl="The second unimodal line search hit its "<>
@@ -301,7 +301,7 @@ frameMinimumStopTest[fa:nonComplexNumberPatternObject,
 defineBadArgs@frameMinimumStopTest;
 
 frameMinimumBoundMessages[
-	anyLower:True|False
+	anyLower:True|False,
 	domainBound:True|False,
 	iterationBound:True|False,
 	reverse:True|False]:=
@@ -603,9 +603,13 @@ unprotectedSymbols[variables:multipleExpressionPatternObject]:=
 
 defineBadArgs@unprotectedSymbols;
 
-Options@FindMinimum`Unimodal={"MaxDisplacement"->10^6*{1,-1},"GrowthFactor"->
-	GoldenRatio,"ShrinkFactor"->2-GoldenRatio,"MaxNarrowingIterations"->100,
-	"Reverse"->False};
+Options@FindMinimum`Unimodal={
+	"GrowthFactor"->GoldenRatio,
+	"ShrinkFactor"->2-GoldenRatio,
+	"MaxWideningIterations"->Automatic,
+	"MaxNarrowingIterations"->Automatic,
+	"Reverse"->False
+	};
 
 FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 	opts1___?OptionQ,Method->uMethodString|
@@ -663,6 +667,7 @@ FindMinimum[function_,
 			wideningIterationBound(*boolean variable indicating that
 				wideningIteration===maxWideningIterations*),
 			lowerList,
+			maxIterations(*max total iterations for FindMinimum*),
 			maxNarrowingIterations(*max iterations for Brent's method*),
 			maxWideningIterations(*max iterations in bracketing search*),
 			options,
@@ -699,7 +704,10 @@ initially decreasing, this next line of code completely reverses that order.*)
 (*first frame*)
 		frame={fa,a,fb,b,fc,c};
 		iteration=1;
+		maxIterations=MaxIterations/.{options};
 		maxWideningIterations="MaxWideningIterations"/.{options};
+		If[maxWideningIterations===Automatic,
+			maxWideningIterations=maxIterations/2];
 (*attempt to frame the minimum*)
 		frame=
 			NestWhile[
@@ -757,6 +765,8 @@ However, I don't feel like creating a variable for it.*)
 			shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
 			iteration=0;
 			maxNarrowingIterations="MaxNarrowingIterations"/.{options};
+			If[maxNarrowingIterations===Automatic,
+				maxNarrowingIterations=maxIterations/2];
 			frame=Sort[Partition[frame,2],OrderedQ[Reverse/@{#1,#2}]&];
 			frame=Most@
 				NestWhile[
