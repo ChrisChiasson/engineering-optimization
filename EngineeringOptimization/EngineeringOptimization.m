@@ -310,26 +310,37 @@ frameMinimumStopTest[fa:nonComplexNumberPatternObject,
 defineBadArgs@frameMinimumStopTest;
 
 frameMinimumBoundMessages[
+	anyLower:True|False
 	domainBound:True|False,
-	dbtag_Symbol,
 	iterationBound:True|False,
-	ibtag_Symbol]:=
-	Block[
-		{Message,MessageName},
-		{If[domainBound,
-			Message@MessageName[FindMinimum,SymbolName@dbtag]
-			],
-			If[iterationBound,
-				Message@MessageName[FindMinimum,SymbolName@ibtag]
+	reverse:True|False]:=
+	If[!reverse,
+		If[domainBound,
+			If[anyLower,
+				Message[FindMinimum::fdbl],
+				Message[FindMinimum::fdbh]
 				]
-			}
+			];
+		If[iterationBound,
+			If[anyLower,
+				Message[FindMinimum::fibl],
+				Message[FindMinimum::fibh]
+				]
+			],	
+		If[domainBound,
+			If[anyLower,
+				Message[FindMinimum::sdbl],
+				Message[FindMinimum::sdbh]
+				]
+			];
+		If[iterationBound,
+			If[anyLower,
+				Message[FindMinimum::sibl],
+				Message[FindMinimum::sibh]
+				]
+			]
 		];
-		
-frameMinimumBoundMessages[domainBound_Symbol,dbtag_Symbol]:=
-	Block[{Message,MessageName},
-		If[domainBound,Message@MessageName[FindMinimum,SymbolName@dbtag]]
-		];
-	
+
 defineBadArgs@frameMinimumBoundMessages;
 
 noValueFalse[symbol:unTrueFalseSymbol]:=If[!ValueQ@symbol,symbol=False];
@@ -676,6 +687,8 @@ FindMinimum[function_,
 	Module[
 		{a,
 			accuracyGoal,
+			anyLowerOrdinates(*boolean value indicating wether any function
+			evaluations	were lower than the two origin points*),
 			b,
 			c,
 			case,
@@ -686,16 +699,20 @@ FindMinimum[function_,
 			frameBound,
 			frame,
 			growthFactor,
+			wideningIterationBound(*boolean variable indicating that
+				wideningIteration===maxWideningIterations*),
 			lowerList,
+			maxNarrowingIterations(*max iterations for Brent's method*),
 			maxWideningIterations(*max iterations in bracketing search*),
 			options,
 			precisionGoal,
 			reverse,
 			sewingTag,
 			shrinkFactor,
-			wideningIterations(*number of iterations in the bracketing search*),
+			wideningIteration(*iteration number of the bracketing search*),
 			workingPrecision
-			},First@Sort@Reap[
+			},
+		First@Sort@Reap[
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`Unimodal,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,
@@ -723,7 +740,7 @@ initially decreasing, this next line of code completely reverses that order.*)
 		maxWideningIterations="MaxWideningIterations"/.{options};
 (*attempt to frame the minimum*)
 		frame=
-			FixedPoint[
+			NestWhile[
 				Apply[
 					frameMinimum[
 						function,
@@ -747,22 +764,67 @@ initially decreasing, this next line of code completely reverses that order.*)
 						domainBound,
 						++wideningIteration,
 						maxWideningIterations,
-						iterationBound
+						wideningIterationBound
 						]&,
 					#
 					]&
 				];
-		If[Not@frameBound,
-			If[Not@reverse,
-				Sow[(*do search in opposite direction*),sewingTag]
-				If[Not[Or@@lowerList],
-					
-					,
-				
-					]
+		anyLowerOrdinates=(#<Min[fa,fb]&)/@Or@@frame[[{1,3,5}]];
+		noValueFalse/@{frameBound,domainBound,wideningIterationBound};
+		frameMinimumBoundMessages[anyLowerOrdinates,
+			domainBound,wideningIterationBound,reverse];
+		If[Not@frameBound&&!reverse,
+			FindMinimum[function,
+				{variable,startLeft,startRight,limitLeft,limitRight
+					},
+				opts1,
+				Method->uMethodString|
+					{uMethodString,"Reverse"->True,methodOptions},
+				opts2
 				]
-			]
-		shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
+			];
+		If[anyLowerOrdinates,Sow[selectMinimum[variable,frame],sewingTag]];
+(*if the minimum was framed*)
+		If[frameBound,		
+(*narrow the frame via Brent's method - interpolation & golden section*)
+			shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
+			maxNarrowingIterations="MaxNarrowingIterations"/.{options};
+			frame=Most@
+				NestWhile[
+					Apply[
+						frameMinimumNarrowBrent[
+							function,
+							variable,
+							##,
+							shrinkFactor,
+							accuracyGoal,
+							precisionGoal,
+							options]&,
+						#]&,
+					{Sequence@@frame[[{1,2}]](*fa,a*),
+						Sequence@@frame[[{5,6}]](*fb,b (different b)*),
+						Sequence@@frame[[{5,6}]](*fu,uu*),
+						brentOrdinateAbscissaVWXSequence[
+							Sequence@@@frame](*fv,v,fw,w,fx,x*),
+						$MaxMachineNumber(*max move distance*)
+						},
+					Apply[
+					Not@frameMinimumStopTest[
+						##,
+						limitLeft,
+						limitRight,
+						frameBound,
+						domainBound,
+						++wideningIteration,
+						maxWideningIterations,
+						wideningIterationBound
+						]&,
+					#
+					]
+					];
+(*choose the minimum point in the frame*)
+			Sow[selectMinimum[variable,frame],sewingTag]]]
+
 		Which[(*if maxdisplacement is negative, turn around*),
 			Sow[reFindMinimum[function,variableStartRange,maxDisplacementList,
 				{methodOptions},{opts1,opts2}],sewingTag],
@@ -781,7 +843,6 @@ initially decreasing, this next line of code completely reverses that order.*)
 				Apply[Not@frameMinimumStopTest[##,boundForward,frameBound,
 					domainBound]&,#]&];
 			lowerList=(#<functionOrigin&)/@frame[[{1,3,5}]];
-			noValueFalse/@{frameBound,domainBound};
 (*was the minimum framed? if not, attempt contengencies*)
 			Which[Not@frameBound&&Not[Or@@lowerList]&&recursable,
 				frameMinimumBoundMessages[domainBound,fdbh];
@@ -803,30 +864,6 @@ initially decreasing, this next line of code completely reverses that order.*)
 						Drop[maxDisplacementList,1],
 						{methodOptions},{opts1,opts2}],
 					sewingTag]];
-(*if the minimum was framed, narrow the frame via Brent's method*)
-				frame=Most@
-					FixedPoint[
-						Apply[
-							frameMinimumNarrowBrent[
-								function,
-								variable,
-								##,
-								shrinkFactor,
-								accuracyGoal,
-								precisionGoal,
-								options]&,
-							#]&,
-						{Sequence@@frame[[{1,2}]](*fa,a*),
-							Sequence@@frame[[{5,6}]](*fb,b*),
-							Sequence@@frame[[{5,6}]](*fu,uu*),
-							brentOrdinateAbscissaVWXSequence[
-								Sequence@@@frame](*fv,v,fw,w,fx,x*),
-							$MaxMachineNumber(*max move distance*)
-							},
-						"MaxNarrowingIterations"/.{options}
-						];
-(*choose the minimum point in the frame*)
-				Sow[selectMinimum[variable,frame],sewingTag]]]
 		,sewingTag][[2,1]]];
 
 lineSearchRules[solutionRules:multipleNonComplexNumberRulePatternObject,
