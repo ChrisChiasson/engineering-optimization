@@ -802,7 +802,7 @@ However, I don't feel like creating a variable for it.*)
 						#
 						]&
 					]
-			]
+			];
 (*choose the minimum point in the frame*)
 		Sow[selectMinimum[variable,Flatten@{frame,fa,a,fb,b,fc,c}],sewingTag],
 		sewingTag][[2,1]]
