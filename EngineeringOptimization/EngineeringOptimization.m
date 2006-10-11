@@ -28,7 +28,7 @@ FindMinimum::sibl="The second unimodal line search hit its "<>
 "MaxWideningIterations bound, but did find at least one point with a lower "<>
 "function value than the origin of the line search. The point with the "<>
 "lowest value will be returned.";
-FindMinimum::nib="A minimum was bracketed, but FindMinimum was unable to"<>
+FindMinimum::nib="A minimum was bracketed, but FindMinimum was unable to "<>
 "converge to the requested precision or accuracy within `1` narrowing "<>
 "iterations. Try increasing \"MaxNarrowingIterations\".";
 FindMinimum::nfv="`1` is not a function of the given variable `2`.";
@@ -580,6 +580,7 @@ frameMinimumNarrowBrentContinueQ[
 	opts___?OptionQ(*options*)]:=
 	Module[{xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal(*tolerance for
 			comparison with a and c*)},
+		Print[{a,c,x}];
 		And[
 (*if x is within tolerance to a and c, then no better guess is likely*)
 			If[nSameQ[#,x,xtol]&/@And[a,c],False,True],
@@ -750,13 +751,14 @@ However, I don't feel like creating a variable for it.*)
 			domainBound,wideningIterationBound,reverse];
 (*was the minimum framed? if not, attempt reverse search*)
 		If[Not@frameBound&&!reverse,
-			Sow[FindMinimum[function,
-					{variable,startLeft,startRight,limitLeft,limitRight
-						},
-					opts1,
-					Method->uMethodString|
-						{uMethodString,"Reverse"->True,methodOptions},
-					opts2
+			Sow[Block[{FindMinimum},
+					FindMinimum[function,
+						{variable,startLeft,startRight,limitLeft,limitRight
+							},
+						opts1,
+						Method->{uMethodString,"Reverse"->True,methodOptions},
+						opts2
+						]
 					],
 				sewingTag
 				]
