@@ -82,7 +82,7 @@ guessPseudoPatternObject={_,_?NumericQ};
 
 multipleGuessPseudoPatternObject={guessPseudoPatternObject..};
 
-guessRangePseudoPatternObject={_,_?NumericQ,_?NumericQ};
+guessRangePseudoPatternObject={_,__?NumericQ};
 
 multipleGuessRangePseudoPatternObject={guessRangePseudoPatternObject..};
 
@@ -243,51 +243,92 @@ optionsListValidQ[optionsCheckSymbol_Symbol,
 
 defineBadArgs@optionsListValidQ;
 
-frameMinimum[function_,variable_,
-	functionStart:nonComplexNumberPatternObject,
-	solutionStart:nonComplexNumberPatternObject,
-	functionIntermediate:nonComplexNumberPatternObject,
-	solutionIntermediate:nonComplexNumberPatternObject,
-	functionEnd:nonComplexNumberPatternObject,
-	solutionEnd:nonComplexNumberPatternObject,
-	growthFactor:nonComplexNumberPatternObject,
-	solutionStartBound:nonComplexNumberPatternObject,
-	solutionEndBound:nonComplexNumberPatternObject,opts__?OptionQ]:=
-	Module[{displacements,solutionTemp1=(1+growthFactor)*solutionEnd-
-		growthFactor*solutionStart,solutionTemp2},
-		displacements=Abs[{solutionTemp1,solutionEndBound}-
-			solutionStartBound];
-		solutionTemp2=First@Pick[{solutionTemp1,solutionEndBound},
-			displacements,Min@displacements];
-		{functionIntermediate,solutionIntermediate,functionEnd,solutionEnd,
-			function/.monitorRules[{variable},{variable->
-				solutionTemp2},EvaluationMonitor,opts],solutionTemp2}];
+clipAbscissa[abscissa:nonComplexNumberPatternObject,
+	limitLeft:nonComplexNumberPatternObject,
+	limitRight:nonComplexNumberPatternObject]:=
+	Piecewise[
+		{{limitLeft,abscissa<limitLeft},{limitRight,abscissa>limitRight}},
+		abscissa];
+
+(*takes the frame a,b,c, moving and expanding it until a minimum is located*)
+(*assumes a unimodal function*)
+
+frameMinimum[function_,
+	variable_,
+	fa:nonComplexNumberPatternObject(*leftmost ordinate*),
+	a:nonComplexNumberPatternObject(*leftmost abscissa*),
+	fb:nonComplexNumberPatternObject(*middle ordinate*),
+	b:nonComplexNumberPatternObject(*middle abscissa*),
+	fc:nonComplexNumberPatternObject(*rightmost ordinate*),
+	c:nonComplexNumberPatternObject(*rightmost abscissa*),
+	growthFactor:nonComplexNumberPatternObject(*usually the golden ratio 1.68*),
+	limitLeft:nonComplexNumberPatternObject(*the minimum value of an abscissa*),
+	limitRight:nonComplexNumberPatternObject(*the maximum value of an abscissa*),
+	workingPrecision:nonComplexNumberPatternObject(*abscissa precision*),
+	opts___?OptionQ]:=
+	Module[
+		{newAbscissa(*newest abscissa*),
+			newOrdinate(*newest ordinate*)},
+		If[c===limitLeft||c===limitRight,
+			{fa,a,fb,b,fc,c},
+			newAbscissa=N[
+				clipAbscissa[c+growthFactor*(c-b),
+					limitLeft,
+					limitRight
+					],
+				workingPrecision
+				];
+			newOrdinate=function/.monitorRules[{variable},
+				{variable->newAbscissa},EvaluationMonitor,opts];
+			{fb,b,fc,c,newOrdinate,newAbscissa}
+			]
+		];
 
 defineBadArgs@frameMinimum;
 
 (*frameMinimumStopTest must have Or Applied to List rather than wrapping the
 arguments directly in Or because all three Stop conditions must be assigned*)
 
-frameMinimumStopTest[functionStart:nonComplexNumberPatternObject,
-	solutionStart:nonComplexNumberPatternObject,
-	functionIntermediate:nonComplexNumberPatternObject,
-	solutionIntermediate:nonComplexNumberPatternObject,
-	functionEnd:nonComplexNumberPatternObject,
-	solutionEnd:nonComplexNumberPatternObject,
-	solutionEndBound:nonComplexNumberPatternObject,
-	frameBound_Symbol,
-	domainBound_Symbol]:=
+frameMinimumStopTest[fa:nonComplexNumberPatternObject,
+	a:nonComplexNumberPatternObject,
+	fb:nonComplexNumberPatternObject,
+	b:nonComplexNumberPatternObject,
+	fc:nonComplexNumberPatternObject,
+	c:nonComplexNumberPatternObject,
+	limitLeft:nonComplexNumberPatternObject,
+	limitRight:nonComplexNumberPatternObject,
+	frameBound:unTrueFalseSymbol,
+	domainBound:unTrueFalseSymbol,
+	iteration_Integer,
+	maxIterations_Integer,
+	iterationBound:unTrueFalseSymbol]:=
 	(*all of these conditions need to be evaluated, thus the apply is needed*)
-	If[Or@@{If[functionEnd>functionIntermediate&&solutionStart!=
-		solutionIntermediate,frameBound=True,False],
-		If[solutionEnd===solutionEndBound,domainBound=True,False]},True,False];
+	Or@@{If[fc>fb,frameBound=True,False],
+			If[c===limitLeft||c===limitRight,domainBound=True,False],
+			If[iteration===maxIterations,iterationBound=True,False]};
 
 defineBadArgs@frameMinimumStopTest;
 
+frameMinimumBoundMessages[
+	domainBound:True|False,
+	dbtag_Symbol,
+	iterationBound:True|False,
+	ibtag_Symbol]:=
+	Block[
+		{Message,MessageName},
+		{If[domainBound,
+			Message@MessageName[FindMinimum,SymbolName@dbtag]
+			],
+			If[iterationBound,
+				Message@MessageName[FindMinimum,SymbolName@ibtag]
+				]
+			}
+		];
+		
 frameMinimumBoundMessages[domainBound_Symbol,dbtag_Symbol]:=
 	Block[{Message,MessageName},
 		If[domainBound,Message@MessageName[FindMinimum,SymbolName@dbtag]]
-		];	
+		];
 	
 defineBadArgs@frameMinimumBoundMessages;
 
@@ -444,7 +485,7 @@ section and xm as a fall back.*)
 					candidateAbscissa;
 (*use only the first point that matches these criteria*)
 			newAbscissa=Select[Drop[perturbed,-2],
-				Less[Abs[#-u],maxAcceptableDisplacement]&,
+				Less[Abs[#-x],maxAcceptableDisplacement]&,
 				1];
 			newAbscissa=Select[Flatten@{newAbscissa,Take[perturbed,-2]},
 				And[Element[#,Reals],
@@ -600,35 +641,129 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
 		{methodOptions}]&&FreeQ[function,variableStartRange[[1]]]:=
 		(Message[FindMinimum::nfv,function,variableStartRange[[1]]];
-		{function,Rule[variableStartRange[[1]],Mean@Rest@variableStartRange]});
+		{function,variableStartRange[[1]]->Mean@variableStartRange[[{2,3}]]});
 
-FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
-	opts1___?OptionQ,Method->uMethodString|
-		{uMethodString,methodOptions___?OptionQ},
-	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
-		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
-		{methodOptions}]&&OrderedQ[Rest@variableStartRange]:=
-	Module[{accuracyGoal,boundForward,boundOrigin,
-		case,criticalDomainLocations,domainBound,frameBound,frame,
-		functionOrigin,growthFactor,lowerList,
-		maxDisplacementList,options,precisionGoal,recursable,sewingTag,
-		shrinkFactor,solutionIntermediate,variable=variableStartRange[[1]],
-		workingPrecision},First@Sort@Reap[
+definePrecisionAndAccuracy[workingPrecision_Symbol,
+	accuracyGoal_Symbol,
+	precisionGoal_Symbol,
+	opts__OptionQ]:=
+	(workingPrecision=WorkingPrecision/.{opts};
+		If[workingPrecision===Automatic,workingPrecision=MachinePrecision];
+		Block[{MachinePrecision=$MachinePrecision},
+			accuracyGoal=AccuracyGoal/.{opts};
+			If[accuracyGoal===Automatic,accuracyGoal=workingPrecision/2];
+			precisionGoal=PrecisionGoal/.{opts};
+			If[precisionGoal===Automatic,precisionGoal=workingPrecision/2];
+			]
+	);
+
+(*reference for this new version:
+	http://www.library.cornell.edu/nr/bookcpdf/c10-1.pdf*)
+
+FindMinimum[function_,
+	{variable_,
+		startLeft:nonComplexNumberPatternObject,
+		startRight:nonComplexNumberPatternObject,
+		limitLeft:nonComplexNumberPatternObject:-$MaxMachineNumber,
+		limitRight:nonComplexNumberPatternObject:$MaxMachineNumber
+		},
+	opts1___?OptionQ,
+	Method->uMethodString|{uMethodString,methodOptions___?OptionQ},
+	opts2___?OptionQ]/;
+		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
+			optionsListValidQ[FindMinimum`Unimodal,{methodOptions}]&&
+				OrderedQ[Rest@variableStartRange]:=
+	Module[
+		{a,
+			accuracyGoal,
+			b,
+			c,
+			case,
+			domainBound,
+			fa,
+			fb,
+			fc,
+			frameBound,
+			frame,
+			growthFactor,
+			lowerList,
+			maxWideningIterations(*max iterations in bracketing search*),
+			options,
+			precisionGoal,
+			reverse,
+			sewingTag,
+			shrinkFactor,
+			wideningIterations(*number of iterations in the bracketing search*),
+			workingPrecision
+			},First@Sort@Reap[
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`Unimodal,FindMinimum}];
-		workingPrecision=WorkingPrecision/.{options};
-		accuracyGoal=AccuracyGoal/.{options};
-		If[accuracyGoal===Automatic,accuracyGoal=workingPrecision/2/.
-			MachinePrecision->$MachinePrecision];
-		precisionGoal=PrecisionGoal/.{options};
-		If[precisionGoal===Automatic,precisionGoal=workingPrecision/2/.
-			MachinePrecision->$MachinePrecision];
-		boundOrigin=N[variableStartRange[[2]],workingPrecision];
-		solutionIntermediate=N[variableStartRange[[3]],workingPrecision];
-		maxDisplacementList=Flatten@{N["MaxDisplacement"/.{options}
-			,workingPrecision]};
-		recursable=If[Length[maxDisplacementList]>=2,True,False];
-		Which[Negative[maxDisplacementList[[1]]],
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,
+			precisionGoal,options];
+		a=N[startLeft,workingPrecision];
+		fa=function/.monitorRules[{variable},{variable->a},
+			EvaluationMonitor,options];
+		b=N[startRight,workingPrecision];
+		fb=function/.monitorRules[{variable},{variable->b},
+			EvaluationMonitor,options];
+(*The line search is always performed in the downward direction. This is a
+departure from the method described in class, but it will save many evaluations.
+I still think of a, b, and c as being right to left, but if the function is
+initially decreasing, this next line of code completely reverses that order.*)
+		If[fb>fa,{fa,a,fb,b}={fb,b,fa,a}];
+(*This next line of code allows the reverse direction to be searched.*)
+		If[reverse,{fa,a,fb,b}={fb,b,fa,a}];
+		growthFactor=N["GrowthFactor"/.{options},workingPrecision];
+		c=b+growthFactor*(b-a);
+		fc=function/.monitorRules[{variable},{variable->c},
+			EvaluationMonitor,options];
+(*first frame*)
+		frame={fa,a,fb,b,fc,c};
+		wideningIteration=1;
+		maxWideningIterations="MaxWideningIterations"/.{options};
+(*attempt to frame the minimum*)
+		frame=
+			FixedPoint[
+				Apply[
+					frameMinimum[
+						function,
+						variable,
+						##,
+						growthFactor,
+						limitLeft,
+						limitRight,
+						workingPrecision,
+						options
+						]&,
+					#
+					]&,
+				frame,
+				Apply[
+					Not@frameMinimumStopTest[
+						##,
+						limitLeft,
+						limitRight,
+						frameBound,
+						domainBound,
+						++wideningIteration,
+						maxWideningIterations,
+						iterationBound
+						]&,
+					#
+					]&
+				];
+		If[Not@frameBound,
+			If[Not@reverse,
+				Sow[(*do search in opposite direction*),sewingTag]
+				If[Not[Or@@lowerList],
+					
+					,
+				
+					]
+				]
+			]
+		shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
+		Which[(*if maxdisplacement is negative, turn around*),
 			Sow[reFindMinimum[function,variableStartRange,maxDisplacementList,
 				{methodOptions},{opts1,opts2}],sewingTag],
 (*the combination of the first condition and these two proceeding conditions
@@ -641,17 +776,6 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 			Sow[selectMinimum[variable,{functionOrigin,boundOrigin}],
 				sewingTag],
 			True,
-			growthFactor=N["GrowthFactor"/.{options},workingPrecision];
-			shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
-			boundForward=maxDisplacementList[[1]]+solutionIntermediate;
-			functionOrigin=function/.monitorRules[{variable},{variable->
-				boundOrigin},EvaluationMonitor,options];
-(*first frame*)
-			frame={functionOrigin,boundOrigin,functionOrigin,boundOrigin,
-				function/.monitorRules[{variable},{variable->
-				solutionIntermediate},EvaluationMonitor,options],
-				solutionIntermediate};
-(*attempt to frame the minimum*)
 			frame=NestWhile[Apply[frameMinimum[function,variable,##,
 				growthFactor,boundOrigin,boundForward,options]&,#]&,frame,
 				Apply[Not@frameMinimumStopTest[##,boundForward,frameBound,
