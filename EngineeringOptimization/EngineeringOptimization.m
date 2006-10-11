@@ -769,7 +769,7 @@ However, I don't feel like creating a variable for it.*)
 			maxNarrowingIterations="MaxNarrowingIterations"/.{options};
 			If[maxNarrowingIterations===Automatic,
 				maxNarrowingIterations=maxIterations/2];
-			frame=Sort[Partition[frame,2],OrderedQ[Reverse/@{#1,#2}]&];
+			frame=Flatten@Sort[Partition[frame,2],OrderedQ[Reverse/@{#1,#2}]&];
 			frame=Most@
 				NestWhile[
 					Apply[
