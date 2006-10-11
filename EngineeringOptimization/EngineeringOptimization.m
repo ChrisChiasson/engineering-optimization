@@ -590,7 +590,7 @@ frameMinimumNarrowBrentStopTest[
 			]
 		];
 
-defineDebugArgs@frameMinimumNarrowBrentStopTest;
+defineBadArgs@frameMinimumNarrowBrentStopTest;
 
 unprotectedSymbols[variables:multipleExpressionPatternObject]:=
 	Module[{symbol},
@@ -782,7 +782,7 @@ However, I don't feel like creating a variable for it.*)
 							precisionGoal,
 							options]&,
 						#
-						],
+						]&,
 					{Sequence@@frame[[{1,2}]](*fa,a*),
 						Sequence@@frame[[{5,6}]](*fc,c*),
 						Sequence@@frame[[{5,6}]](*fu,u*),
