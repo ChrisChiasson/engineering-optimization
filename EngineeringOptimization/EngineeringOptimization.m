@@ -791,14 +791,14 @@ However, I don't feel like creating a variable for it.*)
 						Abs[frame[[6]]-frame[[2]]](*max move distance*)
 						},
 					Apply[
-						(Print@#;Not@frameMinimumNarrowBrentStopTest[
+						Not@frameMinimumNarrowBrentStopTest[
 							##,
 							accuracyGoal,
 							precisionGoal,
 							++iteration,
 							maxNarrowingIterations,
 							options
-							])&,
+							]&,
 						#
 						]&
 					]
