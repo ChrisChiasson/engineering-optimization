@@ -1,45 +1,39 @@
-(* Mathematica Package *)
-
-(* Created by the Wolfram Workbench Jul 28, 2006 *)
-
-(*
-Created on 2006/07/28
-
-Imported from
-Z:\sites\chris.chiasson.name\Engineering_Optimization\pr3\Big_Rewrite.nb
-*)
-
 BeginPackage["EngineeringOptimization`",{"Utilities`FilterOptions`"}]
 
-(* Exported symbols added here with SymbolName::usage *) 
-
-FindMinimum::fdbh="The first unimodal line search hit its MaxDisplacement bound 
-and did not find any points with a lower function value than the origin of the 
-line search. The algorithm will move on to the second search.";
-FindMinimum::fibh="The first unimodal line search hit its MaxIterations bound 
-and did not find any points with a lower function value than the origin of the 
-line search. The algorithm will move on to the second search.";
-FindMinimum::fdbl="The first unimodal line search hit its MaxDisplacement bound,
- but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned.";
-FindMinimum::fibl="The first unimodal line search hit its MaxIterations bound,
- but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned.";
-FindMinimum::sdbh="The second unimodal line search hit its MaxDisplacement bound
- and did not find any points with a lower function value than the origin of the 
- line search. The algorithm will return the origin.";
-FindMinimum::sibh="The second unimodal line search hit its MaxIterations bound 
-and did not find any points with a lower function value than the origin of the 
-line search. The algorithm will return the origin.";
-FindMinimum::sdbl="The second unimodal line search hit its MaxDisplacement bound
-, but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned.";
-FindMinimum::sibl="The second unimodal line search hit its MaxIterations bound,
- but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned.";
+FindMinimum::fdbh="The first unimodal line search hit its MaxDisplacement "<>
+"bound and did not find any points with a lower function value than the "<>
+"origin of the line search. The algorithm will move on to the second search.";
+FindMinimum::fibh="The first unimodal line search hit its "<>
+"MaxWideningIterations bound and did not find any points with a lower "<>
+"function value than the origin of the line search. The algorithm will move "<>
+"on to the second search.";
+FindMinimum::fdbl="The first unimodal line search hit its MaxDisplacement "<>
+"bound, but did find at least one point with a lower function value than the "<>
+"origin of the line search. The point with the lowest value will be returned.";
+FindMinimum::fibl="The first unimodal line search hit its "<>
+"MaxWideningIterations bound, but did find at least one point with a lower "<>
+"function value than the origin of the line search. The point with the "<>
+"lowest value will be returned.";
+FindMinimum::sdbh="The second unimodal line search hit its MaxDisplacement "<>
+"bound and did not find any points with a lower function value than the "<>
+"origin of the line search. The algorithm will return the origin.";
+FindMinimum::sibh="The second unimodal line search hit its "<>
+"MaxWideningIterations bound and did not find any points with a lower "<>
+"function value than the origin of the line search. The algorithm will "<>
+"return the origin.";
+FindMinimum::sdbl="The second unimodal line search hit its MaxDisplacement "<>
+"bound, but did find at least one point with a lower function value than the "<>
+"origin of the line search. The point with the lowest value will be returned.";
+FindMinimum::sibl="The second unimodal line search hit its "<>
+"MaxWideningIterations bound, but did find at least one point with a lower "<>
+"function value than the origin of the line search. The point with the "<>
+"lowest value will be returned.";
+FindMinimum::nib="A minimum was bracketed, but FindMinimum was unable to"<>
+"converge to the requested precision or accuracy within `1` narrowing "<>
+"iterations. Try increasing \"MaxNarrowingIterations\".";
 FindMinimum::nfv="`1` is not a function of the given variable `2`.";
-General::badargs="Bad arguments were supplied to `1`. The call was as follows: \
-`2`";
+General::badargs="Bad arguments were supplied to `1`. "<>
+"The call was as follows: `2`";
 General::badopts="Received bad options: `1`.";
 
 Begin["`Private`"]
@@ -470,74 +464,66 @@ frameMinimumNarrowBrent[function_,variable_,
 			perturbFactor(*factor of perturbation tolerance locations*),
 			sameTestAbscissas=unsortedUnion@{x,u,a,c,v,w}(*points to perturb
 			away from*),
-			xm=(a+c)/2(*[a,c] interval midpoint*),
-			xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal(*tolerance for
-			comparison with a and c*)
+			xm=(a+c)/2(*[a,c] interval midpoint*)
 			},
-(*if x is within tolerance to a and c, then no better guess is likely*)
-		If[nSameQ[#,x,xtol]&/@And[a,c],
-(*return all arguments in a list needed for the stop test*)
-			{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,maxAcceptableDisplacement},
-(*otherwise, continue with the algorithm*)
 (*Guess the location(s) of the minimum from v, w, and x using the
 critical point(s) of an interpolating polynomial, the golden
 section and xm as a fall back.*)
-			e=If[x>=xm,a-x,c-x];
-			candidateAbscissa=Flatten@{
-				Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
-				x+e*shrinkFactor,xm};
+		e=If[x>=xm,a-x,c-x];
+		candidateAbscissa=Flatten@{
+			Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
+			x+e*shrinkFactor,xm};
 (*perturbation should be in the direction of the larger interval*)
-			perturbFactor=Sign[e];
-			perturbed=perturbBrentLocation[#,sameTestAbscissas,
-				perturbFactor,accuracyGoal,precisionGoal]&/@
-					candidateAbscissa;
+		perturbFactor=Sign[e];
+		perturbed=perturbBrentLocation[#,sameTestAbscissas,
+			perturbFactor,accuracyGoal,precisionGoal]&/@
+				candidateAbscissa;
 (*use only the first point that matches these criteria*)
-			newAbscissa=Select[Drop[perturbed,-2],
-				Less[Abs[#-x],maxAcceptableDisplacement]&,
-				1];
-			newAbscissa=Select[Flatten@{newAbscissa,Take[perturbed,-2]},
-				And[Element[#,Reals],
-					LessEqual[a,#,c]
-					]&
-				];
+		newAbscissa=Select[Drop[perturbed,-2],
+			Less[Abs[#-x],maxAcceptableDisplacement]&,
+			1];
+		newAbscissa=Select[Flatten@{newAbscissa,Take[perturbed,-2]},
+			And[Element[#,Reals],
+				LessEqual[a,#,c]
+				]&
+			];
 (*if we get a viable point*)
-			If[newAbscissa=!={},
+		If[newAbscissa=!={},
 (*return the first element*)
-				newAbscissa=First@newAbscissa;
-				candidateAbscissa=
-					Extract[candidateAbscissa,
-						Position[perturbed,
-							newAbscissa][[1]]];
+			newAbscissa=First@newAbscissa;
+			candidateAbscissa=
+				Extract[candidateAbscissa,
+					Position[perturbed,
+						newAbscissa][[1]]];
 (*the new maximum displacement is half this one*)
-				newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
-					newAbscissa-candidateAbscissa}],
+			newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
+				newAbscissa-candidateAbscissa}],
 (*otherwise, guess another point from golden section*)
 (*the result is a number, not a list*)
-				newAbscissa=candidateAbscissa=candidateAbscissa[[-2]];
-				newMaxDisplacement=$MaxMachineNumber;
-				];
+			newAbscissa=candidateAbscissa=candidateAbscissa[[-2]];
+			newMaxDisplacement=$MaxMachineNumber;
+			];
 (*perform the single function evaluation*)
-			newOrdinate=function/.monitorRules[{variable},
-				{variable->newAbscissa},EvaluationMonitor,opts];
+		newOrdinate=function/.monitorRules[{variable},
+			{variable->newAbscissa},EvaluationMonitor,opts];
 (*some arguments for a new iteration*)
-			vwxSequence=brentOrdinateAbscissaVWXSequence[
-				{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
-				];
+		vwxSequence=brentOrdinateAbscissaVWXSequence[
+			{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
+			];
 (*return all arguments in a list needed for a new iteration*)
-			If[newOrdinate<=fx,
-				If[newAbscissa>=x,
-					{fx,x,fc,c,newOrdinate,newAbscissa,vwxSequence,
-						newMaxDisplacement},
-					{fa,a,fx,x,newOrdinate,newAbscissa,vwxSequence,
-						newMaxDisplacement}
-					],
-				If[newAbscissa>=x,
-					{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
-						vwxSequence,newMaxDisplacement},
-					{newOrdinate,newAbscissa,fc,c,newOrdinate,newAbscissa,
-						vwxSequence,newMaxDisplacement}
-					]			
-				]
+		If[newOrdinate<=fx,
+			If[newAbscissa>=x,
+				{fx,x,fc,c,newOrdinate,newAbscissa,vwxSequence,
+					newMaxDisplacement},
+				{fa,a,fx,x,newOrdinate,newAbscissa,vwxSequence,
+					newMaxDisplacement}
+				],
+			If[newAbscissa>=x,
+				{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
+					vwxSequence,newMaxDisplacement},
+				{newOrdinate,newAbscissa,fc,c,newOrdinate,newAbscissa,
+					vwxSequence,newMaxDisplacement}
+				]			
 			]
 		];
 
@@ -572,20 +558,39 @@ frameMinimumNarrow[function_,variable_,
 
 defineBadArgs@frameMinimumNarrow;
 
-(*reFindMinimum is used to call FindMinimum from itself, often because the frame
-search needs to go in a negative direction. Since the algorithm does not work
-when moving the frame in a negative directory, reFindMinimum aliases the
-independant variable using Block so that the search frame will always move in
-the positive direction. Since Block is used, reports from StepMonitor and
-EvaluationMonitor give the correct coordinates (including those from controling
-routines like ALMFindMinimum) even though the FindMinimum
-routine is working with the negative of the independant variable. It also
-handles the oddball case of the displacement limit being equal to zero.*)
+frameMinimumNarrowBrentStopTest[
+	fa:nonComplexNumberPatternObject(*ordinate at a*),
+	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
+	fc:nonComplexNumberPatternObject(*ordinate at c*),
+	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
+	fu:nonComplexNumberPatternObject,(*ordinate at last evaluation*)
+	u:nonComplexNumberPatternObject,(*fu's abscissa*)
+	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
+	v:nonComplexNumberPatternObject(*fv's abscissa*),
+	fw:nonComplexNumberPatternObject(*2nd lowest ordinate*),
+	w:nonComplexNumberPatternObject(*fw's abscissa*),
+	fx:nonComplexNumberPatternObject(*minimum ordinate*),
+	x:nonComplexNumberPatternObject(*fx's abscissa*),
+	maxAcceptableDisplacement:nonComplexNumberPatternObject(*
+	the maximum distance the algorithm can move via polynomial interpolation*),
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
+	narrowingIteration_Integer(*the present narrowing iteration number*),
+	maxNarrowingIterations_Integer(*the maximum # of narrowing iterations*),
+	opts___?OptionQ(*options*)]:=
+	Module[{xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal(*tolerance for
+			comparison with a and c*)},
+		And[
+(*if x is within tolerance to a and c, then no better guess is likely*)
+			If[nSameQ[#,x,xtol]&/@And[a,c],False,True],
+(*we also have to stop if there are too many iterations*)
+			If[narrowingIteration===maxNarrowingIterations,
+				Message[FindMinimum::nib,maxNarrowingIterations];False,
+				True]
+			]
+		];
 
-(*given the value of maxDisplacement and MaxIterations on an initial call, it
-may be possible to work out precisely how many iterations are possible for each
-run - and instead of passing extra information, use the length of
-MaxDisplacement to normalize however many iterations are left - we'll see*)
+defineBadArgs@frameMinimumNarrowBrentStopTest;
 
 unprotectedSymbols[variables:multipleExpressionPatternObject]:=
 	Module[{symbol},
@@ -597,47 +602,6 @@ unprotectedSymbols[variables:multipleExpressionPatternObject]:=
 		];
 
 defineBadArgs@unprotectedSymbols;
-
-reFindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
-	maxDisplacement:multipleNonComplexNumberPatternObject,
-	{methodOptions___?OptionQ},{opts___?OptionQ}]:=
-	Module[{num,
-		reverseNeeded=If[Negative[maxDisplacement[[1]]],True,False],
-		variable=variableStartRange[[1]],
-		variableReverse},
-		If[reverseNeeded,
-			Block[Evaluate[unprotectedSymbols@List@variable],
-				Evaluate[variable]=-variableReverse;
-				Block[{FindMinimum},
-					FindMinimum[function,
-						{variableReverse,
-							Sequence@@-variableStartRange[[{3,2}]]
-							},
-						opts,
-						Method->
-							{uMethodString,
-								"MaxDisplacement"->-maxDisplacement,
-								methodOptions
-								}
-						]
-					]
-				]/.{Rule[variableReverse,num:nonComplexNumberPatternObject]->
-						Rule[variable,-num]},
-			Block[{FindMinimum},
-				FindMinimum[function,
-					variableStartRange,
-					opts,
-					Method->
-						{uMethodString,
-							"MaxDisplacement"->maxDisplacement,
-							methodOptions
-							}
-					]
-				]
-			]
-		];
-
-defineBadArgs@reFindMinimum;
 
 Options@FindMinimum`Unimodal={"MaxDisplacement"->10^6*{1,-1},"GrowthFactor"->
 	GoldenRatio,"ShrinkFactor"->2-GoldenRatio,"MaxNarrowingIterations"->100,
@@ -689,7 +653,6 @@ FindMinimum[function_,
 			evaluations	were lower than the two origin points*),
 			b,
 			c,
-			case,
 			domainBound,
 			fa,
 			fb,
@@ -707,7 +670,7 @@ FindMinimum[function_,
 			reverse,
 			sewingTag,
 			shrinkFactor,
-			wideningIteration(*iteration number of the bracketing search*),
+			iteration(*iteration number of the bracketing search*),
 			workingPrecision
 			},
 		First@Sort@Reap[
@@ -735,7 +698,7 @@ initially decreasing, this next line of code completely reverses that order.*)
 			EvaluationMonitor,options];
 (*first frame*)
 		frame={fa,a,fb,b,fc,c};
-		wideningIteration=1;
+		iteration=1;
 		maxWideningIterations="MaxWideningIterations"/.{options};
 (*attempt to frame the minimum*)
 		frame=
@@ -761,21 +724,21 @@ initially decreasing, this next line of code completely reverses that order.*)
 						limitRight,
 						frameBound,
 						domainBound,
-						++wideningIteration,
+						++iteration,
 						maxWideningIterations,
 						wideningIterationBound
 						]&,
 					#
 					]&
 				];
-(*It's inefficient to use Min[fa,fb] in a pure function because its result may
-be calculated for each of the three elements in the list. However, I don't feel
-like creating a variable for it.*)
+(*It's inefficient to use Min[fa,fb] in a pure function mapped into Or because
+its result may be calculated for each of the three elements in the list.
+However, I don't feel like creating a variable for it.*)
 		anyLowerOrdinates=(#<Min[fa,fb]&)/@Or@@frame[[{1,3,5}]];
 		noValueFalse/@{frameBound,domainBound,wideningIterationBound};
 		frameMinimumBoundMessages[anyLowerOrdinates,
 			domainBound,wideningIterationBound,reverse];
-(*was the minimum framed? if not, attempt contengencies*)
+(*was the minimum framed? if not, attempt reverse search*)
 		If[Not@frameBound&&!reverse,
 			Sow[FindMinimum[function,
 					{variable,startLeft,startRight,limitLeft,limitRight
@@ -792,7 +755,9 @@ like creating a variable for it.*)
 		If[frameBound,		
 (*narrow the frame via Brent's method - interpolation & golden section*)
 			shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
+			iteration=0;
 			maxNarrowingIterations="MaxNarrowingIterations"/.{options};
+			frame=Sort[Partition[frame,2],OrderedQ[Reverse/@{#1,#2}]&];
 			frame=Most@
 				NestWhile[
 					Apply[
@@ -804,31 +769,30 @@ like creating a variable for it.*)
 							accuracyGoal,
 							precisionGoal,
 							options]&,
-						#]&,
+						#
+						]&,
 					{Sequence@@frame[[{1,2}]](*fa,a*),
 						Sequence@@frame[[{5,6}]](*fc,c*),
 						Sequence@@frame[[{5,6}]](*fu,u*),
 						brentOrdinateAbscissaVWXSequence[
 							Sequence@@@frame](*fv,v,fw,w,fx,x*),
-						$MaxMachineNumber(*max move distance*)
+						Abs[frame[[6]]-frame[[2]]](*max move distance*)
 						},
 					Apply[
-					Not@frameMinimumStopTest[
-						##,
-						limitLeft,
-						limitRight,
-						frameBound,
-						domainBound,
-						++wideningIteration,
-						maxWideningIterations,
-						wideningIterationBound
-						]&,
+						Not@frameMinimumNarrowBrentStopTest[
+							##,
+							accuracyGoal,
+							precisionGoal,
+							++iteration,
+							maxNarrowingIterations,
+							options
+							]&,
 						#
 						]
 					]
 			]
 (*choose the minimum point in the frame*)
-		Sow[selectMinimum[variable,frame],sewingTag],
+		Sow[selectMinimum[variable,Flatten@{frame,fa,a,fb,b,fc,c}],sewingTag],
 		sewingTag][[2,1]]
 	];
 
