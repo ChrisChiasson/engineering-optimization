@@ -558,7 +558,7 @@ frameMinimumNarrow[function_,variable_,
 
 defineBadArgs@frameMinimumNarrow;
 
-frameMinimumNarrowBrentStopTest[
+frameMinimumNarrowBrentContinueQ[
 	fa:nonComplexNumberPatternObject(*ordinate at a*),
 	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
 	fc:nonComplexNumberPatternObject(*ordinate at c*),
@@ -590,7 +590,7 @@ frameMinimumNarrowBrentStopTest[
 			]
 		];
 
-defineBadArgs@frameMinimumNarrowBrentStopTest;
+defineBadArgs@frameMinimumNarrowBrentContinueQ;
 
 unprotectedSymbols[variables:multipleExpressionPatternObject]:=
 	Module[{symbol},
@@ -791,7 +791,7 @@ However, I don't feel like creating a variable for it.*)
 						Abs[frame[[6]]-frame[[2]]](*max move distance*)
 						},
 					Apply[
-						Not@frameMinimumNarrowBrentStopTest[
+						frameMinimumNarrowBrentContinueQ[
 							##,
 							accuracyGoal,
 							precisionGoal,
