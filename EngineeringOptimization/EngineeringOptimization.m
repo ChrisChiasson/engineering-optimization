@@ -590,7 +590,7 @@ frameMinimumNarrowBrentStopTest[
 			]
 		];
 
-defineBadArgs@frameMinimumNarrowBrentStopTest;
+defineDebugArgs@frameMinimumNarrowBrentStopTest;
 
 unprotectedSymbols[variables:multipleExpressionPatternObject]:=
 	Module[{symbol},
@@ -782,7 +782,7 @@ However, I don't feel like creating a variable for it.*)
 							precisionGoal,
 							options]&,
 						#
-						]&,
+						],
 					{Sequence@@frame[[{1,2}]](*fa,a*),
 						Sequence@@frame[[{5,6}]](*fc,c*),
 						Sequence@@frame[[{5,6}]](*fu,u*),
@@ -791,16 +791,16 @@ However, I don't feel like creating a variable for it.*)
 						Abs[frame[[6]]-frame[[2]]](*max move distance*)
 						},
 					Apply[
-						Not@frameMinimumNarrowBrentStopTest[
+						(Print@#;Not@frameMinimumNarrowBrentStopTest[
 							##,
 							accuracyGoal,
 							precisionGoal,
 							++iteration,
 							maxNarrowingIterations,
 							options
-							]&,
+							])&,
 						#
-						]
+						]&
 					]
 			]
 (*choose the minimum point in the frame*)
