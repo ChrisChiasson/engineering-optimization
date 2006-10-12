@@ -474,7 +474,7 @@ section and xm as a fall back.*)
 			Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
 			x+e*shrinkFactor,xm};
 (*perturbation should be in the direction of the larger interval*)
-		perturbFactor=Sign[e];
+		perturbFactor=Sign[e]/2;
 		perturbed=perturbBrentLocation[#,sameTestAbscissas,
 			perturbFactor,accuracyGoal,precisionGoal]&/@
 				candidateAbscissa;
@@ -511,19 +511,21 @@ section and xm as a fall back.*)
 			{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
 			];
 (*return all arguments in a list needed for a new iteration*)
-		If[newOrdinate<=fx,
-			If[newAbscissa>=x,
-				{fx,x,fc,c,newOrdinate,newAbscissa,vwxSequence,
-					newMaxDisplacement},
-				{fa,a,fx,x,newOrdinate,newAbscissa,vwxSequence,
-					newMaxDisplacement}
-				],
-			If[newAbscissa>=x,
-				{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
-					vwxSequence,newMaxDisplacement},
-				{newOrdinate,newAbscissa,fc,c,newOrdinate,newAbscissa,
-					vwxSequence,newMaxDisplacement}
-				]			
+		Block[{Experimental`$EqualTolerance=0},
+			If[newOrdinate<=fx,
+				If[newAbscissa>=x,
+					{fx,x,fc,c,newOrdinate,newAbscissa,vwxSequence,
+						newMaxDisplacement},
+					{fa,a,fx,x,newOrdinate,newAbscissa,vwxSequence,
+						newMaxDisplacement}
+					],
+				If[newAbscissa>=x,
+					{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
+						vwxSequence,newMaxDisplacement},
+					{newOrdinate,newAbscissa,fc,c,newOrdinate,newAbscissa,
+						vwxSequence,newMaxDisplacement}
+					]			
+				]
 			]
 		];
 
@@ -580,7 +582,6 @@ frameMinimumNarrowBrentContinueQ[
 	opts___?OptionQ(*options*)]:=
 	Module[{xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal(*tolerance for
 			comparison with a and c*)},
-		Print[{a,c,x}];
 		And[
 (*if x is within tolerance to a and c, then no better guess is likely*)
 			If[nSameQ[#,x,xtol]&/@And[a,c],False,True],
