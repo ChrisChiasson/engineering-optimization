@@ -53,7 +53,9 @@ ruleDelayedSetDelayed=RuleDelayed->SetDelayed;
 rulesSets={ruleSet,ruleDelayedSetDelayed};
 
 (*vector means column vector*)
-nonComplexNumberPatternObject=Map[Blank,Integer|Real|Rational];
+realNumberQ[number_]=MatchQ[number,Map[Blank,Real|Integer|Rational]];
+
+nonComplexNumberPatternObject=Map[Blank,Real|Integer|Rational];
 
 unThreadableNonComplexNumberPatternObject={{nonComplexNumberPatternObject}}
 
@@ -643,10 +645,10 @@ FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 
 FindMinimum[function_,
 	{variable_,
-		startLeft:nonComplexNumberPatternObject,
-		startRight:nonComplexNumberPatternObject,
-		limitLeft:nonComplexNumberPatternObject:-$MaxMachineNumber,
-		limitRight:nonComplexNumberPatternObject:$MaxMachineNumber
+		startLeft_?realNumberQ,
+		startRight_?realNumberQ,
+		limitLeft:_?realNumberQ:-$MaxMachineNumber,
+		limitRight:_?realNumberQ:$MaxMachineNumber
 		},
 	opts1___?OptionQ,
 	Method->uMethodString|{uMethodString,methodOptions___?OptionQ},
