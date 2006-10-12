@@ -1,5 +1,3 @@
-(* ::Package:: *)
-
 BeginPackage["EngineeringOptimization`Documentation`PR1`",
 	{"EngineeringOptimization`",
 		"EngineeringOptimization`Documentation`"}
