@@ -948,10 +948,16 @@ defineBadArgs@vMMKernel;
  here on solutionRules - Chris Chiasson 2006-08-01*)
  
 fMCommonConvergenceTest[variables:multipleExpressionPatternObject,
+	accuracyGoal:nonComplexNumberPatternObject,
+	precisionGoal:nonComplexNumberPatternObject,
 	arguments:fMCommonConvergenceTestPatternObject]:=
 	Module[{solutionRules,solution},
 		solutionRules[solution_Integer]:={arguments}[[solution,1]];
-		SameQ[variables/.solutionRules[1],variables/.solutionRules[2]]];
+		And@@MapThread[nSameQ[#1,#2,accuracyGoal,precisionGoal]&,
+			{variables/.solutionRules[1],
+				variables/.solutionRules[2]}
+			]
+		];
 
 defineBadArgs@fMCommonConvergenceTest;
 
@@ -1012,15 +1018,30 @@ FindMinimum[function_,
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`SteepestDescent,{methodOptions}]:=
-	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]]},
+	Module[
+		{gradient,
+			options,
+			solutionRules,
+			variables=variableStarts[[All,1]],
+			workingPrecision,
+			accuracyGoal,
+			precisionGoal},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`SteepestDescent,FindMinimum}];
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
+		Print[workingPrecision,accuracyGoal,precisionGoal];
 		gradient=List/@D[function,{variables,1}];
 		solutionRules=Rule@@@variableStarts;
 		solutionRules=NestWhile[Apply[sDKernel[function,variables,#1,gradient,
 			#2,options]&,#]&,
-			{solutionRules,gradient/.solutionRules},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
+			{N[solutionRules,workingPrecision],gradient/.solutionRules},
+			Not@fMCommonConvergenceTest[
+				variables,
+				accuracyGoal,
+				precisionGoal,
+				##]&,
+			2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}
 		];
