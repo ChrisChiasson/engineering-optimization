@@ -53,7 +53,7 @@ ruleDelayedSetDelayed=RuleDelayed->SetDelayed;
 rulesSets={ruleSet,ruleDelayedSetDelayed};
 
 (*vector means column vector*)
-realNumberQ[number_]=MatchQ[number,Map[Blank,Real|Integer|Rational]];
+realNumberQ[number_]:=MatchQ[number,Map[Blank,Real|Integer|Rational]];
 
 nonComplexNumberPatternObject=Map[Blank,Real|Integer|Rational];
 
