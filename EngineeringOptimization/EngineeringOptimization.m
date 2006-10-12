@@ -690,20 +690,23 @@ FindMinimum[function_,
 		a=N[startLeft,workingPrecision];
 		fa=function/.monitorRules[{variable},{variable->a},
 			EvaluationMonitor,options];
-		b=N[startRight,workingPrecision];
-		fb=function/.monitorRules[{variable},{variable->b},
+		c=N[startRight,workingPrecision];
+		fc=function/.monitorRules[{variable},{variable->c},
 			EvaluationMonitor,options];
 (*The line search is always performed in the downward direction. This is a
 departure from the method described in class, but it can save many evaluations.
 I still think of a, b, and c as being right to left, but if the function is
-initially decreasing, this next line of code completely reverses that order.*)
-		If[fb>fa,{fa,a,fb,b}={fb,b,fa,a}];
+initially increasing, this next line of code completely reverses that order.*)
+		If[fc>fa,{fa,a,fc,c}={fc,c,fa,a}];
 (*This code allows the reverse direction to be searched.*)
 		reverse="Reverse"/.{options};
-		If[reverse,{fa,a,fb,b}={fb,b,fa,a}];
+		If[reverse,{fa,a,fc,c}={fc,c,fa,a}];
 		growthFactor=N["GrowthFactor"/.{options},workingPrecision];
-		c=b+growthFactor*(b-a);
-		fc=function/.monitorRules[{variable},{variable->c},
+		shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
+(*checking an interior point first prevents limitLeft and limitRight 
+from breaking the algorithm if they are exactly equal to the interval [a,c]*)
+		b=c+shrinkFactor*(a-c);
+		fb=function/.monitorRules[{variable},{variable->b},
 			EvaluationMonitor,options];
 (*first frame*)
 		frame={fa,a,fb,b,fc,c};
@@ -767,7 +770,6 @@ However, I don't feel like creating a variable for it.*)
 (*if the minimum was framed*)
 		If[frameBound,		
 (*narrow the frame via Brent's method - interpolation & golden section*)
-			shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
 			iteration=0;
 			maxNarrowingIterations="MaxNarrowingIterations"/.{options};
 			If[maxNarrowingIterations===Automatic,
