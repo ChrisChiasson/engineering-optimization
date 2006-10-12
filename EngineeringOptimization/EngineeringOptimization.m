@@ -1030,7 +1030,6 @@ FindMinimum[function_,
 			{FindMinimum`SteepestDescent,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
-		Print[workingPrecision,accuracyGoal,precisionGoal];
 		gradient=List/@D[function,{variables,1}];
 		solutionRules=Rule@@@variableStarts;
 		solutionRules=NestWhile[Apply[sDKernel[function,variables,#1,gradient,
