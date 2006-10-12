@@ -497,10 +497,9 @@ frameMinimumNarrowBrent[function_,variable_,
 		{candidateAbscissa(*candidate newAbscissa(s)*),
 			e(*golden step signed large interval length*),
 			goldenSectionDistances(*list of distances from
-			lastResortCandidateAbscissa to the golden section abscissa*),
+			perturbed to the golden section abscissa*),
 			vwxSequence(*sequence of coordinate values for fv,v,fw,w,fx,x
 			for the next iteration*),
-			lastResortCandidateAbscissa(*a "failsafe" for candidateAbscissa*),
 			newAbscissa(*abscissa from interpolation or golden section*),
 			newMaxDisplacement(*maxAcceptableDisplacement for next iteration*),
 			newOrdinate(*function value at newAbscissa*),
@@ -534,7 +533,7 @@ section and xm as a fall back.*)
 		If[newAbscissa==={},
 (*figure out the abscissas where the function can be evaluated away from an
 existing abscissa*)
-			perturbed=lastResortCandidateAbscissa=
+			perturbed=
 				Flatten[
 					List@@IntervalComplement[
 						Interval[{a,c}],
@@ -544,9 +543,9 @@ existing abscissa*)
 						]
 					];
 (*of these, choose the abscissa closest to that of the golden section abscissa*)
-			goldenSectionDistances=Abs[#-candidateAbscissa[[-1]]]&/@
-				lastResortCandidateAbscissa;
-			newAbscissa=Extract[lastResortCandidateAbscissa,
+			goldenSectionDistances=Abs[#-candidateAbscissa[[-1]]]&/@perturbed;
+			candidateAbscissa=perturbed;
+			newAbscissa=Extract[perturbed,
 					Position[goldenSectionDistances,Min@goldenSectionDistances]
 					]
 			];
