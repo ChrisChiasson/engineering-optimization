@@ -652,8 +652,12 @@ FindMinimum[function_,
 	Method->uMethodString|{uMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
-			optionsListValidQ[FindMinimum`Unimodal,{methodOptions}]&&
-				OrderedQ[{startLeft,startRight}]:=
+		optionsListValidQ[FindMinimum`Unimodal,{methodOptions}]&&
+		OrderedQ[{startLeft,startRight}]&&
+		IntervalMemberQ[
+			Interval@{limitLeft,limitRight},
+			Interval@{startLeft,startRight}
+			]:=
 	Module[
 		{a,
 			accuracyGoal,
