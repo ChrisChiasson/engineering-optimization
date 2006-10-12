@@ -108,27 +108,16 @@ eqn[5]=N[
 (*Minimize the negative of the function we wish to maximize.*)
 
 (*Outside the range of X from 0 to H, the load function is unbound
-and unphysical.
-Since the default MaxDisplacment for the Unimodal line search is
-+ or - 100, the function wouldn't find the real optimum with the default
-settings. It would instead run up against the MaxDisplacement limit and stop.
-To get the correct answer, the MaxDisplacement option must be set to restrict
-the load function to its physical range. If the starting guess is 0.1, and
-the range is 0 to H (0 to 0.25), then MaxDisplacement must be set to
-{0.25-.1,0-.1}. Using that method, the optimim X location answer is correct to
-four significant figures. If one increases the MaxNarrowingIterations option
-to 20 from its default 12, then six digits are correct.*)
+and unphysical, so we limit our search to that range*)
 
-(*xpr[2]=FindMinimum[
+xpr[2]=FindMinimum[
 	Evaluate[-beamLoad[X]/.dropSIUnitsRep],
-	{X,0,0.01,0,25/100},
+	Evaluate[{X,0,0.01,0,H}/.rep[1]/.rep[2]/.dropSIUnitsRep],
 	Method->"Unimodal"
-	];*)
+	];
 
 (*I use the results of finding the maximum load to split my
-search domains for the 20000 N intersections.
-I increase the MaxNarrowingIterations option to 30 to ensure that the six
-significant digits shown are correct.*)
+search domains for the 20000 N intersections.*)
 
 (*Minimize the absolute value of the difference between the function and its
 desired value. Restrict the range to the first part of the domain.*)
