@@ -13,9 +13,6 @@ request[1]=FindMinimum[(x-10)^2,{x,1},Method->{"Unimodal",
 	"MaxNarrowingIterations"->30},StepMonitor:>Sow[{"step",x}],
 	EvaluationMonitor:>Sow[{"eval",x}]];
 
-(*perhaps show how the options change the results,
-as you did with the old code*)
-
 (*Book Example Problem 2-1
 Numerical Optimization Techniques for
 Engineering Design
@@ -105,6 +102,8 @@ eqn[5]=N[
 	10
 	];
 
+(*Solve the same problem again using our methods.*)
+
 (*Minimize the negative of the function we wish to maximize.*)
 
 (*Outside the range of X from 0 to H, the load function is unbound
@@ -117,34 +116,31 @@ xpr[2]=FindMinimum[
 	];
 
 (*I use the results of finding the maximum load to split my
-search domains for the 20000 N intersections.*)
+search domains for the 20000 N (loadLine) intersections.*)
 
 (*Minimize the absolute value of the difference between the function and its
 desired value. Restrict the range to the first part of the domain.*)
 
-(*xpr[3]=FindMinimum[
+xpr[3]=FindMinimum[
 	Evaluate[Abs[beamLoad[X]-loadLine/.dropSIUnitsRep]],
-	{X,0},
-	Method->{"Unimodal",
-		"MaxDisplacement"->{xpr[2][[2,1,2]]},
-		"MaxNarrowingIterations"->30
-		},
-	StepMonitor:>Sow[{"step",X}],
-	EvaluationMonitor:>Sow[{"step",X}]
-	];*)
+	Evaluate@Prepend[{0,X/2,0,X}/.xpr[2][[2]],X],
+	Method->"Unimodal"
+	];
 
 (*This time, restrict the range to the last part of the domain.*)
 
-(*xpr[4]=FindMinimum[
+xpr[4]=FindMinimum[
 	Evaluate[Abs[beamLoad[X]-loadLine/.dropSIUnitsRep]],
-	{X,xpr[2][[2,1,2]]},
-	Method->{"Unimodal",
-		"MaxDisplacement"->{25/100-xpr[2][[2,1,2]]},
-		"MaxNarrowingIterations"->30
-		},
-	StepMonitor:>Sow[{"step",X}],
-	EvaluationMonitor:>Sow[{"step",X}]
-	];*)
+	Evaluate@
+		Prepend[
+			{X,(H+X)/2,X,H}/.
+				rep[1]/.
+					rep[2]/.
+						dropSIUnitsRep/.
+							xpr[2][[2]],
+			X],
+	Method->"Unimodal"
+	];
 
 End[];
 
