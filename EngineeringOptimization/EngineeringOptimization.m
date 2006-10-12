@@ -556,8 +556,8 @@ existing abscissa*)
 			Extract[candidateAbscissa,
 				Position[perturbed,
 					newAbscissa][[1]]];
-(*the new maximum displacement is half this one or equal to the perturbation,
-whichever is greater*)
+(*the new maximum displacement is half this displacement or equal to the
+perturbation, whichever is greater*)
 		newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
 			newAbscissa-candidateAbscissa}];
 (*perform the single function evaluation*)
