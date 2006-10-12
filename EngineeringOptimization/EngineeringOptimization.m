@@ -392,7 +392,7 @@ brentOrdinateAbscissaVWXSequence[
 (*coordinatePairs sorted by decreasing ordinate*)
 		{ordinateReverseSortPairs=
 			Sort[
-				unsortedUnion@Partition[pointsFlatYX,2],
+				Partition[pointsFlatYX,2],
 				OrderedQ[{#2,#1}]&
 				]
 			},
@@ -435,6 +435,45 @@ perturbBrentLocation[location_(*an "erroneous" argument to this function*),
 
 defineBadArgs@perturbBrentLocation;
 
+System`IntervalComplement[
+	universe:Interval[{_?NumericQ,_?NumericQ}..],
+	holes:Interval[{_?NumericQ,_?NumericQ}..]..
+	]:=
+	Module[
+		{tempResult,
+			universeList=List@@universe,
+			masks,
+			unifiedHoles=IntervalUnion[holes]
+			},
+		masks=IntervalIntersection[Interval@#,unifiedHoles]&/@universeList;
+		tempResult=IntervalUnion@@
+			MapThread[
+				Interval@@
+					Partition[
+						Block[{Interval=Sequence},
+							Flatten@
+								{#1[[1]],#2,#1[[-1]]}
+							]
+						,2]&,
+				{universeList,masks}
+				];
+		DeleteCases[tempResult,
+			Alternatives@@IntervalIntersection[tempResult,unifiedHoles]
+			]
+		];
+
+defineBadArgs@System`IntervalComplement;
+
+numberInterval[number:nonComplexNumberPatternObject,
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)
+	]:=
+	Module[{halfWidth=10^-accuracyGoal+Abs[number]*10^-precisionGoal(*
+		the half width of the interval corresponding to this number's
+		numerical convergence interval*)},
+		Interval[number+{-halfWidth,halfWidth}]
+		];
+
 frameMinimumNarrowBrent[function_,variable_,
 	fa:nonComplexNumberPatternObject(*ordinate at a*),
 	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
@@ -457,15 +496,17 @@ frameMinimumNarrowBrent[function_,variable_,
 	Module[
 		{candidateAbscissa(*candidate newAbscissa(s)*),
 			e(*golden step signed large interval length*),
+			goldenSectionDistances(*list of distances from
+			lastResortCandidateAbscissa to the golden section abscissa*),
 			vwxSequence(*sequence of coordinate values for fv,v,fw,w,fx,x
 			for the next iteration*),
+			lastResortCandidateAbscissa(*a "failsafe" for candidateAbscissa*),
 			newAbscissa(*abscissa from interpolation or golden section*),
 			newMaxDisplacement(*maxAcceptableDisplacement for next iteration*),
 			newOrdinate(*function value at newAbscissa*),
-			perturbed=0(*perturbation distance(s)*),
+			perturbed(*perturbations from candidateAbscissa*),
 			perturbFactor(*factor of perturbation tolerance locations*),
-			sameTestAbscissas=unsortedUnion@{x,u,a,c,v,w}(*points to perturb
-			away from*),
+			sameTestAbscissas={x,u,a,c,v,w}(*points to perturb away from*),
 			xm=(a+c)/2(*[a,c] interval midpoint*)
 			},
 (*Guess the location(s) of the minimum from v, w, and x using the
@@ -474,7 +515,7 @@ section and xm as a fall back.*)
 		e=If[x>=xm,a-x,c-x];
 		candidateAbscissa=Flatten@{
 			Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
-			x+e*shrinkFactor,xm};
+			x+e*shrinkFactor};
 (*perturbation should be in the direction of the larger interval*)
 		perturbFactor=Sign[e]/2;
 		perturbed=perturbBrentLocation[#,sameTestAbscissas,
@@ -489,28 +530,46 @@ section and xm as a fall back.*)
 				LessEqual[a,#,c]
 				]&
 			];
-(*if we get a viable point*)
-		If[newAbscissa=!={},
-(*return the first element*)
-			newAbscissa=First@newAbscissa;
-			candidateAbscissa=
-				Extract[candidateAbscissa,
-					Position[perturbed,
-						newAbscissa][[1]]];
-(*the new maximum displacement is half this one*)
-			newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
-				newAbscissa-candidateAbscissa}],
-(*otherwise, guess another point from golden section*)
-(*the result is a number, not a list*)
-			newAbscissa=candidateAbscissa=candidateAbscissa[[-2]];
-			newMaxDisplacement=$MaxMachineNumber;
+(*if none of the interpolation or golden section points are viable*)
+		If[newAbscissa==={},
+(*figure out the abscissas where the function can be evaluated away from an
+existing abscissa*)
+			perturbed=lastResortCandidateAbscissa=
+				Flatten[
+					List@@IntervalComplement[
+						Interval[{a,c}],
+						IntervalUnion@@
+							(numberInterval[#,accuracyGoal,precisionGoal]&/@
+								sameTestAbscissas)
+						]
+					];
+(*of these, choose the abscissa closest to that of the golden section abscissa*)
+			goldenSectionDistances=Abs[#-candidateAbscissa[[-1]]]&/@
+				lastResortCandidateAbscissa;
+			newAbscissa=Extract[lastResortCandidateAbscissa,
+					Position[goldenSectionDistances,Min@goldenSectionDistances]
+					]
 			];
+(*return the first element*)
+		newAbscissa=If[newAbscissa==={},
+			Print["can't choose a newAbscissa"];
+			u,
+			First@newAbscissa
+			];
+		candidateAbscissa=
+			Extract[candidateAbscissa,
+				Position[perturbed,
+					newAbscissa][[1]]];
+(*the new maximum displacement is half this one or equal to the perturbation,
+whichever is greater*)
+		newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
+			newAbscissa-candidateAbscissa}];
 (*perform the single function evaluation*)
 		newOrdinate=function/.monitorRules[{variable},
 			{variable->newAbscissa},EvaluationMonitor,opts];
-(*some arguments for a new iteration*)
+(*fv,v,fw,w,fx,x for a new iteration*)
 		vwxSequence=brentOrdinateAbscissaVWXSequence[
-			{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
+			(Sow[#,debug`sow];#)&@{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
 			];
 (*return all arguments in a list needed for a new iteration*)
 		Block[{Experimental`$EqualTolerance=0},
@@ -582,17 +641,31 @@ frameMinimumNarrowBrentContinueQ[
 	narrowingIteration_Integer(*the present narrowing iteration number*),
 	maxNarrowingIterations_Integer(*the maximum # of narrowing iterations*),
 	opts___?OptionQ(*options*)]:=
-	Module[{xtol=10^-accuracyGoal+Abs[x]*10^-precisionGoal(*tolerance for
-			comparison with a and c*)},
+	Module[{
+		accFactor=10^-accuracyGoal(*precomputed accuracy adjustment factor*),
+		precFactor=10^-precisionGoal(*as above, for precision*),
+		aAdjusted(*a adjusted into the interval to take care of overlapping*),
+		cAdjusted(*c adjusted into the interval to take care of overlapping*),
+		xtol(*tolerance for comparison with aAdjusted and cAdjusted*)},
+		xtol=accFactor+Abs[x]*precFactor;
+		aAdjusted=a+accFactor+Abs[a]*precFactor;
+		cAdjusted=c-accFactor-Abs[c]*precFactor;
 		And[
-(*if x is within tolerance to a and c, then no better guess is likely*)
-			If[nSameQ[#,x,xtol]&/@And[a,c],False,True],
+(*if x is within tolerance to a and c adjusted, then no better guess is likely*)
+			If[nSameQ[#,x,xtol]&/@And[aAdjusted,cAdjusted],False,True],
 (*we also have to stop if there are too many iterations*)
 			If[narrowingIteration===maxNarrowingIterations,
-				Message[FindMinimum::nib,maxNarrowingIterations];False,
+				Message[FindMinimum::nib,maxNarrowingIterations];debug`sow=debug`stop;False,
 				True]
 			]
 		];
+
+(*IntervalComplement[
+						Interval[{a,c}],
+						IntervalUnion@@
+							(numberInterval[#,accuracyGoal,precisionGoal]&/@
+								sameTestAbscissas)
+						]*)
 
 defineBadArgs@frameMinimumNarrowBrentContinueQ;
 
