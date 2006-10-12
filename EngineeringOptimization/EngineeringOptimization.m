@@ -551,11 +551,7 @@ existing abscissa*)
 					]
 			];
 (*return the first element*)
-		newAbscissa=If[newAbscissa==={},
-			Print["can't choose a newAbscissa"];
-			u,
-			First@newAbscissa
-			];
+		newAbscissa=First@If[newAbscissa==={},Abort[],newAbscissa];
 		candidateAbscissa=
 			Extract[candidateAbscissa,
 				Position[perturbed,
@@ -569,7 +565,7 @@ whichever is greater*)
 			{variable->newAbscissa},EvaluationMonitor,opts];
 (*fv,v,fw,w,fx,x for a new iteration*)
 		vwxSequence=brentOrdinateAbscissaVWXSequence[
-			(Sow[#,debug`sow];#)&@{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
+			{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
 			];
 (*return all arguments in a list needed for a new iteration*)
 		Block[{Experimental`$EqualTolerance=0},
@@ -642,30 +638,20 @@ frameMinimumNarrowBrentContinueQ[
 	maxNarrowingIterations_Integer(*the maximum # of narrowing iterations*),
 	opts___?OptionQ(*options*)]:=
 	Module[{
-		accFactor=10^-accuracyGoal(*precomputed accuracy adjustment factor*),
-		precFactor=10^-precisionGoal(*as above, for precision*),
-		aAdjusted(*a adjusted into the interval to take care of overlapping*),
-		cAdjusted(*c adjusted into the interval to take care of overlapping*),
-		xtol(*tolerance for comparison with aAdjusted and cAdjusted*)},
-		xtol=accFactor+Abs[x]*precFactor;
-		aAdjusted=a+accFactor+Abs[a]*precFactor;
-		cAdjusted=c-accFactor-Abs[c]*precFactor;
+		occupiedInterval=IntervalUnion@@
+			(numberInterval[#,accuracyGoal,precisionGoal]&/@{a,c,u,v,w,x})(*
+the usually disjoint interval of points that are too close to points which have
+already been evaluated*)
+			},
 		And[
 (*if x is within tolerance to a and c adjusted, then no better guess is likely*)
-			If[nSameQ[#,x,xtol]&/@And[aAdjusted,cAdjusted],False,True],
+			If[IntervalMemberQ[occupiedInterval,Interval[{a,c}]],False,True],
 (*we also have to stop if there are too many iterations*)
 			If[narrowingIteration===maxNarrowingIterations,
-				Message[FindMinimum::nib,maxNarrowingIterations];debug`sow=debug`stop;False,
+				Message[FindMinimum::nib,maxNarrowingIterations];False,
 				True]
 			]
 		];
-
-(*IntervalComplement[
-						Interval[{a,c}],
-						IntervalUnion@@
-							(numberInterval[#,accuracyGoal,precisionGoal]&/@
-								sameTestAbscissas)
-						]*)
 
 defineBadArgs@frameMinimumNarrowBrentContinueQ;
 
