@@ -392,7 +392,7 @@ brentOrdinateAbscissaVWXSequence[
 (*coordinatePairs sorted by decreasing ordinate*)
 		{ordinateReverseSortPairs=
 			Sort[
-				Partition[pointsFlatYX,2],
+				unsortedUnion[Partition[pointsFlatYX,2]],
 				OrderedQ[{#2,#1}]&
 				]
 			},
@@ -521,10 +521,10 @@ section and xm as a fall back.*)
 			perturbFactor,accuracyGoal,precisionGoal]&/@
 				candidateAbscissa;
 (*use only the first point that matches these criteria*)
-		newAbscissa=Select[Drop[perturbed,-2],
+		newAbscissa=Select[Drop[perturbed,-1],
 			Less[Abs[#-x],maxAcceptableDisplacement]&,
 			1];
-		newAbscissa=Select[Flatten@{newAbscissa,Take[perturbed,-2]},
+		newAbscissa=Select[Flatten@{newAbscissa,Take[perturbed,-1]},
 			And[Element[#,Reals],
 				LessEqual[a,#,c]
 				]&
@@ -535,7 +535,7 @@ section and xm as a fall back.*)
 existing abscissa*)
 			perturbed=
 				Flatten[
-					List@@IntervalComplement[
+					List@@IntervalIntersection[
 						Interval[{a,c}],
 						IntervalUnion@@
 							(numberInterval[#,accuracyGoal,precisionGoal]&/@
@@ -563,11 +563,11 @@ perturbation, whichever is greater*)
 		newOrdinate=function/.monitorRules[{variable},
 			{variable->newAbscissa},EvaluationMonitor,opts];
 (*fv,v,fw,w,fx,x for a new iteration*)
-		vwxSequence=brentOrdinateAbscissaVWXSequence[
-			{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
-			];
+		Block[{Experimental`$EqualTolerance=0,Experimental`$SameQTolerance=0},
+			vwxSequence=brentOrdinateAbscissaVWXSequence[
+				{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
+				];
 (*return all arguments in a list needed for a new iteration*)
-		Block[{Experimental`$EqualTolerance=0},
 			If[newOrdinate<=fx,
 				If[newAbscissa>=x,
 					{fx,x,fc,c,newOrdinate,newAbscissa,vwxSequence,
