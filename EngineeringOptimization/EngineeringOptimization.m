@@ -550,17 +550,17 @@ perturbation, whichever is greater*)
 			{fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
 			];
 (*return all arguments in a list needed for a new iteration*)
-		If[newOrdinate<=fx,
+		If[newOrdinate<fx,
 			If[newAbscissa>=x,
-				{fx,x,fc,c,fu,u,
+				{fx,x,fc,c,newOrdinate,newAbscissa,
 					vwxSequence,newMaxDisplacement},
-				{fa,a,fx,x,fu,u,
+				{fa,a,fx,x,newOrdinate,newAbscissa,
 					vwxSequence,newMaxDisplacement}
 				],
 			If[newAbscissa>=x,
-				{fa,a,newOrdinate,newAbscissa,fu,u,
+				{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
 					vwxSequence,newMaxDisplacement},
-				{newOrdinate,newAbscissa,fc,c,fu,u,
+				{newOrdinate,newAbscissa,fc,c,newOrdinate,newAbscissa,
 					vwxSequence,newMaxDisplacement}
 				]
 			]
@@ -620,12 +620,8 @@ frameMinimumNarrowBrentContinueQ[
 	Module[{
 		accFactor=10^-accuracyGoal(*precomputed accuracy adjustment factor*),
 		precFactor=10^-precisionGoal(*as above, for precision*),
-		(*aAdjusteda adjusted into the interval to take care of overlapping,*)
-		(*cAdjustedc adjusted into the interval to take care of overlapping,*)
 		xtol(*tolerance for comparison with aAdjusted and cAdjusted*)},
 		xtol=accFactor+Abs[x]*precFactor;
-(*		aAdjusted=a+accFactor+Abs[a]*precFactor;
-		cAdjusted=c-accFactor-Abs[c]*precFactor;*)
 		And[
 (*if b is within tolerance to a and c adjusted, then no better guess is likely*)
 			If[nSameQ[#,x,xtol]&/@And[a,c],False,True],
@@ -876,8 +872,8 @@ However, I don't feel like creating a variable for it.*)
 						brentOrdinateAbscissaVWXSequence[
 							Sequence@@@frame](*fv,v,fw,w,fx,x*),
 						Abs[frame[[6]]-frame[[2]]](*max move distance*)
-						}(*frame*),
-					(Print@#;Apply[
+						},
+					Apply[
 						frameMinimumNarrowBrentContinueQ[
 							##,
 							accuracyGoal,
@@ -887,7 +883,7 @@ However, I don't feel like creating a variable for it.*)
 							options
 							]&,
 						#
-						])&
+						]&
 					]
 			];
 (*choose the minimum point in the frame*)
