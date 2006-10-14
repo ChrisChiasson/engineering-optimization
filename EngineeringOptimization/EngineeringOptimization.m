@@ -528,7 +528,7 @@ critical point(s) of an interpolating polynomial*)
 (*if none of the interpolation or golden section abscissas are viable*)
 		If[newAbscissa==={},
 (*use the golden section without correction*)
-			newAbscissa=perturbed=candidateAbscissa=candidateAbscissa[[-1]];
+			newAbscissa=perturbed=candidateAbscissa={candidateAbscissa[[-1]]}
 			];
 (*return the first element*)
 		newAbscissa=First@newAbscissa;
