@@ -585,32 +585,32 @@ perturbation, whichever is greater*)
 
 defineBadArgs@frameMinimumNarrowBrent;
 
-(*golden section only version - currently unused*)
+(*golden section only version*)
 
 frameMinimumNarrow[function_,variable_,
-	functionStart:nonComplexNumberPatternObject,
-	solutionStart:nonComplexNumberPatternObject,
-	functionIntermediate1:nonComplexNumberPatternObject,
-	solutionIntermediate1:nonComplexNumberPatternObject,
-	functionIntermediate2:nonComplexNumberPatternObject,
-	solutionIntermediate2:nonComplexNumberPatternObject,
-	functionEnd:nonComplexNumberPatternObject,
-	solutionEnd:nonComplexNumberPatternObject,
+	fa:nonComplexNumberPatternObject(*ordinate at a*),
+	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
+	fb:nonComplexNumberPatternObject(*ordinate at b*),
+	b:nonComplexNumberPatternObject(*the intermediate abscissa in the frame*),
+	fc:nonComplexNumberPatternObject(*ordinate at c*),
+	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
 	shrinkFactor:nonComplexNumberPatternObject,
-	opts__?OptionQ]:=Module[{solutionIntermediateNew},If[
-		functionIntermediate1>functionIntermediate2,
-		solutionIntermediateNew=shrinkFactor*solutionIntermediate1+
-			(1-shrinkFactor)*solutionEnd;
-		{functionIntermediate1,solutionIntermediate1,functionIntermediate2,
-			solutionIntermediate2,function/.monitorRules[{variable},{variable->
-				solutionIntermediateNew},EvaluationMonitor,opts],
-			solutionIntermediateNew,functionEnd,solutionEnd},
-		solutionIntermediateNew=(1-shrinkFactor)*solutionStart+
-			shrinkFactor*solutionIntermediate2;
-		{functionStart,solutionStart,function/.monitorRules[{variable},
-			{variable->solutionIntermediateNew},EvaluationMonitor,opts],
-			solutionIntermediateNew,functionIntermediate1,solutionIntermediate1,
-			functionIntermediate2,solutionIntermediate2}]];
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),	
+	opts__?OptionQ]/;OrderedQ[{a,c}]:=
+	Module[{e=If[b>=(a+c)/2,a-b,c-b],newAbscissa,newOrdinate},
+		newAbscissa=b+e*shrinkFactor;
+		newOrdinate=function/.monitorRules[{variable},
+			{variable->newAbscissa},EvaluationMonitor,opts];
+		If[newOrdinate<=fb,
+			If[newAbscissa>=b,
+				{fb,b,newOrdinate,newAbscissa,fc,c},
+				{fa,a,newOrdinate,newAbscissa,fb,b}],
+			If[newAbscissa>=b,
+				{fa,a,fb,b,newOrdinate,newAbscissa},
+				{newOrdinate,newAbscissa,fb,b,fc,c}]
+			]
+		];
 
 defineBadArgs@frameMinimumNarrow;
 
@@ -633,7 +633,7 @@ frameMinimumNarrowBrentContinueQ[
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
 	narrowingIteration_Integer(*the present narrowing iteration number*),
 	maxNarrowingIterations_Integer(*the maximum # of narrowing iterations*),
-	opts___?OptionQ(*options*)]:=
+	opts___?OptionQ(*options*)]/;OrderedQ[{a,c}]:=
 	Module[{
 		occupiedInterval=IntervalUnion@@
 			(numberInterval[#,accuracyGoal,precisionGoal]&/@{a,c,u,v,w,x})(*
@@ -651,6 +651,39 @@ already been evaluated*)
 		];
 
 defineBadArgs@frameMinimumNarrowBrentContinueQ;
+
+frameMinimumNarrowContinueQ[
+	fa:nonComplexNumberPatternObject(*ordinate at a*),
+	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
+	fb:nonComplexNumberPatternObject,(*minimum ordinate*)
+	b:nonComplexNumberPatternObject,(*fb's abscissa*)
+	fc:nonComplexNumberPatternObject(*ordinate at c*),
+	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
+	narrowingIteration_Integer(*the present narrowing iteration number*),
+	maxNarrowingIterations_Integer(*the maximum # of narrowing iterations*),
+	opts___?OptionQ(*options*)]/;OrderedQ[{a,c}]:=
+	Module[{
+		accFactor=10^-accuracyGoal(*precomputed accuracy adjustment factor*),
+		precFactor=10^-precisionGoal(*as above, for precision*),
+		aAdjusted(*a adjusted into the interval to take care of overlapping*),
+		cAdjusted(*c adjusted into the interval to take care of overlapping*),
+		btol(*tolerance for comparison with aAdjusted and cAdjusted*)},
+		btol=accFactor+Abs[b]*precFactor;
+		aAdjusted=a+accFactor+Abs[a]*precFactor;
+		cAdjusted=c-accFactor-Abs[c]*precFactor;
+		And[
+(*if b is within tolerance to a and c adjusted, then no better guess is likely*)
+			If[nSameQ[#,b,btol]&/@And[aAdjusted,cAdjusted],False,True],
+(*we also have to stop if there are too many iterations*)
+			If[narrowingIteration===maxNarrowingIterations,
+				Message[FindMinimum::nib,maxNarrowingIterations];False,
+				True]
+			]
+		];
+
+defineBadArgs@frameMinimumNarrowContinueQ;
 
 unprotectedSymbols[variables:multipleExpressionPatternObject]:=
 	Module[{symbol},
@@ -841,7 +874,7 @@ However, I don't feel like creating a variable for it.*)
 			frame=Most@
 				NestWhile[
 					Apply[
-						frameMinimumNarrowBrent[
+						frameMinimumNarrow[
 							function,
 							variable,
 							##,
@@ -851,15 +884,15 @@ However, I don't feel like creating a variable for it.*)
 							options]&,
 						#
 						]&,
-					{Sequence@@frame[[{1,2}]](*fa,a*),
+					(*{Sequence@@frame[[{1,2}]](*fa,a*),
 						Sequence@@frame[[{5,6}]](*fc,c*),
 						Sequence@@frame[[{5,6}]](*fu,u*),
 						brentOrdinateAbscissaVWXSequence[
 							Sequence@@@frame](*fv,v,fw,w,fx,x*),
 						Abs[frame[[6]]-frame[[2]]](*max move distance*)
-						},
+						}*)frame,
 					Apply[
-						frameMinimumNarrowBrentContinueQ[
+						frameMinimumNarrowContinueQ[
 							##,
 							accuracyGoal,
 							precisionGoal,
