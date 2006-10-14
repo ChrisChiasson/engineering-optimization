@@ -9,6 +9,7 @@ Begin["`Private`"];
 (*all the plot ranges in this homework go from -5 to 5 in both independant
 variables*)
 rng[x_]={x,-5,5};
+rng[vars__]:=MapAt[ReleaseHold,rng/@Hold[Sequence][vars],{0}];
 
 var[1]=X/@Range@2;
 
