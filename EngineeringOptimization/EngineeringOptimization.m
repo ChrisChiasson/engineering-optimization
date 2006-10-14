@@ -626,7 +626,7 @@ frameMinimumNarrowBrentContinueQ[
 (*if b is within tolerance to a and c adjusted, then no better guess is likely*)
 			If[nSameQ[#,x,xtol]&/@And[a,c],False,True],
 (*we also have to stop if there are too many iterations*)
-			If[narrowingIteration===maxNarrowingIterations,
+			If[narrowingIteration>maxNarrowingIterations,
 				Message[FindMinimum::nib,maxNarrowingIterations];False,
 				True]
 			]
@@ -659,7 +659,7 @@ frameMinimumNarrowContinueQ[
 (*if b is within tolerance to a and c adjusted, then no better guess is likely*)
 			If[nSameQ[#,b,btol]&/@And[a,c],False,True],
 (*we also have to stop if there are too many iterations*)
-			If[narrowingIteration===maxNarrowingIterations,
+			If[narrowingIteration>maxNarrowingIterations,
 				Message[FindMinimum::nib,maxNarrowingIterations];False,
 				True]
 			]
@@ -986,18 +986,47 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`VariableMetric,
 		{methodOptions}]:=
-	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]]},
+	Module[
+		{gradient,
+			options,solutionRules,
+			variables=variableStarts[[All,1]],
+			workingPrecision,
+			accuracyGoal,
+			precisionGoal},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`VariableMetric,FindMinimum}];
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
 		gradient=List/@D[function,{variables,1}];
-		solutionRules=Rule@@@variableStarts;
-		solutionRules=NestWhile[Apply[vMMKernel[function,variables,#1,gradient,
-			#2,#3,options]&,#]&,
-			{solutionRules,gradient/.solutionRules,
-				IdentityMatrix[Length[variableStarts]]},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
-			MaxIterations/.{options}][[1]];
-		{function/.solutionRules,solutionRules}];
+		solutionRules=N[Rule@@@variableStarts,workingPrecision];
+		solutionRules=
+			NestWhile[
+				Apply[
+					vMMKernel[
+						function,
+						variables,
+						#1,
+						gradient,
+						#2,
+						#3,
+						options
+						]&,
+					#]&,
+				{solutionRules,
+					gradient/.solutionRules,
+					IdentityMatrix[Length[variableStarts]]
+					},
+				Not@fMCommonConvergenceTest[
+					variables,
+					accuracyGoal,
+					precisionGoal,
+					##
+					]&,
+				2,
+				MaxIterations/.{options}
+				][[1]];
+		{function/.solutionRules,solutionRules}
+		];
 
 (*steepest descent*)
 
@@ -1046,10 +1075,10 @@ FindMinimum[function_,
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
 		gradient=List/@D[function,{variables,1}];
-		solutionRules=Rule@@@variableStarts;
+		solutionRules=N[Rule@@@variableStarts,workingPrecision];
 		solutionRules=NestWhile[Apply[sDKernel[function,variables,#1,gradient,
 			#2,options]&,#]&,
-			{N[solutionRules,workingPrecision],gradient/.solutionRules},
+			{solutionRules,gradient/.solutionRules},
 			Not@fMCommonConvergenceTest[
 				variables,
 				accuracyGoal,
@@ -1100,18 +1129,26 @@ FindMinimum[function_,
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`FletcherReeves,{methodOptions}]:=
-	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]]},
+	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]],
+		workingPrecision,accuracyGoal,precisionGoal},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`FletcherReeves,FindMinimum}];
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
 		gradient=List/@D[function,{variables,1}];
-		solutionRules=Rule@@@variableStarts;
+		solutionRules=N[Rule@@@variableStarts,workingPrecision];
 		solutionRules=NestWhile[Apply[fRKernel[function,variables,#1,gradient,
 			##2,options]&,#]&,
 			{solutionRules,
 				gradient/.solutionRules,
 				Table[{0},{Length@variables}],
 				0},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
+			Not@fMCommonConvergenceTest[
+				variables,
+				accuracyGoal,
+				precisionGoal,
+				##]&,
+			2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}
 		];
@@ -1181,17 +1218,26 @@ FindMinimum[function_,
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`Powell,{methodOptions}]:=
-	Module[{options,solutionRules,variables=variableStarts[[All,1]]},
+	Module[{options,solutionRules,variables=variableStarts[[All,1]],
+		workingPrecision,accuracyGoal,precisionGoal},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`Powell,FindMinimum}];
-		solutionRules=Rule@@@variableStarts;
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
+		solutionRules=N[Rule@@@variableStarts,workingPrecision];
 		solutionRules=NestWhile[Apply[PowKernel[function,variables,##,options]&,
 			#]&,
 			{solutionRules,
 				Map[List,IdentityMatrix[Length[variableStarts]],{2}],
 				1
 				},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
+			Not@fMCommonConvergenceTest[
+				variables,
+				accuracyGoal,
+				precisionGoal,
+				##
+				]&,
+			2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}
 		];
@@ -1232,16 +1278,25 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`IsaacNewton,
 		{methodOptions}]:=
 	Module[{gradient,hessian,options,solutionRules,
-		variables=variableStarts[[All,1]]},
+		variables=variableStarts[[All,1]],workingPrecision,accuracyGoal,
+		precisionGoal},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`IsaacNewton,FindMinimum}];
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
 		gradient=List/@D[function,{variables,1}];
-		solutionRules=Rule@@@variableStarts;
+		solutionRules=N[Rule@@@variableStarts,workingPrecision];
 		hessian=Experimental`OptimizeExpression[D[function,{variables,2}]];
 		solutionRules=NestWhile[Apply[INKernel[function,variables,#1,gradient,
 			#2,hessian,options]&,#]&,
 			{solutionRules,gradient/.solutionRules},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
+			Not@fMCommonConvergenceTest[
+				variables,
+				accuracyGoal,
+				precisionGoal,
+				##
+				]&,
+			2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}];
 
