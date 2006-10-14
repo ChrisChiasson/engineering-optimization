@@ -31,6 +31,12 @@ eqn[2]=And[
 	X[1]>=0
 	];
 
+(*constraint for problem 5-5*)
+eqn[3]=X[1]-X[2]-2==0;
+
+(*constraint for problem 5-6*)
+eqn[4]=X[1]+X[2]-(1/2)<=0;
+
 sol[2,1]=Minimize[{eqn[1][[2]],eqn[2]},var[1]];
 
 End[];
