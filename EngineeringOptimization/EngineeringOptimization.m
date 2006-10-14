@@ -563,25 +563,23 @@ perturbation, whichever is greater*)
 		newOrdinate=function/.monitorRules[{variable},
 			{variable->newAbscissa},EvaluationMonitor,opts];
 (*fv,v,fw,w,fx,x for a new iteration*)
-		Block[{Experimental`$EqualTolerance=0,Experimental`$SameQTolerance=0},
-			vwxSequence=brentOrdinateAbscissaVWXSequence[
-				{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
-				];
+		vwxSequence=brentOrdinateAbscissaVWXSequence[
+			{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
+			];
 (*return all arguments in a list needed for a new iteration*)
-			If[newOrdinate<=fx,
-				If[newAbscissa>=x,
-					{fx,x,fc,c,newOrdinate,newAbscissa,vwxSequence,
-						newMaxDisplacement},
-					{fa,a,fx,x,newOrdinate,newAbscissa,vwxSequence,
-						newMaxDisplacement}
-					],
-				If[newAbscissa>=x,
-					{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
-						vwxSequence,newMaxDisplacement},
-					{newOrdinate,newAbscissa,fc,c,newOrdinate,newAbscissa,
-						vwxSequence,newMaxDisplacement}
-					]			
-				]
+		If[newOrdinate<=fx,
+			If[newAbscissa>=x,
+				{fx,x,fc,c,newOrdinate,newAbscissa,vwxSequence,
+					newMaxDisplacement},
+				{fa,a,fx,x,newOrdinate,newAbscissa,vwxSequence,
+					newMaxDisplacement}
+				],
+			If[newAbscissa>=x,
+				{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
+					vwxSequence,newMaxDisplacement},
+				{newOrdinate,newAbscissa,fc,c,newOrdinate,newAbscissa,
+					vwxSequence,newMaxDisplacement}
+				]			
 			]
 		];
 
@@ -718,6 +716,7 @@ FindMinimum[function_,
 			Interval@{limitLeft,limitRight},
 			Interval@{startLeft,startRight}
 			]:=
+	Block[{Experimental`$EqualTolerance=0,Experimental`$SameQTolerance=0},
 	Module[
 		{a,
 			accuracyGoal,
@@ -875,6 +874,7 @@ However, I don't feel like creating a variable for it.*)
 (*choose the minimum point in the frame*)
 		Sow[selectMinimum[variable,Flatten@{frame,fa,a,fb,b,fc,c}],sewingTag],
 		sewingTag][[2,1]]
+	]
 	];
 
 lineSearchRules[solutionRules:multipleNonComplexNumberRulePatternObject,
