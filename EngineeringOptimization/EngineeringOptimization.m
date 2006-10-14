@@ -479,8 +479,6 @@ frameMinimumNarrowBrent[function_,variable_,
 	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
 	fc:nonComplexNumberPatternObject(*ordinate at c*),
 	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
-	fu:nonComplexNumberPatternObject,(*ordinate at last evaluation*)
-	u:nonComplexNumberPatternObject,(*fu's abscissa*)
 	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
 	v:nonComplexNumberPatternObject(*fv's abscissa*),
 	fw:nonComplexNumberPatternObject(*2nd lowest ordinate*),
@@ -492,7 +490,7 @@ frameMinimumNarrowBrent[function_,variable_,
 	shrinkFactor:nonComplexNumberPatternObject(*golden ratio 0.38 etc*),
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
-	opts__?OptionQ(*options*)]/;OrderedQ[{a,c}]:=
+	opts__?OptionQ(*options*)]/;OrderedQ[{a,x,c}]:=
 	Module[
 		{candidateAbscissa(*candidate newAbscissa(s)*),
 			e(*golden step signed large interval length*),
@@ -505,12 +503,11 @@ frameMinimumNarrowBrent[function_,variable_,
 			newOrdinate(*function value at newAbscissa*),
 			perturbed(*perturbations from candidateAbscissa*),
 			perturbFactor(*factor of perturbation tolerance locations*),
-			sameTestAbscissas={x,u,a,c,v,w}(*points to perturb away from*),
+			sameTestAbscissas={x,c,a,w,v}(*points to perturb away from*),
 			xm=(a+c)/2(*[a,c] interval midpoint*)
 			},
 (*Guess the location(s) of the minimum from v, w, and x using the
-critical point(s) of an interpolating polynomial, the golden
-section and xm as a fall back.*)
+critical point(s) of an interpolating polynomial*)
 		e=If[x>=xm,a-x,c-x];
 		candidateAbscissa=Flatten@{
 			Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
@@ -521,36 +518,20 @@ section and xm as a fall back.*)
 			perturbFactor,accuracyGoal,precisionGoal]&/@
 				candidateAbscissa;
 (*use only the first point that matches these criteria*)
-		newAbscissa=Select[Drop[perturbed,-1],
-			Less[Abs[#-x],maxAcceptableDisplacement]&,
-			1];
-		newAbscissa=Select[Flatten@{newAbscissa,Take[perturbed,-1]},
+		newAbscissa=Select[perturbed,
 			And[Element[#,Reals],
-				LessEqual[a,#,c]
-				]&
+				a<=#<=c,
+				Abs[#-x]<maxAcceptableDisplacement
+				]&,
+			1
 			];
-(*if none of the interpolation or golden section points are viable*)
+(*if none of the interpolation or golden section abscissas are viable*)
 		If[newAbscissa==={},
-(*figure out the abscissas where the function can be evaluated away from an
-existing abscissa*)
-			perturbed=
-				Flatten[
-					List@@IntervalIntersection[
-						Interval[{a,c}],
-						IntervalUnion@@
-							(numberInterval[#,accuracyGoal,precisionGoal]&/@
-								sameTestAbscissas)
-						]
-					];
-(*of these, choose the abscissa closest to that of the golden section abscissa*)
-			goldenSectionDistances=Abs[#-candidateAbscissa[[-1]]]&/@perturbed;
-			candidateAbscissa=perturbed;
-			newAbscissa=Extract[perturbed,
-					Position[goldenSectionDistances,Min@goldenSectionDistances]
-					]
+(*use the golden section without correction*)
+			newAbscissa=perturbed=candidateAbscissa=candidateAbscissa[[-1]];
 			];
 (*return the first element*)
-		newAbscissa=First@If[newAbscissa==={},Abort[],newAbscissa];
+		newAbscissa=First@newAbscissa;
 		candidateAbscissa=
 			Extract[candidateAbscissa,
 				Position[perturbed,
@@ -562,22 +543,22 @@ perturbation, whichever is greater*)
 (*perform the single function evaluation*)
 		newOrdinate=function/.monitorRules[{variable},
 			{variable->newAbscissa},EvaluationMonitor,opts];
-(*fv,v,fw,w,fx,x for a new iteration*)
+(*fv,v,fw,w,fx,x for a new iteration from their present values and the new val*)
 		vwxSequence=brentOrdinateAbscissaVWXSequence[
-			{fa,a,fc,c,fu,u,fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
+			{fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
 			];
 (*return all arguments in a list needed for a new iteration*)
 		If[newOrdinate<=fx,
 			If[newAbscissa>=x,
-				{fx,x,fc,c,newOrdinate,newAbscissa,vwxSequence,
-					newMaxDisplacement},
-				{fa,a,fx,x,newOrdinate,newAbscissa,vwxSequence,
-					newMaxDisplacement}
+				{fx,x,fc,c,
+					vwxSequence,newMaxDisplacement},
+				{fa,a,fx,x,
+					vwxSequence,newMaxDisplacement}
 				],
 			If[newAbscissa>=x,
-				{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
+				{fa,a,newOrdinate,newAbscissa,
 					vwxSequence,newMaxDisplacement},
-				{newOrdinate,newAbscissa,fc,c,newOrdinate,newAbscissa,
+				{newOrdinate,newAbscissa,fc,c,
 					vwxSequence,newMaxDisplacement}
 				]			
 			]
@@ -597,7 +578,7 @@ frameMinimumNarrow[function_,variable_,
 	shrinkFactor:nonComplexNumberPatternObject,
 	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),	
-	opts__?OptionQ]/;OrderedQ[{a,c}]:=
+	opts__?OptionQ]/;OrderedQ[{a,b,c}]:=
 	Module[{e=If[b>=(a+c)/2,a-b,c-b],newAbscissa,newOrdinate},
 		newAbscissa=b+e*shrinkFactor;
 		newOrdinate=function/.monitorRules[{variable},
@@ -619,8 +600,6 @@ frameMinimumNarrowBrentContinueQ[
 	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
 	fc:nonComplexNumberPatternObject(*ordinate at c*),
 	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
-	fu:nonComplexNumberPatternObject,(*ordinate at last evaluation*)
-	u:nonComplexNumberPatternObject,(*fu's abscissa*)
 	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
 	v:nonComplexNumberPatternObject(*fv's abscissa*),
 	fw:nonComplexNumberPatternObject(*2nd lowest ordinate*),
@@ -633,16 +612,19 @@ frameMinimumNarrowBrentContinueQ[
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
 	narrowingIteration_Integer(*the present narrowing iteration number*),
 	maxNarrowingIterations_Integer(*the maximum # of narrowing iterations*),
-	opts___?OptionQ(*options*)]/;OrderedQ[{a,c}]:=
+	opts___?OptionQ(*options*)]/;OrderedQ[{a,x,c}]:=
 	Module[{
-		occupiedInterval=IntervalUnion@@
-			(numberInterval[#,accuracyGoal,precisionGoal]&/@{a,c,u,v,w,x})(*
-the usually disjoint interval of points that are too close to points which have
-already been evaluated*)
-			},
+		accFactor=10^-accuracyGoal(*precomputed accuracy adjustment factor*),
+		precFactor=10^-precisionGoal(*as above, for precision*),
+		(*aAdjusteda adjusted into the interval to take care of overlapping,*)
+		(*cAdjustedc adjusted into the interval to take care of overlapping,*)
+		xtol(*tolerance for comparison with aAdjusted and cAdjusted*)},
+		xtol=accFactor+Abs[x]*precFactor;
+(*		aAdjusted=a+accFactor+Abs[a]*precFactor;
+		cAdjusted=c-accFactor-Abs[c]*precFactor;*)
 		And[
-(*if x is within tolerance to a and c adjusted, then no better guess is likely*)
-			If[IntervalMemberQ[occupiedInterval,Interval[{a,c}]],False,True],
+(*if b is within tolerance to a and c adjusted, then no better guess is likely*)
+			If[nSameQ[#,x,xtol]&/@And[a,c],False,True],
 (*we also have to stop if there are too many iterations*)
 			If[narrowingIteration===maxNarrowingIterations,
 				Message[FindMinimum::nib,maxNarrowingIterations];False,
@@ -663,19 +645,19 @@ frameMinimumNarrowContinueQ[
 	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
 	narrowingIteration_Integer(*the present narrowing iteration number*),
 	maxNarrowingIterations_Integer(*the maximum # of narrowing iterations*),
-	opts___?OptionQ(*options*)]/;OrderedQ[{a,c}]:=
+	opts___?OptionQ(*options*)]/;OrderedQ[{a,b,c}]:=
 	Module[{
 		accFactor=10^-accuracyGoal(*precomputed accuracy adjustment factor*),
 		precFactor=10^-precisionGoal(*as above, for precision*),
-		aAdjusted(*a adjusted into the interval to take care of overlapping*),
-		cAdjusted(*c adjusted into the interval to take care of overlapping*),
+		(*aAdjusteda adjusted into the interval to take care of overlapping,*)
+		(*cAdjustedc adjusted into the interval to take care of overlapping,*)
 		btol(*tolerance for comparison with aAdjusted and cAdjusted*)},
 		btol=accFactor+Abs[b]*precFactor;
-		aAdjusted=a+accFactor+Abs[a]*precFactor;
-		cAdjusted=c-accFactor-Abs[c]*precFactor;
+(*		aAdjusted=a+accFactor+Abs[a]*precFactor;
+		cAdjusted=c-accFactor-Abs[c]*precFactor;*)
 		And[
 (*if b is within tolerance to a and c adjusted, then no better guess is likely*)
-			If[nSameQ[#,b,btol]&/@And[aAdjusted,cAdjusted],False,True],
+			If[nSameQ[#,b,btol]&/@And[a,c],False,True],
 (*we also have to stop if there are too many iterations*)
 			If[narrowingIteration===maxNarrowingIterations,
 				Message[FindMinimum::nib,maxNarrowingIterations];False,
@@ -874,7 +856,7 @@ However, I don't feel like creating a variable for it.*)
 			frame=Most@
 				NestWhile[
 					Apply[
-						frameMinimumNarrow[
+						frameMinimumNarrowBrent[
 							function,
 							variable,
 							##,
@@ -884,15 +866,15 @@ However, I don't feel like creating a variable for it.*)
 							options]&,
 						#
 						]&,
-					(*{Sequence@@frame[[{1,2}]](*fa,a*),
+					{Sequence@@frame[[{1,2}]](*fa,a*),
 						Sequence@@frame[[{5,6}]](*fc,c*),
-						Sequence@@frame[[{5,6}]](*fu,u*),
+						(*Sequence@@frame[[{5,6}]](*fu,u*),*)
 						brentOrdinateAbscissaVWXSequence[
 							Sequence@@@frame](*fv,v,fw,w,fx,x*),
 						Abs[frame[[6]]-frame[[2]]](*max move distance*)
-						}*)frame,
-					Apply[
-						frameMinimumNarrowContinueQ[
+						}(*frame*),
+					(Print@#;Apply[
+						frameMinimumNarrowBrentContinueQ[
 							##,
 							accuracyGoal,
 							precisionGoal,
@@ -901,7 +883,7 @@ However, I don't feel like creating a variable for it.*)
 							options
 							]&,
 						#
-						]&
+						])&
 					]
 			];
 (*choose the minimum point in the frame*)
