@@ -479,6 +479,8 @@ frameMinimumNarrowBrent[function_,variable_,
 	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
 	fc:nonComplexNumberPatternObject(*ordinate at c*),
 	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
+	fu:nonComplexNumberPatternObject,(*ordinate at last evaluation*)
+	u:nonComplexNumberPatternObject,(*fu's abscissa*)
 	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
 	v:nonComplexNumberPatternObject(*fv's abscissa*),
 	fw:nonComplexNumberPatternObject(*2nd lowest ordinate*),
@@ -503,7 +505,7 @@ frameMinimumNarrowBrent[function_,variable_,
 			newOrdinate(*function value at newAbscissa*),
 			perturbed(*perturbations from candidateAbscissa*),
 			perturbFactor(*factor of perturbation tolerance locations*),
-			sameTestAbscissas={x,c,a,w,v}(*points to perturb away from*),
+			sameTestAbscissas={x,u,c,a,w,v}(*points to perturb away from*),
 			xm=(a+c)/2(*[a,c] interval midpoint*)
 			},
 (*Guess the location(s) of the minimum from v, w, and x using the
@@ -526,7 +528,7 @@ critical point(s) of an interpolating polynomial*)
 			1
 			];
 (*if none of the interpolation or golden section abscissas are viable*)
-		If[newAbscissa==={},
+		If[Or[newAbscissa==={}],
 (*use the golden section without correction*)
 			newAbscissa=perturbed=candidateAbscissa={candidateAbscissa[[-1]]}
 			];
@@ -550,17 +552,17 @@ perturbation, whichever is greater*)
 (*return all arguments in a list needed for a new iteration*)
 		If[newOrdinate<=fx,
 			If[newAbscissa>=x,
-				{fx,x,fc,c,
+				{fx,x,fc,c,fu,u,
 					vwxSequence,newMaxDisplacement},
-				{fa,a,fx,x,
+				{fa,a,fx,x,fu,u,
 					vwxSequence,newMaxDisplacement}
 				],
 			If[newAbscissa>=x,
-				{fa,a,newOrdinate,newAbscissa,
+				{fa,a,newOrdinate,newAbscissa,fu,u,
 					vwxSequence,newMaxDisplacement},
-				{newOrdinate,newAbscissa,fc,c,
+				{newOrdinate,newAbscissa,fc,c,fu,u,
 					vwxSequence,newMaxDisplacement}
-				]			
+				]
 			]
 		];
 
@@ -600,6 +602,8 @@ frameMinimumNarrowBrentContinueQ[
 	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
 	fc:nonComplexNumberPatternObject(*ordinate at c*),
 	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
+	fu:nonComplexNumberPatternObject,(*ordinate at last evaluation*)
+	u:nonComplexNumberPatternObject,(*fu's abscissa*)
 	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
 	v:nonComplexNumberPatternObject(*fv's abscissa*),
 	fw:nonComplexNumberPatternObject(*2nd lowest ordinate*),
@@ -868,7 +872,7 @@ However, I don't feel like creating a variable for it.*)
 						]&,
 					{Sequence@@frame[[{1,2}]](*fa,a*),
 						Sequence@@frame[[{5,6}]](*fc,c*),
-						(*Sequence@@frame[[{5,6}]](*fu,u*),*)
+						Sequence@@frame[[{5,6}]](*fu,u*),
 						brentOrdinateAbscissaVWXSequence[
 							Sequence@@@frame](*fv,v,fw,w,fx,x*),
 						Abs[frame[[6]]-frame[[2]]](*max move distance*)
