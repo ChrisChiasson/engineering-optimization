@@ -70,7 +70,8 @@ multipleVectorNonComplexNumberPatternObject=
 
 inequalityHeadAlternatives=Less|LessEqual|Greater|GreaterEqual;
 
-constraintPatternObject=(inequalityHeadAlternatives|Equal)[__];
+constraintPatternObject=Flatten[inequalityHeadAlternatives|Equal,Infinity,
+	Alternatives][__];
 
 multipleConstraintPatternObject=(And|List)[constraintPatternObject..];
 
@@ -209,9 +210,24 @@ parseOptions[argumentOptionList:multipleNullRulePatternObject,
 
 defineBadArgs@parseOptions;
 
+unprotectedSymbols[variables:multipleExpressionPatternObject]:=
+	Module[{symbol},
+		Union@Reap[variables/.
+			symbol_Symbol/;
+				FreeQ[Attributes@symbol,Protected]:>
+					Sow[symbol]
+			][[2,1]]
+		];
+
+defineBadArgs@unprotectedSymbols;
+
 monitorRules[variables:multipleExpressionPatternObject,
 spotRules:multipleNonComplexNumberRulePatternObject,monitor_,opts__?OptionQ]:=
-	CompoundExpression[Block[variables,Set@@@spotRules;monitor/.{opts}],
+	CompoundExpression[
+		Block[
+			Evaluate[unprotectedSymbols@variables],
+			Set@@@spotRules;monitor/.{opts}
+			],
 		spotRules];
 
 defineBadArgs@monitorRules;
@@ -667,17 +683,6 @@ frameMinimumNarrowContinueQ[
 
 defineBadArgs@frameMinimumNarrowContinueQ;
 
-unprotectedSymbols[variables:multipleExpressionPatternObject]:=
-	Module[{symbol},
-		Union@Reap[variables/.
-			symbol_Symbol/;
-				FreeQ[Attributes@symbol,Protected]:>
-					Sow[symbol]
-			][[2,1]]
-		];
-
-defineBadArgs@unprotectedSymbols;
-
 definePrecisionAndAccuracy[workingPrecision_Symbol,
 	accuracyGoal_Symbol,
 	precisionGoal_Symbol,
@@ -916,6 +921,27 @@ easier to write and probably faster to calculate*)
  indicate the names of the variables as they appear in Garret N. Vanderplaats'
  Numerical Optimization Techniques for Engineering Design*)
 
+fixIndeterminateGradient[
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	gradientSymbolic:vectorExpressionPatternObject,
+	gradientNumeric:vectorNonComplexNumberPatternObject]:=
+	gradientNumeric;
+
+fixIndeterminateGradient[
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	gradientSymbolic:vectorExpressionPatternObject,
+	gradientNumeric:vectorExpressionPatternObject]:=
+	MapIndexed[
+		If[MatchQ[#1,{nonComplexNumberPatternObject}],
+			#1,
+			Limit[Extract[gradientSymbolic,#2],Extract[solutionRules,#2]]/.
+				solutionRules
+			]&,
+		gradientNumeric
+		];
+
+defineDebugArgs@fixIndeterminateGradient;
+
 vMMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
@@ -950,15 +976,23 @@ is zero, then no changes takes place*)
 				tau=Transpose[gradientChange].inverseHessianApproximation.
 					gradientChange//singleElementScalar;
 				gamma=inverseHessianApproximation.gradientChange;
-				inverseHessianApproximationNew=inverseHessianApproximation+
-					(sigma+theta*tau)/sigma^2*
-						displacementVector.Transpose[displacementVector]+
-					(theta-1)/tau*gamma.Transpose[gamma]-
-					theta/sigma*(gamma.Transpose[displacementVector]+
-						displacementVector.Transpose[gamma])];		
+				Block[{Message},
+					inverseHessianApproximationNew=inverseHessianApproximation+
+						(sigma+theta*tau)/sigma^2*
+							displacementVector.Transpose[displacementVector]+
+						(theta-1)/tau*gamma.Transpose[gamma]-
+						theta/sigma*(gamma.Transpose[displacementVector]+
+							displacementVector.Transpose[gamma])
+					]
+			];
+		gradientNumericNew=fixIndeterminateGradient[
+			solutionRulesNew,
+			gradientSymbolic,
+			gradientNumericNew
+			];
 		{solutionRulesNew,gradientNumericNew,inverseHessianApproximationNew}];
 
-defineBadArgs@vMMKernel;
+defineDebugArgs@vMMKernel;
 
 (*I want this convergence to generate a message if solutionRules indexes
  a part of {arguments} that doesn't exist, so I am not putting a condition
@@ -1015,7 +1049,11 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 						]&,
 					#]&,
 				{solutionRules,
-					gradient/.solutionRules,
+					fixIndeterminateGradient[
+						solutionRules,
+						gradient,
+						gradient/.solutionRules
+						],
 					IdentityMatrix[Length[variableStarts]]
 					},
 				Not@fMCommonConvergenceTest[
@@ -1269,7 +1307,7 @@ INKernel[function_,variables:multipleExpressionPatternObject,
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		{solutionRulesNew,gradientSymbolic/.solutionRulesNew}];
 
-defineDebugArgs@INKernel;
+defineBadArgs@INKernel;
 
 Options@FindMinimum`IsaacNewton={fMSubMethodDefaultOption};
 
@@ -1304,7 +1342,7 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 
 (*augmented Lagrange multiplier*) 
 
-defineDebugArgs@aLMKernel;
+defineBadArgs@aLMKernel;
 
 constraintRateMultiplier[function_,variables:multipleExpressionPatternObject,
 	constraintValue_,opts___?OptionQ]:=
@@ -1498,6 +1536,9 @@ penaltyKernel[constraint:constraintPatternObject,border_,
 
 Options@penaltyKernel`AugmentedLagrangeMultiplier={Method->BaPMethodString};
 
+(*augmentInequalityConstraint makes an inequality constraint into an equality
+constraint through the use of Lagrange multipliers*)
+
 augmentInequalityConstraint[constraint:inequalityHeadAlternatives[__],
 	exteriorPenaltyFactor_,
 	lagrangeMultiplier_,
@@ -1505,6 +1546,16 @@ augmentInequalityConstraint[constraint:inequalityHeadAlternatives[__],
 	Max[penaltyKernel[constraint,opts],
 		-lagrangeMultiplier/(2*exteriorPenaltyFactor)
 		];
+
+(*it may seem odd to have a version of this function that operates on Equal,
+but it is useful as a no-op when mapping the function onto a list of constraints
+*)
+
+augmentInequalityConstraint[constraint:HoldPattern[Equal[__]],
+	exteriorPenaltyFactor_,
+	lagrangeMultiplier_,
+	opts___?OptionQ]:=
+	penaltyKernel[constraint,opts];
 
 defineBadArgs@augmentConstraint;
 
@@ -1660,9 +1711,9 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	penalties_,
 	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,
-		nonComplexNumberPatternObject],
-	penaltyMultiplierGrowthFactor:nonComplexNumberPatternObject,
-	lagrangeMultiplierRules:multipleNonComplexNumberRulePatternObject,
+		_],
+	penaltyMultiplierGrowthFactor_,
+	lagrangeMultiplierRules:multipleRulePatternObject,
 	lagrangeMultiplierUpdates:multipleExpressionPatternObject,opts___?OptionQ]:=
 	Module[{
 		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
@@ -1698,6 +1749,14 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 
 (*this is an attempt to reformulate NMinimize in the calling structure I used
 in FindMinimum -- instead of the original Trott-Strzebonski partial evaluation*)
+
+NMinimize[{function_,constraint:constraintPatternObject},
+	variableStartRanges:multipleGuessRangePseudoPatternObject,
+	opts1___?OptionQ,
+	Method->aLMMethodString|{aLMMethodString,methodOptions___?OptionQ},
+	opts2___?OptionQ]:=
+	NMinimize[{function,{constraint}},variableStartRanges,opts1,
+		Method->{aLMMethodString,methodOptions},opts2];
 
 NMinimize[{function_,constraints:multipleConstraintPatternObject},
 	variableStartRanges:multipleGuessRangePseudoPatternObject,
@@ -1744,7 +1803,7 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 			];
 (*It is somewhat inefficient to have different function calls generate the
 penalties and the multiplier updates -- these could easily be defined at the
-same time. In fact, they were defined by the one function call in the previous
+same time. In fact, they were defined by one function call in the previous
 version of this routine. This way, however, the code can be more modular, easier
 to understand, and easier to debug.*)
 		lagrangeMultiplierUpdates=
@@ -1771,7 +1830,7 @@ to understand, and easier to debug.*)
 					lagrangeMultiplierUpdates,
 					options]&,
 				#]&,
-			solutionRules,
+			{solutionRules,penaltyMultiplierRule,lagrangeMultiplierRules},
 			Not@fMCommonConvergenceTest[
 				variables,
 				accuracyGoal,
