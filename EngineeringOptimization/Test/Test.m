@@ -22,10 +22,14 @@ rep[1]={b[_]->2/100,h[_]->500/100};
 rep[2]={b[num_]:>ToExpression["b"<>ToString[num]],
 	h[num_]:>ToExpression["h"<>ToString[num]]};
 
+(*the following options seem to make the optimization work*)
+(*SetOptions[NMinimize`AugmentedLagrangeMultiplier,
+  InitialLagrangeMultipliers\[Rule]200,InitialPenaltyMultiplier\[Rule]2000]*)
+
 test[1]:=Module[{stepCount=0,evaluationCount=0},
 	NMinimize[xpr[1]/.rep[2],Transpose@{xpr[2],xpr[2]-1/1000/.rep[1],
 		xpr[2]+1/1000/.rep[1]}/.rep[2],Method->{"AugmentedLagrangeMultiplier",
-		"MaximumPenaltyMultiplier"->Infinity},WorkingPrecision->32]];
+		"MaximumPenaltyMultiplier"->Infinity},StepMonitor:>Print[{"step",++stepCount,xpr[2]/.rep[2]}],EvaluationMonitor:>Print[{"evaluation",++evaluationCount,xpr[2]/.rep[2]}]]];
 
 test[2]:=Module[{stepCount=0,evaluationCount=0},
 	NMinimize[xpr[1]/.rep[2],Transpose@{xpr[2],xpr[2]-1/1000/.rep[1],
