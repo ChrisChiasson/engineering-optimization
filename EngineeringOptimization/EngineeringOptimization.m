@@ -928,7 +928,19 @@ fixIndeterminateGradient[
 	gradientNumeric:vectorNonComplexNumberPatternObject]:=
 	gradientNumeric;
 
-fixIndeterminateGradient[
+(*fixIndeterminateGradient[
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	gradientSymbolic:vectorExpressionPatternObject,
+	gradientNumeric:vectorExpressionPatternObject]:=
+	MapIndexed[
+		If[MatchQ[#1,{nonComplexNumberPatternObject}],
+			#1,
+			Block[{Indeterminate},Extract[gradientSymbolic,#2]/.solutionRules]
+			]&,
+		gradientNumeric
+		];*)
+
+(*fixIndeterminateGradient[
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
 	gradientNumeric:vectorExpressionPatternObject]:=
@@ -937,6 +949,18 @@ fixIndeterminateGradient[
 			#1,
 			Limit[Extract[gradientSymbolic,#2],Extract[solutionRules,#2]]/.
 				solutionRules
+			]&,
+		gradientNumeric
+		];*)
+
+fixIndeterminateGradient[
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	gradientSymbolic:vectorExpressionPatternObject,
+	gradientNumeric:vectorExpressionPatternObject]:=
+	MapIndexed[
+		If[MatchQ[#1,{nonComplexNumberPatternObject}],
+			#1,
+			Fold[Limit,Extract[gradientSymbolic,#2],solutionRules]
 			]&,
 		gradientNumeric
 		];
@@ -978,7 +1002,7 @@ is zero, then no changes takes place*)
 				tau=Transpose[gradientChange].inverseHessianApproximation.
 					gradientChange//singleElementScalar;
 				gamma=inverseHessianApproximation.gradientChange;
-				Block[{Message},
+				Block[{message},
 					inverseHessianApproximationNew=inverseHessianApproximation+
 						(sigma+theta*tau)/sigma^2*
 							displacementVector.Transpose[displacementVector]+
@@ -1036,7 +1060,7 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			{FindMinimum`VariableMetric,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
-		gradient=List/@D[function,{variables,1}];
+		gradient=List/@Block[{message},D[function,{variables,1}]];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		solutionRules=
 			NestWhile[
@@ -1343,64 +1367,6 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}];
 
-(*augmented Lagrange multiplier*) 
-
-defineBadArgs@aLMKernel;
-
-constraintRateMultiplier[function_,variables:multipleExpressionPatternObject,
-	constraintValue_,opts___?OptionQ]:=
-	constraintRateMultiplierContainer@Divide[
-		Norm@If[
-			ReplaceAll[Gradient,{opts}]===Automatic,D[function,{variables,1}],
-				Gradient/.{opts} (*should be something for numeric derivative*)
-				],
-		Norm@D[constraintValue,{variables,1}]
-		];
-
-defineBadArgs@constraintRateMultiplier;
-
-constraintPenaltyTransformation[function_,
-	variables:multipleExpressionPatternObject,
-	penalty:constraintPatternObject,penaltyMultiplier_Symbol,opts___?OptionQ]:=
-	Module[{constraintValue,lagrangeMultiplier,scaledConstraintValue,
-		scaledEquivalentConstraintValue},
-		constraintValue=Which[
-			MatchQ[Head[penalty],(Less|LessEqual)],
-			scaledEquivalentConstraintValue=Max[
-				scaledConstraintValue,
-				-lagrangeMultiplier/(2*penaltyMultiplier)
-				];
-			Subtract@@penalty,
-			MatchQ[Head[penalty],(Greater|GreaterEqual)],
-			scaledEquivalentConstraintValue=Max[
-				scaledConstraintValue,
-				-lagrangeMultiplier/(2*penaltyMultiplier)
-				];
-			Subtract@@Reverse@penalty,
-			MatchQ[Head[penalty],Equal],
-				scaledEquivalentConstraintValue=scaledConstraintValue;
-				Subtract@@penalty
-			];
-		scaledConstraintValue=constraintValue*
-			constraintRateMultiplier[function,variables,constraintValue,opts];
-		{lagrangeMultiplier*scaledEquivalentConstraintValue+penaltyMultiplier*
-			scaledEquivalentConstraintValue^2,2*penaltyMultiplier*
-			scaledEquivalentConstraintValue,lagrangeMultiplier}
-		];
-
-defineBadArgs@constraintPenaltyTransformation;
-
-chooseMethod[method_Symbol,methodRulePatternObject_Rule,
-	methodOptions_Symbol,opts___?OptionQ]:=
-	Module[{methodOptionPossibleList,methodRuleList=Cases[{opts},
-		Map[HoldPattern,methodRulePatternObject,{0}]],optionHeadAlternatives},
-		If[methodRuleList==={},False,methodOptionPossibleList=Rest@Flatten@List@
-			methodRuleList[[1,2]];If[optionsListValidQ[method,
-				methodOptionPossibleList],methodOptions=Sequence@@
-					methodOptionPossibleList;True,False]]];
-
-defineBadArgs@chooseMethod;
-
 Options@penaltyKernel`Basic={wrapper->Identity};
 
 BaPMethodString="Basic";
@@ -1574,20 +1540,31 @@ penaltyKernel[constraint:constraintPatternObject,
 			Sequence@@Options@penaltyKernel`AugmentedLagrangeMultiplier],
 		psi
 		},
-		psi=Which[
-				MatchQ[Head[constraint],inequalityHeadAlternatives],
-				augmentInequalityConstraint[
-					constraint,
-					exteriorPenaltyFactor,
-					lagrangeMultiplier,
-					options],
-				MatchQ[Head[constraint],Equal],
-				penaltyKernel[constraint,options],
-				True,
-				Abort[]
+		psi=augmentInequalityConstraint[
+				constraint,
+				exteriorPenaltyFactor,
+				lagrangeMultiplier,
+				options
 				];
-(*it's interesting that the parser didn't warn me about the previously
-	missing semicolon on the Which statement above*)
+		penaltyKernel[
+			psi,
+			exteriorPenaltyFactor,
+			lagrangeMultiplier,
+			Method->{aLMMethodString,methodOptions}
+			]
+		];
+
+penaltyKernel[psi_,
+	exteriorPenaltyFactor_,
+	lagrangeMultiplier_,
+	Method->aLMMethodString|{aLMMethodString,methodOptions___?OptionQ}]/;
+		optionsListValidQ[
+			penaltyKernel`AugmentedLagrangeMultiplier,{methodOptions}]:=
+	Module[{
+		options=ruleLhsUnion@Sequence[
+			methodOptions,
+			Sequence@@Options@penaltyKernel`AugmentedLagrangeMultiplier]
+		},
 		lagrangeMultiplier*psi+exteriorPenaltyFactor*psi^2
 		];
 
@@ -1704,7 +1681,19 @@ penalty[constraints:multipleConstraintPatternObject,
 
 defineBadArgs@penalty;
 
-Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
+(*augmented Lagrange multiplier*) 
+
+constraintRateMultiplier[gradientNorm_,
+	variables:multipleExpressionPatternObject,
+	constraintValue_]:=
+	constraintRateMultiplierContainer@Divide[
+		gradientNorm,
+		Norm@D[constraintValue,{variables,1}]
+		];
+
+defineBadArgs@constraintRateMultiplier;
+
+Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->1,
 	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->10^5,
 	"LagrangeMultiplierHead"->Automatic,
 	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
@@ -1718,13 +1707,16 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 	penaltyMultiplierGrowthFactor_,
 	lagrangeMultiplierRules:multipleRulePatternObject,
 	lagrangeMultiplierUpdates:multipleExpressionPatternObject,opts___?OptionQ]:=
-	Module[{
-		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
-			Sequence@@Cases[{opts},Except[aLMMethodRulePatternObject,
-				commonOptionsPatternObject]]],
-		lagrangeMultiplierNewRules,
-		penaltyMultiplierNewRule,
-		solutionNewRules},
+	Module[
+		{cRMRule=constraintRateMultiplierContainer->
+			(ReplaceAll[#,solutionRules]&),
+			findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
+				Sequence@@Cases[{opts},Except[aLMMethodRulePatternObject,
+					commonOptionsPatternObject]]],
+			lagrangeMultiplierNewRules,
+			penaltyMultiplierNewRule,
+			solutionNewRules
+			},
 		(*++debug`aLMKernelCount;*)
 		solutionNewRules=monitorRules[
 			variables,
@@ -1733,7 +1725,7 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 					FindMinimum[
 						function+
 							(penalties/.lagrangeMultiplierRules/.
-								penaltyMultiplierRule),
+								penaltyMultiplierRule/.cRMRule),
 						List@@@solutionRules,
 						StepMonitor->EvaluationMonitor,
 						findMinimumOptions
@@ -1751,6 +1743,8 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 					/.lagrangeMultiplierRules
 					/.solutionNewRules}];
 		{solutionNewRules,penaltyMultiplierNewRule,lagrangeMultiplierNewRules}];
+
+defineBadArgs@aLMKernel;
 
 (*this is an attempt to reformulate NMinimize in the calling structure I used
 in FindMinimum -- instead of the original Trott-Strzebonski partial evaluation*)
@@ -1773,10 +1767,9 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 				NMinimize`AugmentedLagrangeMultiplier,
 				{methodOptions}]:=
 	Module[{
-		lagrangeMultiplierHead,
-		gradient,
-		hessian,
+		gradientNorm,
 		lagrangeMultipliers,
+		lagrangeMultiplierHead,
 		lagrangeMultiplierRules,
 		lagrangeMultiplierUpdates,
 		lambda,
@@ -1801,23 +1794,33 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 		lagrangeMultiplierHead="LagrangeMultiplierHead"/.{options};
 		If[lagrangeMultiplierHead===Automatic,lagrangeMultiplierHead=lambda];
 		lagrangeMultipliers=lagrangeMultiplierHead/@Range[Length@constraints];
-		penalties=penalty[constraints,
-			penaltyMultiplier,
-			lagrangeMultipliers,
-			Method->aLMMethodString
-			];
-(*It is somewhat inefficient to have different function calls generate the
-penalties and the multiplier updates -- these could easily be defined at the
-same time. In fact, they were defined by one function call in the previous
-version of this routine. This way, however, the code can be more modular, easier
-to understand, and easier to debug.*)
-		lagrangeMultiplierUpdates=
-			MapThread[2*penaltyMultiplier*
-				augmentInequalityConstraint[#,
+		penalties=
+			MapThread[
+				augmentInequalityConstraint[
+					#1,
 					penaltyMultiplier,
 					#2,
-					Method->BaPMethodString]&,
-				{List@@constraints,lagrangeMultipliers}];
+					Method->BaPMethodString
+					]&,
+				{List@@constraints,
+					lagrangeMultipliers}];
+		gradientNorm=Gradient/.{options};
+		If[gradientNorm===Automatic,gradientNorm=D[function,{variables,1}]];
+		gradientNorm=Norm@gradientNorm;
+		penalties=#*constraintRateMultiplier[gradientNorm,variables,#]&/@
+			penalties;
+(*it's important for this next line to be in this place relative to penalties*)
+		lagrangeMultiplierUpdates=2*penaltyMultiplier*penalties;
+		penalties=Plus@@
+			MapThread[
+				penaltyKernel[
+					#1,
+					penaltyMultiplier,
+					#2,
+					Method->aLMMethodString
+					]&,
+				{penalties,lagrangeMultipliers}
+				];
 		lagrangeMultiplierRules=Thread[lagrangeMultipliers->
 			"InitialLagrangeMultipliers"/.{options}];
 		solutionRules=#1->Mean@{##2}&@@@variableStartRanges/.
