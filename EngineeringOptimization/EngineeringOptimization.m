@@ -226,7 +226,7 @@ spotRules:multipleNonComplexNumberRulePatternObject,monitor_,opts__?OptionQ]:=
 	CompoundExpression[
 		Block[
 			Evaluate[unprotectedSymbols@variables],
-			Set@@@spotRules;monitor/.{opts}
+			Set@@@spotRules;monitor//.{opts}
 			],
 		spotRules];
 
@@ -770,6 +770,7 @@ FindMinimum[function_,
 			{FindMinimum`Unimodal,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,
 			precisionGoal,options];
+		(*++debug`lineSearchCount;*)
 		a=N[startLeft,workingPrecision];
 		fa=function/.monitorRules[{variable},{variable->a},
 			EvaluationMonitor,options];
@@ -951,6 +952,7 @@ vMMKernel[function_,variables:multipleExpressionPatternObject,
 		findMinimumOptions,gradientChange,gradientNumericNew,
 		inverseHessianApproximationNew,searchDirection,solutionRulesNew,gamma,
 		sigma,tau,theta="Theta"/.{opts}},
+		(*++debug`vMMKernelCount;*)
 		searchDirection=-inverseHessianApproximation.gradientNumeric;
 		solutionRulesNew=lineSearchRules[solutionRules,
 			Sequence@@@searchDirection,displacement];
@@ -1029,6 +1031,7 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			workingPrecision,
 			accuracyGoal,
 			precisionGoal},
+		(*++debug`FindMinimum`VariableMetricCount;*)
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`VariableMetric,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
@@ -1722,6 +1725,7 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 		lagrangeMultiplierNewRules,
 		penaltyMultiplierNewRule,
 		solutionNewRules},
+		(*++debug`aLMKernelCount;*)
 		solutionNewRules=monitorRules[
 			variables,
 			Last@
@@ -1731,6 +1735,7 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 							(penalties/.lagrangeMultiplierRules/.
 								penaltyMultiplierRule),
 						List@@@solutionRules,
+						StepMonitor->EvaluationMonitor,
 						findMinimumOptions
 						]
 					],
