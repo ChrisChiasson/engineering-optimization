@@ -965,7 +965,7 @@ fixIndeterminateGradient[
 		gradientNumeric
 		];
 
-defineDebugArgs@fixIndeterminateGradient;
+defiineBadArgs@fixIndeterminateGradient;
 
 vMMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
@@ -1018,7 +1018,7 @@ is zero, then no changes takes place*)
 			];
 		{solutionRulesNew,gradientNumericNew,inverseHessianApproximationNew}];
 
-defineDebugArgs@vMMKernel;
+defiineBadArgs@vMMKernel;
 
 (*I want this convergence to generate a message if solutionRules indexes
  a part of {arguments} that doesn't exist, so I am not putting a condition
@@ -1721,10 +1721,10 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 		solutionNewRules=monitorRules[
 			variables,
 			Last@
-				Block[{FindMinimum},
-					FindMinimum[
+				Block[{FindMinimum,ComplexInfinity,DirectedInfinity},
+					(Print[{#,penalties}];ReleaseHold[#])&@FindMinimum[
 						function+
-							(penalties/.lagrangeMultiplierRules/.
+							(Hold[penalties]/.lagrangeMultiplierRules/.
 								penaltyMultiplierRule/.cRMRule),
 						List@@@solutionRules,
 						StepMonitor->EvaluationMonitor,
@@ -1734,14 +1734,18 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 			StepMonitor,
 			opts
 			];
+		Print@solutionNewRules;
 		penaltyMultiplierNewRule=MapAt[Min[#*penaltyMultiplierGrowthFactor,
 			"MaximumPenaltyMultiplier"/.{opts}]&,penaltyMultiplierRule,2];
+		Print@penaltyMultiplierNewRule;
 		lagrangeMultiplierNewRules=MapThread[
 			Function[{rule,update},MapAt[#+update&,rule,2]],
 				{lagrangeMultiplierRules,lagrangeMultiplierUpdates
-					/.penaltyMultiplierRule
 					/.lagrangeMultiplierRules
-					/.solutionNewRules}];
+					/.penaltyMultiplierRule
+					/.cRMRule
+					/.solutionRules}];
+		Print@lagrangeMultiplierNewRules;
 		{solutionNewRules,penaltyMultiplierNewRule,lagrangeMultiplierNewRules}];
 
 defineBadArgs@aLMKernel;
@@ -1794,7 +1798,7 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 		lagrangeMultiplierHead="LagrangeMultiplierHead"/.{options};
 		If[lagrangeMultiplierHead===Automatic,lagrangeMultiplierHead=lambda];
 		lagrangeMultipliers=lagrangeMultiplierHead/@Range[Length@constraints];
-		penalties=
+		penalties=PiecewiseExpand/@
 			MapThread[
 				augmentInequalityConstraint[
 					#1,
