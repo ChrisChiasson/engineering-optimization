@@ -70,8 +70,10 @@ multipleVectorNonComplexNumberPatternObject=
 
 inequalityHeadAlternatives=Less|LessEqual|Greater|GreaterEqual;
 
-constraintPatternObject=Flatten[inequalityHeadAlternatives|Equal,Infinity,
-	Alternatives][__];
+constraintHeadAlternatives=Flatten[inequalityHeadAlternatives|Equal,Infinity,
+	Alternatives];
+
+constraintPatternObject=constraintHeadAlternatives[__];
 
 multipleConstraintPatternObject=(And|List)[constraintPatternObject..];
 
@@ -941,7 +943,7 @@ fixIndeterminateGradient[
 		gradientNumeric
 		];
 
-defineDebugArgs@fixIndeterminateGradient;
+defineBadArgs@fixIndeterminateGradient;
 
 vMMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
@@ -994,7 +996,7 @@ is zero, then no changes takes place*)
 			];
 		{solutionRulesNew,gradientNumericNew,inverseHessianApproximationNew}];
 
-defineDebugArgs@vMMKernel;
+defineBadArgs@vMMKernel;
 
 (*I want this convergence to generate a message if solutionRules indexes
  a part of {arguments} that doesn't exist, so I am not putting a condition
@@ -1773,6 +1775,7 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 				NMinimize`AugmentedLagrangeMultiplier,
 				{methodOptions}]:=
 	Module[{
+		constraintList,
 		lagrangeMultiplierHead,
 		gradient,
 		hessian,
@@ -1790,6 +1793,13 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 		workingPrecision,
 		accuracyGoal,
 		precisionGoal},
+		constraintList=
+			List@@
+				(And@@
+					constraints/.
+						(head:constraintHeadAlternatives)[args___]/;
+							Length[{args}]>2:>
+								And@@head@@@Partition[{args},2,1]);
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{NMinimize`AugmentedLagrangeMultiplier,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
@@ -1800,8 +1810,9 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 			ReplaceAll["InitialPenaltyMultiplier",{options}];
 		lagrangeMultiplierHead="LagrangeMultiplierHead"/.{options};
 		If[lagrangeMultiplierHead===Automatic,lagrangeMultiplierHead=lambda];
-		lagrangeMultipliers=lagrangeMultiplierHead/@Range[Length@constraints];
-		penalties=penalty[constraints,
+		lagrangeMultipliers=lagrangeMultiplierHead/@
+			Range[Length@constraintList];
+		penalties=penalty[constraintList,
 			penaltyMultiplier,
 			lagrangeMultipliers,
 			Method->aLMMethodString
@@ -1817,7 +1828,7 @@ to understand, and easier to debug.*)
 					penaltyMultiplier,
 					#2,
 					Method->BaPMethodString]&,
-				{List@@constraints,lagrangeMultipliers}];
+				{constraintList,lagrangeMultipliers}];
 		lagrangeMultiplierRules=Thread[lagrangeMultipliers->
 			"InitialLagrangeMultipliers"/.{options}];
 		solutionRules=#1->Mean@{##2}&@@@variableStartRanges/.
