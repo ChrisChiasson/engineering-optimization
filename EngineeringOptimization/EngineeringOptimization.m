@@ -922,13 +922,17 @@ easier to write and probably faster to calculate*)
  indicate the names of the variables as they appear in Garret N. Vanderplaats'
  Numerical Optimization Techniques for Engineering Design*)
 
+validateGradient[gradient:vectorExpressionPatternObject]:=gradient;
+
+defiineBadArgs@validateGradient;
+
 fixIndeterminateGradient[
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
 	gradientNumeric:vectorNonComplexNumberPatternObject]:=
 	gradientNumeric;
 
-(*fixIndeterminateGradient[
+fixIndeterminateGradient[
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
 	gradientNumeric:vectorExpressionPatternObject]:=
@@ -937,10 +941,10 @@ fixIndeterminateGradient[
 			#1,
 			Block[{Indeterminate},Extract[gradientSymbolic,#2]/.solutionRules]
 			]&,
-		gradientNumeric
-		];*)
+		validateGradient@gradientNumeric
+		];
 
-(*fixIndeterminateGradient[
+fixIndeterminateGradient[
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
 	gradientNumeric:vectorExpressionPatternObject]:=
@@ -950,10 +954,10 @@ fixIndeterminateGradient[
 			Limit[Extract[gradientSymbolic,#2],Extract[solutionRules,#2]]/.
 				solutionRules
 			]&,
-		gradientNumeric
-		];*)
+		validateGradient@gradientNumeric
+		];
 
-fixIndeterminateGradient[
+(*fixIndeterminateGradient[
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
 	gradientNumeric:vectorExpressionPatternObject]:=
@@ -962,8 +966,8 @@ fixIndeterminateGradient[
 			#1,
 			Fold[Limit,Extract[gradientSymbolic,#2],solutionRules]
 			]&,
-		gradientNumeric
-		];
+		validateGradient@gradientNumeric
+		];*)
 
 defiineBadArgs@fixIndeterminateGradient;
 
@@ -1002,7 +1006,7 @@ is zero, then no changes takes place*)
 				tau=Transpose[gradientChange].inverseHessianApproximation.
 					gradientChange//singleElementScalar;
 				gamma=inverseHessianApproximation.gradientChange;
-				Block[{message},
+				Block[{Message},
 					inverseHessianApproximationNew=inverseHessianApproximation+
 						(sigma+theta*tau)/sigma^2*
 							displacementVector.Transpose[displacementVector]+
@@ -1060,7 +1064,7 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			{FindMinimum`VariableMetric,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
-		gradient=List/@Block[{message},D[function,{variables,1}]];
+		gradient=List/@Block[{Message},D[function,{variables,1}]];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		solutionRules=
 			NestWhile[
@@ -1736,9 +1740,9 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 		lagrangeMultiplierNewRules=MapThread[
 			Function[{rule,update},MapAt[#+update&,rule,2]],
 				{lagrangeMultiplierRules,lagrangeMultiplierUpdates
-					/.lagrangeMultiplierRules
 					/.penaltyMultiplierRule
-					/.solutionRules}];
+					/.lagrangeMultiplierRules
+					/.solutionNewRules}];
 		{solutionNewRules,penaltyMultiplierNewRule,lagrangeMultiplierNewRules}
 		];
 
