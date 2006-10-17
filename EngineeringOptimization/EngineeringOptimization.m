@@ -1793,13 +1793,11 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 		workingPrecision,
 		accuracyGoal,
 		precisionGoal},
-		constraintList=
-			List@@
-				(And@@
-					constraints/.
-						(head:constraintHeadAlternatives)[args___]/;
-							Length[{args}]>2:>
-								And@@head@@@Partition[{args},2,1]);
+		constraintList=List@@
+				(constraints/.
+					(head:constraintHeadAlternatives)[args___]/;
+						Length[{args}]>2:>
+							And@@head@@@Partition[{args},2,1]);
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{NMinimize`AugmentedLagrangeMultiplier,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
