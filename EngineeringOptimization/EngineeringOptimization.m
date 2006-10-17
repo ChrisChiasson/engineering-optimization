@@ -1694,7 +1694,7 @@ constraintRateMultiplier[gradientNorm_,
 defineBadArgs@constraintRateMultiplier;
 
 Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->1,
-	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->10^5,
+	"InitialPenaltyMultiplier"->Automatic,"MaximumPenaltyMultiplier"->Infinity,
 	"LagrangeMultiplierHead"->Automatic,
 	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
 	Method->{vMMethodString,Method->uMethodString}};
@@ -1702,15 +1702,12 @@ Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->1,
 aLMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	penalties_,
-	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,
-		_],
+	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,_],
 	penaltyMultiplierGrowthFactor_,
 	lagrangeMultiplierRules:multipleRulePatternObject,
 	lagrangeMultiplierUpdates:multipleExpressionPatternObject,opts___?OptionQ]:=
 	Module[
-		{cRMRule=constraintRateMultiplierContainer->
-			(ReplaceAll[#,solutionRules]&),
-			findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
+		{findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
 				Sequence@@Cases[{opts},Except[aLMMethodRulePatternObject,
 					commonOptionsPatternObject]]],
 			lagrangeMultiplierNewRules,
@@ -1721,11 +1718,11 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 		solutionNewRules=monitorRules[
 			variables,
 			Last@
-				Block[{FindMinimum,ComplexInfinity,DirectedInfinity},
-					(Print[{#,penalties}];ReleaseHold[#])&@FindMinimum[
+				Block[{FindMinimum},
+					FindMinimum[
 						function+
-							(Hold[penalties]/.lagrangeMultiplierRules/.
-								penaltyMultiplierRule/.cRMRule),
+							(penalties/.lagrangeMultiplierRules
+								/.penaltyMultiplierRule),
 						List@@@solutionRules,
 						StepMonitor->EvaluationMonitor,
 						findMinimumOptions
@@ -1734,19 +1731,16 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 			StepMonitor,
 			opts
 			];
-		Print@solutionNewRules;
 		penaltyMultiplierNewRule=MapAt[Min[#*penaltyMultiplierGrowthFactor,
 			"MaximumPenaltyMultiplier"/.{opts}]&,penaltyMultiplierRule,2];
-		Print@penaltyMultiplierNewRule;
 		lagrangeMultiplierNewRules=MapThread[
 			Function[{rule,update},MapAt[#+update&,rule,2]],
 				{lagrangeMultiplierRules,lagrangeMultiplierUpdates
 					/.lagrangeMultiplierRules
 					/.penaltyMultiplierRule
-					/.cRMRule
 					/.solutionRules}];
-		Print@lagrangeMultiplierNewRules;
-		{solutionNewRules,penaltyMultiplierNewRule,lagrangeMultiplierNewRules}];
+		{solutionNewRules,penaltyMultiplierNewRule,lagrangeMultiplierNewRules}
+		];
 
 defineBadArgs@aLMKernel;
 
@@ -1795,6 +1789,9 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 			{options};
 		penaltyMultiplierRule=penaltyMultiplier->
 			ReplaceAll["InitialPenaltyMultiplier",{options}];
+		If[penaltyMultiplierRule[[2]]===Automatic,
+			penaltyMultiplierRule[[2]]=1;
+			];
 		lagrangeMultiplierHead="LagrangeMultiplierHead"/.{options};
 		If[lagrangeMultiplierHead===Automatic,lagrangeMultiplierHead=lambda];
 		lagrangeMultipliers=lagrangeMultiplierHead/@Range[Length@constraints];
@@ -1811,7 +1808,7 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 		gradientNorm=Gradient/.{options};
 		If[gradientNorm===Automatic,gradientNorm=D[function,{variables,1}]];
 		gradientNorm=Norm@gradientNorm;
-		penalties=#*constraintRateMultiplier[gradientNorm,variables,#]&/@
+		penalties=#*(1+0*constraintRateMultiplier[gradientNorm,variables,#])&/@
 			penalties;
 (*it's important for this next line to be in this place relative to penalties*)
 		lagrangeMultiplierUpdates=2*penaltyMultiplier*penalties;
@@ -1829,6 +1826,14 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 			"InitialLagrangeMultipliers"/.{options}];
 		solutionRules=#1->Mean@{##2}&@@@variableStartRanges/.
 				ruleNumeric[workingPrecision];
+		{penalties,lagrangeMultiplierUpdates}=
+			{penalties,lagrangeMultiplierUpdates}/.
+				constraintRateMultiplierContainer->
+					(#/.penaltyMultiplierRule
+						/.lagrangeMultiplierRules
+						/.solutionRules
+						/.x_?InexactNumberQ:>SetPrecision[x,Infinity]
+						&);
 		solutionRules=NestWhile[
 			Apply[
 				aLMKernel[
