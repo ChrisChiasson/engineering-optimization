@@ -227,7 +227,7 @@ the expanded components of ",XMLElement["xref",{"linkend"->
 "hw_1_lagrangemultipliers"},{}],"."}]],PrependDirectory->EODExportDirectory];
 
 (*solve for the possible optimum configurations of the four rectangle points
-(4 x 4 y 7 lagrange multipliers)*)
+(4 x, 4 y, and 7 lagrange multipliers)*)
 
 (*turn off the warning that not all variables may have solutions returned*)
 
