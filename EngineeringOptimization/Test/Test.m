@@ -31,6 +31,10 @@ test[1]:=Module[{stepCount=0,evaluationCount=0},
 		xpr[2]+1/1000/.rep[1]}/.rep[2],Method->{"AugmentedLagrangeMultiplier",
 		"MaximumPenaltyMultiplier"->Infinity},StepMonitor:>Print[{"step",++stepCount,xpr[2]/.rep[2]}],EvaluationMonitor:>Print[{"evaluation",++evaluationCount,xpr[2]/.rep[2]}]]];
 
+(*{0.0654197,{b1\[Rule]0.0313362,b2\[Rule]0.0288309,b3\[Rule]0.0257998,
+    b4\[Rule]0.0220456,b5\[Rule]0.0174976,h1\[Rule]0.626724,h2\[Rule]0.576618,
+    h3\[Rule]0.515997,h4\[Rule]0.440911,h5\[Rule]0.349951}}*)
+
 test[2]:=Module[{stepCount=0,evaluationCount=0},
 	NMinimize[xpr[1]/.rep[2],Transpose@{xpr[2],xpr[2]-1/1000/.rep[1],
 		xpr[2]+1/1000/.rep[1]}/.rep[2],Method->{"AugmentedLagrangeMultiplier",
