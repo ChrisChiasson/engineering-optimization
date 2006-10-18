@@ -76,7 +76,7 @@
 			<para>The question requires that the problem be restated in the
 				language of numerical optimization as given in the book. Using
 				that language, maximization of the rectangle area is interpreted
-				as the minimization of, F, the negative of the area. Also, all
+				as the minimization of F, the negative of the area. Also, all
 				optimization variables are considered to be part of one solution
 				vector, separate from any physical variable naming scheme that
 				may be present in the problem at hand. To differentiate between
@@ -183,6 +183,8 @@
 				16. This answers part b of the problem.
 			</para>
 			<xi:include href="mout/hw_1_selectedsolution.xml"/>
+		</listitem>
+		<listitem>
 			<para>The last part, c, of the homework only requests a graph of the
 				optimum solution, which I provide in
 				<xref linkend="hw_1_minimum_constrained_f"/>.
