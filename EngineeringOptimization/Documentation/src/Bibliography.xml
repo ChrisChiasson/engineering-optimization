@@ -5,7 +5,6 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="5">
 	<biblioentry xml:id="GNVNOTED">
-		<abbrev xml:id="GNVNOTED_abbrev">GNVNOTED</abbrev>
 		<author>
 			<personname>
 				<honorific>Dr</honorific>
@@ -31,7 +30,6 @@
 		</publisher>
 	</biblioentry>
 	<biblioentry xml:id="JSCET">
-		<abbrev xml:id="JSCET_abbrev">JSCET</abbrev>
 		<author>
 			<personname>
 				<honorific>Dr</honorific>
@@ -54,7 +52,6 @@
 		</publisher>
 	</biblioentry>
 	<biblioentry xml:id="MHEM">
-		<abbrev xml:id="MHEM_abbrev">MHEM</abbrev>
 		<editor>
 			<personname>
 				<firstname>Michiel</firstname>
@@ -76,7 +73,6 @@
 		</publisher>
 	</biblioentry>
 	<biblioentry xml:id="SRILPSA">
-		<abbrev xml:id="SRILPSA_abbrev">SRILPSA</abbrev>
 		<author>
 			<personname 
 				xl:href="http://www2.isye.gatech.edu/~spyros/index.html">
