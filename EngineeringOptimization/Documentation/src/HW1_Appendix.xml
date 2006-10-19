@@ -3,6 +3,7 @@
 	version="5">
 	<title>Homework 1 Appendix</title>
 	<example xml:id="HW1_code">
+		<?dbfo keep-together="auto"?>
 		<title>Homework 1 Code</title>
 		<para>This is the code for the homework 1 calculations.</para>
 		<programlisting><include xmlns="http://www.w3.org/2001/XInclude" 
