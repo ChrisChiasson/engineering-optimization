@@ -1,6 +1,7 @@
 BeginPackage["EngineeringOptimization`Documentation`PR1`",
 	{"EngineeringOptimization`",
-		"EngineeringOptimization`Documentation`"}
+		"EngineeringOptimization`Documentation`",
+		"DiscreteMath`GraphPlot`"}
 	];
 
 Begin["`Private`"];
@@ -148,18 +149,68 @@ setEdge[i_,j_]:=(AppendTo[connections,i->j];edge[i,j]=None);
 
 setEdge[i_,j_,expr_]:=(AppendTo[connections,i->j];edge[i,j]=expr);
 
-node[1,text]="Given: f, a, c, limitLeft, limitRight, reverse, shrinkFactor,
+label[1,text]="Given: f, a, c, limitLeft, limitRight, reverse, shrinkFactor,
 growthFactor, maxWideningIterations, maxNarrowingIterations";
 
 setEdge[1,2];
 
-node[2,text]="if fc>fa";
+label[2,text]="if fc>fa";
 
 setEdge[2,3,"then"];
 
 label[3,code]=HoldForm[{fa,a,fc,c}={fc,c,fa,a}];
 
 setEdge[2,4,"else"];
+
+setEdge[3,4];
+
+label[4,text]="if reverse";
+
+setEdge[4,5,"then"];
+
+label[5,code]=HoldForm[{fa,a,fc,c}={fc,c,fa,a}];
+
+setEdge[5,6];
+
+setEdge[4,6,"else"];
+
+label[6,code]=HoldForm[fb=f[b]];
+
+label[x_]:=Catch[If[ValueQ[label[x,code]],Throw[label[x,code]]];label[x,text]];
+
+coord=GraphCoordinates[connections];
+
+GraphPlot[connections,
+	EdgeStyleFunction->
+		({Gray,
+			Arrow[
+				{coord[[#1]],
+					coord[[#2]]
+					}
+				],
+			Black,
+			If[edge[#1,#2]=!=None,
+				Text[edge[#1,#2],
+					Mean@{coord[[#1]],coord[[#2]]}
+					],
+				Unevaluated[Sequence[]]
+				]
+			}&),
+	VertexStyleFunction->
+		(Text[
+			DisplayForm@
+				Cell[
+					BoxData[
+						ToBoxes[
+							label[#]
+							]
+						],
+					PageWidth->200
+					],
+			coord[[#]]
+			]&),
+	ImageSize->600
+	];
 
 End[];
 
