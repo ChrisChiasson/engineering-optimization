@@ -140,6 +140,27 @@ xpr[4]=FindMinimum[
 	Method->"Unimodal"
 	];
 
+(*routine diagram*)
+
+connections={};
+
+setEdge[i_,j_]:=(AppendTo[connections,i->j];edge[i,j]=None);
+
+setEdge[i_,j_,expr_]:=(AppendTo[connections,i->j];edge[i,j]=expr);
+
+node[1,text]="Given: f, a, c, limitLeft, limitRight, reverse, shrinkFactor,
+growthFactor, maxWideningIterations, maxNarrowingIterations";
+
+setEdge[1,2];
+
+node[2,text]="if fc>fa";
+
+setEdge[2,3,"then"];
+
+label[3,code]=HoldForm[{fa,a,fc,c}={fc,c,fa,a}];
+
+setEdge[2,4,"else"];
+
 End[];
 
 EndPackage[];
