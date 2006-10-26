@@ -16,11 +16,7 @@ FindMinimum[eqn[1][[2]],{{X[1],0},{X[2],0}},Method->"SteepestDescent"];
 
 FindMinimum[eqn[1][[2]],{{X[1],0},{X[2],0}},Method->"FletcherReeves"];
 
-FindMinimum[eqn[1][[2]],{{X[1],0},{X[2],0}},
-	Method->{"Powell",
-		Method->{"Unimodal","MaxNarrowingIterations"->40}
-		}
-	];
+FindMinimum[eqn[1][[2]],{{X[1],0},{X[2],0}},Method->"Powell"];
 
 FindMinimum[eqn[1][[2]],{{X[1],0},{X[2],0}},Method->"IsaacNewton"];
 

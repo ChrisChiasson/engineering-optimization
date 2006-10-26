@@ -1,42 +1,39 @@
-(* Mathematica Package *)
-
-(* Created by the Wolfram Workbench Jul 28, 2006 *)
-
-(*
-Created on 2006/07/28
-
-Imported from
-Z:\sites\chris.chiasson.name\Engineering_Optimization\pr3\Big_Rewrite.nb
-*)
-
 BeginPackage["EngineeringOptimization`",{"Utilities`FilterOptions`"}]
 
-(* Exported symbols added here with SymbolName::usage *) 
-
-FindMinimum::fdbh="The first unimodal line search hit its MaxDisplacement bound 
-and did not find any points with a lower function value than the origin of the 
-line search. The algorithm will move on to the second search.";
-FindMinimum::fibh="The first unimodal line search hit its MaxIterations bound 
-and did not find any points with a lower function value than the origin of the 
-line search. The algorithm will move on to the second search.";
-FindMinimum::fdbl="The first unimodal line search hit its MaxDisplacement bound,
- but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned.";
-FindMinimum::fibl="The first unimodal line search hit its MaxIterations bound,
- but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned.";
-FindMinimum::sdbh="The second unimodal line search hit its MaxDisplacement bound
- and did not find any points with a lower function value than the origin of the 
- line search. The algorithm will return the origin.";
-FindMinimum::sibh="The second unimodal line search hit its MaxIterations bound 
-and did not find any points with a lower function value than the origin of the 
-line search. The algorithm will return the origin.";
-FindMinimum::sdbl="The second unimodal line search hit its MaxDisplacement bound
-, but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned.";
-FindMinimum::sibl="The second unimodal line search hit its MaxIterations bound,
- but did find at least one point with a lower function value than the origin
- of the line search. The point with the lowest value will be returned.";
+FindMinimum::fdbh="The first unimodal line search hit its max displacement "<>
+"bound and did not find any points with a lower function value than the "<>
+"origin of the line search. The algorithm will move on to the second search.";
+FindMinimum::fibh="The first unimodal line search hit its "<>
+"MaxWideningIterations bound and did not find any points with a lower "<>
+"function value than the origin of the line search. The algorithm will move "<>
+"on to the second search.";
+FindMinimum::fdbl="The first unimodal line search hit its max displacement "<>
+"bound, but did find at least one point with a lower function value than the "<>
+"origin of the line search. The point with the lowest value will be returned.";
+FindMinimum::fibl="The first unimodal line search hit its "<>
+"MaxWideningIterations bound, but did find at least one point with a lower "<>
+"function value than the origin of the line search. The point with the "<>
+"lowest value will be returned.";
+FindMinimum::sdbh="The second unimodal line search hit its max displacement "<>
+"bound and did not find any points with a lower function value than the "<>
+"origin of the line search. The algorithm will return the origin.";
+FindMinimum::sibh="The second unimodal line search hit its "<>
+"MaxWideningIterations bound and did not find any points with a lower "<>
+"function value than the origin of the line search. The algorithm will "<>
+"return the origin.";
+FindMinimum::sdbl="The second unimodal line search hit its max displacement "<>
+"bound, but did find at least one point with a lower function value than the "<>
+"origin of the line search. The point with the lowest value will be returned.";
+FindMinimum::sibl="The second unimodal line search hit its "<>
+"MaxWideningIterations bound, but did find at least one point with a lower "<>
+"function value than the origin of the line search. The point with the "<>
+"lowest value will be returned.";
+FindMinimum::nib="A minimum was bracketed, but FindMinimum was unable to "<>
+"converge to the requested precision or accuracy within `1` narrowing "<>
+"iterations. Try increasing \"MaxNarrowingIterations\".";
+FindMinimum::nfv="`1` is not a function of the given variable `2`.";
+General::badargs="Bad arguments were supplied to `1`. "<>
+"The call was as follows: `2`";
 General::badopts="Received bad options: `1`.";
 
 Begin["`Private`"]
@@ -56,7 +53,9 @@ ruleDelayedSetDelayed=RuleDelayed->SetDelayed;
 rulesSets={ruleSet,ruleDelayedSetDelayed};
 
 (*vector means column vector*)
-nonComplexNumberPatternObject=Map[Blank,Integer|Real|Rational];
+nonComplexNumberPatternObject=Map[Blank,Real|Integer|Rational];
+
+realNumberQ[number_]:=MatchQ[number,nonComplexNumberPatternObject];
 
 unThreadableNonComplexNumberPatternObject={{nonComplexNumberPatternObject}}
 
@@ -71,7 +70,10 @@ multipleVectorNonComplexNumberPatternObject=
 
 inequalityHeadAlternatives=Less|LessEqual|Greater|GreaterEqual;
 
-constraintPatternObject=(inequalityHeadAlternatives|Equal)[__];
+constraintHeadAlternatives=Flatten[inequalityHeadAlternatives|Equal,Infinity,
+	Alternatives];
+
+constraintPatternObject=constraintHeadAlternatives[__];
 
 multipleConstraintPatternObject=(And|List)[constraintPatternObject..];
 
@@ -79,7 +81,7 @@ guessPseudoPatternObject={_,_?NumericQ};
 
 multipleGuessPseudoPatternObject={guessPseudoPatternObject..};
 
-guessRangePseudoPatternObject={_,_?NumericQ,_?NumericQ};
+guessRangePseudoPatternObject={_,__?NumericQ};
 
 multipleGuessRangePseudoPatternObject={guessRangePseudoPatternObject..};
 
@@ -210,9 +212,24 @@ parseOptions[argumentOptionList:multipleNullRulePatternObject,
 
 defineBadArgs@parseOptions;
 
+unprotectedSymbols[variables:multipleExpressionPatternObject]:=
+	Module[{symbol},
+		Union@Reap[variables/.
+			symbol_Symbol/;
+				FreeQ[Attributes@symbol,Protected]:>
+					Sow[symbol]
+			][[2,1]]
+		];
+
+defineBadArgs@unprotectedSymbols;
+
 monitorRules[variables:multipleExpressionPatternObject,
 spotRules:multipleNonComplexNumberRulePatternObject,monitor_,opts__?OptionQ]:=
-	CompoundExpression[Block[variables,Set@@@spotRules;monitor/.{opts}],
+	CompoundExpression[
+		Block[
+			Evaluate[unprotectedSymbols@variables],
+			Set@@@spotRules;monitor//.{opts}
+			],
 		spotRules];
 
 defineBadArgs@monitorRules;
@@ -240,56 +257,101 @@ optionsListValidQ[optionsCheckSymbol_Symbol,
 
 defineBadArgs@optionsListValidQ;
 
-frameMinimum[function_,variable_,
-	functionStart:nonComplexNumberPatternObject,
-	solutionStart:nonComplexNumberPatternObject,
-	functionIntermediate:nonComplexNumberPatternObject,
-	solutionIntermediate:nonComplexNumberPatternObject,
-	functionEnd:nonComplexNumberPatternObject,
-	solutionEnd:nonComplexNumberPatternObject,
-	growthFactor:nonComplexNumberPatternObject,
-	solutionStartBound:nonComplexNumberPatternObject,
-	solutionEndBound:nonComplexNumberPatternObject,opts__?OptionQ]:=
-	Module[{displacements,solutionTemp1=(1+growthFactor)*solutionEnd-
-		growthFactor*solutionStart,solutionTemp2},
-		displacements=Abs[{solutionTemp1,solutionEndBound}-
-			solutionStartBound];
-		solutionTemp2=First@Pick[{solutionTemp1,solutionEndBound},
-			displacements,Min@displacements];
-		{functionIntermediate,solutionIntermediate,functionEnd,solutionEnd,
-			function/.monitorRules[{variable},{variable->
-				solutionTemp2},EvaluationMonitor,opts],solutionTemp2}];
+clipAbscissa[abscissa:nonComplexNumberPatternObject,
+	limitLeft:nonComplexNumberPatternObject,
+	limitRight:nonComplexNumberPatternObject]:=
+	Piecewise[
+		{{limitLeft,abscissa<limitLeft},{limitRight,abscissa>limitRight}},
+		abscissa];
+
+(*takes the frame a,b,c, moving and expanding it until a minimum is located*)
+(*assumes a unimodal function*)
+
+frameMinimum[function_,
+	variable_,
+	fa:nonComplexNumberPatternObject(*leftmost ordinate*),
+	a:nonComplexNumberPatternObject(*leftmost abscissa*),
+	fb:nonComplexNumberPatternObject(*middle ordinate*),
+	b:nonComplexNumberPatternObject(*middle abscissa*),
+	fc:nonComplexNumberPatternObject(*rightmost ordinate*),
+	c:nonComplexNumberPatternObject(*rightmost abscissa*),
+	growthFactor:nonComplexNumberPatternObject(*usually the golden ratio 1.68*),
+	limitLeft:nonComplexNumberPatternObject(*the minimum value of an abscissa*),
+	limitRight:nonComplexNumberPatternObject(*the maximum value of an abscissa*),
+	workingPrecision_(*abscissa precision*),
+	opts___?OptionQ]:=
+	Module[
+		{newAbscissa(*newest abscissa*),
+			newOrdinate(*newest ordinate*)},
+		newAbscissa=N[
+			clipAbscissa[c+growthFactor*(c-b),
+				limitLeft,
+				limitRight
+				],
+			workingPrecision
+			];
+		newOrdinate=function/.monitorRules[{variable},
+			{variable->newAbscissa},EvaluationMonitor,opts];
+		{fb,b,fc,c,newOrdinate,newAbscissa}
+		];
 
 defineBadArgs@frameMinimum;
 
 (*frameMinimumStopTest must have Or Applied to List rather than wrapping the
 arguments directly in Or because all three Stop conditions must be assigned*)
 
-frameMinimumStopTest[functionStart:nonComplexNumberPatternObject,
-	solutionStart:nonComplexNumberPatternObject,
-	functionIntermediate:nonComplexNumberPatternObject,
-	solutionIntermediate:nonComplexNumberPatternObject,
-	functionEnd:nonComplexNumberPatternObject,
-	solutionEnd:nonComplexNumberPatternObject,
-	solutionEndBound:nonComplexNumberPatternObject,
-	frameBound_Symbol,
-	domainBound_Symbol,iteration_Integer,
-	maxIterations_Integer,iterationBound_Symbol]:=
-	If[Or@@{If[functionEnd>functionIntermediate,frameBound=True,False],
-		If[solutionEnd===solutionEndBound,domainBound=True,False],
-		If[iteration>=maxIterations,iterationBound=True,False]},True,False];
-
-frameMinimumStopTest[blah___]:=Dialog[
-	DialogProlog:>Print["debug`frameMinimumStopTest"],
-	DialogSymbols:>{debug`frameMinimumStopTest={blah}}];
+frameMinimumStopTest[fa:nonComplexNumberPatternObject,
+	a:nonComplexNumberPatternObject,
+	fb:nonComplexNumberPatternObject,
+	b:nonComplexNumberPatternObject,
+	fc:nonComplexNumberPatternObject,
+	c:nonComplexNumberPatternObject,
+	limitLeft:nonComplexNumberPatternObject,
+	limitRight:nonComplexNumberPatternObject,
+	frameBound:unTrueFalseSymbol,
+	domainBound:unTrueFalseSymbol,
+	iteration_Integer,
+	maxIterations_Integer,
+	iterationBound:unTrueFalseSymbol]:=
+	(*all of these conditions need to be evaluated, thus the apply is needed*)
+	Or@@{If[fc>fb,frameBound=True,False],
+			If[c===limitLeft||c===limitRight,domainBound=True,False],
+			If[iteration===maxIterations,iterationBound=True,False]};
 
 defineBadArgs@frameMinimumStopTest;
 
-frameMinimumBoundMessages[domainBound_Symbol,dbtag_Symbol,
-	iterationBound_Symbol,ibtag_Symbol]:=Block[{Message,MessageName},
-		{If[domainBound,Message@MessageName[FindMinimum,SymbolName@dbtag]],
-		If[iterationBound,Message@MessageName[FindMinimum,SymbolName@ibtag]]}];	
-	
+frameMinimumBoundMessages[
+	anyLower:True|False,
+	domainBound:True|False,
+	iterationBound:True|False,
+	reverse:True|False]:=
+	If[!reverse,
+		If[domainBound,
+			If[anyLower,
+				Message[FindMinimum::fdbl],
+				Message[FindMinimum::fdbh]
+				]
+			];
+		If[iterationBound,
+			If[anyLower,
+				Message[FindMinimum::fibl],
+				Message[FindMinimum::fibh]
+				]
+			],	
+		If[domainBound,
+			If[anyLower,
+				Message[FindMinimum::sdbl],
+				Message[FindMinimum::sdbh]
+				]
+			];
+		If[iterationBound,
+			If[anyLower,
+				Message[FindMinimum::sibl],
+				Message[FindMinimum::sibh]
+				]
+			]
+		];
+
 defineBadArgs@frameMinimumBoundMessages;
 
 noValueFalse[symbol:unTrueFalseSymbol]:=If[!ValueQ@symbol,symbol=False];
@@ -309,198 +371,540 @@ selectMinimum[variable_Symbol,
 
 defineBadArgs@selectMinimum;
 
+unsortedUnion[x_]:=Reap[Sow[1,x],_,#1&][[2]]
+
+defineBadArgs@unsortedUnion;
+
+nSameQ[currVal:nonComplexNumberPatternObject,
+	prevVal:nonComplexNumberPatternObject,
+	accuracyGoal:nonComplexNumberPatternObject,
+	precisionGoal:nonComplexNumberPatternObject]:=
+	Abs[currVal-prevVal]<=10^-accuracyGoal+Abs[prevVal]*10^-precisionGoal;
+
+nSameQ[currVal:nonComplexNumberPatternObject,
+	prevVal:nonComplexNumberPatternObject,
+	rhs:nonComplexNumberPatternObject(*the pre-calculated right hand side of the
+	above definition*)]:=
+	Abs[currVal-prevVal]<=rhs;
+
+defineBadArgs@nSameQ;
+
+(*The file loaded here defines a function, criticalDomainLocations, which
+is a function of three or four points y1,x1,y2,x2,y3,x3,(y4,x4) (function value
+before domain value). The outputs are a list of critical (in the calculus
+senese) domain locations (x values) obtained from a polynomial fit through the
+given points. The reason the file is loaded this way is that the function was
+(time consumingly) generated from other Mathematica input and would
+otherwise be prone to copy/paste error.*)
+
+Get[StringReplace[Context[],{"`"->"","Private"->""}]<>
+	"/criticalDomainLocations.m"];
+
+defineBadArgs@criticalDomainLocations;
+
+brentOrdinateAbscissaVWXSequence[
+	pointsFlatYX:multipleNonComplexNumberPatternObject(*
+	coordinates in a flat list, ordinate first, abscissa second*)
+	]/;EvenQ[Length@pointsFlatYX]:=
+	Module[
+(*coordinatePairs sorted by decreasing ordinate*)
+		{ordinateReverseSortPairs=
+			Sort[
+				unsortedUnion[Partition[pointsFlatYX,2]],
+				OrderedQ[{#2,#1}]&
+				]
+			},
+		Sequence@@Sequence@@@Take[ordinateReverseSortPairs,-3](*fv,v,fw,w,fx,x*)
+		];
+
+defineBadArgs@brentOrdinateAbscissaVWXSequence;
+
+perturbBrentLocation[location:nonComplexNumberPatternObject(*
+	abscissa that may or may not be perturbed by this proceedure*),
+	unSameLocations:multipleNonComplexNumberPatternObject(*banned locations*),
+	perturbFactor:nonComplexNumberPatternObject(*perturbation factor*),	
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
+	Module[{rhs(*the tolerance used in the right hand side of nSameQ*)},
+(*perturb the point until it is "different" from any of the unSameLocations*)
+		FixedPoint[
+			Function[loc(*a location*),
+				rhs=10^-accuracyGoal+Abs[loc]*10^-precisionGoal;
+				Catch@(
+					Scan[
+						If[nSameQ[loc,#,rhs],
+							Throw[loc+perturbFactor*rhs]
+							]&,
+						unSameLocations
+						];
+					loc
+					)
+				],
+			location
+			]
+		];
+
+perturbBrentLocation[location_(*an "erroneous" argument to this function*),
+	unSameLocations:multipleNonComplexNumberPatternObject(*banned locations*),
+	perturbFactor:nonComplexNumberPatternObject(*perturbation factor*),	
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)]:=
+	$MaxMachineNumber;
+
+defineBadArgs@perturbBrentLocation;
+
+System`IntervalComplement[
+	universe:Interval[{_?NumericQ,_?NumericQ}..],
+	holes:Interval[{_?NumericQ,_?NumericQ}..]..
+	]:=
+	Module[
+		{tempResult,
+			universeList=List@@universe,
+			masks,
+			unifiedHoles=IntervalUnion[holes]
+			},
+		masks=IntervalIntersection[Interval@#,unifiedHoles]&/@universeList;
+		tempResult=IntervalUnion@@
+			MapThread[
+				Interval@@
+					Partition[
+						Block[{Interval=Sequence},
+							Flatten@
+								{#1[[1]],#2,#1[[-1]]}
+							]
+						,2]&,
+				{universeList,masks}
+				];
+		DeleteCases[tempResult,
+			Alternatives@@IntervalIntersection[tempResult,unifiedHoles]
+			]
+		];
+
+defineBadArgs@System`IntervalComplement;
+
+numberInterval[number:nonComplexNumberPatternObject,
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*)
+	]:=
+	Module[{halfWidth=10^-accuracyGoal+Abs[number]*10^-precisionGoal(*
+		the half width of the interval corresponding to this number's
+		numerical convergence interval*)},
+		Interval[number+{-halfWidth,halfWidth}]
+		];
+
+frameMinimumNarrowBrent[function_,variable_,
+	fa:nonComplexNumberPatternObject(*ordinate at a*),
+	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
+	fc:nonComplexNumberPatternObject(*ordinate at c*),
+	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
+	fu:nonComplexNumberPatternObject,(*ordinate at last evaluation*)
+	u:nonComplexNumberPatternObject,(*fu's abscissa*)
+	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
+	v:nonComplexNumberPatternObject(*fv's abscissa*),
+	fw:nonComplexNumberPatternObject(*2nd lowest ordinate*),
+	w:nonComplexNumberPatternObject(*fw's abscissa*),
+	fx:nonComplexNumberPatternObject(*minimum ordinate*),
+	x:nonComplexNumberPatternObject(*fx's abscissa*),
+	maxAcceptableDisplacement:nonComplexNumberPatternObject(*
+	the maximum distance the algorithm can move via polynomial interpolation*),
+	shrinkFactor:nonComplexNumberPatternObject(*golden ratio 0.38 etc*),
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
+	opts__?OptionQ(*options*)]/;OrderedQ[{a,x,c}]:=
+	Module[
+		{candidateAbscissa(*candidate newAbscissa(s)*),
+			e(*golden step signed large interval length*),
+			goldenSectionDistances(*list of distances from
+			perturbed to the golden section abscissa*),
+			vwxSequence(*sequence of coordinate values for fv,v,fw,w,fx,x
+			for the next iteration*),
+			newAbscissa(*abscissa from interpolation or golden section*),
+			newMaxDisplacement(*maxAcceptableDisplacement for next iteration*),
+			newOrdinate(*function value at newAbscissa*),
+			perturbed(*perturbations from candidateAbscissa*),
+			perturbFactor(*factor of perturbation tolerance locations*),
+			sameTestAbscissas={x,u,c,a,w,v}(*points to perturb away from*),
+			xm=(a+c)/2(*[a,c] interval midpoint*)
+			},
+(*Guess the location(s) of the minimum from v, w, and x using the
+critical point(s) of an interpolating polynomial*)
+		e=If[x>=xm,a-x,c-x];
+		candidateAbscissa=Flatten@{
+			Block[{Message},criticalDomainLocations[fv,v,fw,w,fx,x]],
+			x+e*shrinkFactor};
+(*perturbation should be in the direction of the larger interval*)
+		perturbFactor=Sign[e]/2;
+		perturbed=perturbBrentLocation[#,sameTestAbscissas,
+			perturbFactor,accuracyGoal,precisionGoal]&/@
+				candidateAbscissa;
+(*use only the first point that matches these criteria*)
+		newAbscissa=Select[perturbed,
+			And[Element[#,Reals],
+				a<=#<=c,
+				Abs[#-x]<maxAcceptableDisplacement
+				]&,
+			1
+			];
+(*if none of the interpolation or golden section abscissas are viable*)
+		If[Or[newAbscissa==={}],
+(*use the golden section without correction*)
+			newAbscissa=perturbed=candidateAbscissa={candidateAbscissa[[-1]]}
+			];
+(*return the first element*)
+		newAbscissa=First@newAbscissa;
+		candidateAbscissa=
+			Extract[candidateAbscissa,
+				Position[perturbed,
+					newAbscissa][[1]]];
+(*the new maximum displacement is half this displacement or equal to the
+perturbation, whichever is greater*)
+		newMaxDisplacement=Max@Abs[{(newAbscissa-x)/2,
+			newAbscissa-candidateAbscissa}];
+(*perform the single function evaluation*)
+		newOrdinate=function/.monitorRules[{variable},
+			{variable->newAbscissa},EvaluationMonitor,opts];
+(*fv,v,fw,w,fx,x for a new iteration from their present values and the new val*)
+		vwxSequence=brentOrdinateAbscissaVWXSequence[
+			{fv,v,fw,w,fx,x,newOrdinate,newAbscissa}
+			];
+(*return all arguments in a list needed for a new iteration*)
+		If[newOrdinate<fx,
+			If[newAbscissa>=x,
+				{fx,x,fc,c,newOrdinate,newAbscissa,
+					vwxSequence,newMaxDisplacement},
+				{fa,a,fx,x,newOrdinate,newAbscissa,
+					vwxSequence,newMaxDisplacement}
+				],
+			If[newAbscissa>=x,
+				{fa,a,newOrdinate,newAbscissa,newOrdinate,newAbscissa,
+					vwxSequence,newMaxDisplacement},
+				{newOrdinate,newAbscissa,fc,c,newOrdinate,newAbscissa,
+					vwxSequence,newMaxDisplacement}
+				]
+			]
+		];
+
+defineBadArgs@frameMinimumNarrowBrent;
+
+(*golden section only version*)
+
 frameMinimumNarrow[function_,variable_,
-	functionStart:nonComplexNumberPatternObject,
-	solutionStart:nonComplexNumberPatternObject,
-	functionIntermediate1:nonComplexNumberPatternObject,
-	solutionIntermediate1:nonComplexNumberPatternObject,
-	functionIntermediate2:nonComplexNumberPatternObject,
-	solutionIntermediate2:nonComplexNumberPatternObject,
-	functionEnd:nonComplexNumberPatternObject,
-	solutionEnd:nonComplexNumberPatternObject,
+	fa:nonComplexNumberPatternObject(*ordinate at a*),
+	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
+	fb:nonComplexNumberPatternObject(*ordinate at b*),
+	b:nonComplexNumberPatternObject(*the intermediate abscissa in the frame*),
+	fc:nonComplexNumberPatternObject(*ordinate at c*),
+	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
 	shrinkFactor:nonComplexNumberPatternObject,
-	opts__?OptionQ]:=Module[{solutionIntermediateNew},If[
-		functionIntermediate1>functionIntermediate2,
-		solutionIntermediateNew=shrinkFactor*solutionIntermediate1+
-			(1-shrinkFactor)*solutionEnd;
-		{functionIntermediate1,solutionIntermediate1,functionIntermediate2,
-			solutionIntermediate2,function/.monitorRules[{variable},{variable->
-				solutionIntermediateNew},EvaluationMonitor,opts],
-			solutionIntermediateNew,functionEnd,solutionEnd},
-		solutionIntermediateNew=(1-shrinkFactor)*solutionStart+
-			shrinkFactor*solutionIntermediate2;
-		{functionStart,solutionStart,function/.monitorRules[{variable},
-			{variable->solutionIntermediateNew},EvaluationMonitor,opts],
-			solutionIntermediateNew,functionIntermediate1,solutionIntermediate1,
-			functionIntermediate2,solutionIntermediate2}]];
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),	
+	opts__?OptionQ]/;OrderedQ[{a,b,c}]:=
+	Module[{e=If[b>=(a+c)/2,a-b,c-b],newAbscissa,newOrdinate},
+		newAbscissa=b+e*shrinkFactor;
+		newOrdinate=function/.monitorRules[{variable},
+			{variable->newAbscissa},EvaluationMonitor,opts];
+		If[newOrdinate<=fb,
+			If[newAbscissa>=b,
+				{fb,b,newOrdinate,newAbscissa,fc,c},
+				{fa,a,newOrdinate,newAbscissa,fb,b}],
+			If[newAbscissa>=b,
+				{fa,a,fb,b,newOrdinate,newAbscissa},
+				{newOrdinate,newAbscissa,fb,b,fc,c}]
+			]
+		];
 
 defineBadArgs@frameMinimumNarrow;
 
-(*The file loaded here defines a function, cubicCriticalDomainLocations, which
-is a function of four points y1,x1,y2,x2,y3,x3,y4,x4 (function value before
-domain value). The outputs are a list of two critical (in the calculus senese)
-domain locations (x values) obtained from a cubic polynomial fit through the
-four given points. The reason the file is loaded this way is that the
-function was (time consumingly) generated from other Mathematica input and would
-otherwise be prone to copy/paste error*)
+frameMinimumNarrowBrentContinueQ[
+	fa:nonComplexNumberPatternObject(*ordinate at a*),
+	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
+	fc:nonComplexNumberPatternObject(*ordinate at c*),
+	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
+	fu:nonComplexNumberPatternObject,(*ordinate at last evaluation*)
+	u:nonComplexNumberPatternObject,(*fu's abscissa*)
+	fv:nonComplexNumberPatternObject(*3rd lowest ordinate*),
+	v:nonComplexNumberPatternObject(*fv's abscissa*),
+	fw:nonComplexNumberPatternObject(*2nd lowest ordinate*),
+	w:nonComplexNumberPatternObject(*fw's abscissa*),
+	fx:nonComplexNumberPatternObject(*minimum ordinate*),
+	x:nonComplexNumberPatternObject(*fx's abscissa*),
+	maxAcceptableDisplacement:nonComplexNumberPatternObject(*
+	the maximum distance the algorithm can move via polynomial interpolation*),
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
+	narrowingIteration_Integer(*the present narrowing iteration number*),
+	maxNarrowingIterations_Integer(*the maximum # of narrowing iterations*),
+	opts___?OptionQ(*options*)]/;OrderedQ[{a,x,c}]:=
+	Module[{
+		accFactor=10^-accuracyGoal(*precomputed accuracy adjustment factor*),
+		precFactor=10^-precisionGoal(*as above, for precision*),
+		xtol(*tolerance for comparison with aAdjusted and cAdjusted*)},
+		xtol=accFactor+Abs[x]*precFactor;
+		And[
+(*if b is within tolerance to a and c adjusted, then no better guess is likely*)
+			If[nSameQ[#,x,xtol]&/@And[a,c],False,True],
+(*we also have to stop if there are too many iterations*)
+			If[narrowingIteration>maxNarrowingIterations,
+				Message[FindMinimum::nib,maxNarrowingIterations];False,
+				True]
+			]
+		];
 
-Get[StringReplace[Context[],{"`"->"","Private"->""}]<>
-	"/cubicCriticalDomainLocations.m"];
+defineBadArgs@frameMinimumNarrowBrentContinueQ;
 
-defineBadArgs@cubicCriticalDomainLocations;
+frameMinimumNarrowContinueQ[
+	fa:nonComplexNumberPatternObject(*ordinate at a*),
+	a:nonComplexNumberPatternObject(*interval boundary left hand side (lhs) *),
+	fb:nonComplexNumberPatternObject,(*minimum ordinate*)
+	b:nonComplexNumberPatternObject,(*fb's abscissa*)
+	fc:nonComplexNumberPatternObject(*ordinate at c*),
+	c:nonComplexNumberPatternObject(*interval boundary right hand side (rhs)*),
+	accuracyGoal:nonComplexNumberPatternObject(*digits of accuracy requested*),
+	precisionGoal:nonComplexNumberPatternObject(*requested precision digits*),
+	narrowingIteration_Integer(*the present narrowing iteration number*),
+	maxNarrowingIterations_Integer(*the maximum # of narrowing iterations*),
+	opts___?OptionQ(*options*)]/;OrderedQ[{a,b,c}]:=
+	Module[{
+		accFactor=10^-accuracyGoal(*precomputed accuracy adjustment factor*),
+		precFactor=10^-precisionGoal(*as above, for precision*),
+		(*aAdjusteda adjusted into the interval to take care of overlapping,*)
+		(*cAdjustedc adjusted into the interval to take care of overlapping,*)
+		btol(*tolerance for comparison with aAdjusted and cAdjusted*)},
+		btol=accFactor+Abs[b]*precFactor;
+(*		aAdjusted=a+accFactor+Abs[a]*precFactor;
+		cAdjusted=c-accFactor-Abs[c]*precFactor;*)
+		And[
+(*if b is within tolerance to a and c adjusted, then no better guess is likely*)
+			If[nSameQ[#,b,btol]&/@And[a,c],False,True],
+(*we also have to stop if there are too many iterations*)
+			If[narrowingIteration>maxNarrowingIterations,
+				Message[FindMinimum::nib,maxNarrowingIterations];False,
+				True]
+			]
+		];
 
-(*reFindMinimum is used to call FindMinimum from itself, often because the frame
-search needs to go in a negative direction. Since the algorithm does not work
-when moving the frame in a negative directory, reFindMinimum aliases the
-independant variable using Block so that the search frame will always move in
-the positive direction. Since Block is used, reports from StepMonitor and
-EvaluationMonitor give the correct coordinates (including those from controling
-routines like ALMFindMinimum) even though the FindMinimum
-routine is working with the negative of the independant variable. It also
-handles the oddball case of the displacement limit being equal to zero.*)
+defineBadArgs@frameMinimumNarrowContinueQ;
 
-(*given the value of maxDisplacement and MaxIterations on an initial call, it
-may be possible to work out precisely how many iterations are possible for each
-run - and instead of passing extra information, use the length of
-MaxDisplacement to normalize however many iterations are left - we'll see*)
+definePrecisionAndAccuracy[workingPrecision_Symbol,
+	accuracyGoal_Symbol,
+	precisionGoal_Symbol,
+	opts__?OptionQ]:=
+	(workingPrecision=WorkingPrecision/.{opts};
+		If[workingPrecision===Automatic,workingPrecision=MachinePrecision];
+		Block[{MachinePrecision=$MachinePrecision},
+			accuracyGoal=AccuracyGoal/.{opts};
+			If[accuracyGoal===Automatic,accuracyGoal=workingPrecision/2];
+			precisionGoal=PrecisionGoal/.{opts};
+			If[precisionGoal===Automatic,precisionGoal=workingPrecision/2];
+			]
+	);
 
-reFindMinimum[function_,variable_,
-	origin:nonComplexNumberPatternObject,
-	maxDisplacement:multipleNonComplexNumberPatternObject,
-	{methodOptions___?OptionQ},{opts___?OptionQ}]:=
-	Module[{num,
-		reverseNeeded=If[Negative[maxDisplacement[[1]]],True,False],
-		variableReverse},
-		If[reverseNeeded,Block[{variable=-variableReverse},Block[{FindMinimum},
-			FindMinimum[function,{variableReverse,-origin},opts,Method->
-				{uMethodString,"MaxDisplacement"->-maxDisplacement,
-				methodOptions}]]]/.{Rule[variableReverse,num:
-					nonComplexNumberPatternObject]->Rule[variable,-num]},
-			Block[{FindMinimum},FindMinimum[function,{variable,-origin},opts,
-				Method->{uMethodString,"MaxDisplacement"->maxDisplacement,
-				methodOptions}]]]];
+defineBadArgs@definePrecisionAndAccuracy;
 
-defineBadArgs@reFindMinimum;
+Options@FindMinimum`Unimodal={
+	"GrowthFactor"->GoldenRatio,
+	"ShrinkFactor"->2-GoldenRatio,
+	"MaxWideningIterations"->Automatic,
+	"MaxNarrowingIterations"->Automatic,
+	"Reverse"->False
+	};
 
-Options@FindMinimum`Unimodal={"MaxDisplacement"->{100,-100},"GrowthFactor"->
-	GoldenRatio,"ShrinkFactor"->2-GoldenRatio,"MaxNarrowingIterations"->12};
-
-FindMinimum[function_,variableStart:guessPseudoPatternObject,
+FindMinimum[function_,variableStartRange:guessRangePseudoPatternObject,
 	opts1___?OptionQ,Method->uMethodString|
 		{uMethodString,methodOptions___?OptionQ},
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
-		{methodOptions}]&&FreeQ[function,variableStart[[1]]]:=
-		{function,Rule@@variableStart};
+		{methodOptions}]&&FreeQ[function,variableStartRange[[1]]]:=
+		(Message[FindMinimum::nfv,function,variableStartRange[[1]]];
+		{function,variableStartRange[[1]]->Mean@variableStartRange[[{2,3}]]});
 
-FindMinimum[function_,variableStart:guessPseudoPatternObject,
-	opts1___?OptionQ,Method->uMethodString|
-		{uMethodString,methodOptions___?OptionQ},
-	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
-		excludedOptions->Method]&&optionsListValidQ[FindMinimum`Unimodal,
-		{methodOptions}]:=
-	Module[{boundDivisor=3,boundForward,boundOrigin,
-		case,criticalDomainLocations,domainBound,frameBound,frame,
-		functionOrigin,growthFactor,iterationBound,iterations,lowerList,
-		maxDisplacementList,maxIterations,options,recursable,sewingTag,
-		shrinkFactor,solutionIntermediate,variable=variableStart[[1]],
-		workingPrecision},First@Sort@Reap[
+(*reference for this new version:
+	http://www.library.cornell.edu/nr/bookcpdf/c10-1.pdf*)
+
+FindMinimum[function_,
+	{variable_,
+		startLeft_?realNumberQ,
+		startRight_?realNumberQ,
+		limitLeft:_?(realNumberQ):-$MaxMachineNumber,
+		limitRight:_?(realNumberQ):$MaxMachineNumber
+		},
+	opts1___?OptionQ,
+	Method->uMethodString|{uMethodString,methodOptions___?OptionQ},
+	opts2___?OptionQ]/;
+		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
+		optionsListValidQ[FindMinimum`Unimodal,{methodOptions}]&&
+		OrderedQ[{startLeft,startRight}]&&
+		IntervalMemberQ[
+			Interval@{limitLeft,limitRight},
+			Interval@{startLeft,startRight}
+			]:=
+	Block[{Experimental`$EqualTolerance=0,Experimental`$SameQTolerance=0},
+	Module[
+		{a,
+			accuracyGoal,
+			anyLowerOrdinates(*boolean value indicating wether any function
+			evaluations	were lower than the two origin points*),
+			b,
+			c,
+			domainBound,
+			fa,
+			fb,
+			fc,
+			frameBound,
+			frame,
+			growthFactor,
+			wideningIterationBound(*boolean variable indicating that
+				wideningIteration===maxWideningIterations*),
+			lowerList,
+			maxIterations(*max total iterations for FindMinimum*),
+			maxNarrowingIterations(*max iterations for Brent's method*),
+			maxWideningIterations(*max iterations in bracketing search*),
+			options,
+			precisionGoal,
+			reverse,
+			sewingTag,
+			shrinkFactor,
+			iteration(*iteration number of the bracketing search*),
+			workingPrecision
+			},
+		First@Sort@Reap[
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`Unimodal,FindMinimum}];
-		workingPrecision=WorkingPrecision/.{options};
-		boundOrigin=N[variableStart[[2]],workingPrecision];
-		maxDisplacementList=Flatten@{N["MaxDisplacement"/.{options}
-			,workingPrecision]};
-		recursable=If[Length[maxDisplacementList]>=2,True,False];
-		Which[Negative[maxDisplacementList[[1]]],
-			Sow[reFindMinimum[function,variable,boundOrigin,maxDisplacementList,
-				{methodOptions},{opts1,opts2}],sewingTag],
-(*the combination of the first condition and these two proceeding conditions
- means that maxDisplacementList[[1]] would need to be == 0 for execution*)
-			NonPositive[maxDisplacementList[[1]]]&&recursable,
-			Sow[reFindMinimum[function,variable,boundOrigin,
-				Drop[maxDisplacementList,1],{methodOptions},{opts1,opts2}],
-				sewingTag],
-			NonPositive[maxDisplacementList[[1]]]&&Not@recursable,
-			Sow[selectMinimum[variable,{functionOrigin,boundOrigin}],
-				sewingTag],
-			True,
-			maxIterations=MaxIterations/.{options};
-			growthFactor=N["GrowthFactor"/.{options},workingPrecision];
-			shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
-			boundForward=maxDisplacementList[[1]]+boundOrigin;
-			iterations=0;
-			++iterations;
-			functionOrigin=function/.monitorRules[{variable},{variable->
-				boundOrigin},EvaluationMonitor,options];
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,
+			precisionGoal,options];
+		(*++debug`lineSearchCount;*)
+		a=N[startLeft,workingPrecision];
+		fa=function/.monitorRules[{variable},{variable->a},
+			EvaluationMonitor,options];
+		c=N[startRight,workingPrecision];
+		fc=function/.monitorRules[{variable},{variable->c},
+			EvaluationMonitor,options];
+(*The line search is always performed in the downward direction. This is a
+departure from the method described in class, but it can save many evaluations.
+I still think of a, b, and c as being right to left, but if the function is
+initially increasing, this next line of code completely reverses that order.*)
+		If[fc>fa,{fa,a,fc,c}={fc,c,fa,a}];
+(*This code allows the reverse direction to be searched.*)
+		reverse="Reverse"/.{options};
+		If[reverse,{fa,a,fc,c}={fc,c,fa,a}];
+		growthFactor=N["GrowthFactor"/.{options},workingPrecision];
+		shrinkFactor=N["ShrinkFactor"/.{options},workingPrecision];
+(*checking an interior point first prevents limitLeft and limitRight 
+from breaking the algorithm if they are exactly equal to the interval [a,c]*)
+		b=c+shrinkFactor*(a-c);
+		fb=function/.monitorRules[{variable},{variable->b},
+			EvaluationMonitor,options];
 (*first frame*)
-			solutionIntermediate=boundOrigin+maxDisplacementList[[1]]
-				/boundDivisor;
-			frame={functionOrigin,boundOrigin,functionOrigin,boundOrigin,
-				function/.monitorRules[{variable},{variable->
-				solutionIntermediate},EvaluationMonitor,options],
-				solutionIntermediate};
+		frame={fa,a,fb,b,fc,c};
+		iteration=1;
+		maxIterations=MaxIterations/.{options};
+		maxWideningIterations="MaxWideningIterations"/.{options};
+		If[maxWideningIterations===Automatic,
+			maxWideningIterations=maxIterations/2];
 (*attempt to frame the minimum*)
-			frame=NestWhile[Apply[frameMinimum[function,variable,##,
-				growthFactor,boundOrigin,boundForward,options]&,#]&,frame,
-				Apply[Not@frameMinimumStopTest[##,boundForward,frameBound,
-					domainBound,++iterations,IntegerPart[maxIterations/3],
-					iterationBound]&,#]&];
-			lowerList=(#<functionOrigin&)/@frame[[{1,3,5}]];
-			noValueFalse/@{frameBound,domainBound,iterationBound};
-(*was the minimum framed? if not, attempt contengencies*)
-			Which[Not@frameBound&&Not[Or@@lowerList]&&recursable,
-				frameMinimumBoundMessages[domainBound,fdbh,iterationBound,fibh];
-				Sow[reFindMinimum[function,variable,boundOrigin,
-					Drop[maxDisplacementList,1],{methodOptions},{opts1,opts2}]
-					,sewingTag],
-				Not@frameBound&&Not[Or@@lowerList]&&Not@recursable,
-				frameMinimumBoundMessages[domainBound,sdbh,iterationBound,sibh];
-				Sow[selectMinimum[variable,{functionOrigin,boundOrigin}],
-					sewingTag],
-				Not@frameBound&&Or@@lowerList,
-				frameMinimumBoundMessages[domainBound,fdbl,iterationBound,fibl];
-				Sow[selectMinimum[variable,frame],sewingTag],
-				frameBound,
-(*the framebound&&Not@@lowerlist is a necessary but insufficient condition for
- the unimodal minimum to be in the other direction*)
-				If[Not[Or@@lowerList]&&recursable,
-					Sow[reFindMinimum[function,variable,boundOrigin,
-						Drop[maxDisplacementList,1],
-						{methodOptions},{opts1,opts2}]
-					,sewingTag]];
-(*if the minimum was framed, narrow the frame*)
-				frame=Flatten@{frame[[{1,2}]],Map[{function/.monitorRules[
-					{variable},{variable->#},EvaluationMonitor,options],#}&,
-					{{1-shrinkFactor,shrinkFactor},{shrinkFactor,
-						1-shrinkFactor}}.frame[[{2,6}]]],frame[[{5,6}]]};
-				frame=FixedPoint[Apply[frameMinimumNarrow[function,variable,##,
-					shrinkFactor,options]&,#]&,frame,
-					Min["MaxNarrowingIterations"/.{options},maxIterations
-						-iterations-2]];
-(*fit a polynomail to the frame and see if any critical points are inside*)
-				Block[{Message},
-					criticalDomainLocations=Cases[
-						cubicCriticalDomainLocations@@
-							Rationalize[frame,0],
-						case:nonComplexNumberPatternObject/;
-							Function[Less[#1,case,#2]]@@Sort[{frame[[2]],
-								frame[[8]]}]
+		frame=
+			NestWhile[
+				Apply[
+					frameMinimum[
+						function,
+						variable,
+						##,
+						growthFactor,
+						limitLeft,
+						limitRight,
+						workingPrecision,
+						options
+						]&,
+					#
+					]&,
+				frame,
+				Apply[
+					Not@frameMinimumStopTest[
+						##,
+						limitLeft,
+						limitRight,
+						frameBound,
+						domainBound,
+						++iteration,
+						maxWideningIterations,
+						wideningIterationBound
+						]&,
+					#
+					]&
+				];
+(*It's inefficient to use Min[fa,fb] in a pure function mapped into Or because
+its result may be calculated for each of the three elements in the list.
+However, I don't feel like creating a variable for it.*)
+		anyLowerOrdinates=(#<Min[fa,fb]&)/@Or@@frame[[{1,3,5}]];
+		noValueFalse/@{frameBound,domainBound,wideningIterationBound};
+		frameMinimumBoundMessages[anyLowerOrdinates,
+			domainBound,wideningIterationBound,reverse];
+(*was the minimum framed? if not, attempt reverse search*)
+		If[Not@frameBound&&!reverse,
+			Sow[Block[{FindMinimum},
+					FindMinimum[function,
+						{variable,startLeft,startRight,limitLeft,limitRight
+							},
+						opts1,
+						Method->{uMethodString,"Reverse"->True,methodOptions},
+						opts2
 						]
-					];
-(*if so, add them to the frame*)
-				frame=Flatten@{frame,Map[{function/.monitorRules[{variable},
-					{variable->#},EvaluationMonitor,options],#}&,
-					criticalDomainLocations]};
+					],
+				sewingTag
+				]
+			];
+(*if the minimum was framed*)
+		If[frameBound,		
+(*narrow the frame via Brent's method - interpolation & golden section*)
+			iteration=0;
+			maxNarrowingIterations="MaxNarrowingIterations"/.{options};
+			If[maxNarrowingIterations===Automatic,
+				maxNarrowingIterations=maxIterations/2];
+			frame=Flatten@Sort[Partition[frame,2],OrderedQ[Reverse/@{#1,#2}]&];
+			frame=Most@
+				NestWhile[
+					Apply[
+						frameMinimumNarrowBrent[
+							function,
+							variable,
+							##,
+							shrinkFactor,
+							accuracyGoal,
+							precisionGoal,
+							options]&,
+						#
+						]&,
+					{Sequence@@frame[[{1,2}]](*fa,a*),
+						Sequence@@frame[[{5,6}]](*fc,c*),
+						Sequence@@frame[[{5,6}]](*fu,u*),
+						brentOrdinateAbscissaVWXSequence[
+							Sequence@@@frame](*fv,v,fw,w,fx,x*),
+						Abs[frame[[6]]-frame[[2]]](*max move distance*)
+						},
+					Apply[
+						frameMinimumNarrowBrentContinueQ[
+							##,
+							accuracyGoal,
+							precisionGoal,
+							++iteration,
+							maxNarrowingIterations,
+							options
+							]&,
+						#
+						]&
+					]
+			];
 (*choose the minimum point in the frame*)
-				Sow[selectMinimum[variable,frame],sewingTag]]]
-		,sewingTag][[2,1]]];
-		
+		Sow[selectMinimum[variable,Flatten@{frame,fa,a,fb,b,fc,c}],sewingTag],
+		sewingTag][[2,1]]
+	]
+	];
+
 lineSearchRules[solutionRules:multipleNonComplexNumberRulePatternObject,
 	searchDirection:multipleNonComplexNumberPatternObject,displacement_Symbol]:=
 	MapThread[Function[{variableRule,searchDirectionComponent},
 		MapAt[#+searchDirectionComponent*displacement&,variableRule,2]],
-		{solutionRules,searchDirection}]
+		{solutionRules,searchDirection}];
 
 defineBadArgs@lineSearchRules;
 
@@ -508,6 +912,8 @@ singleElementScalar[singleElement:unThreadableNonComplexNumberPatternObject]:=
 	First@First@singleElement;
 
 defineBadArgs@singleElementScalar;
+
+(*variable metric method*)
 
 (*theta is the parameter that scales the hessian or inverse hessian update
 between the Davidon Fletcher Powell (DFP) and Broyden Fletcher Goldfarb Shanno
@@ -518,16 +924,26 @@ easier to write and probably faster to calculate*)
  indicate the names of the variables as they appear in Garret N. Vanderplaats'
  Numerical Optimization Techniques for Engineering Design*)
 
-unprotectedSymbols[variables:multipleExpressionPatternObject]:=
-	Module[{symbol},
-		Union@Reap[variables/.
-			symbol_Symbol/;
-				FreeQ[Attributes@symbol,Protected]:>
-					Sow[symbol]
-			][[2,1]]
+fixIndeterminateGradient[
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	gradientSymbolic:vectorExpressionPatternObject,
+	gradientNumeric:vectorNonComplexNumberPatternObject]:=
+	gradientNumeric;
+
+fixIndeterminateGradient[
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	gradientSymbolic:vectorExpressionPatternObject,
+	gradientNumeric:vectorExpressionPatternObject]:=
+	MapIndexed[
+		If[MatchQ[#1,{nonComplexNumberPatternObject}],
+			#1,
+			Limit[Extract[gradientSymbolic,#2],Extract[solutionRules,#2]]/.
+				solutionRules
+			]&,
+		gradientNumeric
 		];
 
-defineBadArgs@unprotectedSymbols;
+defineBadArgs@fixIndeterminateGradient;
 
 vMMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
@@ -538,6 +954,7 @@ vMMKernel[function_,variables:multipleExpressionPatternObject,
 		findMinimumOptions,gradientChange,gradientNumericNew,
 		inverseHessianApproximationNew,searchDirection,solutionRulesNew,gamma,
 		sigma,tau,theta="Theta"/.{opts}},
+		(*++debug`vMMKernelCount;*)
 		searchDirection=-inverseHessianApproximation.gradientNumeric;
 		solutionRulesNew=lineSearchRules[solutionRules,
 			Sequence@@@searchDirection,displacement];
@@ -547,7 +964,9 @@ vMMKernel[function_,variables:multipleExpressionPatternObject,
 		displacementRule=(Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]])[[2]];
+				{displacement,0,1},findMinimumOptions]]])[[2]];
+(*the displacement acts as a divisor, so it can't be zero... besides, if it
+is zero, then no changes takes place*)
 		If[(displacement/.displacementRule)===0.,
 			gradientNumericNew=gradientNumeric;
 				solutionRulesNew=solutionRules,
@@ -561,12 +980,20 @@ vMMKernel[function_,variables:multipleExpressionPatternObject,
 				tau=Transpose[gradientChange].inverseHessianApproximation.
 					gradientChange//singleElementScalar;
 				gamma=inverseHessianApproximation.gradientChange;
-				inverseHessianApproximationNew=inverseHessianApproximation+
-					(sigma+theta*tau)/sigma^2*
-						displacementVector.Transpose[displacementVector]+
-					(theta-1)/tau*gamma.Transpose[gamma]-
-					theta/sigma*(gamma.Transpose[displacementVector]+
-						displacementVector.Transpose[gamma])];		
+				Block[{Message},
+					inverseHessianApproximationNew=inverseHessianApproximation+
+						(sigma+theta*tau)/sigma^2*
+							displacementVector.Transpose[displacementVector]+
+						(theta-1)/tau*gamma.Transpose[gamma]-
+						theta/sigma*(gamma.Transpose[displacementVector]+
+							displacementVector.Transpose[gamma])
+					]
+			];
+		gradientNumericNew=fixIndeterminateGradient[
+			solutionRulesNew,
+			gradientSymbolic,
+			gradientNumericNew
+			];
 		{solutionRulesNew,gradientNumericNew,inverseHessianApproximationNew}];
 
 defineBadArgs@vMMKernel;
@@ -576,15 +1003,20 @@ defineBadArgs@vMMKernel;
  here on solutionRules - Chris Chiasson 2006-08-01*)
  
 fMCommonConvergenceTest[variables:multipleExpressionPatternObject,
+	accuracyGoal:nonComplexNumberPatternObject,
+	precisionGoal:nonComplexNumberPatternObject,
 	arguments:fMCommonConvergenceTestPatternObject]:=
 	Module[{solutionRules,solution},
 		solutionRules[solution_Integer]:={arguments}[[solution,1]];
-		SameQ[variables/.solutionRules[1],variables/.solutionRules[2]]];
+		And@@MapThread[nSameQ[#1,#2,accuracyGoal,precisionGoal]&,
+			{variables/.solutionRules[1],
+				variables/.solutionRules[2]}
+			]
+		];
 
 defineBadArgs@fMCommonConvergenceTest;
 
-fMSubMethodDefaultOption=Method->{uMethodString,
-		"MaxDisplacement"->{12,-12},"MaxNarrowingIterations"->8};
+fMSubMethodDefaultOption=Method->uMethodString;
 
 Options@FindMinimum`VariableMetric={"Theta"->1,fMSubMethodDefaultOption};
 
@@ -594,18 +1026,54 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`VariableMetric,
 		{methodOptions}]:=
-	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]]},
+	Module[
+		{gradient,
+			options,solutionRules,
+			variables=variableStarts[[All,1]],
+			workingPrecision,
+			accuracyGoal,
+			precisionGoal},
+		(*++debug`FindMinimum`VariableMetricCount;*)
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`VariableMetric,FindMinimum}];
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
 		gradient=List/@D[function,{variables,1}];
-		solutionRules=Rule@@@variableStarts;
-		solutionRules=NestWhile[Apply[vMMKernel[function,variables,#1,gradient,
-			#2,#3,options]&,#]&,
-			{solutionRules,gradient/.solutionRules,
-				IdentityMatrix[Length[variableStarts]]},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
-			MaxIterations/.{options}][[1]];
-		{function/.solutionRules,solutionRules}];
+		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
+		solutionRules=
+			NestWhile[
+				Apply[
+					vMMKernel[
+						function,
+						variables,
+						#1,
+						gradient,
+						#2,
+						#3,
+						options
+						]&,
+					#]&,
+				{solutionRules,
+					fixIndeterminateGradient[
+						solutionRules,
+						gradient,
+						gradient/.solutionRules
+						],
+					IdentityMatrix[Length[variableStarts]]
+					},
+				Not@fMCommonConvergenceTest[
+					variables,
+					accuracyGoal,
+					precisionGoal,
+					##
+					]&,
+				2,
+				MaxIterations/.{options}
+				][[1]];
+		{function/.solutionRules,solutionRules}
+		];
+
+(*steepest descent*)
 
 sDKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
@@ -623,7 +1091,7 @@ sDKernel[function_,variables:multipleExpressionPatternObject,
 		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]][[2]];
+				{displacement,0,1},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		gradientNumericNew=gradientSymbolic/.solutionRulesNew;
 		{solutionRulesNew,gradientNumericNew}];
@@ -639,18 +1107,34 @@ FindMinimum[function_,
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`SteepestDescent,{methodOptions}]:=
-	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]]},
+	Module[
+		{gradient,
+			options,
+			solutionRules,
+			variables=variableStarts[[All,1]],
+			workingPrecision,
+			accuracyGoal,
+			precisionGoal},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`SteepestDescent,FindMinimum}];
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
 		gradient=List/@D[function,{variables,1}];
-		solutionRules=Rule@@@variableStarts;
+		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		solutionRules=NestWhile[Apply[sDKernel[function,variables,#1,gradient,
 			#2,options]&,#]&,
 			{solutionRules,gradient/.solutionRules},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
+			Not@fMCommonConvergenceTest[
+				variables,
+				accuracyGoal,
+				precisionGoal,
+				##]&,
+			2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}
 		];
+
+(*Fletcher-Reeves*)
 
 fRKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
@@ -670,7 +1154,7 @@ fRKernel[function_,variables:multipleExpressionPatternObject,
 		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]][[2]];
+				{displacement,0,1},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		gradientNumericNew=gradientSymbolic/.solutionRulesNew;
 		betaNew=Transpose[gradientNumericNew].gradientNumericNew/
@@ -679,7 +1163,7 @@ fRKernel[function_,variables:multipleExpressionPatternObject,
 
 defineBadArgs@fRKernel;
 
-(*http://www.library.cornell.edu/nr/bookcpdf/c10-6.pdf*)
+(*reference http://www.library.cornell.edu/nr/bookcpdf/c10-6.pdf*)
 
 Options@FindMinimum`FletcherReeves={fMSubMethodDefaultOption};
 
@@ -690,21 +1174,31 @@ FindMinimum[function_,
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`FletcherReeves,{methodOptions}]:=
-	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]]},
+	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]],
+		workingPrecision,accuracyGoal,precisionGoal},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`FletcherReeves,FindMinimum}];
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
 		gradient=List/@D[function,{variables,1}];
-		solutionRules=Rule@@@variableStarts;
+		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		solutionRules=NestWhile[Apply[fRKernel[function,variables,#1,gradient,
 			##2,options]&,#]&,
 			{solutionRules,
 				gradient/.solutionRules,
 				Table[{0},{Length@variables}],
 				0},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
+			Not@fMCommonConvergenceTest[
+				variables,
+				accuracyGoal,
+				precisionGoal,
+				##]&,
+			2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}
 		];
+
+(*Powell*)
 
 PowKernelKernel[function_,
 	variables:multipleExpressionPatternObject,
@@ -717,13 +1211,13 @@ PowKernelKernel[function_,
 		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},opts]]][[2]];
+				{displacement,0,1},opts]]][[2]];
 		solutionRulesNew/.displacementRule
 		];
 
 defineBadArgs@PowKernelKernel;
 
-(*http://www.library.cornell.edu/nr/bookcpdf/c10-5.pdf*)
+(*reference http://www.library.cornell.edu/nr/bookcpdf/c10-5.pdf*)
 
 PowKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
@@ -750,7 +1244,7 @@ PowKernel[function_,variables:multipleExpressionPatternObject,
 		displacementRule=Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]][[2]];
+				{displacement,0,1},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		{solutionRulesNew,
 			If[Mod[iteration,variablesLength+1]===0,
@@ -769,20 +1263,31 @@ FindMinimum[function_,
 	opts2___?OptionQ]/;
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`Powell,{methodOptions}]:=
-	Module[{options,solutionRules,variables=variableStarts[[All,1]]},
+	Module[{options,solutionRules,variables=variableStarts[[All,1]],
+		workingPrecision,accuracyGoal,precisionGoal},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`Powell,FindMinimum}];
-		solutionRules=Rule@@@variableStarts;
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
+		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		solutionRules=NestWhile[Apply[PowKernel[function,variables,##,options]&,
 			#]&,
 			{solutionRules,
 				Map[List,IdentityMatrix[Length[variableStarts]],{2}],
 				1
 				},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
+			Not@fMCommonConvergenceTest[
+				variables,
+				accuracyGoal,
+				precisionGoal,
+				##
+				]&,
+			2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}
 		];
+
+(*Isaac Newton*)
 
 INKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
@@ -803,11 +1308,11 @@ INKernel[function_,variables:multipleExpressionPatternObject,
 		displacementRule=(Block[Evaluate[unprotectedSymbols@variables],
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
-				{displacement,0},findMinimumOptions]]])[[2]];
+				{displacement,0,1},findMinimumOptions]]])[[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		{solutionRulesNew,gradientSymbolic/.solutionRulesNew}];
 
-defineDebugArgs@INKernel;
+defineBadArgs@INKernel;
 
 Options@FindMinimum`IsaacNewton={fMSubMethodDefaultOption};
 
@@ -818,48 +1323,31 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`IsaacNewton,
 		{methodOptions}]:=
 	Module[{gradient,hessian,options,solutionRules,
-		variables=variableStarts[[All,1]]},
+		variables=variableStarts[[All,1]],workingPrecision,accuracyGoal,
+		precisionGoal},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`IsaacNewton,FindMinimum}];
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
 		gradient=List/@D[function,{variables,1}];
-		solutionRules=Rule@@@variableStarts;
+		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		hessian=Experimental`OptimizeExpression[D[function,{variables,2}]];
 		solutionRules=NestWhile[Apply[INKernel[function,variables,#1,gradient,
 			#2,hessian,options]&,#]&,
 			{solutionRules,gradient/.solutionRules},
-			Not@fMCommonConvergenceTest[variables,##]&,2,
+			Not@fMCommonConvergenceTest[
+				variables,
+				accuracyGoal,
+				precisionGoal,
+				##
+				]&,
+			2,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}];
 
-(*aLMKernel[function_,variables:multipleExpressionPatternObject,
-	solutionRules:multipleNonComplexNumberRulePatternObject,
-	penalties_,
-	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,
-		nonComplexNumberPatternObject],
-	penaltyMultiplierGrowthFactor:nonComplexNumberPatternObject,
-	lagrangeMultiplierRules:multipleNonComplexNumberRulePatternObject,
-	lagrangeMultiplierUpdates:multipleExpressionPatternObject,opts___?OptionQ]:=
-	Module[{case,constraintRateMultiplierRule=
-		constraintRateMultiplierContainer->(ReplaceAll[#,solutionRules]&),
-		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
-			Sequence@@Cases[{opts},Except[aLMMethodRulePatternObject,
-				commonOptionsPatternObject]]],
-		lagrangeMultiplierNewRules=MapThread[
-			Function[{rule,update},MapAt[#+update&,rule,2]],
-				{lagrangeMultiplierRules,lagrangeMultiplierUpdates
-					/.constraintRateMultiplierContainer->Identity
-					/.penaltyMultiplierRule
-					/.lagrangeMultiplierRules
-					/.solutionRules}],
-			penaltyMultiplierNewRule=MapAt[Min[#*penaltyMultiplierGrowthFactor,
-				"MaximumPenaltyMultiplier"/.{opts}]&,penaltyMultiplierRule,2]},
-		{monitorRules[variables,Last@Block[{FindMinimum},FindMinimum[
-			function+(penalties/.constraintRateMultiplierRule
-				/.lagrangeMultiplierNewRules/.penaltyMultiplierNewRule),
-			List@@@solutionRules,findMinimumOptions]],StepMonitor,opts],
-			penaltyMultiplierNewRule,lagrangeMultiplierNewRules}]*)
+(*augmented Lagrange multiplier*) 
 
-defineDebugArgs@aLMKernel;
+defineBadArgs@aLMKernel;
 
 constraintRateMultiplier[function_,variables:multipleExpressionPatternObject,
 	constraintValue_,opts___?OptionQ]:=
@@ -911,168 +1399,9 @@ chooseMethod[method_Symbol,methodRulePatternObject_Rule,
 		If[methodRuleList==={},False,methodOptionPossibleList=Rest@Flatten@List@
 			methodRuleList[[1,2]];If[optionsListValidQ[method,
 				methodOptionPossibleList],methodOptions=Sequence@@
-					methodOptionPossibleList;True,False]]]
+					methodOptionPossibleList;True,False]]];
 
 defineBadArgs@chooseMethod;
-
-Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
-	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->10^5,
-	"LagrangeMultiplierHead"->Automatic,
-	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
-	Method->{vMMethodString,Method->{uMethodString,
-		"MaxDisplacement"->{10,-10},"MaxNarrowingIterations"->6}}}
-
-Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
-	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->Infinity,
-	"LagrangeMultiplierHead"->Automatic,
-	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
-	Method->{vMMethodString,Method->{uMethodString,
-		"MaxDisplacement"->{10,-10},"MaxNarrowingIterations"->30}}}
-
-(*NMinimize[{function_,constraints:multipleConstraintPatternObject},
-	variableStartRanges:multipleGuessRangePseudoPatternObject,opts___?OptionQ]:=
-	Module[{constraintsList=List@@constraints,lagrangeMultiplierRules,
-		lagrangeMultipliers,lagrangeMultiplierUpdates,methodOptions,
-		options,penalties,penaltyMultiplier,penaltyMultiplierGrowthFactor,
-		penaltyMultiplierRule,solutionRules=#1->Mean@{##2}&@@@
-			variableStartRanges,variables=variableStartRanges[[All,1]],
-		workingPrecision},(options=parseOptions[{methodOptions,opts},
-			{NMinimize`AugmentedLagrangeMultiplier,NMinimize}];
-		workingPrecision=WorkingPrecision/.{options};
-		penaltyMultiplierGrowthFactor="PenaltyMultiplierGrowthFactor"
-			/.{options};
-		penaltyMultiplierRule=penaltyMultiplier->
-			ReplaceAll["InitialPenaltyMultiplier",{options}];
-		{penalties,lagrangeMultiplierUpdates,lagrangeMultipliers}=Transpose[
-			constraintPenaltyTransformation[function,variables,#,
-			penaltyMultiplier,options]&/@constraintsList];
-		lagrangeMultiplierRules=Thread[lagrangeMultipliers->
-			"InitialLagrangeMultipliers"/.{options}];
-		FixedPoint[Apply[aLMKernel[function,variables,#1,penalties,#2,
-			N[penaltyMultiplierGrowthFactor,workingPrecision],#3,
-			lagrangeMultiplierUpdates,options]&,#]&,
-			{monitorRules[variables,solutionRules,StepMonitor,options],
-				penaltyMultiplierRule,lagrangeMultiplierRules}/.
-				ruleNumeric[workingPrecision]
-			,MaxIterations/.{options}])/;
-		chooseMethod[NMinimize`AugmentedLagrangeMultiplier,
-			aLMMethodRulePatternObject,methodOptions,opts]]*)
-
-aLMKernel[function_,variables:multipleExpressionPatternObject,
-	solutionRules:multipleNonComplexNumberRulePatternObject,
-	penalties_,
-	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,
-		nonComplexNumberPatternObject],
-	penaltyMultiplierGrowthFactor:nonComplexNumberPatternObject,
-	lagrangeMultiplierRules:multipleNonComplexNumberRulePatternObject,
-	lagrangeMultiplierUpdates:multipleExpressionPatternObject,opts___?OptionQ]:=
-	Module[{
-		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
-			Sequence@@Cases[{opts},Except[aLMMethodRulePatternObject,
-				commonOptionsPatternObject]]],
-		lagrangeMultiplierNewRules,
-		penaltyMultiplierNewRule,
-		solutionNewRules},
-		solutionNewRules=monitorRules[
-			variables,
-			Last@
-				Block[{FindMinimum},
-					FindMinimum[
-						function+
-							(penalties/.lagrangeMultiplierRules/.
-								penaltyMultiplierRule),
-						List@@@solutionRules,
-						findMinimumOptions
-						]
-					],
-			StepMonitor,
-			opts
-			];
-		penaltyMultiplierNewRule=MapAt[Min[#*penaltyMultiplierGrowthFactor,
-			"MaximumPenaltyMultiplier"/.{opts}]&,penaltyMultiplierRule,2];
-		lagrangeMultiplierNewRules=MapThread[
-			Function[{rule,update},MapAt[#+update&,rule,2]],
-				{lagrangeMultiplierRules,lagrangeMultiplierUpdates
-					/.penaltyMultiplierRule
-					/.lagrangeMultiplierRules
-					/.solutionNewRules}];
-		{solutionNewRules,penaltyMultiplierNewRule,lagrangeMultiplierNewRules}];
-
-(*this is an attempt to reformulate NMinimize in the calling structure I used
-in FindMinimum*)
-NMinimize[{function_,constraints:multipleConstraintPatternObject},
-	variableStartRanges:multipleGuessRangePseudoPatternObject,
-	opts1___?OptionQ,
-	Method->aLMMethodString|{aLMMethodString,methodOptions___?OptionQ},
-	opts2___?OptionQ]/;
-		optionsListValidQ[NMinimize,{opts1,opts2},excludedOptions->Method]&&
-			optionsListValidQ[
-				NMinimize`AugmentedLagrangeMultiplier,
-				{methodOptions}]:=
-	Module[{
-		lagrangeMultiplierHead,
-		gradient,
-		hessian,
-		lagrangeMultipliers,
-		lagrangeMultiplierRules,
-		lagrangeMultiplierUpdates,
-		lambda,
-		options,
-		penalties,
-		penaltyMultiplier,
-		penaltyMultiplierRule,
-		penaltyMultiplierGrowthFactor,
-		solutionRules,
-		variables=variableStartRanges[[All,1]],
-		workingPrecision},
-		options=parseOptions[{methodOptions,opts1,opts2},
-			{NMinimize`AugmentedLagrangeMultiplier,FindMinimum}];
-		workingPrecision=WorkingPrecision/.{options};
-		penaltyMultiplierGrowthFactor="PenaltyMultiplierGrowthFactor"/.
-			{options};
-		penaltyMultiplierRule=penaltyMultiplier->
-			ReplaceAll["InitialPenaltyMultiplier",{options}];
-		lagrangeMultiplierHead="LagrangeMultiplierHead"/.{options};
-		If[lagrangeMultiplierHead===Automatic,
-			lagrangeMultiplierHead=lambda];
-		lagrangeMultipliers=lagrangeMultiplierHead/@
-			Range[Length@constraints];
-		penalties=penalty[constraints,
-			penaltyMultiplier,
-			lagrangeMultipliers,
-			Method->aLMMethodString
-			];
-		lagrangeMultiplierUpdates=
-			MapThread[2*penaltyMultiplier*
-				augmentInequalityConstraint[#,
-					penaltyMultiplier,
-					#2,
-					Method->BaPMethodString]&,
-				{List@@constraints,lagrangeMultipliers}];
-		lagrangeMultiplierRules=Thread[lagrangeMultipliers->
-			"InitialLagrangeMultipliers"/.{options}];
-		solutionRules=#1->Mean@{##2}&@@@variableStartRanges;
-		solutionRules=NestWhile[
-			Apply[
-				aLMKernel[
-					function,
-					variables,
-					#1,
-					penalties,
-					#2,
-					N[penaltyMultiplierGrowthFactor,workingPrecision],
-					#3,
-					lagrangeMultiplierUpdates,
-					options]&,
-				#]&,
-			{monitorRules[variables,solutionRules,StepMonitor,options],
-				penaltyMultiplierRule,lagrangeMultiplierRules}/.
-				ruleNumeric[workingPrecision],
-			Not@fMCommonConvergenceTest[variables,##]&,
-			2,
-			MaxIterations/.{options}
-			][[1]];
-		{function/.solutionRules,solutionRules}];
 
 Options@penaltyKernel`Basic={wrapper->Identity};
 
@@ -1212,13 +1541,26 @@ penaltyKernel[constraint:constraintPatternObject,border_,
 
 Options@penaltyKernel`AugmentedLagrangeMultiplier={Method->BaPMethodString};
 
+(*augmentInequalityConstraint makes an inequality constraint into an equality
+constraint through the use of Lagrange multipliers*)
+
 augmentInequalityConstraint[constraint:inequalityHeadAlternatives[__],
 	exteriorPenaltyFactor_,
 	lagrangeMultiplier_,
-	opts___?OptionQ]=
+	opts___?OptionQ]:=
 	Max[penaltyKernel[constraint,opts],
 		-lagrangeMultiplier/(2*exteriorPenaltyFactor)
 		];
+
+(*it may seem odd to have a version of this function that operates on Equal,
+but it is useful as a no-op when mapping the function onto a list of constraints
+*)
+
+augmentInequalityConstraint[constraint:HoldPattern[Equal[__]],
+	exteriorPenaltyFactor_,
+	lagrangeMultiplier_,
+	opts___?OptionQ]:=
+	penaltyKernel[constraint,opts];
 
 defineBadArgs@augmentConstraint;
 
@@ -1246,8 +1588,8 @@ penaltyKernel[constraint:constraintPatternObject,
 				True,
 				Abort[]
 				];
-		(*it's interesting that the parser didn't warn me about the previously
-			missing semicolon on the Which statement above*)
+(*it's interesting that the parser didn't warn me about the previously
+	missing semicolon on the Which statement above*)
 		lagrangeMultiplier*psi+exteriorPenaltyFactor*psi^2
 		];
 
@@ -1363,6 +1705,156 @@ penalty[constraints:multipleConstraintPatternObject,
 		];
 
 defineBadArgs@penalty;
+
+Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
+	"InitialPenaltyMultiplier"->1,"MaximumPenaltyMultiplier"->10^5,
+	"LagrangeMultiplierHead"->Automatic,
+	"PenaltyMultiplierGrowthFactor"->GoldenRatio,Gradient->Automatic,
+	Method->{vMMethodString,Method->uMethodString}};
+
+aLMKernel[function_,variables:multipleExpressionPatternObject,
+	solutionRules:multipleNonComplexNumberRulePatternObject,
+	penalties_,
+	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,
+		_],
+	penaltyMultiplierGrowthFactor_,
+	lagrangeMultiplierRules:multipleRulePatternObject,
+	lagrangeMultiplierUpdates:multipleExpressionPatternObject,opts___?OptionQ]:=
+	Module[{
+		findMinimumOptions=ruleLhsUnion@FilterOptions[FindMinimum,
+			Sequence@@Cases[{opts},Except[aLMMethodRulePatternObject,
+				commonOptionsPatternObject]]],
+		lagrangeMultiplierNewRules,
+		penaltyMultiplierNewRule,
+		solutionNewRules},
+		(*++debug`aLMKernelCount;*)
+		solutionNewRules=monitorRules[
+			variables,
+			Last@
+				Block[{FindMinimum},
+					FindMinimum[
+						function+
+							(penalties/.lagrangeMultiplierRules/.
+								penaltyMultiplierRule),
+						List@@@solutionRules,
+						StepMonitor->EvaluationMonitor,
+						findMinimumOptions
+						]
+					],
+			StepMonitor,
+			opts
+			];
+		penaltyMultiplierNewRule=MapAt[Min[#*penaltyMultiplierGrowthFactor,
+			"MaximumPenaltyMultiplier"/.{opts}]&,penaltyMultiplierRule,2];
+		lagrangeMultiplierNewRules=MapThread[
+			Function[{rule,update},MapAt[#+update&,rule,2]],
+				{lagrangeMultiplierRules,lagrangeMultiplierUpdates
+					/.penaltyMultiplierRule
+					/.lagrangeMultiplierRules
+					/.solutionNewRules}];
+		{solutionNewRules,penaltyMultiplierNewRule,lagrangeMultiplierNewRules}];
+
+(*this is an attempt to reformulate NMinimize in the calling structure I used
+in FindMinimum -- instead of the original Trott-Strzebonski partial evaluation*)
+
+NMinimize[{function_,constraint:constraintPatternObject},
+	variableStartRanges:multipleGuessRangePseudoPatternObject,
+	opts1___?OptionQ,
+	Method->aLMMethodString|{aLMMethodString,methodOptions___?OptionQ},
+	opts2___?OptionQ]:=
+	NMinimize[{function,{constraint}},variableStartRanges,opts1,
+		Method->{aLMMethodString,methodOptions},opts2];
+
+NMinimize[{function_,constraints:multipleConstraintPatternObject},
+	variableStartRanges:multipleGuessRangePseudoPatternObject,
+	opts1___?OptionQ,
+	Method->aLMMethodString|{aLMMethodString,methodOptions___?OptionQ},
+	opts2___?OptionQ]/;
+		optionsListValidQ[NMinimize,{opts1,opts2},excludedOptions->Method]&&
+			optionsListValidQ[
+				NMinimize`AugmentedLagrangeMultiplier,
+				{methodOptions}]:=
+	Module[{
+		constraintList,
+		lagrangeMultiplierHead,
+		gradient,
+		hessian,
+		lagrangeMultipliers,
+		lagrangeMultiplierRules,
+		lagrangeMultiplierUpdates,
+		lambda,
+		options,
+		penalties,
+		penaltyMultiplier,
+		penaltyMultiplierRule,
+		penaltyMultiplierGrowthFactor,
+		solutionRules,
+		variables=variableStartRanges[[All,1]],
+		workingPrecision,
+		accuracyGoal,
+		precisionGoal},
+		constraintList=List@@
+				(constraints/.
+					(head:constraintHeadAlternatives)[args___]/;
+						Length[{args}]>2:>
+							And@@head@@@Partition[{args},2,1]);
+		options=parseOptions[{methodOptions,opts1,opts2},
+			{NMinimize`AugmentedLagrangeMultiplier,FindMinimum}];
+		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
+			options];
+		penaltyMultiplierGrowthFactor="PenaltyMultiplierGrowthFactor"/.
+			{options};
+		penaltyMultiplierRule=penaltyMultiplier->
+			ReplaceAll["InitialPenaltyMultiplier",{options}];
+		lagrangeMultiplierHead="LagrangeMultiplierHead"/.{options};
+		If[lagrangeMultiplierHead===Automatic,lagrangeMultiplierHead=lambda];
+		lagrangeMultipliers=lagrangeMultiplierHead/@
+			Range[Length@constraintList];
+		penalties=penalty[constraintList,
+			penaltyMultiplier,
+			lagrangeMultipliers,
+			Method->aLMMethodString
+			];
+(*It is somewhat inefficient to have different function calls generate the
+penalties and the multiplier updates -- these could easily be defined at the
+same time. In fact, they were defined by one function call in the previous
+version of this routine. This way, however, the code can be more modular, easier
+to understand, and easier to debug.*)
+		lagrangeMultiplierUpdates=
+			MapThread[2*penaltyMultiplier*
+				augmentInequalityConstraint[#,
+					penaltyMultiplier,
+					#2,
+					Method->BaPMethodString]&,
+				{constraintList,lagrangeMultipliers}];
+		lagrangeMultiplierRules=Thread[lagrangeMultipliers->
+			"InitialLagrangeMultipliers"/.{options}];
+		solutionRules=#1->Mean@{##2}&@@@variableStartRanges/.
+				ruleNumeric[workingPrecision];
+		solutionRules=NestWhile[
+			Apply[
+				aLMKernel[
+					function,
+					variables,
+					#1,
+					penalties,
+					#2,
+					penaltyMultiplierGrowthFactor,
+					#3,
+					lagrangeMultiplierUpdates,
+					options]&,
+				#]&,
+			{solutionRules,penaltyMultiplierRule,lagrangeMultiplierRules},
+			Not@fMCommonConvergenceTest[
+				variables,
+				accuracyGoal,
+				precisionGoal,
+				##
+				]&,
+			2,
+			MaxIterations/.{options}
+			][[1]];
+		{function/.solutionRules,solutionRules}];
 
 Attributes[FindMinimum]=oldAttributesFindMinimum;
 Protect[NMinimize,FindMinimum];

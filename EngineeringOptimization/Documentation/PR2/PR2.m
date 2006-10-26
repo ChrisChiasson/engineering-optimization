@@ -70,11 +70,7 @@ sol[2]=Block[{FindMinimum},
 	FindMinimum[eqn[4][[2]],
 		Transpose@{var[1],var[3]},
 		Method->{"VariableMetric",
-			"Theta"->1,
-			Method->{"Unimodal",
-				"MaxDisplacement"->{2,-2},
-				"MaxNarrowingIterations"->30
-				}
+			"Theta"->1
 			}
 		]
 	];
@@ -84,11 +80,7 @@ sol[3]=Block[{FindMinimum},
 	FindMinimum[eqn[4][[2]],
 		Transpose@{var[1],var[3]},
 		Method->{"VariableMetric",
-			"Theta"->0,
-			Method->{"Unimodal",
-				"MaxDisplacement"->{2,-2},
-				"MaxNarrowingIterations"->30
-				}
+			"Theta"->0
 			}
 		]
 	];

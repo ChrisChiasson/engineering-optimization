@@ -39,11 +39,12 @@
 		</caption>
 	</figure>
 	<para>As <xref linkend="hw_1_screenshot"/> shows, I am to solve
-		problem 1-5 of <citation>GNVNOTED</citation>. The block quotation below
-		gives the problem statement in its entirety.
+		problem 1-5 of <citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>.
+		The block quotation below gives the problem statement in its entirety.
 	</para>
 	<blockquote>
-		<attribution><citation>GNVNOTED</citation>, p30</attribution>
+		<attribution><citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>,
+		p30</attribution>
 		<para><emphasis role="strong">1-5</emphasis> Given the
 			ellipse <xi:include href="mout/hw_1_ellipse_inline.xml"/>, it is
 			desired to find the rectangle of greatest area which
@@ -76,7 +77,7 @@
 			<para>The question requires that the problem be restated in the
 				language of numerical optimization as given in the book. Using
 				that language, maximization of the rectangle area is interpreted
-				as the minimization of, F, the negative of the area. Also, all
+				as the minimization of F, the negative of the area. Also, all
 				optimization variables are considered to be part of one solution
 				vector, separate from any physical variable naming scheme that
 				may be present in the problem at hand. To differentiate between
@@ -152,13 +153,14 @@
 			</para>
 			<xi:include href="mout/hw_1_hconstraints.xml"/>
 			<para>The problem is now in the numeric optimization form
-				specified by <citation>GNVNOTED</citation>. Part a of the
-				problem is complete.</para>
+				specified by <citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>.
+				Part a of the problem is complete.
+			</para>
 		</listitem>
 		<listitem>
 			<para>This seven-constraint single-objective optimization problem
 				may be solved by the method of Lagrange multipliers from 
-				calculus as shown, for example, in <citation>JSCET</citation>,
+				calculus as shown, for example, in <citation><olink targetdoc="self" targetptr="JSCET"/></citation>,
 				p 805. <xref linkend="hw_1_lagrangemultipliers"/> shows the
 				method as it applies to this problem. The solution is a linear
 				combination of the gradients of the constraints. In my
@@ -183,6 +185,8 @@
 				16. This answers part b of the problem.
 			</para>
 			<xi:include href="mout/hw_1_selectedsolution.xml"/>
+		</listitem>
+		<listitem>
 			<para>The last part, c, of the homework only requests a graph of the
 				optimum solution, which I provide in
 				<xref linkend="hw_1_minimum_constrained_f"/>.

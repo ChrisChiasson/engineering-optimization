@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.44.1"
+   sodipodi:docbase="C:\workspace\engineering-optimization\EngineeringOptimization\Documentation\PR1"
+   sodipodi:docname="pr_1_Unimodal_FindMinimum_flow_chart.svg">
+  <defs
+     id="defs4" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     gridtolerance="10000"
+     guidetolerance="10"
+     objecttolerance="10"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.3621053"
+     inkscape:cx="372.68451"
+     inkscape:cy="876.22489"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     inkscape:window-width="1280"
+     inkscape:window-height="1004"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-width:0.59164739;stroke-opacity:1"
+       id="rect1914"
+       width="291.79169"
+       height="49.839458"
+       x="10.106681"
+       y="10.227386" />
+    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot1916"><flowRegion
+         id="flowRegion1918"><use
+           x="0"
+           y="0"
+           xlink:href="#rect1914"
+           id="use1920" /></flowRegion><flowPara
+         id="flowPara1922">Given: f, a, c, limitLeft, limitRight, reverse, shrinkFactor, growthFactor, maxWideningIterations, maxNarrowingIterations</flowPara></flowRoot>    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-width:0.43315035;stroke-opacity:1"
+       id="rect1942"
+       width="49.78228"
+       height="24.509157"
+       x="131.38925"
+       y="-395.20087"
+       transform="scale(1,-1)" />
+    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot1948"><flowRegion
+         id="flowRegion1950"><use
+           x="0"
+           y="0"
+           xlink:href="#rect1942"
+           id="use1952" /></flowRegion><flowPara
+         id="flowPara1954">if fc&gt;fb</flowPara></flowRoot>    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-width:0.47864097;stroke-opacity:1"
+       id="rect6397"
+       width="104.77174"
+       height="13.736197"
+       x="55.535282"
+       y="459.36426" />
+    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot6399"><flowRegion
+         id="flowRegion6401"><use
+           x="0"
+           y="0"
+           xlink:href="#rect6397"
+           id="use6403" /></flowRegion><flowPara
+         id="flowPara6405">frameBound=True</flowPara></flowRoot>    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 149.03914,395.41744 L 112.04801,459.12494"
+       id="path6407"
+       inkscape:connector-type="polyline"
+       inkscape:connection-start="#rect1942"
+       inkscape:connection-end="#rect6397" />
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="text6409"
+       sodipodi:linespacing="100%"
+       transform="matrix(-1,0,0,-1,264.3039,834.211)"><textPath
+         xlink:href="#path6407"
+         id="textPath6413"><tspan
+   id="tspan6411">then</tspan></textPath></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       x="104.25038"
+       y="541.11646"
+       id="text6416"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan6418"
+         x="104.25038"
+         y="541.11646">if Or[c==limitLeft,c==limitRight]</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       x="60.935081"
+       y="586.63428"
+       id="text6420"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan6422"
+         x="60.935081"
+         y="586.63428">domainBound=True</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       x="104.98454"
+       y="559.47046"
+       id="text6424"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan6426"
+         x="104.98454"
+         y="559.47046">then</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       x="172.52704"
+       y="490.45959"
+       id="text6428"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan6430"
+         x="172.52704"
+         y="490.45959">else</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       x="181.33693"
+       y="609.39313"
+       id="text6432"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan6434"
+         x="181.33693"
+         y="609.39313">else</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       x="65.340027"
+       y="645.36682"
+       id="text6436"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan6438"
+         x="65.340027"
+         y="645.36682">if iteration==maxWideningIterations</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       x="59.466766"
+       y="687.948"
+       id="text6440"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan6442"
+         x="59.466766"
+         y="687.948">then</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       x="24.227201"
+       y="731.99744"
+       id="text6444"
+       sodipodi:linespacing="100%"><tspan
+         sodipodi:role="line"
+         id="tspan6446"
+         x="24.227201"
+         y="731.99744">iterationBound=True</tspan></text>
+    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
+       id="rect6525"
+       width="43.3153"
+       height="16.151468"
+       x="19.088099"
+       y="88.413239" />
+    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
+       id="rect6527"
+       width="41.112827"
+       height="15.41731"
+       x="21.290571"
+       y="114.10876" />
+    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
+       id="rect6529"
+       width="37.442039"
+       height="16.885626"
+       x="20.556414"
+       y="137.60181" />
+    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
+       id="rect6531"
+       width="30.100462"
+       height="15.41731"
+       x="10.278207"
+       y="167.70227" />
+    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
+       id="rect6533"
+       width="123.33848"
+       height="19.088099"
+       x="124.07264"
+       y="196.33441" />
+    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
+       id="rect6535"
+       width="66.808342"
+       height="15.41731"
+       x="118.19937"
+       y="224.96655" />
+    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
+       id="rect6537"
+       width="46.25193"
+       height="13.948995"
+       x="64.605873"
+       y="244.78882" />
+    <rect
+       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-width:0.94277614;stroke-opacity:1"
+       id="rect6539"
+       width="115.31996"
+       height="15.474535"
+       x="118.90493"
+       y="275.59485" />
+    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot6541"><flowRegion
+         id="flowRegion6543"><use
+           x="0"
+           y="0"
+           xlink:href="#rect6525"
+           id="use6545" /></flowRegion><flowPara
+         id="flowPara6547">fa=f[a]</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot6549"><flowRegion
+         id="flowRegion6551"><use
+           x="0"
+           y="0"
+           xlink:href="#rect6527"
+           id="use6553" /></flowRegion><flowPara
+         id="flowPara6555">fc=f[c]</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot6557"><flowRegion
+         id="flowRegion6559"><use
+           x="0"
+           y="0"
+           xlink:href="#rect6529"
+           id="use6561" /></flowRegion><flowPara
+         id="flowPara6563">if fc&gt;fa</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot6565"><flowRegion
+         id="flowRegion6567"><use
+           x="0"
+           y="0"
+           xlink:href="#rect6531"
+           id="use6569" /></flowRegion><flowPara
+         id="flowPara6571">then</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot6573"><flowRegion
+         id="flowRegion6575"><use
+           x="0"
+           y="0"
+           xlink:href="#rect6533"
+           id="use6577" /></flowRegion><flowPara
+         id="flowPara6579">{fa,a,fc,c}={fc,c,fa,a}</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot6585"><flowRegion
+         id="flowRegion6587"><use
+           x="0"
+           y="0"
+           xlink:href="#rect6535"
+           id="use6589" /></flowRegion><flowPara
+         id="flowPara6591">if reverse</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot6593"><flowRegion
+         id="flowRegion6595"><use
+           x="0"
+           y="0"
+           xlink:href="#rect6537"
+           id="use6597" /></flowRegion><flowPara
+         id="flowPara6599">then</flowPara></flowRoot>    <flowRoot
+       xml:space="preserve"
+       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
+       id="flowRoot6601"><flowRegion
+         id="flowRegion6603"><use
+           x="0"
+           y="0"
+           xlink:href="#rect6539"
+           id="use6605" /></flowRegion><flowPara
+         id="flowPara6607">{fa,a,fc,c}={fc,c,fa,a}</flowPara></flowRoot>  </g>
+</svg>

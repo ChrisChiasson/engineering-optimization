@@ -5,7 +5,6 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="5">
 	<biblioentry xml:id="GNVNOTED">
-		<abbrev xml:id="GNVNOTED_abbrev">GNVNOTED</abbrev>
 		<author>
 			<personname>
 				<honorific>Dr</honorific>
@@ -23,15 +22,13 @@
 		</copyright>
 		<publisher>
 			<publishername xl:href="http://www.vrand.com">Vanderplaats Research
-				&amp; Development, Inc.
-			</publishername>
+				&amp; Development, Inc.</publishername>
 			<address><street>1767 S. 8th Street</street>
 				<city>Colorado Springs</city>, <state>Colorado</state>, <postcode>80906</postcode>
 				<phone>+1 (719) 473-4611</phone></address>
 		</publisher>
 	</biblioentry>
 	<biblioentry xml:id="JSCET">
-		<abbrev xml:id="JSCET_abbrev">JSCET</abbrev>
 		<author>
 			<personname>
 				<honorific>Dr</honorific>
@@ -47,14 +44,12 @@
 		</copyright>
 		<publisher>
 			<publishername>Books/Cole Publishing
-				Company
-			</publishername>
+				Company</publishername>
 			<address><street>511 Forest Lodge Road</street>
 				<city>Pacific Grove</city>, <state>California</state>, <postcode>93950</postcode></address>
 		</publisher>
 	</biblioentry>
 	<biblioentry xml:id="MHEM">
-		<abbrev xml:id="MHEM_abbrev">MHEM</abbrev>
 		<editor>
 			<personname>
 				<firstname>Michiel</firstname>
@@ -62,21 +57,18 @@
 			</personname>
 		</editor>
 		<title xl:href="http://eom.springer.de/">Encyclopaedia of
-			Mathematics
-		</title>
+			Mathematics</title>
 		<biblioid class="isbn">1-4020-0609-8</biblioid>
 		<copyright>
 			<year>2002</year>
 		</copyright>
 		<publisher>
 			<publishername xl:href="http://springer.de">
-				Springer-Verlag
-			</publishername>
+				Springer-Verlag</publishername>
 			<address><city>Berlin</city> <city>Heidelberg</city> <city>New York</city></address>
 		</publisher>
 	</biblioentry>
 	<biblioentry xml:id="SRILPSA">
-		<abbrev xml:id="SRILPSA_abbrev">SRILPSA</abbrev>
 		<author>
 			<personname 
 				xl:href="http://www2.isye.gatech.edu/~spyros/index.html">
@@ -88,8 +80,7 @@
 		</author>
 		<title xl:href="http://www2.isye.gatech.edu/~spyros/LP/LP.html">
 			Introduction to Linear Programming and the Simplex
-			Algorithm
-		</title>
+			Algorithm</title>
 		<copyright>
 			<year>1997</year>
 		</copyright>
