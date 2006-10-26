@@ -1,12 +1,10 @@
 BeginPackage["EngineeringOptimization`Documentation`PR1`",
 	{"EngineeringOptimization`",
-		"EngineeringOptimization`Documentation`",
-		"DiscreteMath`GraphPlot`",
-		"Graphics`Arrow`"}
+		"EngineeringOptimization`Documentation`"}
 	];
 
 Begin["`Private`"];
-(*
+
 (*requested f[x]=(x-10)^2 example*)
 
 request[1]=FindMinimum[(x-10)^2,{x,1},Method->{"Unimodal",
@@ -140,82 +138,6 @@ xpr[4]=FindMinimum[
 							xpr[2][[2]],
 			X],
 	Method->"Unimodal"
-	];
-*)
-(*routine diagram*)
-
-connections={};
-
-setEdge[i_,j_]:=(AppendTo[connections,i->j];edge[i,j]=None);
-
-setEdge[i_,j_,expr_]:=(AppendTo[connections,i->j];edge[i,j]=expr);
-
-label[1,text]="Given: f, a, c, limitLeft, limitRight, reverse, shrinkFactor,
-growthFactor, maxWideningIterations, maxNarrowingIterations";
-
-setEdge[1,2];
-
-label[2,text]="if fc>fa";
-
-setEdge[2,3,"then"];
-
-label[3,code]=HoldForm[{fa,a,fc,c}={fc,c,fa,a}];
-
-setEdge[2,4,"else"];
-
-setEdge[3,4];
-
-label[4,text]="if reverse";
-
-setEdge[4,5,"then"];
-
-label[5,code]=HoldForm[{fa,a,fc,c}={fc,c,fa,a}];
-
-setEdge[5,6];
-
-setEdge[4,6,"else"];
-
-label[6,code]=HoldForm[fb=f[b]];
-
-setEdge[6,7];
-
-label[7]=
-
-label[x_]:=Catch[If[ValueQ[label[x,code]],Throw[label[x,code]]];label[x,text]];
-
-coord=GraphCoordinates[connections];
-
-GraphPlot[connections,
-	EdgeStyleFunction->
-		({Red,
-			Arrow[
-				{coord[[#1]],
-					coord[[#2]]
-					}
-				],
-			Black,
-			If[edge[#1,#2]=!=None,
-				Text[edge[#1,#2],
-					Mean@{coord[[#1]],coord[[#2]]}
-					],
-				Unevaluated[Sequence[]]
-				]
-			}&),
-	VertexStyleFunction->
-		(Text[
-			DisplayForm@
-				Cell[
-					BoxData[
-						ToBoxes[
-							label[#]
-							]
-						],
-					PageWidth->200
-					],
-			coord[[#]]
-			]&),
-	ImageSize->600,
-	Method->"LayeredDrawing"
 	];
 
 End[];
