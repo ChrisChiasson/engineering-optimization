@@ -1,11 +1,12 @@
 BeginPackage["EngineeringOptimization`Documentation`PR1`",
 	{"EngineeringOptimization`",
 		"EngineeringOptimization`Documentation`",
-		"DiscreteMath`GraphPlot`"}
+		"DiscreteMath`GraphPlot`",
+		"Graphics`Arrow`"}
 	];
 
 Begin["`Private`"];
-
+(*
 (*requested f[x]=(x-10)^2 example*)
 
 request[1]=FindMinimum[(x-10)^2,{x,1},Method->{"Unimodal",
@@ -140,7 +141,7 @@ xpr[4]=FindMinimum[
 			X],
 	Method->"Unimodal"
 	];
-
+*)
 (*routine diagram*)
 
 connections={};
@@ -176,13 +177,17 @@ setEdge[4,6,"else"];
 
 label[6,code]=HoldForm[fb=f[b]];
 
+setEdge[6,7];
+
+label[7]=
+
 label[x_]:=Catch[If[ValueQ[label[x,code]],Throw[label[x,code]]];label[x,text]];
 
 coord=GraphCoordinates[connections];
 
 GraphPlot[connections,
 	EdgeStyleFunction->
-		({Gray,
+		({Red,
 			Arrow[
 				{coord[[#1]],
 					coord[[#2]]
@@ -209,7 +214,8 @@ GraphPlot[connections,
 					],
 			coord[[#]]
 			]&),
-	ImageSize->600
+	ImageSize->600,
+	Method->"LayeredDrawing"
 	];
 
 End[];
