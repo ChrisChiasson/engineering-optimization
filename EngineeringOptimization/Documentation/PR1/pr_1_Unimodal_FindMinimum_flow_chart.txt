@@ -26,7 +26,9 @@ node.action   { shape: rounded; fill: #8bef91; }
 				        --> [ {fu,u} =\n{fc,c} ] { class: action; }
 					  --> [ {fv,v,fw,w,fx,x} =\npair sorted\n{fa,a,fb,b,fc,c}\nin order of\ndecreasing\nordinate ] { class: action; }
 					    --> [ maxDisplacement =\nc-a ] { class: action; }
-					    					  
+					      --> [ xtol = 10^-accuracyGoal +\nAbs(x)*10^-precisionGoal ] { class: action; }
+					        --> [ if And(Abs(a-x) < xtol,\nAbs(c-x) < xtol) ] { class: question; }
+						  -- then --> [done with frame narrow]
 
 [ if fc > fa ]
    -- else --> [ if reverse ]
@@ -55,3 +57,34 @@ node.action   { shape: rounded; fill: #8bef91; }
 
 [ if And(Not(frameBound,\nNot(reverse)) ]
   -- else --> [ if frameBound ]
+
+[ if And(Abs(a-x) < xtol,\nAbs(c-x) < xtol) ]
+  -- else --> [ if x > (a + c)/2 ] { class: question; }
+    -- then --> [ e = a - x ] { class: action; }
+      --> [ define candidateAbsicssa(1)\nvia inverse polynomial\ninterpolation ] { class: action; }
+        --> [ candidateAbscissa(2) = x + e*shrinkFactor ] { class: action; }
+	  --> [ perturbed = candidateAbscissa ] { class: action; }
+	    --> [ perturbationFactor =\nSign(e)/2 ] { class: action; }
+	      --> [ sameTestAbscissas =\n{x,u,c,a,w,c} ] { class: action; }
+	        --> [ i = 0 ] { class: action; }
+		  --> [ i++ ] { class: action; }
+		    --> [ if i >\nLength(perturbed) ] { class: question; }
+		      -- then --> [ done with perturbation ]
+		    
+[ if x > (a + c)/2 ]
+  -- else --> [ e = c - x ] { class: action; }
+
+[ if i >\nLength(perturbed) ] { class: question; }
+  -- else --> [ ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal ] { class: action; }
+    --> [ j = 0 ] { class: action; }
+      --> [ j++ ] { class: action; }
+        --> [ if j >\nLength(sameTestAbscissas) ] { class: question; }
+	  -- then --> [ i++ ]
+
+[ if j >\nLength(sameTestAbscissas) ]
+  -- else --> [ if Abs(sameTestAbscissas(j) -\nperturbed(i)) < ptol ] { class: question; }
+    -- then --> [ perturbed(i) =\n perturbed(i) +\nperturbFactor*tol ] { class: action; }
+      --> [ ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal ]
+
+[ if Abs(sameTestAbscissas(j) -\nperturbed(i)) < ptol ]
+  -- else --> [ j++ ]
