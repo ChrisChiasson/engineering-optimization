@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 
-<svg width="578.72" height="1963" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<!-- Generated at Thu Oct 26 18:39:45 2006 by:
+<svg width="747.12" height="3157" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!-- Generated at Thu Oct 26 19:42:44 2006 by:
   Graph::Easy v0.48
   Graph::Easy::As_svg v0.20
 -->
@@ -42,313 +42,529 @@
 </defs>
 
 <!-- graph background with border (mainly for printing) -->
-<rect x="0" y="0" width="586.72" height="1971" fill="white" stroke="none" stroke-dasharray="" stroke-width="1" />
+<rect x="0" y="0" width="755.12" height="3165" fill="white" stroke="none" stroke-dasharray="" stroke-width="1" />
 
 <g class="edge">
- <!-- from cdomain to if iteration ==\nmaxWideningIterations -->
- <!-- south/east corner -->
+ <!-- from if fc &gt; fb to cdomain -->
+ <!-- south/west corner -->
  <g stroke="#000000" stroke-width="1">
-  <line x1="75.68" y1="1395.5" x2="75.68" y2="1513" />
-  <line x1="75.18" y1="1396" x2="129.82" y2="1396" />
+  <line x1="682.84" y1="1085" x2="682.84" y2="1147" />
+  <line x1="637.02" y1="1085.5" x2="683.34" y2="1085.5" />
  </g>
 
  <!-- vertical -->
- <line x1="75.68" y1="1513" x2="75.68" y2="1645" stroke="#000000" stroke-width="1" />
- <text x="83" y="1579" fill="#000000" stroke="none" text-anchor="start">False</text>
+ <line x1="682.84" y1="1147" x2="682.84" y2="1279" stroke="#000000" stroke-width="1" />
+ <text x="690" y="1213" fill="#000000" stroke="none" text-anchor="start">else</text>
 
- <!-- north/east corner -->
+ <!-- north/west corner -->
  <g stroke="#000000" stroke-width="1">
-  <line x1="75.68" y1="1645" x2="75.68" y2="1751" />
-  <line x1="75.18" y1="1750.5" x2="128.82" y2="1750.5" />
+  <line x1="682.84" y1="1279" x2="682.84" y2="1388.5" />
+  <line x1="638.02" y1="1388" x2="683.34" y2="1388" />
  </g>
- <use stroke="#000000" xlink:href="#ah" x="129.82" y="1750.5"/>
-</g>
-
-<g class="edge">
- <!-- from domainBound = True to if iteration ==\nmaxWideningIterations -->
- <!-- vertical -->
- <line x1="289.86" y1="1621" x2="289.86" y2="1640.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1641.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\nmaxWideningIterations,\nmaxNarrowingIterations to {fa,fc} =\n{f(a),f(c)} -->
- <!-- vertical -->
- <line x1="289.86" y1="178" x2="289.86" y2="197.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 198.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from frameBound = True to cdomain -->
- <!-- vertical -->
- <line x1="289.86" y1="1255" x2="289.86" y2="1274.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1275.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from iteration = 1 to if fc &gt; fb -->
- <!-- vertical -->
- <line x1="289.86" y1="1000" x2="289.86" y2="1019.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1020.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from if reverse to b = c + shrinkFactor*(a-c) -->
- <!-- south/east corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="75.68" y1="614.5" x2="75.68" y2="670" />
-  <line x1="75.18" y1="615" x2="129.82" y2="615" />
- </g>
-
- <!-- vertical -->
- <line x1="75.68" y1="670" x2="75.68" y2="820" stroke="#000000" stroke-width="1" />
- <text x="83" y="745" fill="#000000" stroke="none" text-anchor="start">False</text>
-
- <!-- north/east corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="75.68" y1="820" x2="75.68" y2="838.5" />
-  <line x1="75.18" y1="838" x2="128.82" y2="838" />
- </g>
- <use stroke="#000000" xlink:href="#ah" x="129.82" y="838"/>
-</g>
-
-<g class="edge">
- <!-- from fb = f(b) to iteration = 1 -->
- <!-- vertical -->
- <line x1="289.86" y1="932" x2="289.86" y2="951.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 952.8)rotate(90)"/>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(637.02 1388)rotate(180)"/>
 </g>
 
 <g class="edge">
  <!-- from if fc &gt; fa to if reverse -->
  <!-- south/west corner -->
  <g stroke="#000000" stroke-width="1">
-  <line x1="504.04" y1="348.5" x2="504.04" y2="410" />
-  <line x1="449.9" y1="349" x2="504.54" y2="349" />
+  <line x1="682.84" y1="348.5" x2="682.84" y2="410" />
+  <line x1="637.02" y1="349" x2="683.34" y2="349" />
  </g>
 
  <!-- vertical -->
- <line x1="504.04" y1="410" x2="504.04" y2="560" stroke="#000000" stroke-width="1" />
- <text x="512" y="485" fill="#000000" stroke="none" text-anchor="start">False</text>
+ <line x1="682.84" y1="410" x2="682.84" y2="560" stroke="#000000" stroke-width="1" />
+ <text x="690" y="485" fill="#000000" stroke="none" text-anchor="start">else</text>
 
  <!-- north/west corner -->
  <g stroke="#000000" stroke-width="1">
-  <line x1="504.04" y1="560" x2="504.04" y2="615.5" />
-  <line x1="450.9" y1="615" x2="504.54" y2="615" />
+  <line x1="682.84" y1="560" x2="682.84" y2="615.5" />
+  <line x1="638.02" y1="615" x2="683.34" y2="615" />
  </g>
- <use stroke="#000000" xlink:href="#ah" transform="translate(449.9 615)rotate(180)"/>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(637.02 615)rotate(180)"/>
+</g>
+
+<g class="edge">
+ <!-- from frameMinimumStopTest to something -->
+ <!-- horizontal -->
+ <line x1="126.46" y1="2063" x2="217.1" y2="2063" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(125.46 2063)rotate(180)"/>
+ <text x="174" y="2055" fill="#000000" stroke="none">then</text>
+</g>
+
+<g class="edge">
+ <!-- from newOrdinate =\nf(newAbscissa) to {fa,a,fb,b,fc,c} =\n{fb,b,fc,c,newOrdinate,newAbscissa} -->
+ <!-- vertical -->
+ <line x1="427.06" y1="3072" x2="427.06" y2="3091.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 3092.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from domainBound = then to if iteration ==\nmaxWideningIterations -->
+ <!-- vertical -->
+ <line x1="427.06" y1="1605" x2="427.06" y2="1624.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 1625.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\nmaxWideningIterations,\nmaxNarrowingIterations to {fa,fc} =\n{f(a),f(c)} -->
+ <!-- vertical -->
+ <line x1="427.06" y1="178" x2="427.06" y2="197.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 198.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from frameBound = then to cdomain -->
+ <!-- vertical -->
+ <line x1="427.06" y1="1255" x2="427.06" y2="1274.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 1275.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from iteration = 1 to if fc &gt; fb -->
+ <!-- vertical -->
+ <line x1="427.06" y1="1000" x2="427.06" y2="1019.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 1020.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from iterationBound = then to frameMinimumStopTest -->
+ <!-- vertical -->
+ <line x1="427.06" y1="1948" x2="427.06" y2="1967.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 1968.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from fb = f(b) to iteration = 1 -->
+ <!-- vertical -->
+ <line x1="427.06" y1="932" x2="427.06" y2="951.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 952.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if newAbscissa &gt;=\nupperLimit to iteration++ -->
+ <!-- south/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="171.28" y1="2711.5" x2="171.28" y2="2810" />
+  <line x1="170.78" y1="2712" x2="217.1" y2="2712" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="171.28" y1="2810" x2="171.28" y2="2942" stroke="#000000" stroke-width="1" />
+ <text x="179" y="2876" fill="#000000" stroke="none" text-anchor="start">else</text>
+
+ <!-- north/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="171.28" y1="2942" x2="171.28" y2="2960.5" />
+  <line x1="170.78" y1="2960" x2="216.1" y2="2960" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" x="217.1" y="2960"/>
 </g>
 
 <g class="edge">
  <!-- from if fc &gt; fa to {fa,a,fc,c} =\n{fc,c,fa,a} -->
  <!-- vertical -->
- <line x1="289.86" y1="418" x2="289.86" y2="466.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 467.6)rotate(90)"/>
- <text x="297" y="442" fill="#000000" stroke="none" text-anchor="start">True</text>
+ <line x1="427.06" y1="418" x2="427.06" y2="466.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 467.6)rotate(90)"/>
+ <text x="435" y="442" fill="#000000" stroke="none" text-anchor="start">then</text>
 </g>
 
 <g class="edge">
- <!-- from if iteration ==\nmaxWideningIterations to iterationBound = True -->
+ <!-- from frameMinimumStopTest to newAbscissa = c + growthFactor*(c-b) -->
  <!-- vertical -->
- <line x1="289.86" y1="1864" x2="289.86" y2="1912.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1913.6)rotate(90)"/>
- <text x="297" y="1888" fill="#000000" stroke="none" text-anchor="start">True</text>
+ <line x1="427.06" y1="2162" x2="427.06" y2="2210.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 2211.6)rotate(90)"/>
+ <text x="435" y="2186" fill="#000000" stroke="none" text-anchor="start">else</text>
+</g>
+
+<g class="edge">
+ <!-- from if iteration ==\nmaxWideningIterations to iterationBound = then -->
+ <!-- vertical -->
+ <line x1="427.06" y1="1848" x2="427.06" y2="1896.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 1897.6)rotate(90)"/>
+ <text x="435" y="1872" fill="#000000" stroke="none" text-anchor="start">then</text>
+</g>
+
+<g class="edge">
+ <!-- from cdomain to if iteration ==\nmaxWideningIterations -->
+ <!-- south/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="171.28" y1="1387.5" x2="171.28" y2="1497" />
+  <line x1="170.78" y1="1388" x2="217.1" y2="1388" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="171.28" y1="1497" x2="171.28" y2="1629" stroke="#000000" stroke-width="1" />
+ <text x="179" y="1563" fill="#000000" stroke="none" text-anchor="start">else</text>
+
+ <!-- north/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="171.28" y1="1629" x2="171.28" y2="1735" />
+  <line x1="170.78" y1="1734.5" x2="216.1" y2="1734.5" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" x="217.1" y="1734.5"/>
+</g>
+
+<g class="edge">
+ <!-- from iteration++ to newOrdinate =\nf(newAbscissa) -->
+ <!-- vertical -->
+ <line x1="427.06" y1="2986" x2="427.06" y2="3005.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 3006.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from newAbscissa = c + growthFactor*(c-b) to if newAbscissa &lt;=\nlowerLimit -->
+ <!-- vertical -->
+ <line x1="427.06" y1="2262" x2="427.06" y2="2281.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 2282.8)rotate(90)"/>
 </g>
 
 <g class="edge">
  <!-- from {fc,c,fa,a} =\n{fa,a,fc,c} to b = c + shrinkFactor*(a-c) -->
  <!-- vertical -->
- <line x1="289.86" y1="796" x2="289.86" y2="815.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 816.8)rotate(90)"/>
+ <line x1="427.06" y1="796" x2="427.06" y2="815.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 816.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if newAbscissa &gt;=\nupperLimit to newAbscissa = upperLimit -->
+ <!-- vertical -->
+ <line x1="427.06" y1="2818" x2="427.06" y2="2866.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 2867.6)rotate(90)"/>
+ <text x="435" y="2842" fill="#000000" stroke="none" text-anchor="start">then</text>
 </g>
 
 <g class="edge">
  <!-- from b = c + shrinkFactor*(a-c) to fb = f(b) -->
  <!-- vertical -->
- <line x1="289.86" y1="864" x2="289.86" y2="883.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 884.8)rotate(90)"/>
+ <line x1="427.06" y1="864" x2="427.06" y2="883.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 884.8)rotate(90)"/>
 </g>
 
 <g class="edge">
- <!-- from if fc &gt; fb to frameBound = True -->
+ <!-- from if fc &gt; fb to frameBound = then -->
  <!-- vertical -->
- <line x1="289.86" y1="1155" x2="289.86" y2="1203.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1204.6)rotate(90)"/>
- <text x="297" y="1179" fill="#000000" stroke="none" text-anchor="start">True</text>
+ <line x1="427.06" y1="1155" x2="427.06" y2="1203.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 1204.6)rotate(90)"/>
+ <text x="435" y="1179" fill="#000000" stroke="none" text-anchor="start">then</text>
 </g>
 
 <g class="edge">
  <!-- from {fa,a,fc,c} =\n{fc,c,fa,a} to if reverse -->
  <!-- vertical -->
- <line x1="289.86" y1="536" x2="289.86" y2="555.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 556.8)rotate(90)"/>
+ <line x1="427.06" y1="536" x2="427.06" y2="555.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 556.8)rotate(90)"/>
 </g>
 
 <g class="edge">
  <!-- from {fa,fc} =\n{f(a),f(c)} to if fc &gt; fa -->
  <!-- vertical -->
- <line x1="289.86" y1="264" x2="289.86" y2="283.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 284.8)rotate(90)"/>
+ <line x1="427.06" y1="264" x2="427.06" y2="283.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 284.8)rotate(90)"/>
 </g>
 
 <g class="edge">
- <!-- from cdomain to domainBound = True -->
+ <!-- from if reverse to b = c + shrinkFactor*(a-c) -->
+ <!-- south/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="171.28" y1="614.5" x2="171.28" y2="670" />
+  <line x1="170.78" y1="615" x2="217.1" y2="615" />
+ </g>
+
  <!-- vertical -->
- <line x1="289.86" y1="1521" x2="289.86" y2="1569.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1570.6)rotate(90)"/>
- <text x="297" y="1545" fill="#000000" stroke="none" text-anchor="start">True</text>
+ <line x1="171.28" y1="670" x2="171.28" y2="820" stroke="#000000" stroke-width="1" />
+ <text x="179" y="745" fill="#000000" stroke="none" text-anchor="start">else</text>
+
+ <!-- north/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="171.28" y1="820" x2="171.28" y2="838.5" />
+  <line x1="170.78" y1="838" x2="216.1" y2="838" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" x="217.1" y="838"/>
+</g>
+
+<g class="edge">
+ <!-- from newAbscissa = upperLimit to iteration++ -->
+ <!-- vertical -->
+ <line x1="427.06" y1="2918" x2="427.06" y2="2937.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 2938.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from newAbscissa = lowerLimit to if newAbscissa &gt;=\nupperLimit -->
+ <!-- vertical -->
+ <line x1="427.06" y1="2590" x2="427.06" y2="2609.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 2610.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if iteration ==\nmaxWideningIterations to frameMinimumStopTest -->
+ <!-- south/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="682.84" y1="1734" x2="682.84" y2="1840" />
+  <line x1="637.02" y1="1734.5" x2="683.34" y2="1734.5" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="682.84" y1="1840" x2="682.84" y2="1972" stroke="#000000" stroke-width="1" />
+ <text x="690" y="1906" fill="#000000" stroke="none" text-anchor="start">else</text>
+
+ <!-- north/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="682.84" y1="1972" x2="682.84" y2="2063.5" />
+  <line x1="638.02" y1="2063" x2="683.34" y2="2063" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(637.02 2063)rotate(180)"/>
+</g>
+
+<g class="edge">
+ <!-- from cdomain to domainBound = then -->
+ <!-- vertical -->
+ <line x1="427.06" y1="1505" x2="427.06" y2="1553.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 1554.6)rotate(90)"/>
+ <text x="435" y="1529" fill="#000000" stroke="none" text-anchor="start">then</text>
+</g>
+
+<g class="edge">
+ <!-- from if newAbscissa &lt;=\nlowerLimit to newAbscissa = lowerLimit -->
+ <!-- vertical -->
+ <line x1="427.06" y1="2490" x2="427.06" y2="2538.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 2539.6)rotate(90)"/>
+ <text x="435" y="2514" fill="#000000" stroke="none" text-anchor="start">then</text>
 </g>
 
 <g class="edge">
  <!-- from if reverse to {fc,c,fa,a} =\n{fa,a,fc,c} -->
  <!-- vertical -->
- <line x1="289.86" y1="678" x2="289.86" y2="726.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 727.6)rotate(90)"/>
- <text x="297" y="702" fill="#000000" stroke="none" text-anchor="start">True</text>
+ <line x1="427.06" y1="678" x2="427.06" y2="726.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(427.06 727.6)rotate(90)"/>
+ <text x="435" y="702" fill="#000000" stroke="none" text-anchor="start">then</text>
 </g>
 
 <g class="edge">
- <!-- from if fc &gt; fb to cdomain -->
+ <!-- from if newAbscissa &lt;=\nlowerLimit to if newAbscissa &gt;=\nupperLimit -->
  <!-- south/west corner -->
  <g stroke="#000000" stroke-width="1">
-  <line x1="504.04" y1="1085" x2="504.04" y2="1147" />
-  <line x1="449.9" y1="1085.5" x2="504.54" y2="1085.5" />
+  <line x1="682.84" y1="2383.5" x2="682.84" y2="2482" />
+  <line x1="637.02" y1="2384" x2="683.34" y2="2384" />
  </g>
 
  <!-- vertical -->
- <line x1="504.04" y1="1147" x2="504.04" y2="1279" stroke="#000000" stroke-width="1" />
- <text x="512" y="1213" fill="#000000" stroke="none" text-anchor="start">False</text>
+ <line x1="682.84" y1="2482" x2="682.84" y2="2614" stroke="#000000" stroke-width="1" />
+ <text x="690" y="2548" fill="#000000" stroke="none" text-anchor="start">else</text>
 
  <!-- north/west corner -->
  <g stroke="#000000" stroke-width="1">
-  <line x1="504.04" y1="1279" x2="504.04" y2="1396.5" />
-  <line x1="450.9" y1="1396" x2="504.54" y2="1396" />
+  <line x1="682.84" y1="2614" x2="682.84" y2="2712.5" />
+  <line x1="638.02" y1="2712" x2="683.34" y2="2712" />
  </g>
- <use stroke="#000000" xlink:href="#ah" transform="translate(449.9 1396)rotate(180)"/>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(637.02 2712)rotate(180)"/>
 </g>
 
 <g class="node-start">
  <!-- Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\nmaxWideningIterations,\nmaxNarrowingIterations, rounded -->
- <rect fill="#ffbfc9" height="161" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+ <rect fill="#ffbfc9" height="161" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
    y="8.5" />
- <text x="289" y="32" fill="#000000" text-anchor="middle">
-  <tspan x="289" y="30">Given: f, a, c,</tspan>
-  <tspan x="289" y="48">limitLeft,</tspan>
-  <tspan x="289" y="66">limitRight,</tspan>
-  <tspan x="289" y="84">reverse,</tspan>
-  <tspan x="289" y="102">shrinkFactor,</tspan>
-  <tspan x="289" y="120">growthFactor,</tspan>
-  <tspan x="289" y="138">maxWideningIterations,</tspan>
-  <tspan x="289" y="156">maxNarrowingIterations</tspan>
+ <text x="427" y="32" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="30">Given: f, a, c,</tspan>
+  <tspan x="427" y="48">limitLeft,</tspan>
+  <tspan x="427" y="66">limitRight,</tspan>
+  <tspan x="427" y="84">reverse,</tspan>
+  <tspan x="427" y="102">shrinkFactor,</tspan>
+  <tspan x="427" y="120">growthFactor,</tspan>
+  <tspan x="427" y="138">maxWideningIterations,</tspan>
+  <tspan x="427" y="156">maxNarrowingIterations</tspan>
  </text>
 </g>
 
 <g class="node-action">
  <!-- {fa,fc} =\n{f(a),f(c)}, rounded -->
- <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+ <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
    y="202.5" />
- <text x="289" y="226" fill="#000000" text-anchor="middle">
-  <tspan x="289" y="224">{fa,fc} =</tspan>
-  <tspan x="289" y="242">{f(a),f(c)}</tspan>
+ <text x="427" y="226" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="224">{fa,fc} =</tspan>
+  <tspan x="427" y="242">{f(a),f(c)}</tspan>
  </text>
 </g>
 
 <g class="node-question">
  <!-- if fc &gt; fa, diamond -->
- <polygon points="144.03,349, 289.86,288.5, 435.69,349, 289.86,409.5" fill="#ffff8a" stroke="#000000" />
- <text x="289" y="355" fill="#000000" text-anchor="middle">if fc &gt; fa</text>
+ <polygon points="229.23,349, 427.06,288.5, 624.89,349, 427.06,409.5" fill="#ffff8a" stroke="#000000" />
+ <text x="427" y="355" fill="#000000" text-anchor="middle">if fc &gt; fa</text>
 </g>
 
 <g class="node-action">
  <!-- {fa,a,fc,c} =\n{fc,c,fa,a}, rounded -->
- <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+ <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
    y="474.5" />
- <text x="289" y="498" fill="#000000" text-anchor="middle">
-  <tspan x="289" y="496">{fa,a,fc,c} =</tspan>
-  <tspan x="289" y="514">{fc,c,fa,a}</tspan>
+ <text x="427" y="498" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="496">{fa,a,fc,c} =</tspan>
+  <tspan x="427" y="514">{fc,c,fa,a}</tspan>
  </text>
 </g>
 
 <g class="node-question">
  <!-- if reverse, diamond -->
- <polygon points="144.03,615, 289.86,560.5, 435.69,615, 289.86,669.5" fill="#ffff8a" stroke="#000000" />
- <text x="289" y="621" fill="#000000" text-anchor="middle">if reverse</text>
+ <polygon points="229.23,615, 427.06,560.5, 624.89,615, 427.06,669.5" fill="#ffff8a" stroke="#000000" />
+ <text x="427" y="621" fill="#000000" text-anchor="middle">if reverse</text>
 </g>
 
 <g class="node-action">
  <!-- {fc,c,fa,a} =\n{fa,a,fc,c}, rounded -->
- <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+ <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
    y="734.5" />
- <text x="289" y="758" fill="#000000" text-anchor="middle">
-  <tspan x="289" y="756">{fc,c,fa,a} =</tspan>
-  <tspan x="289" y="774">{fa,a,fc,c}</tspan>
+ <text x="427" y="758" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="756">{fc,c,fa,a} =</tspan>
+  <tspan x="427" y="774">{fa,a,fc,c}</tspan>
  </text>
 </g>
 
 <g class="node-action">
  <!-- b = c + shrinkFactor*(a-c), rounded -->
- <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
    y="820.5" />
- <text x="289" y="844" fill="#000000" text-anchor="middle">b = c + shrinkFactor*(a-c)</text>
+ <text x="427" y="844" fill="#000000" text-anchor="middle">b = c + shrinkFactor*(a-c)</text>
 </g>
 
 <g class="node-action">
  <!-- fb = f(b), rounded -->
- <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
    y="888.5" />
- <text x="289" y="912" fill="#000000" text-anchor="middle">fb = f(b)</text>
+ <text x="427" y="912" fill="#000000" text-anchor="middle">fb = f(b)</text>
 </g>
 
 <g class="node-action">
  <!-- iteration = 1, rounded -->
- <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
    y="956.5" />
- <text x="289" y="980" fill="#000000" text-anchor="middle">iteration = 1</text>
+ <text x="427" y="980" fill="#000000" text-anchor="middle">iteration = 1</text>
 </g>
 
 <g class="node-question">
  <!-- if fc &gt; fb, diamond -->
- <polygon points="144.03,1085.5, 289.86,1024.5, 435.69,1085.5, 289.86,1146.5" fill="#ffff8a" stroke="#000000" />
- <text x="289" y="1091" fill="#000000" text-anchor="middle">if fc &gt; fb</text>
+ <polygon points="229.23,1085.5, 427.06,1024.5, 624.89,1085.5, 427.06,1146.5" fill="#ffff8a" stroke="#000000" />
+ <text x="427" y="1091" fill="#000000" text-anchor="middle">if fc &gt; fb</text>
 </g>
 
 <g class="node-action">
- <!-- frameBound = True, rounded -->
- <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+ <!-- frameBound = then, rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
    y="1211.5" />
- <text x="289" y="1235" fill="#000000" text-anchor="middle">frameBound = True</text>
+ <text x="427" y="1235" fill="#000000" text-anchor="middle">frameBound = then</text>
 </g>
 
 <g class="node-question">
- <!-- if Or( c == limitLeft,\nc == limitRight ), diamond -->
- <polygon points="144.03,1396, 289.86,1279.5, 435.69,1396, 289.86,1512.5" fill="#ffff8a" stroke="#000000" />
- <text x="289" y="1393" fill="#000000" text-anchor="middle">
-  <tspan x="289" y="1391">if Or( c == limitLeft,</tspan>
-  <tspan x="289" y="1409">c == limitRight )</tspan>
+ <!-- if Or(c == limitLeft,\nc == limitRight), diamond -->
+ <polygon points="229.23,1388, 427.06,1279.5, 624.89,1388, 427.06,1496.5" fill="#ffff8a" stroke="#000000" />
+ <text x="427" y="1385" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="1383">if Or(c == limitLeft,</tspan>
+  <tspan x="427" y="1401">c == limitRight)</tspan>
  </text>
 </g>
 
 <g class="node-action">
- <!-- domainBound = True, rounded -->
- <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
-   y="1577.5" />
- <text x="289" y="1601" fill="#000000" text-anchor="middle">domainBound = True</text>
+ <!-- domainBound = then, rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
+   y="1561.5" />
+ <text x="427" y="1585" fill="#000000" text-anchor="middle">domainBound = then</text>
 </g>
 
 <g class="node-question">
  <!-- if iteration ==\nmaxWideningIterations, diamond -->
- <polygon points="144.03,1750.5, 289.86,1645.5, 435.69,1750.5, 289.86,1855.5" fill="#ffff8a" stroke="#000000" />
- <text x="289" y="1747" fill="#000000" text-anchor="middle">
-  <tspan x="289" y="1745">if iteration ==</tspan>
-  <tspan x="289" y="1763">maxWideningIterations</tspan>
+ <polygon points="229.23,1734.5, 427.06,1629.5, 624.89,1734.5, 427.06,1839.5" fill="#ffff8a" stroke="#000000" />
+ <text x="427" y="1731" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="1729">if iteration ==</tspan>
+  <tspan x="427" y="1747">maxWideningIterations</tspan>
  </text>
 </g>
 
 <g class="node-action">
- <!-- iterationBound = True, rounded -->
- <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
-   y="1920.5" />
- <text x="289" y="1944" fill="#000000" text-anchor="middle">iterationBound = True</text>
+ <!-- iterationBound = then, rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
+   y="1904.5" />
+ <text x="427" y="1928" fill="#000000" text-anchor="middle">iterationBound = then</text>
+</g>
+
+<g class="node-question">
+ <!-- if Or(frameBound,\ndomainBound,\niterationBound), diamond -->
+ <polygon points="229.23,2063, 427.06,1972.5, 624.89,2063, 427.06,2153.5" fill="#ffff8a" stroke="#000000" />
+ <text x="427" y="2051" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="2049">if Or(frameBound,</tspan>
+  <tspan x="427" y="2067">domainBound,</tspan>
+  <tspan x="427" y="2085">iterationBound)</tspan>
+ </text>
+</g>
+
+<g class="node">
+ <!-- something, rect -->
+ <rect fill="#ffffff" height="181" stroke="#000000" width="105" x="8.5" y="1972.5" />
+ <text x="61" y="2069" fill="#000000" text-anchor="middle">something</text>
+</g>
+
+<g class="node-action">
+ <!-- newAbscissa = c + growthFactor*(c-b), rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
+   y="2218.5" />
+ <text x="427" y="2242" fill="#000000" text-anchor="middle">newAbscissa = c + growthFactor*(c-b)</text>
+</g>
+
+<g class="node-question">
+ <!-- if newAbscissa &lt;=\nlowerLimit, diamond -->
+ <polygon points="229.23,2384, 427.06,2286.5, 624.89,2384, 427.06,2481.5" fill="#ffff8a" stroke="#000000" />
+ <text x="427" y="2381" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="2379">if newAbscissa &lt;=</tspan>
+  <tspan x="427" y="2397">lowerLimit</tspan>
+ </text>
+</g>
+
+<g class="node-action">
+ <!-- newAbscissa = lowerLimit, rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
+   y="2546.5" />
+ <text x="427" y="2570" fill="#000000" text-anchor="middle">newAbscissa = lowerLimit</text>
+</g>
+
+<g class="node-question">
+ <!-- if newAbscissa &gt;=\nupperLimit, diamond -->
+ <polygon points="229.23,2712, 427.06,2614.5, 624.89,2712, 427.06,2809.5" fill="#ffff8a" stroke="#000000" />
+ <text x="427" y="2709" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="2707">if newAbscissa &gt;=</tspan>
+  <tspan x="427" y="2725">upperLimit</tspan>
+ </text>
+</g>
+
+<g class="node-action">
+ <!-- newAbscissa = upperLimit, rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
+   y="2874.5" />
+ <text x="427" y="2898" fill="#000000" text-anchor="middle">newAbscissa = upperLimit</text>
+</g>
+
+<g class="node-action">
+ <!-- iteration++, rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
+   y="2942.5" />
+ <text x="427" y="2966" fill="#000000" text-anchor="middle">iteration++</text>
+</g>
+
+<g class="node-action">
+ <!-- newOrdinate =\nf(newAbscissa), rounded -->
+ <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
+   y="3010.5" />
+ <text x="427" y="3034" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="3032">newOrdinate =</tspan>
+  <tspan x="427" y="3050">f(newAbscissa)</tspan>
+ </text>
+</g>
+
+<g class="node-action">
+ <!-- {fa,a,fb,b,fc,c} =\n{fb,b,fc,c,newOrdinate,newAbscissa}, rounded -->
+ <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="396" x="229.06"
+   y="3096.5" />
+ <text x="427" y="3120" fill="#000000" text-anchor="middle">
+  <tspan x="427" y="3118">{fa,a,fb,b,fc,c} =</tspan>
+  <tspan x="427" y="3136">{fb,b,fc,c,newOrdinate,newAbscissa}</tspan>
+ </text>
 </g>
 
 </svg>

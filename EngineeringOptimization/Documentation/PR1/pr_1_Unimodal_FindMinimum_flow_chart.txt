@@ -6,26 +6,41 @@ node.action   { shape: rounded; fill: #8bef91; }
 [ Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\nmaxWideningIterations,\nmaxNarrowingIterations ] { class: start }
   --> [ {fa,fc} =\n{f(a),f(c)} ] {class: action; }
     --> [ if fc > fa ] { class: question; }
-      -- True --> [ {fa,a,fc,c} =\n{fc,c,fa,a} ] { class: action; }
+      -- then --> [ {fa,a,fc,c} =\n{fc,c,fa,a} ] { class: action; }
         --> [ if reverse ] { class: question; }
-	  -- True --> [ {fc,c,fa,a} =\n{fa,a,fc,c} ] { class: action; }
+	  -- then --> [ {fc,c,fa,a} =\n{fa,a,fc,c} ] { class: action; }
 	    --> [ b = c + shrinkFactor*(a-c) ] { class: action; }
 	      --> [ fb = f(b) ] { class: action; }
 	        --> [ iteration = 1 ] { class: action; }
 		  --> [ if fc > fb ] { class: question; }
-		    -- True --> [ frameBound = True ] { class: action; }
-		      --> [ cdomain ] { class: question; label: if Or( c == limitLeft,\nc == limitRight ); }
-		        -- True --> [ domainBound = True ] { class: action; }
+		    -- then --> [ frameBound = then ] { class: action; }
+		      --> [ cdomain ] { class: question; label: if Or(c == limitLeft,\nc == limitRight); }
+		        -- then --> [ domainBound = then ] { class: action; }
 			  --> [ if iteration ==\nmaxWideningIterations ] { class: question; }
-			    -- True --> [ iterationBound = True ] { class: action; }
-
+			    -- then --> [ iterationBound = then ] { class: action; }
+			      --> [ frameMinimumStopTest ] { class: question; label: if Or(frameBound,\ndomainBound,\niterationBound); }
+			        -- then --> [ something ]
 
 [ if fc > fa ]
-   -- False --> [ if reverse ]
+   -- else --> [ if reverse ]
 
 [ if reverse ]
-  -- False --> [ b = c + shrinkFactor*(a-c) ]
+  -- else --> [ b = c + shrinkFactor*(a-c) ]
 
 [ if fc > fb ]
-  -- False --> [ cdomain ]
-    -- False --> [ if iteration ==\nmaxWideningIterations ]
+  -- else --> [ cdomain ]
+    -- else --> [ if iteration ==\nmaxWideningIterations ]
+      -- else --> [ frameMinimumStopTest ]
+        -- else --> [ newAbscissa = c + growthFactor*(c-b) ] { class: action; }
+	  --> [ if newAbscissa <=\nlowerLimit ] { class: question; }
+	    -- then --> [ newAbscissa = lowerLimit ] { class: action; }
+	      --> [ if newAbscissa >=\nupperLimit ] { class: question; }
+	        -- then --> [ newAbscissa = upperLimit ] { class: action; }
+		  --> [ iteration++ ] { class: action; }
+		    --> [ newOrdinate =\nf(newAbscissa) ] { class: action; }
+		      --> [ {fa,a,fb,b,fc,c} =\n{fb,b,fc,c,newOrdinate,newAbscissa} ] { class: action; }
+
+
+[ if newAbscissa <=\nlowerLimit ]
+  -- else --> [ if newAbscissa >=\nupperLimit ]
+    -- else --> [ iteration++ ]
