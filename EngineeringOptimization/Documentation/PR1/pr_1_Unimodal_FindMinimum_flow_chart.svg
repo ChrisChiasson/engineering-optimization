@@ -1,339 +1,354 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-<svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://web.resource.org/cc/"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="744.09448819"
-   height="1052.3622047"
-   id="svg2"
-   sodipodi:version="0.32"
-   inkscape:version="0.44.1"
-   sodipodi:docbase="C:\workspace\engineering-optimization\EngineeringOptimization\Documentation\PR1"
-   sodipodi:docname="pr_1_Unimodal_FindMinimum_flow_chart.svg">
-  <defs
-     id="defs4" />
-  <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     gridtolerance="10000"
-     guidetolerance="10"
-     objecttolerance="10"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="1.3621053"
-     inkscape:cx="372.68451"
-     inkscape:cy="876.22489"
-     inkscape:document-units="px"
-     inkscape:current-layer="layer1"
-     showguides="true"
-     inkscape:guide-bbox="true"
-     inkscape:window-width="1280"
-     inkscape:window-height="1004"
-     inkscape:window-x="-4"
-     inkscape:window-y="-4" />
-  <metadata
-     id="metadata7">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     inkscape:label="Layer 1"
-     inkscape:groupmode="layer"
-     id="layer1">
-    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-width:0.59164739;stroke-opacity:1"
-       id="rect1914"
-       width="291.79169"
-       height="49.839458"
-       x="10.106681"
-       y="10.227386" />
-    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot1916"><flowRegion
-         id="flowRegion1918"><use
-           x="0"
-           y="0"
-           xlink:href="#rect1914"
-           id="use1920" /></flowRegion><flowPara
-         id="flowPara1922">Given: f, a, c, limitLeft, limitRight, reverse, shrinkFactor, growthFactor, maxWideningIterations, maxNarrowingIterations</flowPara></flowRoot>    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-width:0.43315035;stroke-opacity:1"
-       id="rect1942"
-       width="49.78228"
-       height="24.509157"
-       x="131.38925"
-       y="-395.20087"
-       transform="scale(1,-1)" />
-    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot1948"><flowRegion
-         id="flowRegion1950"><use
-           x="0"
-           y="0"
-           xlink:href="#rect1942"
-           id="use1952" /></flowRegion><flowPara
-         id="flowPara1954">if fc&gt;fb</flowPara></flowRoot>    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-width:0.47864097;stroke-opacity:1"
-       id="rect6397"
-       width="104.77174"
-       height="13.736197"
-       x="55.535282"
-       y="459.36426" />
-    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot6399"><flowRegion
-         id="flowRegion6401"><use
-           x="0"
-           y="0"
-           xlink:href="#rect6397"
-           id="use6403" /></flowRegion><flowPara
-         id="flowPara6405">frameBound=True</flowPara></flowRoot>    <path
-       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:black;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="M 149.03914,395.41744 L 112.04801,459.12494"
-       id="path6407"
-       inkscape:connector-type="polyline"
-       inkscape:connection-start="#rect1942"
-       inkscape:connection-end="#rect6397" />
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="text6409"
-       sodipodi:linespacing="100%"
-       transform="matrix(-1,0,0,-1,264.3039,834.211)"><textPath
-         xlink:href="#path6407"
-         id="textPath6413"><tspan
-   id="tspan6411">then</tspan></textPath></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       x="104.25038"
-       y="541.11646"
-       id="text6416"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan6418"
-         x="104.25038"
-         y="541.11646">if Or[c==limitLeft,c==limitRight]</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       x="60.935081"
-       y="586.63428"
-       id="text6420"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan6422"
-         x="60.935081"
-         y="586.63428">domainBound=True</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       x="104.98454"
-       y="559.47046"
-       id="text6424"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan6426"
-         x="104.98454"
-         y="559.47046">then</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       x="172.52704"
-       y="490.45959"
-       id="text6428"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan6430"
-         x="172.52704"
-         y="490.45959">else</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       x="181.33693"
-       y="609.39313"
-       id="text6432"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan6434"
-         x="181.33693"
-         y="609.39313">else</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       x="65.340027"
-       y="645.36682"
-       id="text6436"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan6438"
-         x="65.340027"
-         y="645.36682">if iteration==maxWideningIterations</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       x="59.466766"
-       y="687.948"
-       id="text6440"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan6442"
-         x="59.466766"
-         y="687.948">then</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       x="24.227201"
-       y="731.99744"
-       id="text6444"
-       sodipodi:linespacing="100%"><tspan
-         sodipodi:role="line"
-         id="tspan6446"
-         x="24.227201"
-         y="731.99744">iterationBound=True</tspan></text>
-    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
-       id="rect6525"
-       width="43.3153"
-       height="16.151468"
-       x="19.088099"
-       y="88.413239" />
-    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
-       id="rect6527"
-       width="41.112827"
-       height="15.41731"
-       x="21.290571"
-       y="114.10876" />
-    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
-       id="rect6529"
-       width="37.442039"
-       height="16.885626"
-       x="20.556414"
-       y="137.60181" />
-    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
-       id="rect6531"
-       width="30.100462"
-       height="15.41731"
-       x="10.278207"
-       y="167.70227" />
-    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
-       id="rect6533"
-       width="123.33848"
-       height="19.088099"
-       x="124.07264"
-       y="196.33441" />
-    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
-       id="rect6535"
-       width="66.808342"
-       height="15.41731"
-       x="118.19937"
-       y="224.96655" />
-    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-opacity:1"
-       id="rect6537"
-       width="46.25193"
-       height="13.948995"
-       x="64.605873"
-       y="244.78882" />
-    <rect
-       style="opacity:1;fill:red;fill-opacity:1;stroke:red;stroke-width:0.94277614;stroke-opacity:1"
-       id="rect6539"
-       width="115.31996"
-       height="15.474535"
-       x="118.90493"
-       y="275.59485" />
-    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot6541"><flowRegion
-         id="flowRegion6543"><use
-           x="0"
-           y="0"
-           xlink:href="#rect6525"
-           id="use6545" /></flowRegion><flowPara
-         id="flowPara6547">fa=f[a]</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot6549"><flowRegion
-         id="flowRegion6551"><use
-           x="0"
-           y="0"
-           xlink:href="#rect6527"
-           id="use6553" /></flowRegion><flowPara
-         id="flowPara6555">fc=f[c]</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot6557"><flowRegion
-         id="flowRegion6559"><use
-           x="0"
-           y="0"
-           xlink:href="#rect6529"
-           id="use6561" /></flowRegion><flowPara
-         id="flowPara6563">if fc&gt;fa</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot6565"><flowRegion
-         id="flowRegion6567"><use
-           x="0"
-           y="0"
-           xlink:href="#rect6531"
-           id="use6569" /></flowRegion><flowPara
-         id="flowPara6571">then</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot6573"><flowRegion
-         id="flowRegion6575"><use
-           x="0"
-           y="0"
-           xlink:href="#rect6533"
-           id="use6577" /></flowRegion><flowPara
-         id="flowPara6579">{fa,a,fc,c}={fc,c,fa,a}</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot6585"><flowRegion
-         id="flowRegion6587"><use
-           x="0"
-           y="0"
-           xlink:href="#rect6535"
-           id="use6589" /></flowRegion><flowPara
-         id="flowPara6591">if reverse</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot6593"><flowRegion
-         id="flowRegion6595"><use
-           x="0"
-           y="0"
-           xlink:href="#rect6537"
-           id="use6597" /></flowRegion><flowPara
-         id="flowPara6599">then</flowPara></flowRoot>    <flowRoot
-       xml:space="preserve"
-       style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:100%;writing-mode:lr-tb;text-anchor:start;fill:black;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Georgia"
-       id="flowRoot6601"><flowRegion
-         id="flowRegion6603"><use
-           x="0"
-           y="0"
-           xlink:href="#rect6539"
-           id="use6605" /></flowRegion><flowPara
-         id="flowPara6607">{fa,a,fc,c}={fc,c,fa,a}</flowPara></flowRoot>  </g>
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+
+<svg width="578.72" height="1963" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!-- Generated at Thu Oct 26 18:39:45 2006 by:
+  Graph::Easy v0.48
+  Graph::Easy::As_svg v0.20
+-->
+
+<title>Untitled graph</title>
+<defs>
+ <!-- open arrow head -->
+ <g id="ah" stroke-linecap="round" stroke-width="1">
+  <line x1="-8" y1="-4" x2="1" y2="0" />
+  <line x1="1" y1="0" x2="-8" y2="4" />
+ </g>
+
+ <!-- class definitions -->
+ <style type="text/css"><![CDATA[
+ .edge {
+  fill: inherit;
+  font-family: monospaced, courier-new, courier, sans-serif;
+  font-size: 13px;
+  stroke: black;
+  text-anchor: middle;
+ }
+ .node,.node_action,.node_anon,.node_question,.node_start {
+  text-anchor: middle;
+  fill: white;
+  font-size: 16px;
+ }
+ .node_action {
+  fill: #8bef91;
+ }
+ .node_question {
+  fill: #ffff8a;
+ }
+ .node_start {
+  fill: #ffbfc9;
+ }
+ ]]></style>
+</defs>
+
+<!-- graph background with border (mainly for printing) -->
+<rect x="0" y="0" width="586.72" height="1971" fill="white" stroke="none" stroke-dasharray="" stroke-width="1" />
+
+<g class="edge">
+ <!-- from cdomain to if iteration ==\nmaxWideningIterations -->
+ <!-- south/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="75.68" y1="1395.5" x2="75.68" y2="1513" />
+  <line x1="75.18" y1="1396" x2="129.82" y2="1396" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="75.68" y1="1513" x2="75.68" y2="1645" stroke="#000000" stroke-width="1" />
+ <text x="83" y="1579" fill="#000000" stroke="none" text-anchor="start">False</text>
+
+ <!-- north/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="75.68" y1="1645" x2="75.68" y2="1751" />
+  <line x1="75.18" y1="1750.5" x2="128.82" y2="1750.5" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" x="129.82" y="1750.5"/>
+</g>
+
+<g class="edge">
+ <!-- from domainBound = True to if iteration ==\nmaxWideningIterations -->
+ <!-- vertical -->
+ <line x1="289.86" y1="1621" x2="289.86" y2="1640.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1641.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\nmaxWideningIterations,\nmaxNarrowingIterations to {fa,fc} =\n{f(a),f(c)} -->
+ <!-- vertical -->
+ <line x1="289.86" y1="178" x2="289.86" y2="197.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 198.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from frameBound = True to cdomain -->
+ <!-- vertical -->
+ <line x1="289.86" y1="1255" x2="289.86" y2="1274.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1275.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from iteration = 1 to if fc &gt; fb -->
+ <!-- vertical -->
+ <line x1="289.86" y1="1000" x2="289.86" y2="1019.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1020.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if reverse to b = c + shrinkFactor*(a-c) -->
+ <!-- south/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="75.68" y1="614.5" x2="75.68" y2="670" />
+  <line x1="75.18" y1="615" x2="129.82" y2="615" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="75.68" y1="670" x2="75.68" y2="820" stroke="#000000" stroke-width="1" />
+ <text x="83" y="745" fill="#000000" stroke="none" text-anchor="start">False</text>
+
+ <!-- north/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="75.68" y1="820" x2="75.68" y2="838.5" />
+  <line x1="75.18" y1="838" x2="128.82" y2="838" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" x="129.82" y="838"/>
+</g>
+
+<g class="edge">
+ <!-- from fb = f(b) to iteration = 1 -->
+ <!-- vertical -->
+ <line x1="289.86" y1="932" x2="289.86" y2="951.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 952.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if fc &gt; fa to if reverse -->
+ <!-- south/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="504.04" y1="348.5" x2="504.04" y2="410" />
+  <line x1="449.9" y1="349" x2="504.54" y2="349" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="504.04" y1="410" x2="504.04" y2="560" stroke="#000000" stroke-width="1" />
+ <text x="512" y="485" fill="#000000" stroke="none" text-anchor="start">False</text>
+
+ <!-- north/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="504.04" y1="560" x2="504.04" y2="615.5" />
+  <line x1="450.9" y1="615" x2="504.54" y2="615" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(449.9 615)rotate(180)"/>
+</g>
+
+<g class="edge">
+ <!-- from if fc &gt; fa to {fa,a,fc,c} =\n{fc,c,fa,a} -->
+ <!-- vertical -->
+ <line x1="289.86" y1="418" x2="289.86" y2="466.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 467.6)rotate(90)"/>
+ <text x="297" y="442" fill="#000000" stroke="none" text-anchor="start">True</text>
+</g>
+
+<g class="edge">
+ <!-- from if iteration ==\nmaxWideningIterations to iterationBound = True -->
+ <!-- vertical -->
+ <line x1="289.86" y1="1864" x2="289.86" y2="1912.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1913.6)rotate(90)"/>
+ <text x="297" y="1888" fill="#000000" stroke="none" text-anchor="start">True</text>
+</g>
+
+<g class="edge">
+ <!-- from {fc,c,fa,a} =\n{fa,a,fc,c} to b = c + shrinkFactor*(a-c) -->
+ <!-- vertical -->
+ <line x1="289.86" y1="796" x2="289.86" y2="815.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 816.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from b = c + shrinkFactor*(a-c) to fb = f(b) -->
+ <!-- vertical -->
+ <line x1="289.86" y1="864" x2="289.86" y2="883.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 884.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if fc &gt; fb to frameBound = True -->
+ <!-- vertical -->
+ <line x1="289.86" y1="1155" x2="289.86" y2="1203.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1204.6)rotate(90)"/>
+ <text x="297" y="1179" fill="#000000" stroke="none" text-anchor="start">True</text>
+</g>
+
+<g class="edge">
+ <!-- from {fa,a,fc,c} =\n{fc,c,fa,a} to if reverse -->
+ <!-- vertical -->
+ <line x1="289.86" y1="536" x2="289.86" y2="555.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 556.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from {fa,fc} =\n{f(a),f(c)} to if fc &gt; fa -->
+ <!-- vertical -->
+ <line x1="289.86" y1="264" x2="289.86" y2="283.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 284.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from cdomain to domainBound = True -->
+ <!-- vertical -->
+ <line x1="289.86" y1="1521" x2="289.86" y2="1569.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 1570.6)rotate(90)"/>
+ <text x="297" y="1545" fill="#000000" stroke="none" text-anchor="start">True</text>
+</g>
+
+<g class="edge">
+ <!-- from if reverse to {fc,c,fa,a} =\n{fa,a,fc,c} -->
+ <!-- vertical -->
+ <line x1="289.86" y1="678" x2="289.86" y2="726.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(289.86 727.6)rotate(90)"/>
+ <text x="297" y="702" fill="#000000" stroke="none" text-anchor="start">True</text>
+</g>
+
+<g class="edge">
+ <!-- from if fc &gt; fb to cdomain -->
+ <!-- south/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="504.04" y1="1085" x2="504.04" y2="1147" />
+  <line x1="449.9" y1="1085.5" x2="504.54" y2="1085.5" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="504.04" y1="1147" x2="504.04" y2="1279" stroke="#000000" stroke-width="1" />
+ <text x="512" y="1213" fill="#000000" stroke="none" text-anchor="start">False</text>
+
+ <!-- north/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="504.04" y1="1279" x2="504.04" y2="1396.5" />
+  <line x1="450.9" y1="1396" x2="504.54" y2="1396" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(449.9 1396)rotate(180)"/>
+</g>
+
+<g class="node-start">
+ <!-- Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\nmaxWideningIterations,\nmaxNarrowingIterations, rounded -->
+ <rect fill="#ffbfc9" height="161" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+   y="8.5" />
+ <text x="289" y="32" fill="#000000" text-anchor="middle">
+  <tspan x="289" y="30">Given: f, a, c,</tspan>
+  <tspan x="289" y="48">limitLeft,</tspan>
+  <tspan x="289" y="66">limitRight,</tspan>
+  <tspan x="289" y="84">reverse,</tspan>
+  <tspan x="289" y="102">shrinkFactor,</tspan>
+  <tspan x="289" y="120">growthFactor,</tspan>
+  <tspan x="289" y="138">maxWideningIterations,</tspan>
+  <tspan x="289" y="156">maxNarrowingIterations</tspan>
+ </text>
+</g>
+
+<g class="node-action">
+ <!-- {fa,fc} =\n{f(a),f(c)}, rounded -->
+ <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+   y="202.5" />
+ <text x="289" y="226" fill="#000000" text-anchor="middle">
+  <tspan x="289" y="224">{fa,fc} =</tspan>
+  <tspan x="289" y="242">{f(a),f(c)}</tspan>
+ </text>
+</g>
+
+<g class="node-question">
+ <!-- if fc &gt; fa, diamond -->
+ <polygon points="144.03,349, 289.86,288.5, 435.69,349, 289.86,409.5" fill="#ffff8a" stroke="#000000" />
+ <text x="289" y="355" fill="#000000" text-anchor="middle">if fc &gt; fa</text>
+</g>
+
+<g class="node-action">
+ <!-- {fa,a,fc,c} =\n{fc,c,fa,a}, rounded -->
+ <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+   y="474.5" />
+ <text x="289" y="498" fill="#000000" text-anchor="middle">
+  <tspan x="289" y="496">{fa,a,fc,c} =</tspan>
+  <tspan x="289" y="514">{fc,c,fa,a}</tspan>
+ </text>
+</g>
+
+<g class="node-question">
+ <!-- if reverse, diamond -->
+ <polygon points="144.03,615, 289.86,560.5, 435.69,615, 289.86,669.5" fill="#ffff8a" stroke="#000000" />
+ <text x="289" y="621" fill="#000000" text-anchor="middle">if reverse</text>
+</g>
+
+<g class="node-action">
+ <!-- {fc,c,fa,a} =\n{fa,a,fc,c}, rounded -->
+ <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+   y="734.5" />
+ <text x="289" y="758" fill="#000000" text-anchor="middle">
+  <tspan x="289" y="756">{fc,c,fa,a} =</tspan>
+  <tspan x="289" y="774">{fa,a,fc,c}</tspan>
+ </text>
+</g>
+
+<g class="node-action">
+ <!-- b = c + shrinkFactor*(a-c), rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+   y="820.5" />
+ <text x="289" y="844" fill="#000000" text-anchor="middle">b = c + shrinkFactor*(a-c)</text>
+</g>
+
+<g class="node-action">
+ <!-- fb = f(b), rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+   y="888.5" />
+ <text x="289" y="912" fill="#000000" text-anchor="middle">fb = f(b)</text>
+</g>
+
+<g class="node-action">
+ <!-- iteration = 1, rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+   y="956.5" />
+ <text x="289" y="980" fill="#000000" text-anchor="middle">iteration = 1</text>
+</g>
+
+<g class="node-question">
+ <!-- if fc &gt; fb, diamond -->
+ <polygon points="144.03,1085.5, 289.86,1024.5, 435.69,1085.5, 289.86,1146.5" fill="#ffff8a" stroke="#000000" />
+ <text x="289" y="1091" fill="#000000" text-anchor="middle">if fc &gt; fb</text>
+</g>
+
+<g class="node-action">
+ <!-- frameBound = True, rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+   y="1211.5" />
+ <text x="289" y="1235" fill="#000000" text-anchor="middle">frameBound = True</text>
+</g>
+
+<g class="node-question">
+ <!-- if Or( c == limitLeft,\nc == limitRight ), diamond -->
+ <polygon points="144.03,1396, 289.86,1279.5, 435.69,1396, 289.86,1512.5" fill="#ffff8a" stroke="#000000" />
+ <text x="289" y="1393" fill="#000000" text-anchor="middle">
+  <tspan x="289" y="1391">if Or( c == limitLeft,</tspan>
+  <tspan x="289" y="1409">c == limitRight )</tspan>
+ </text>
+</g>
+
+<g class="node-action">
+ <!-- domainBound = True, rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+   y="1577.5" />
+ <text x="289" y="1601" fill="#000000" text-anchor="middle">domainBound = True</text>
+</g>
+
+<g class="node-question">
+ <!-- if iteration ==\nmaxWideningIterations, diamond -->
+ <polygon points="144.03,1750.5, 289.86,1645.5, 435.69,1750.5, 289.86,1855.5" fill="#ffff8a" stroke="#000000" />
+ <text x="289" y="1747" fill="#000000" text-anchor="middle">
+  <tspan x="289" y="1745">if iteration ==</tspan>
+  <tspan x="289" y="1763">maxWideningIterations</tspan>
+ </text>
+</g>
+
+<g class="node-action">
+ <!-- iterationBound = True, rounded -->
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="292" x="143.86"
+   y="1920.5" />
+ <text x="289" y="1944" fill="#000000" text-anchor="middle">iterationBound = True</text>
+</g>
+
 </svg>

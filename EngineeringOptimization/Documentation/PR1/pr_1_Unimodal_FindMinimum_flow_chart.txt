@@ -1,0 +1,31 @@
+graph         { flow: south; }
+node.start    { shape: rounded; fill: #ffbfc9; }
+node.question { shape: diamond; fill: #ffff8a; }
+node.action   { shape: rounded; fill: #8bef91; }
+
+[ Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\nmaxWideningIterations,\nmaxNarrowingIterations ] { class: start }
+  --> [ {fa,fc} =\n{f(a),f(c)} ] {class: action; }
+    --> [ if fc > fa ] { class: question; }
+      -- True --> [ {fa,a,fc,c} =\n{fc,c,fa,a} ] { class: action; }
+        --> [ if reverse ] { class: question; }
+	  -- True --> [ {fc,c,fa,a} =\n{fa,a,fc,c} ] { class: action; }
+	    --> [ b = c + shrinkFactor*(a-c) ] { class: action; }
+	      --> [ fb = f(b) ] { class: action; }
+	        --> [ iteration = 1 ] { class: action; }
+		  --> [ if fc > fb ] { class: question; }
+		    -- True --> [ frameBound = True ] { class: action; }
+		      --> [ cdomain ] { class: question; label: if Or( c == limitLeft,\nc == limitRight ); }
+		        -- True --> [ domainBound = True ] { class: action; }
+			  --> [ if iteration ==\nmaxWideningIterations ] { class: question; }
+			    -- True --> [ iterationBound = True ] { class: action; }
+
+
+[ if fc > fa ]
+   -- False --> [ if reverse ]
+
+[ if reverse ]
+  -- False --> [ b = c + shrinkFactor*(a-c) ]
+
+[ if fc > fb ]
+  -- False --> [ cdomain ]
+    -- False --> [ if iteration ==\nmaxWideningIterations ]
