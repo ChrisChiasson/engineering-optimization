@@ -13,11 +13,11 @@ node.action   { shape: rounded; fill: #8bef91; }
 	      --> [ fb = f(b) ] { class: action; }
 	        --> [ iteration = 1 ] { class: action; }
 		  --> [ if fc > fb ] { class: question; }
-		    -- then --> [ frameBound = then ] { class: action; }
+		    -- then --> [ frameBound = True ] { class: action; }
 		      --> [ cdomain ] { class: question; label: if Or(c == limitLeft,\nc == limitRight); }
-		        -- then --> [ domainBound = then ] { class: action; }
+		        -- then --> [ domainBound = True ] { class: action; }
 			  --> [ if iteration ==\nmaxWideningIterations ] { class: question; }
-			    -- then --> [ iterationBound = then ] { class: action; }
+			    -- then --> [ iterationBound = True ] { class: action; }
 			      --> [ frameMinimumStopTest ] { class: question; label: if Or(frameBound,\ndomainBound,\niterationBound); }
 			        -- then --> [ if And(Not(frameBound,\nNot(reverse)) ] { class: question; }
 				  -- then --> [ Sow (a.k.a. store)\nthe results of running\nthis algorithm with\nreverse = False ] { class: action; }
