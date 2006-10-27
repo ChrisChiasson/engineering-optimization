@@ -19,7 +19,7 @@ node.action   { shape: rounded; fill: #8bef91; }
 			  --> [ if iteration ==\nmaxWideningIterations ] { class: question; }
 			    -- then --> [ iterationBound = then ] { class: action; }
 			      --> [ frameMinimumStopTest ] { class: question; label: if Or(frameBound,\ndomainBound,\niterationBound); }
-			        -- then --> [ something ]
+			        -- then --> [ if And(Not(frameBound,\nNot(reverse)) ] { class: question; }
 
 [ if fc > fa ]
    -- else --> [ if reverse ]
@@ -39,6 +39,7 @@ node.action   { shape: rounded; fill: #8bef91; }
 		  --> [ iteration++ ] { class: action; }
 		    --> [ newOrdinate =\nf(newAbscissa) ] { class: action; }
 		      --> [ {fa,a,fb,b,fc,c} =\n{fb,b,fc,c,newOrdinate,newAbscissa} ] { class: action; }
+		        --> [ if fc > fb ]
 
 
 [ if newAbscissa <=\nlowerLimit ]
