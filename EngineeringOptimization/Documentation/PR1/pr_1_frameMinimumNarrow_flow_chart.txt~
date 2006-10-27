@@ -1,0 +1,52 @@
+graph         { flow: south; }
+node.start    { shape: rounded; fill: #ffbfc9; }
+node.question { shape: diamond; fill: #ffff8a; }
+node.action   { shape: rounded; fill: #8bef91; }
+
+[ Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\naccuracyGoal,\nprecisionGoal,\nmaxWideningIterations,\nmaxNarrowingIterations ] { class: start }
+  --> [ xtol = 10^-accuracyGoal +\nAbs(x)*10^-precisionGoal ] { class: action; }
+    --> [ if And(Abs(a-x) < xtol,\nAbs(c-x) < xtol) ] { class: question; }
+      -- then --> [done with frame narrow]
+
+[ if And(Abs(a-x) < xtol,\nAbs(c-x) < xtol) ]
+  -- else --> [ if x > (a + c)/2 ] { class: question; }
+    -- then --> [ e = a - x ] { class: action; }
+      --> [ define candidateAbsicssa(1)\nvia inverse polynomial\ninterpolation ] { class: action; }
+        --> [ candidateAbscissa(2) = x + e*shrinkFactor ] { class: action; }
+	  --> [ perturbed = candidateAbscissa ] { class: action; }
+	    --> [ perturbationFactor =\nSign(e)/2 ] { class: action; }
+	      --> [ sameTestAbscissas =\n{x,u,c,a,w,c} ] { class: action; }
+	        --> [ i = 0 ] { class: action; }
+		  --> [ i++ ] { class: action; }
+		    --> [ if i >\nLength(perturbed) ] { class: question; }
+		      -- then --> [ Select from perturbed\na list containing\nthe first and\nonly the first\nabscissa between\na and c that represents\na displacement less than\nmaxAcceptableDisplacement from x.\nCall it newAbscissa. ] { class: action; }
+		        --> [ if newAbscissa == {}\n(if no perturbed points\nmet the criteria) ]  { class: question; }
+			  -- then --> [ newAbscissa =\nperturbed =\ncandidateAbscissa =\n{candidateAbsicssa(2)} ] { class: action; }
+			    --> [ newAbscissa = newAbscissa(1) ] { class: action; }
+			      --> [ newOrdinate = f(newAbscissa) ] { class: action; }
+			        --> [ iteration++ ] { class: action; }
+				  --> [ candidateAbscissa =\ncandidateAbsicssa(i)\nwhere i is the position\nthat matches position(i)\nto newAbscissa ] { class: action; }
+				    --> [ maxAcceptableDisplacement =\nMax(Abs({(newAbscissa-x)/2,\nnewAbscissa-candidateAbscissa})) ] { class: action; }
+				      --> [ store lowest three points of\n{fv,v,fw,w,fx,x,newOrdinate,newAbscissa}\npair sorted in order\nof decreasing ordinate\nas vwxSequence ] { class: action; }
+
+[ if x > (a + c)/2 ]
+  -- else --> [ e = c - x ] { class: action; }
+    --> [ define candidateAbsicssa(1)\nvia inverse polynomial\ninterpolation ]
+
+[ if i >\nLength(perturbed) ] { class: question; }
+  -- else --> [ ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal ] { class: action; }
+    --> [ j = 0 ] { class: action; }
+      --> [ j++ ] { class: action; }
+        --> [ if j >\nLength(sameTestAbscissas) ] { class: question; }
+	  -- then --> [ i++ ]
+
+[ if j >\nLength(sameTestAbscissas) ]
+  -- else --> [ if Abs(sameTestAbscissas(j) -\nperturbed(i)) < ptol ] { class: question; }
+    -- then --> [ perturbed(i) =\n perturbed(i) +\nperturbFactor*tol ] { class: action; }
+      --> [ ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal ]
+
+[ if Abs(sameTestAbscissas(j) -\nperturbed(i)) < ptol ]
+  -- else --> [ j++ ]
+
+[ if newAbscissa == {}\n(if no perturbed points\nmet the criteria) ]
+  -- else --> [ newAbscissa = newAbscissa(1) ]

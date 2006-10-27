@@ -73,6 +73,8 @@ node.action   { shape: rounded; fill: #8bef91; }
 		        --> [ if newAbscissa == {}\n(if no perturbed points\nmet the criteria) ]  { class: question; }
 			  -- then --> [ newAbscissa =\nperturbed =\ncandidateAbscissa =\n{candidateAbsicssa(2)} ] { class: action; }
 			    --> [ newAbscissa = newAbscissa(1) ] { class: action; }
+			      --> [ newOrdinate = f(newAbscissa) ] { class: action; }
+			        --> [ nIteration++ ] 
 		    
 [ if x > (a + c)/2 ]
   -- else --> [ e = c - x ] { class: action; }

@@ -1,0 +1,33 @@
+graph         { flow: south; }
+node.start    { shape: rounded; fill: #ffbfc9; }
+node.question { shape: diamond; fill: #ffff8a; }
+node.action   { shape: rounded; fill: #8bef91; }
+
+[ Given: f, fa, a, fb, b, fc, c,\nlimitLeft,\nlimitRight,\ngrowthFactor,\niteration,\nmaxWideningIterations ] { class: start }
+  --> [ if fc > fb ] { class: question; }
+     -- then --> [ frameBound = True ] { class: action; }
+       --> [ cdomain ] { class: question; label: if Or(c == limitLeft,\nc == limitRight); }
+	 -- then --> [ domainBound = True ] { class: action; }
+	   --> [ if iteration ==\nmaxWideningIterations ] { class: question; }
+	     -- then --> [ iterationBound = True ] { class: action; }
+	       --> [ frameMinimumStopTest ] { class: question; label: if Or(frameBound,\ndomainBound,\niterationBound); }
+		 -- then --> [ exit subroutine ] { class: action; }
+
+[ if fc > fb ]
+  -- else --> [ cdomain ]
+    -- else --> [ if iteration ==\nmaxWideningIterations ]
+      -- else --> [ frameMinimumStopTest ]
+        -- else --> [ newAbscissa = c + growthFactor*(c-b) ] { class: action; }
+	  --> [ if newAbscissa <=\nlowerLimit ] { class: question; }
+	    -- then --> [ newAbscissa = lowerLimit ] { class: action; }
+	      --> [ if newAbscissa >=\nupperLimit ] { class: question; }
+	        -- then --> [ newAbscissa = upperLimit ] { class: action; }
+		  --> [ iteration++ ] { class: action; }
+		    --> [ newOrdinate =\nf(newAbscissa) ] { class: action; }
+		      --> [ {fa,a,fb,b,fc,c} =\n{fb,b,fc,c,newOrdinate,newAbscissa} ] { class: action; }
+		        --> [ if fc > fb ]
+
+
+[ if newAbscissa <=\nlowerLimit ]
+  -- else --> [ if newAbscissa >=\nupperLimit ]
+    -- else --> [ iteration++ ]
