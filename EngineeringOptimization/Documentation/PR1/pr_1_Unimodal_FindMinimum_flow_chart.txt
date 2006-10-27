@@ -20,6 +20,8 @@ node.action   { shape: rounded; fill: #8bef91; }
 			    -- then --> [ iterationBound = then ] { class: action; }
 			      --> [ frameMinimumStopTest ] { class: question; label: if Or(frameBound,\ndomainBound,\niterationBound); }
 			        -- then --> [ if And(Not(frameBound,\nNot(reverse)) ] { class: question; }
+				  -- then --> [ Sow (a.k.a. store)\nthe results of running\nthis algorithm with\nreverse = False ] { class: action; }
+				    --> [something]
 
 [ if fc > fa ]
    -- else --> [ if reverse ]
@@ -45,3 +47,6 @@ node.action   { shape: rounded; fill: #8bef91; }
 [ if newAbscissa <=\nlowerLimit ]
   -- else --> [ if newAbscissa >=\nupperLimit ]
     -- else --> [ iteration++ ]
+
+[ if And(Not(frameBound,\nNot(reverse)) ]
+  -- else --> [something]
