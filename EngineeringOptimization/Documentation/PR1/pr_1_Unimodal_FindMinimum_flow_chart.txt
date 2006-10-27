@@ -69,10 +69,14 @@ node.action   { shape: rounded; fill: #8bef91; }
 	        --> [ i = 0 ] { class: action; }
 		  --> [ i++ ] { class: action; }
 		    --> [ if i >\nLength(perturbed) ] { class: question; }
-		      -- then --> [ done with perturbation ]
+		      -- then --> [ Select from perturbed\na list containing\nthe first and\nonly the first\nabscissa between\na and c that represents\na displacement less than\nmaxAcceptableDisplacement from x.\nCall it newAbscissa. ] { class: action; }
+		        --> [ if newAbscissa == {}\n(if no perturbed points\nmet the criteria) ]  { class: question; }
+			  -- then --> [ newAbscissa =\nperturbed =\ncandidateAbscissa =\n{candidateAbsicssa(2)} ] { class: action; }
+			    --> [ newAbscissa = newAbscissa(1) ] { class: action; }
 		    
 [ if x > (a + c)/2 ]
   -- else --> [ e = c - x ] { class: action; }
+    --> [ define candidateAbsicssa(1)\nvia inverse polynomial\ninterpolation ]
 
 [ if i >\nLength(perturbed) ] { class: question; }
   -- else --> [ ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal ] { class: action; }
@@ -88,3 +92,6 @@ node.action   { shape: rounded; fill: #8bef91; }
 
 [ if Abs(sameTestAbscissas(j) -\nperturbed(i)) < ptol ]
   -- else --> [ j++ ]
+
+[ if newAbscissa == {}\n(if no perturbed points\nmet the criteria) ]
+  -- else --> [ newAbscissa = newAbscissa(1) ]

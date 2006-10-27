@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 
-<svg width="1263.72" height="5941" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<!-- Generated at Thu Oct 26 21:48:22 2006 by:
+<svg width="1295.72" height="6222" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<!-- Generated at Fri Oct 27 01:10:55 2006 by:
   Graph::Easy v0.48
   Graph::Easy::As_svg v0.20
 -->
@@ -42,14 +42,7 @@
 </defs>
 
 <!-- graph background with border (mainly for printing) -->
-<rect x="0" y="0" width="1271.72" height="5949" fill="white" stroke="none" stroke-dasharray="" stroke-width="1" />
-
-<g class="edge">
- <!-- from newAbscissa = upperLimit to iteration++ -->
- <!-- vertical -->
- <line x1="353.06" y1="3064" x2="353.06" y2="3083.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(353.06 3084.8)rotate(90)"/>
-</g>
+<rect x="0" y="0" width="1303.72" height="6230" fill="white" stroke="none" stroke-dasharray="" stroke-width="1" />
 
 <g class="edge">
  <!-- from frameMinimumStopTest to if And(Not(frameBound,\nNot(reverse)) -->
@@ -81,18 +74,18 @@
 </g>
 
 <g class="edge">
- <!-- from Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\naccuracyGoal,\nprecisionGoal,\nmaxWideningIterations,\nmaxNarrowingIterations to {fa,fc} =\n{f(a),f(c)} -->
+ <!-- from if Abs(sameTestAbscissas(j) -\nperturbed(i)) &lt; ptol to perturbed(i) =\n perturbed(i) +\nperturbFactor*tol -->
  <!-- vertical -->
- <line x1="884.62" y1="214" x2="884.62" y2="233.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 234.8)rotate(90)"/>
+ <line x1="884.62" y1="6087" x2="884.62" y2="6135.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 6136.6)rotate(90)"/>
+ <text x="892" y="6111" fill="#000000" stroke="none" text-anchor="start">then</text>
 </g>
 
 <g class="edge">
- <!-- from if x &gt; (a + c)/2 to e = c - x -->
- <!-- horizontal -->
- <line x1="564.02" y1="3915" x2="654.66" y2="3915" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(563.02 3915)rotate(180)"/>
- <text x="611" y="3907" fill="#000000" stroke="none">else</text>
+ <!-- from Select from perturbed\na list containing\nthe first and\nonly the first\nabscissa between\na and c that represents\na displacement less than\nmaxAcceptableDisplacement from x.\nCall it newAbscissa. to if newAbscissa == {}\n(if no perturbed points\nmet the criteria) -->
+ <!-- vertical -->
+ <line x1="353.06" y1="4885" x2="353.06" y2="4933.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(353.06 4934.6)rotate(90)"/>
 </g>
 
 <g class="edge">
@@ -143,13 +136,6 @@
 </g>
 
 <g class="edge">
- <!-- from iterationBound = True to frameMinimumStopTest -->
- <!-- vertical -->
- <line x1="884.62" y1="1984" x2="884.62" y2="2003.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 2004.8)rotate(90)"/>
-</g>
-
-<g class="edge">
  <!-- from fb = f(b) to iteration = 1 -->
  <!-- vertical -->
  <line x1="884.62" y1="968" x2="884.62" y2="987.8" stroke="#000000" stroke-width="1" />
@@ -161,14 +147,6 @@
  <!-- vertical -->
  <line x1="884.62" y1="3308" x2="884.62" y2="3327.8" stroke="#000000" stroke-width="1" />
  <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 3328.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from if j &gt;\nLength(sameTestAbscissas) to if Abs(sameTestAbscissas(j) -\nperturbed(i)) &lt; ptol -->
- <!-- vertical -->
- <line x1="884.62" y1="5446" x2="884.62" y2="5494.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 5495.6)rotate(90)"/>
- <text x="892" y="5470" fill="#000000" stroke="none" text-anchor="start">else</text>
 </g>
 
 <g class="edge">
@@ -212,45 +190,10 @@
 </g>
 
 <g class="edge">
- <!-- from if iteration ==\nmaxWideningIterations to iterationBound = True -->
- <!-- vertical -->
- <line x1="884.62" y1="1884" x2="884.62" y2="1932.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 1933.6)rotate(90)"/>
- <text x="892" y="1908" fill="#000000" stroke="none" text-anchor="start">then</text>
-</g>
-
-<g class="edge">
  <!-- from i++ to if i &gt;\nLength(perturbed) -->
  <!-- vertical -->
  <line x1="884.62" y1="4673" x2="884.62" y2="4692.8" stroke="#000000" stroke-width="1" />
  <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4693.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from define candidateAbsicssa(1)\nvia inverse polynomial\ninterpolation to candidateAbscissa(2) = x + e*shrinkFactor -->
- <!-- vertical -->
- <line x1="884.62" y1="4229" x2="884.62" y2="4248.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4249.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from if And(Not(frameBound,\nNot(reverse)) to if frameBound -->
- <!-- south/west corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="1163.92" y1="2368.5" x2="1163.92" y2="2484" />
-  <line x1="1115.28" y1="2369" x2="1164.42" y2="2369" />
- </g>
-
- <!-- vertical -->
- <line x1="1163.92" y1="2484" x2="1163.92" y2="2670" stroke="#000000" stroke-width="1" />
- <text x="1171" y="2577" fill="#000000" stroke="none" text-anchor="start">else</text>
-
- <!-- north/west corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="1163.92" y1="2670" x2="1163.92" y2="2768.5" />
-  <line x1="1116.28" y1="2768" x2="1164.42" y2="2768" />
- </g>
- <use stroke="#000000" xlink:href="#ah" transform="translate(1115.28 2768)rotate(180)"/>
 </g>
 
 <g class="edge">
@@ -262,13 +205,6 @@
 </g>
 
 <g class="edge">
- <!-- from {fa,a,fb,b,fc,c} =\npair sorted\n{fa,a,fb,b,fc,c}\nin order of\nincreasing\nabscissa to {fu,u} =\n{fc,c} -->
- <!-- vertical -->
- <line x1="884.62" y1="3064" x2="884.62" y2="3083.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 3084.8)rotate(90)"/>
-</g>
-
-<g class="edge">
  <!-- from if newAbscissa &lt;=\nlowerLimit to newAbscissa = lowerLimit -->
  <!-- vertical -->
  <line x1="353.06" y1="2492" x2="353.06" y2="2540.6" stroke="#000000" stroke-width="1" />
@@ -277,27 +213,46 @@
 </g>
 
 <g class="edge">
+ <!-- from if i &gt;\nLength(perturbed) to ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal -->
+ <!-- vertical -->
+ <line x1="884.62" y1="4885" x2="884.62" y2="4933.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4934.6)rotate(90)"/>
+ <text x="892" y="4909" fill="#000000" stroke="none" text-anchor="start">else</text>
+</g>
+
+<g class="edge">
  <!-- from if j &gt;\nLength(sameTestAbscissas) to i++ -->
  <!-- north/west corner -->
  <g stroke="#000000" stroke-width="1">
-  <line x1="1163.92" y1="5183" x2="1163.92" y2="5311" />
-  <line x1="1115.28" y1="5310.5" x2="1164.42" y2="5310.5" />
+  <line x1="1163.92" y1="5464" x2="1163.92" y2="5592" />
+  <line x1="1115.28" y1="5591.5" x2="1164.42" y2="5591.5" />
  </g>
 
  <!-- vertical -->
- <line x1="1163.92" y1="5151" x2="1163.92" y2="5183" stroke="#000000" stroke-width="1" />
+ <line x1="1163.92" y1="5432" x2="1163.92" y2="5464" stroke="#000000" stroke-width="1" />
 
  <!-- crossing -->
  <g stroke="#000000" stroke-width="1">
-  <line x1="1116.28" y1="5119" x2="1224.72" y2="5119" />
-  <line x1="1163.92" y1="5087" x2="1163.92" y2="5151" stroke="#000000" stroke-dasharray="1 0"/>
+  <line x1="1116.28" y1="5400" x2="1224.72" y2="5400" />
+  <line x1="1163.92" y1="5368" x2="1163.92" y2="5432" stroke="#000000" stroke-dasharray="1 0"/>
  </g>
- <use stroke="#000000" xlink:href="#ah" transform="translate(1115.28 5119)rotate(180)"/>
- <text x="1163" y="5111" fill="#000000" stroke="none" text-anchor="start">then</text>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(1115.28 5400)rotate(180)"/>
+ <text x="1163" y="5392" fill="#000000" stroke="none" text-anchor="start">then</text>
 
  <!-- vertical -->
- <line x1="1163.92" y1="4665" x2="1163.92" y2="5087" stroke="#000000" stroke-width="1" />
- <text x="1171" y="4876" fill="#000000" stroke="none" text-anchor="start">then</text>
+ <line x1="1163.92" y1="5182" x2="1163.92" y2="5368" stroke="#000000" stroke-width="1" />
+
+ <!-- crossing -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1116.28" y1="5061.5" x2="1224.72" y2="5061.5" />
+  <line x1="1163.92" y1="4941" x2="1163.92" y2="5182" stroke="#000000" stroke-dasharray="1 0"/>
+ </g>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(1115.28 5061.5)rotate(180)"/>
+ <text x="1163" y="5053" fill="#000000" stroke="none" text-anchor="start">then</text>
+
+ <!-- vertical -->
+ <line x1="1163.92" y1="4665" x2="1163.92" y2="4941" stroke="#000000" stroke-width="1" />
+ <text x="1171" y="4803" fill="#000000" stroke="none" text-anchor="start">then</text>
 
  <!-- south/west corner -->
  <g stroke="#000000" stroke-width="1">
@@ -305,13 +260,6 @@
   <line x1="1116.28" y1="4647" x2="1164.42" y2="4647" />
  </g>
  <use stroke="#000000" xlink:href="#ah" transform="translate(1115.28 4647)rotate(180)"/>
-</g>
-
-<g class="edge">
- <!-- from b = c + shrinkFactor*(a-c) to fb = f(b) -->
- <!-- vertical -->
- <line x1="884.62" y1="900" x2="884.62" y2="919.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 920.8)rotate(90)"/>
 </g>
 
 <g class="edge">
@@ -323,32 +271,10 @@
 </g>
 
 <g class="edge">
- <!-- from if Abs(sameTestAbscissas(j) -\nperturbed(i)) &lt; ptol to perturbed(i) =\n perturbed(i) +\nperturbFactor*tol -->
+ <!-- from newAbscissa =\nperturbed =\ncandidateAbscissa =\n{candidateAbsicssa(2)} to newAbscissa = newAbscissa(1) -->
  <!-- vertical -->
- <line x1="884.62" y1="5806" x2="884.62" y2="5854.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 5855.6)rotate(90)"/>
- <text x="892" y="5830" fill="#000000" stroke="none" text-anchor="start">then</text>
-</g>
-
-<g class="edge">
- <!-- from iteration++ to newOrdinate =\nf(newAbscissa) -->
- <!-- vertical -->
- <line x1="353.06" y1="3150" x2="353.06" y2="3169.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(353.06 3170.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from newAbscissa = c + growthFactor*(c-b) to if newAbscissa &lt;=\nlowerLimit -->
- <!-- vertical -->
- <line x1="353.06" y1="2198" x2="353.06" y2="2246.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(353.06 2247.6)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal to j = 0 -->
- <!-- vertical -->
- <line x1="884.62" y1="4995" x2="884.62" y2="5014.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 5015.8)rotate(90)"/>
+ <line x1="353.06" y1="5344" x2="353.06" y2="5363.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(353.06 5364.8)rotate(90)"/>
 </g>
 
 <g class="edge">
@@ -356,14 +282,6 @@
  <!-- vertical -->
  <line x1="884.62" y1="4451" x2="884.62" y2="4470.8" stroke="#000000" stroke-width="1" />
  <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4471.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from cdomain to domainBound = True -->
- <!-- vertical -->
- <line x1="884.62" y1="1541" x2="884.62" y2="1589.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 1590.6)rotate(90)"/>
- <text x="892" y="1565" fill="#000000" stroke="none" text-anchor="start">then</text>
 </g>
 
 <g class="edge">
@@ -375,45 +293,6 @@
 </g>
 
 <g class="edge">
- <!-- from perturbed(i) =\n perturbed(i) +\nperturbFactor*tol to ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal -->
- <!-- north/east corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="608.84" y1="5862" x2="608.84" y2="5898.5" />
-  <line x1="608.34" y1="5898" x2="654.66" y2="5898" />
- </g>
-
- <!-- vertical -->
- <line x1="608.84" y1="4987" x2="608.84" y2="5862" stroke="#000000" stroke-width="1" />
-
- <!-- south/east corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="608.84" y1="4959.5" x2="608.84" y2="4987" />
-  <line x1="608.34" y1="4960" x2="653.66" y2="4960" />
- </g>
- <use stroke="#000000" xlink:href="#ah" x="654.66" y="4960"/>
-</g>
-
-<g class="edge">
- <!-- from if fc &gt; fb to cdomain -->
- <!-- south/west corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="1163.92" y1="1121" x2="1163.92" y2="1183" />
-  <line x1="1115.28" y1="1121.5" x2="1164.42" y2="1121.5" />
- </g>
-
- <!-- vertical -->
- <line x1="1163.92" y1="1183" x2="1163.92" y2="1315" stroke="#000000" stroke-width="1" />
- <text x="1171" y="1249" fill="#000000" stroke="none" text-anchor="start">else</text>
-
- <!-- north/west corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="1163.92" y1="1315" x2="1163.92" y2="1424.5" />
-  <line x1="1116.28" y1="1424" x2="1164.42" y2="1424" />
- </g>
- <use stroke="#000000" xlink:href="#ah" transform="translate(1115.28 1424)rotate(180)"/>
-</g>
-
-<g class="edge">
  <!-- from sameTestAbscissas =\n{x,u,c,a,w,c} to i = 0 -->
  <!-- vertical -->
  <line x1="884.62" y1="4537" x2="884.62" y2="4556.8" stroke="#000000" stroke-width="1" />
@@ -421,39 +300,10 @@
 </g>
 
 <g class="edge">
- <!-- from j++ to if j &gt;\nLength(sameTestAbscissas) -->
- <!-- vertical -->
- <line x1="884.62" y1="5159" x2="884.62" y2="5178.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 5179.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from if x &gt; (a + c)/2 to e = a - x -->
- <!-- vertical -->
- <line x1="884.62" y1="4025" x2="884.62" y2="4073.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4074.6)rotate(90)"/>
- <text x="892" y="4049" fill="#000000" stroke="none" text-anchor="start">then</text>
-</g>
-
-<g class="edge">
  <!-- from xtol = 10^-accuracyGoal +\nAbs(x)*10^-precisionGoal to if And(Abs(a-x) &lt; xtol,\nAbs(c-x) &lt; xtol) -->
  <!-- vertical -->
  <line x1="884.62" y1="3480" x2="884.62" y2="3499.8" stroke="#000000" stroke-width="1" />
  <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 3500.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from frameBound = True to cdomain -->
- <!-- vertical -->
- <line x1="884.62" y1="1291" x2="884.62" y2="1310.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 1311.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from {fu,u} =\n{fc,c} to {fv,v,fw,w,fx,x} =\npair sorted\n{fa,a,fb,b,fc,c}\nin order of\ndecreasing\nordinate -->
- <!-- vertical -->
- <line x1="884.62" y1="3150" x2="884.62" y2="3169.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 3170.8)rotate(90)"/>
 </g>
 
 <g class="edge">
@@ -479,17 +329,10 @@
 </g>
 
 <g class="edge">
- <!-- from maxDisplacement =\nc-a to xtol = 10^-accuracyGoal +\nAbs(x)*10^-precisionGoal -->
+ <!-- from e = c - x to define candidateAbsicssa(1)\nvia inverse polynomial\ninterpolation -->
  <!-- vertical -->
- <line x1="884.62" y1="3394" x2="884.62" y2="3413.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 3414.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from j = 0 to j++ -->
- <!-- vertical -->
- <line x1="884.62" y1="5063" x2="884.62" y2="5082.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 5083.8)rotate(90)"/>
+ <line x1="884.62" y1="4125" x2="884.62" y2="4144.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4145.8)rotate(90)"/>
 </g>
 
 <g class="edge">
@@ -501,14 +344,6 @@
 </g>
 
 <g class="edge">
- <!-- from if fc &gt; fa to {fa,a,fc,c} =\n{fc,c,fa,a} -->
- <!-- vertical -->
- <line x1="884.62" y1="454" x2="884.62" y2="502.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 503.6)rotate(90)"/>
- <text x="892" y="478" fill="#000000" stroke="none" text-anchor="start">then</text>
-</g>
-
-<g class="edge">
  <!-- from if And(Abs(a-x) &lt; xtol,\nAbs(c-x) &lt; xtol) to done with frame narrow -->
  <!-- horizontal -->
  <line x1="564.02" y1="3626.5" x2="654.66" y2="3626.5" stroke="#000000" stroke-width="1" />
@@ -517,66 +352,18 @@
 </g>
 
 <g class="edge">
- <!-- from candidateAbscissa(2) = x + e*shrinkFactor to perturbed = candidateAbscissa -->
- <!-- vertical -->
- <line x1="884.62" y1="4297" x2="884.62" y2="4316.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4317.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from Sow (a.k.a. store)\nthe results of running\nthis algorithm with\nreverse = False to if frameBound -->
- <!-- vertical -->
- <line x1="884.62" y1="2646" x2="884.62" y2="2665.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 2666.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from if i &gt;\nLength(perturbed) to done with perturbation -->
+ <!-- from if i &gt;\nLength(perturbed) to Select from perturbed\na list containing\nthe first and\nonly the first\nabscissa between\na and c that represents\na displacement less than\nmaxAcceptableDisplacement from x.\nCall it newAbscissa. -->
  <!-- horizontal -->
- <line x1="564.02" y1="4783" x2="654.66" y2="4783" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(563.02 4783)rotate(180)"/>
- <text x="611" y="4775" fill="#000000" stroke="none">then</text>
+ <line x1="564.02" y1="4787" x2="654.66" y2="4787" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(563.02 4787)rotate(180)"/>
+ <text x="611" y="4779" fill="#000000" stroke="none">then</text>
 </g>
 
 <g class="edge">
- <!-- from if Abs(sameTestAbscissas(j) -\nperturbed(i)) &lt; ptol to j++ -->
- <!-- horizontal -->
- <line x1="1115.28" y1="5650" x2="1224.72" y2="5650" stroke="#000000" stroke-width="1" />
-
- <!-- north/west corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="1240.72" y1="5502" x2="1240.72" y2="5650.5" />
-  <line x1="1224.72" y1="5650" x2="1241.22" y2="5650" />
- </g>
-
+ <!-- from j++ to if j &gt;\nLength(sameTestAbscissas) -->
  <!-- vertical -->
- <line x1="1240.72" y1="5151" x2="1240.72" y2="5502" stroke="#000000" stroke-width="1" />
-
- <!-- south/west corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="1240.72" y1="5118.5" x2="1240.72" y2="5151" />
-  <line x1="1224.72" y1="5119" x2="1241.22" y2="5119" />
- </g>
-</g>
-
-<g class="edge">
- <!-- from if fc &gt; fa to if reverse -->
- <!-- south/west corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="1163.92" y1="384.5" x2="1163.92" y2="446" />
-  <line x1="1115.28" y1="385" x2="1164.42" y2="385" />
- </g>
-
- <!-- vertical -->
- <line x1="1163.92" y1="446" x2="1163.92" y2="596" stroke="#000000" stroke-width="1" />
- <text x="1171" y="521" fill="#000000" stroke="none" text-anchor="start">else</text>
-
- <!-- north/west corner -->
- <g stroke="#000000" stroke-width="1">
-  <line x1="1163.92" y1="596" x2="1163.92" y2="651.5" />
-  <line x1="1116.28" y1="651" x2="1164.42" y2="651" />
- </g>
- <use stroke="#000000" xlink:href="#ah" transform="translate(1115.28 651)rotate(180)"/>
+ <line x1="884.62" y1="5440" x2="884.62" y2="5459.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 5460.8)rotate(90)"/>
 </g>
 
 <g class="edge">
@@ -589,23 +376,20 @@
 <g class="edge">
  <!-- from e = a - x to define candidateAbsicssa(1)\nvia inverse polynomial\ninterpolation -->
  <!-- vertical -->
- <line x1="884.62" y1="4125" x2="884.62" y2="4144.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4145.8)rotate(90)"/>
-</g>
+ <line x1="353.06" y1="4025" x2="353.06" y2="4081" stroke="#000000" stroke-width="1" />
 
-<g class="edge">
- <!-- from {fa,a,fc,c} =\n{fc,c,fa,a} to if reverse -->
  <!-- vertical -->
- <line x1="884.62" y1="572" x2="884.62" y2="591.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 592.8)rotate(90)"/>
-</g>
+ <line x1="353.06" y1="4081" x2="353.06" y2="4149" stroke="#000000" stroke-width="1" />
 
-<g class="edge">
- <!-- from if frameBound to {fa,a,fb,b,fc,c} =\npair sorted\n{fa,a,fb,b,fc,c}\nin order of\nincreasing\nabscissa -->
- <!-- vertical -->
- <line x1="884.62" y1="2874" x2="884.62" y2="2922.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 2923.6)rotate(90)"/>
- <text x="892" y="2898" fill="#000000" stroke="none" text-anchor="start">then</text>
+ <!-- north/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="353.06" y1="4149" x2="353.06" y2="4185.5" />
+  <line x1="352.56" y1="4185" x2="551.56" y2="4185" />
+ </g>
+
+ <!-- horizontal -->
+ <line x1="551.56" y1="4185" x2="653.66" y2="4185" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" x="654.66" y="4185"/>
 </g>
 
 <g class="edge">
@@ -629,26 +413,11 @@
 </g>
 
 <g class="edge">
- <!-- from {fa,fc} =\n{f(a),f(c)} to if fc &gt; fa -->
+ <!-- from if newAbscissa == {}\n(if no perturbed points\nmet the criteria) to newAbscissa =\nperturbed =\ncandidateAbscissa =\n{candidateAbsicssa(2)} -->
  <!-- vertical -->
- <line x1="884.62" y1="300" x2="884.62" y2="319.8" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 320.8)rotate(90)"/>
-</g>
-
-<g class="edge">
- <!-- from if And(Not(frameBound,\nNot(reverse)) to Sow (a.k.a. store)\nthe results of running\nthis algorithm with\nreverse = False -->
- <!-- vertical -->
- <line x1="884.62" y1="2492" x2="884.62" y2="2540.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 2541.6)rotate(90)"/>
- <text x="892" y="2516" fill="#000000" stroke="none" text-anchor="start">then</text>
-</g>
-
-<g class="edge">
- <!-- from if i &gt;\nLength(perturbed) to ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal -->
- <!-- vertical -->
- <line x1="884.62" y1="4877" x2="884.62" y2="4925.6" stroke="#000000" stroke-width="1" />
- <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4926.6)rotate(90)"/>
- <text x="892" y="4901" fill="#000000" stroke="none" text-anchor="start">else</text>
+ <line x1="353.06" y1="5190" x2="353.06" y2="5238.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(353.06 5239.6)rotate(90)"/>
+ <text x="361" y="5214" fill="#000000" stroke="none" text-anchor="start">then</text>
 </g>
 
 <g class="edge">
@@ -689,6 +458,338 @@
   <line x1="608.34" y1="1770.5" x2="653.66" y2="1770.5" />
  </g>
  <use stroke="#000000" xlink:href="#ah" x="654.66" y="1770.5"/>
+</g>
+
+<g class="edge">
+ <!-- from newAbscissa = upperLimit to iteration++ -->
+ <!-- vertical -->
+ <line x1="353.06" y1="3064" x2="353.06" y2="3083.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(353.06 3084.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\naccuracyGoal,\nprecisionGoal,\nmaxWideningIterations,\nmaxNarrowingIterations to {fa,fc} =\n{f(a),f(c)} -->
+ <!-- vertical -->
+ <line x1="884.62" y1="214" x2="884.62" y2="233.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 234.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from iterationBound = True to frameMinimumStopTest -->
+ <!-- vertical -->
+ <line x1="884.62" y1="1984" x2="884.62" y2="2003.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 2004.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal to j = 0 -->
+ <!-- vertical -->
+ <line x1="884.62" y1="5190" x2="884.62" y2="5238.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 5239.6)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if iteration ==\nmaxWideningIterations to iterationBound = True -->
+ <!-- vertical -->
+ <line x1="884.62" y1="1884" x2="884.62" y2="1932.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 1933.6)rotate(90)"/>
+ <text x="892" y="1908" fill="#000000" stroke="none" text-anchor="start">then</text>
+</g>
+
+<g class="edge">
+ <!-- from perturbed(i) =\n perturbed(i) +\nperturbFactor*tol to ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal -->
+ <!-- north/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1163.92" y1="6143" x2="1163.92" y2="6179.5" />
+  <line x1="1115.28" y1="6179" x2="1164.42" y2="6179" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="1163.92" y1="6079" x2="1163.92" y2="6143" stroke="#000000" stroke-width="1" />
+
+ <!-- crossing -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1115.28" y1="5931" x2="1224.72" y2="5931" />
+  <line x1="1163.92" y1="5783" x2="1163.92" y2="6079" stroke="#000000" stroke-dasharray="1 0"/>
+ </g>
+
+ <!-- south/east corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1163.92" y1="5750.5" x2="1163.92" y2="5783" />
+  <line x1="1163.42" y1="5751" x2="1224.72" y2="5751" />
+ </g>
+
+ <!-- north/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1240.72" y1="5719" x2="1240.72" y2="5751.5" />
+  <line x1="1224.72" y1="5751" x2="1241.22" y2="5751" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="1240.72" y1="5432" x2="1240.72" y2="5719" stroke="#000000" stroke-width="1" />
+
+ <!-- crossing -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1224.72" y1="5400" x2="1256.72" y2="5400" />
+  <line x1="1240.72" y1="5368" x2="1240.72" y2="5432" stroke="#000000" stroke-dasharray="1 0"/>
+ </g>
+
+ <!-- vertical -->
+ <line x1="1240.72" y1="5182" x2="1240.72" y2="5368" stroke="#000000" stroke-width="1" />
+
+ <!-- south/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1240.72" y1="5061" x2="1240.72" y2="5182" />
+  <line x1="1224.72" y1="5061.5" x2="1241.22" y2="5061.5" />
+ </g>
+</g>
+
+<g class="edge">
+ <!-- from {fa,a,fb,b,fc,c} =\npair sorted\n{fa,a,fb,b,fc,c}\nin order of\nincreasing\nabscissa to {fu,u} =\n{fc,c} -->
+ <!-- vertical -->
+ <line x1="884.62" y1="3064" x2="884.62" y2="3083.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 3084.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if And(Not(frameBound,\nNot(reverse)) to if frameBound -->
+ <!-- south/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1163.92" y1="2368.5" x2="1163.92" y2="2484" />
+  <line x1="1115.28" y1="2369" x2="1164.42" y2="2369" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="1163.92" y1="2484" x2="1163.92" y2="2670" stroke="#000000" stroke-width="1" />
+ <text x="1171" y="2577" fill="#000000" stroke="none" text-anchor="start">else</text>
+
+ <!-- north/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1163.92" y1="2670" x2="1163.92" y2="2768.5" />
+  <line x1="1116.28" y1="2768" x2="1164.42" y2="2768" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(1115.28 2768)rotate(180)"/>
+</g>
+
+<g class="edge">
+ <!-- from define candidateAbsicssa(1)\nvia inverse polynomial\ninterpolation to candidateAbscissa(2) = x + e*shrinkFactor -->
+ <!-- vertical -->
+ <line x1="884.62" y1="4229" x2="884.62" y2="4248.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4249.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from b = c + shrinkFactor*(a-c) to fb = f(b) -->
+ <!-- vertical -->
+ <line x1="884.62" y1="900" x2="884.62" y2="919.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 920.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from newAbscissa = c + growthFactor*(c-b) to if newAbscissa &lt;=\nlowerLimit -->
+ <!-- vertical -->
+ <line x1="353.06" y1="2198" x2="353.06" y2="2246.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(353.06 2247.6)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from iteration++ to newOrdinate =\nf(newAbscissa) -->
+ <!-- vertical -->
+ <line x1="353.06" y1="3150" x2="353.06" y2="3169.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(353.06 3170.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from j = 0 to j++ -->
+ <!-- vertical -->
+ <line x1="884.62" y1="5344" x2="884.62" y2="5363.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 5364.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from cdomain to domainBound = True -->
+ <!-- vertical -->
+ <line x1="884.62" y1="1541" x2="884.62" y2="1589.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 1590.6)rotate(90)"/>
+ <text x="892" y="1565" fill="#000000" stroke="none" text-anchor="start">then</text>
+</g>
+
+<g class="edge">
+ <!-- from if fc &gt; fb to cdomain -->
+ <!-- south/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1163.92" y1="1121" x2="1163.92" y2="1183" />
+  <line x1="1115.28" y1="1121.5" x2="1164.42" y2="1121.5" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="1163.92" y1="1183" x2="1163.92" y2="1315" stroke="#000000" stroke-width="1" />
+ <text x="1171" y="1249" fill="#000000" stroke="none" text-anchor="start">else</text>
+
+ <!-- north/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1163.92" y1="1315" x2="1163.92" y2="1424.5" />
+  <line x1="1116.28" y1="1424" x2="1164.42" y2="1424" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(1115.28 1424)rotate(180)"/>
+</g>
+
+<g class="edge">
+ <!-- from if newAbscissa == {}\n(if no perturbed points\nmet the criteria) to newAbscissa = newAbscissa(1) -->
+ <!-- south/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="608.84" y1="5061" x2="608.84" y2="5182" />
+  <line x1="563.02" y1="5061.5" x2="609.34" y2="5061.5" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="608.84" y1="5182" x2="608.84" y2="5368" stroke="#000000" stroke-width="1" />
+ <text x="616" y="5275" fill="#000000" stroke="none" text-anchor="start">else</text>
+
+ <!-- north/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="608.84" y1="5368" x2="608.84" y2="5400.5" />
+  <line x1="564.02" y1="5400" x2="609.34" y2="5400" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(563.02 5400)rotate(180)"/>
+</g>
+
+<g class="edge">
+ <!-- from if Abs(sameTestAbscissas(j) -\nperturbed(i)) &lt; ptol to j++ -->
+ <!-- horizontal -->
+ <line x1="1224.72" y1="5931" x2="1256.72" y2="5931" stroke="#000000" stroke-width="1" />
+
+ <!-- north/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1272.72" y1="5783" x2="1272.72" y2="5931.5" />
+  <line x1="1256.72" y1="5931" x2="1273.22" y2="5931" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="1272.72" y1="5432" x2="1272.72" y2="5783" stroke="#000000" stroke-width="1" />
+
+ <!-- south/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1272.72" y1="5399.5" x2="1272.72" y2="5432" />
+  <line x1="1256.72" y1="5400" x2="1273.22" y2="5400" />
+ </g>
+</g>
+
+<g class="edge">
+ <!-- from if x &gt; (a + c)/2 to e = a - x -->
+ <!-- horizontal -->
+ <line x1="564.02" y1="3915" x2="654.66" y2="3915" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(563.02 3915)rotate(180)"/>
+ <text x="611" y="3907" fill="#000000" stroke="none">then</text>
+</g>
+
+<g class="edge">
+ <!-- from {fu,u} =\n{fc,c} to {fv,v,fw,w,fx,x} =\npair sorted\n{fa,a,fb,b,fc,c}\nin order of\ndecreasing\nordinate -->
+ <!-- vertical -->
+ <line x1="884.62" y1="3150" x2="884.62" y2="3169.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 3170.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from frameBound = True to cdomain -->
+ <!-- vertical -->
+ <line x1="884.62" y1="1291" x2="884.62" y2="1310.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 1311.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from maxDisplacement =\nc-a to xtol = 10^-accuracyGoal +\nAbs(x)*10^-precisionGoal -->
+ <!-- vertical -->
+ <line x1="884.62" y1="3394" x2="884.62" y2="3413.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 3414.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if x &gt; (a + c)/2 to e = c - x -->
+ <!-- vertical -->
+ <line x1="884.62" y1="4025" x2="884.62" y2="4073.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4074.6)rotate(90)"/>
+ <text x="892" y="4049" fill="#000000" stroke="none" text-anchor="start">else</text>
+</g>
+
+<g class="edge">
+ <!-- from if fc &gt; fa to {fa,a,fc,c} =\n{fc,c,fa,a} -->
+ <!-- vertical -->
+ <line x1="884.62" y1="454" x2="884.62" y2="502.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 503.6)rotate(90)"/>
+ <text x="892" y="478" fill="#000000" stroke="none" text-anchor="start">then</text>
+</g>
+
+<g class="edge">
+ <!-- from candidateAbscissa(2) = x + e*shrinkFactor to perturbed = candidateAbscissa -->
+ <!-- vertical -->
+ <line x1="884.62" y1="4297" x2="884.62" y2="4316.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 4317.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from Sow (a.k.a. store)\nthe results of running\nthis algorithm with\nreverse = False to if frameBound -->
+ <!-- vertical -->
+ <line x1="884.62" y1="2646" x2="884.62" y2="2665.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 2666.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if fc &gt; fa to if reverse -->
+ <!-- south/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1163.92" y1="384.5" x2="1163.92" y2="446" />
+  <line x1="1115.28" y1="385" x2="1164.42" y2="385" />
+ </g>
+
+ <!-- vertical -->
+ <line x1="1163.92" y1="446" x2="1163.92" y2="596" stroke="#000000" stroke-width="1" />
+ <text x="1171" y="521" fill="#000000" stroke="none" text-anchor="start">else</text>
+
+ <!-- north/west corner -->
+ <g stroke="#000000" stroke-width="1">
+  <line x1="1163.92" y1="596" x2="1163.92" y2="651.5" />
+  <line x1="1116.28" y1="651" x2="1164.42" y2="651" />
+ </g>
+ <use stroke="#000000" xlink:href="#ah" transform="translate(1115.28 651)rotate(180)"/>
+</g>
+
+<g class="edge">
+ <!-- from if frameBound to {fa,a,fb,b,fc,c} =\npair sorted\n{fa,a,fb,b,fc,c}\nin order of\nincreasing\nabscissa -->
+ <!-- vertical -->
+ <line x1="884.62" y1="2874" x2="884.62" y2="2922.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 2923.6)rotate(90)"/>
+ <text x="892" y="2898" fill="#000000" stroke="none" text-anchor="start">then</text>
+</g>
+
+<g class="edge">
+ <!-- from {fa,a,fc,c} =\n{fc,c,fa,a} to if reverse -->
+ <!-- vertical -->
+ <line x1="884.62" y1="572" x2="884.62" y2="591.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 592.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from {fa,fc} =\n{f(a),f(c)} to if fc &gt; fa -->
+ <!-- vertical -->
+ <line x1="884.62" y1="300" x2="884.62" y2="319.8" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 320.8)rotate(90)"/>
+</g>
+
+<g class="edge">
+ <!-- from if And(Not(frameBound,\nNot(reverse)) to Sow (a.k.a. store)\nthe results of running\nthis algorithm with\nreverse = False -->
+ <!-- vertical -->
+ <line x1="884.62" y1="2492" x2="884.62" y2="2540.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 2541.6)rotate(90)"/>
+ <text x="892" y="2516" fill="#000000" stroke="none" text-anchor="start">then</text>
+</g>
+
+<g class="edge">
+ <!-- from if j &gt;\nLength(sameTestAbscissas) to if Abs(sameTestAbscissas(j) -\nperturbed(i)) &lt; ptol -->
+ <!-- vertical -->
+ <line x1="884.62" y1="5727" x2="884.62" y2="5775.6" stroke="#000000" stroke-width="1" />
+ <use stroke="#000000" xlink:href="#ah" transform="translate(884.62 5776.6)rotate(90)"/>
+ <text x="892" y="5751" fill="#000000" stroke="none" text-anchor="start">else</text>
 </g>
 
 <g class="node-start">
@@ -1001,9 +1102,9 @@
 
 <g class="node-action">
  <!-- e = a - x, rounded -->
- <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="436" x="666.62"
-   y="4081.5" />
- <text x="884" y="4105" fill="#000000" text-anchor="middle">e = a - x</text>
+ <rect fill="#8bef91" height="203" rx="15" ry="15" stroke="#000000" width="396" x="155.06"
+   y="3813.5" />
+ <text x="353" y="3921" fill="#000000" text-anchor="middle">e = a - x</text>
 </g>
 
 <g class="node-action">
@@ -1067,76 +1168,116 @@
 
 <g class="node-question">
  <!-- if i &gt;\nLength(perturbed), diamond -->
- <polygon points="666.79,4783, 884.62,4697.5, 1102.45,4783, 884.62,4868.5" fill="#ffff8a" stroke="#000000" />
- <text x="884" y="4780" fill="#000000" text-anchor="middle">
-  <tspan x="884" y="4778">if i &gt;</tspan>
-  <tspan x="884" y="4796">Length(perturbed)</tspan>
+ <polygon points="666.79,4787, 884.62,4697.5, 1102.45,4787, 884.62,4876.5" fill="#ffff8a" stroke="#000000" />
+ <text x="884" y="4784" fill="#000000" text-anchor="middle">
+  <tspan x="884" y="4782">if i &gt;</tspan>
+  <tspan x="884" y="4800">Length(perturbed)</tspan>
  </text>
 </g>
 
-<g class="node">
- <!-- done with perturbation, rect -->
- <rect fill="#ffffff" height="171" stroke="#000000" width="396" x="155.06" y="4697.5" />
- <text x="353" y="4789" fill="#000000" text-anchor="middle">done with perturbation</text>
+<g class="node-action">
+ <!-- Select from perturbed\na list containing\nthe first and\nonly the first\nabscissa between\na and c that represents\na displacement less than\nmaxAcceptableDisplacement from x.\nCall it newAbscissa., rounded -->
+ <rect fill="#8bef91" height="179" rx="15" ry="15" stroke="#000000" width="396" x="155.06"
+   y="4697.5" />
+ <text x="353" y="4721" fill="#000000" text-anchor="middle">
+  <tspan x="353" y="4719">Select from perturbed</tspan>
+  <tspan x="353" y="4737">a list containing</tspan>
+  <tspan x="353" y="4755">the first and</tspan>
+  <tspan x="353" y="4773">only the first</tspan>
+  <tspan x="353" y="4791">abscissa between</tspan>
+  <tspan x="353" y="4809">a and c that represents</tspan>
+  <tspan x="353" y="4827">a displacement less than</tspan>
+  <tspan x="353" y="4845">maxAcceptableDisplacement from x.</tspan>
+  <tspan x="353" y="4863">Call it newAbscissa.</tspan>
+ </text>
+</g>
+
+<g class="node-question">
+ <!-- if newAbscissa == {}\n(if no perturbed points\nmet the criteria), diamond -->
+ <polygon points="155.23,5061.5, 353.06,4941.5, 550.89,5061.5, 353.06,5181.5" fill="#ffff8a" stroke="#000000" />
+ <text x="353" y="5049" fill="#000000" text-anchor="middle">
+  <tspan x="353" y="5047">if newAbscissa == {}</tspan>
+  <tspan x="353" y="5065">(if no perturbed points</tspan>
+  <tspan x="353" y="5083">met the criteria)</tspan>
+ </text>
+</g>
+
+<g class="node-action">
+ <!-- newAbscissa =\nperturbed =\ncandidateAbscissa =\n{candidateAbsicssa(2)}, rounded -->
+ <rect fill="#8bef91" height="89" rx="15" ry="15" stroke="#000000" width="396" x="155.06"
+   y="5246.5" />
+ <text x="353" y="5270" fill="#000000" text-anchor="middle">
+  <tspan x="353" y="5268">newAbscissa =</tspan>
+  <tspan x="353" y="5286">perturbed =</tspan>
+  <tspan x="353" y="5304">candidateAbscissa =</tspan>
+  <tspan x="353" y="5322">{candidateAbsicssa(2)}</tspan>
+ </text>
+</g>
+
+<g class="node-action">
+ <!-- newAbscissa = newAbscissa(1), rounded -->
+ <rect fill="#8bef91" height="63" rx="15" ry="15" stroke="#000000" width="396" x="155.06"
+   y="5368.5" />
+ <text x="353" y="5406" fill="#000000" text-anchor="middle">newAbscissa = newAbscissa(1)</text>
 </g>
 
 <g class="node-action">
  <!-- e = c - x, rounded -->
- <rect fill="#8bef91" height="203" rx="15" ry="15" stroke="#000000" width="396" x="155.06"
-   y="3813.5" />
- <text x="353" y="3921" fill="#000000" text-anchor="middle">e = c - x</text>
+ <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="436" x="666.62"
+   y="4081.5" />
+ <text x="884" y="4105" fill="#000000" text-anchor="middle">e = c - x</text>
 </g>
 
 <g class="node-action">
  <!-- ptol = 10^-accuracyGoal +\nAbs(perturbed(i))*10^-precisionGoal, rounded -->
- <rect fill="#8bef91" height="53" rx="15" ry="15" stroke="#000000" width="436" x="666.62"
-   y="4933.5" />
- <text x="884" y="4957" fill="#000000" text-anchor="middle">
-  <tspan x="884" y="4955">ptol = 10^-accuracyGoal +</tspan>
-  <tspan x="884" y="4973">Abs(perturbed(i))*10^-precisionGoal</tspan>
+ <rect fill="#8bef91" height="240" rx="15" ry="15" stroke="#000000" width="436" x="666.62"
+   y="4941.5" />
+ <text x="884" y="5058" fill="#000000" text-anchor="middle">
+  <tspan x="884" y="5056">ptol = 10^-accuracyGoal +</tspan>
+  <tspan x="884" y="5074">Abs(perturbed(i))*10^-precisionGoal</tspan>
  </text>
 </g>
 
 <g class="node-action">
  <!-- j = 0, rounded -->
- <rect fill="#8bef91" height="35" rx="15" ry="15" stroke="#000000" width="436" x="666.62"
-   y="5019.5" />
- <text x="884" y="5043" fill="#000000" text-anchor="middle">j = 0</text>
+ <rect fill="#8bef91" height="89" rx="15" ry="15" stroke="#000000" width="436" x="666.62"
+   y="5246.5" />
+ <text x="884" y="5297" fill="#000000" text-anchor="middle">j = 0</text>
 </g>
 
 <g class="node-action">
  <!-- j++, rounded -->
  <rect fill="#8bef91" height="63" rx="15" ry="15" stroke="#000000" width="436" x="666.62"
-   y="5087.5" />
- <text x="884" y="5125" fill="#000000" text-anchor="middle">j++</text>
+   y="5368.5" />
+ <text x="884" y="5406" fill="#000000" text-anchor="middle">j++</text>
 </g>
 
 <g class="node-question">
  <!-- if j &gt;\nLength(sameTestAbscissas), diamond -->
- <polygon points="666.79,5310.5, 884.62,5183.5, 1102.45,5310.5, 884.62,5437.5" fill="#ffff8a" stroke="#000000" />
- <text x="884" y="5307" fill="#000000" text-anchor="middle">
-  <tspan x="884" y="5305">if j &gt;</tspan>
-  <tspan x="884" y="5323">Length(sameTestAbscissas)</tspan>
+ <polygon points="666.79,5591.5, 884.62,5464.5, 1102.45,5591.5, 884.62,5718.5" fill="#ffff8a" stroke="#000000" />
+ <text x="884" y="5588" fill="#000000" text-anchor="middle">
+  <tspan x="884" y="5586">if j &gt;</tspan>
+  <tspan x="884" y="5604">Length(sameTestAbscissas)</tspan>
  </text>
 </g>
 
 <g class="node-question">
  <!-- if Abs(sameTestAbscissas(j) -\nperturbed(i)) &lt; ptol, diamond -->
- <polygon points="666.79,5650, 884.62,5502.5, 1102.45,5650, 884.62,5797.5" fill="#ffff8a" stroke="#000000" />
- <text x="884" y="5647" fill="#000000" text-anchor="middle">
-  <tspan x="884" y="5645">if Abs(sameTestAbscissas(j) -</tspan>
-  <tspan x="884" y="5663">perturbed(i)) &lt; ptol</tspan>
+ <polygon points="666.79,5931, 884.62,5783.5, 1102.45,5931, 884.62,6078.5" fill="#ffff8a" stroke="#000000" />
+ <text x="884" y="5928" fill="#000000" text-anchor="middle">
+  <tspan x="884" y="5926">if Abs(sameTestAbscissas(j) -</tspan>
+  <tspan x="884" y="5944">perturbed(i)) &lt; ptol</tspan>
  </text>
 </g>
 
 <g class="node-action">
  <!-- perturbed(i) =\n perturbed(i) +\nperturbFactor*tol, rounded -->
  <rect fill="#8bef91" height="71" rx="15" ry="15" stroke="#000000" width="436" x="666.62"
-   y="5862.5" />
- <text x="884" y="5886" fill="#000000" text-anchor="middle">
-  <tspan x="884" y="5884">perturbed(i) =</tspan>
-  <tspan x="884" y="5902">perturbed(i) +</tspan>
-  <tspan x="884" y="5920">perturbFactor*tol</tspan>
+   y="6143.5" />
+ <text x="884" y="6167" fill="#000000" text-anchor="middle">
+  <tspan x="884" y="6165">perturbed(i) =</tspan>
+  <tspan x="884" y="6183">perturbed(i) +</tspan>
+  <tspan x="884" y="6201">perturbFactor*tol</tspan>
  </text>
 </g>
 
