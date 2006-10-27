@@ -3,7 +3,7 @@ node.start    { shape: rounded; fill: #ffbfc9; }
 node.question { shape: diamond; fill: #ffff8a; }
 node.action   { shape: rounded; fill: #8bef91; }
 
-[ Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\nmaxWideningIterations,\nmaxNarrowingIterations ] { class: start }
+[ Given: f, a, c,\nlimitLeft,\nlimitRight,\nreverse,\nshrinkFactor,\ngrowthFactor,\naccuracyGoal,\nprecisionGoal,\nmaxWideningIterations,\nmaxNarrowingIterations ] { class: start }
   --> [ {fa,fc} =\n{f(a),f(c)} ] {class: action; }
     --> [ if fc > fa ] { class: question; }
       -- then --> [ {fa,a,fc,c} =\n{fc,c,fa,a} ] { class: action; }
@@ -21,7 +21,12 @@ node.action   { shape: rounded; fill: #8bef91; }
 			      --> [ frameMinimumStopTest ] { class: question; label: if Or(frameBound,\ndomainBound,\niterationBound); }
 			        -- then --> [ if And(Not(frameBound,\nNot(reverse)) ] { class: question; }
 				  -- then --> [ Sow (a.k.a. store)\nthe results of running\nthis algorithm with\nreverse = False ] { class: action; }
-				    --> [something]
+				    --> [ if frameBound ] { class: question; }
+				      -- then --> [ {fa,a,fb,b,fc,c} =\npair sorted\n{fa,a,fb,b,fc,c}\nin order of\nincreasing\nabscissa ] { class: action; }
+				        --> [ {fu,u} =\n{fc,c} ] { class: action; }
+					  --> [ {fv,v,fw,w,fx,x} =\npair sorted\n{fa,a,fb,b,fc,c}\nin order of\ndecreasing\nordinate ] { class: action; }
+					    --> [ maxDisplacement =\nc-a ] { class: action; }
+					    					  
 
 [ if fc > fa ]
    -- else --> [ if reverse ]
@@ -49,4 +54,4 @@ node.action   { shape: rounded; fill: #8bef91; }
     -- else --> [ iteration++ ]
 
 [ if And(Not(frameBound,\nNot(reverse)) ]
-  -- else --> [something]
+  -- else --> [ if frameBound ]
