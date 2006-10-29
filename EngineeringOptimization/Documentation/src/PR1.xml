@@ -67,4 +67,19 @@
 				keeping	track of all function evaluations.</para>
 		</caption>
 	</figure>
+	<para>As <xref linkend="pr_1_screenshot_assignment"/> shows, I am to create
+		a procedure for solving single-variable unconstrained minimization
+		problems. This is also referred to as a line search, since there is
+		only one independant variable.</para>
+	<para>The line search description follows in section XXX. I use the routine
+		to solve the requested problems in section XXX.</para>
+	<section>
+		<title>Description of Line Search</title>
+		<para>The line search follows NOTES ON EXPANDING INTERVAL - REFERENCE
+			GNVNOTED FIGURE FROM ABOVE AND NUMERICAL RECIPIES - THEN DO OTHER
+			STUFF.</para>
+		<para>In order to satisfy constraints in later
+			assignments, I implemented a slightly different routine than that
+			recommended in <xref linkend="pr_1_screenshot_flow_chart"/>.</para>
+	</section>
 </chapter>
