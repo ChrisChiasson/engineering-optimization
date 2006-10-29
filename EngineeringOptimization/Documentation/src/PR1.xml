@@ -1,1 +1,64 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="HW1"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xl="http://www.w3.org/1999/xlink"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	version="5">
+	<title>Line Search &#x2014; Project 1</title>
+	<figure xml:id="pr_1_screenshot_assignment">
+		<title>Project 1 Assignment</title>
+			<screenshot>
+				<mediaobject>
+					<imageobject role="html">
+						<imagedata
+							fileref="mout/pr_1_screenshot_assignment.png"/>
+					</imageobject>
+					<imageobject role="fo">
+						<imagedata contentwidth="5in"
+							fileref="mout/pr_1_screenshot_assignment.png"/>
+					</imageobject>
+					<textobject>
+						<phrase>Project 1: (25% of class grade) due 6th week
+							Develop	a single variable unconstrained minimization
+							routine	using the bounding-golden section-quad fit
+							chart developed in class. Test the program using
+							first (a) F(x)=(x-10)^2 (b) *2nd use the program to
+							solve the example 2-1 problem Required: (1) The
+							program (2) Documentation of all the variables and
+							flowcharts (3) The output of the 2 problems (test
+							cases)</phrase>
+					</textobject>
+				</mediaobject>
+			</screenshot>
+		<caption>
+			<para>This is a video screen capture from the beginning of the
+				third session.</para>
+		</caption>
+	</figure>
+	<figure xml:id="pr_1_screenshot_flow_chart">
+		<title>Project 1 Flowchart</title>
+		<screenshot>
+			<mediaobject>
+				<imageobject role="html">
+					<imagedata fileref="mout/pr_1_screenshot_flow_chart.png"/>
+				</imageobject>
+				<imageobject role="fo">
+					<imagedata contentwidth="5in"
+						fileref="mout/pr_1_screenshot_flow_chart.png"/>
+				</imageobject>
+				<textobject>
+					<phrase>This diagram is a code flowchart for the Project 1
+						routine for finding a bounded minimum.</phrase>
+				</textobject>
+			</mediaobject>
+		</screenshot>
+		<caption>
+			<para>This video screen capture contains the flowchart that goes
+				with the first capture in this session. It references
+				two figures in <citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>.
+				Figure 2-11 contains a method for bounding a minimum. Figure 2-8
+				details a four point golden section method.</para>
+		</caption>
+	</figure>
+</chapter>
