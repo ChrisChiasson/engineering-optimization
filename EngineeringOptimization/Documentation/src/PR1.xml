@@ -6,6 +6,9 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="5">
 	<title>Line Search &#x2014; Project 1</title>
+	<para><xref linkend="pr_1_screenshot_assignment"/> and
+		<xref linkend="pr_1_screenshot_flow_chart"/> below show our first
+		project	as assigned by Dr. Mohamed El-Sayed.</para>
 	<figure xml:id="pr_1_screenshot_assignment">
 		<title>Project 1 Assignment</title>
 			<screenshot>
@@ -33,7 +36,7 @@
 			</screenshot>
 		<caption>
 			<para>This is a video screen capture from the beginning of the
-				third session showing our assignment.</para>
+				third session showing our line search assignment.</para>
 		</caption>
 	</figure>
 	<figure xml:id="pr_1_screenshot_flow_chart">
