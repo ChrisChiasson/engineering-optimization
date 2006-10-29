@@ -33,7 +33,7 @@
 			</screenshot>
 		<caption>
 			<para>This is a video screen capture from the beginning of the
-				third session.</para>
+				third session showing our assignment.</para>
 		</caption>
 	</figure>
 	<figure xml:id="pr_1_screenshot_flow_chart">
@@ -58,7 +58,10 @@
 				with the first capture in this session. It references
 				two figures in <citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>.
 				Figure 2-11 contains a method for bounding a minimum. Figure 2-8
-				details a four point golden section method.</para>
+				details a four point golden section method. The chart directs
+				us to bound the minimum, perform the golden section method,
+				and then to curve fit the point for the last evaluation, while
+				keeping	track of all function evaluations.</para>
 		</caption>
 	</figure>
 </chapter>
