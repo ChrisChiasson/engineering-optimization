@@ -1,0 +1,1 @@
+Get["EngineeringOptimization`Documentation`"<>#<>"`"]&/@{"HW1","PR1"}
