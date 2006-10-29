@@ -1,6 +1,7 @@
 BeginPackage["EngineeringOptimization`Documentation`PR1`",
 	{"EngineeringOptimization`",
-		"EngineeringOptimization`Documentation`"}
+		"EngineeringOptimization`Documentation`",
+		"XML`DocBook`"}
 	];
 
 Begin["`Private`"];
@@ -138,6 +139,35 @@ xpr[4]=FindMinimum[
 							xpr[2][[2]],
 			X],
 	Method->"Unimodal"
+	];
+
+filesToTransport={"pr_1_screenshot_assignment.png",
+	"pr_1_screenshot_flow_chart.png",
+	"pr_1_frameMinimum_flow_chart.eps",
+	"pr_1_frameMinimumNarrow_flow_chart.eps",
+	"pr_1_perturb_flow_chart.eps",
+	"pr_1_Unimodal_FindMinimum_flow_chart.eps"
+	};
+
+If[EODExport===True,
+	Export@@@#&/@ReleaseHold@DownValues[export][[All,1]];
+		pwd=InputDirectoryName[];
+		CopyFile[
+				ToFileName[
+					pwd,
+					#
+					],
+				ToFileName[
+					EODExportDirectory,
+					#
+					],
+				Overwrite->True
+				]&/@
+					filesToTransport;
+		CopyFile[InputFileName[],
+			ToFileName[EODExportDirectory,InputFileBaseName[]],
+			Overwrite->True
+			]
 	];
 
 End[];
