@@ -118,8 +118,8 @@
 					routine to handle the low-level line search. So, when I was
 					ready to rewrite this routine again, I made it mostly
 					conform to the calling style of FindMinimum, but it executes
-					my code	when the option	Method&#8594;"Unimodal" is passed. This
-					is important, because if one leaves off the Method
+					my code	when the option	Method&#8594;"Unimodal" is passed.
+					This is important, because if one leaves off the Method
 					statement, one of the built in methods, "Gradient",
 					"ConjugateGradient", "QuasiNewton", "Newton", or 
 					"LevenbergMarquardt", will be chosen automatically.</para></footnote>.
@@ -175,11 +175,9 @@
 			<para>Because the minimum could be contained within	the initial
 				interval [a,c], a middle point, b, is chosen to make the first
 				list of coordinates. If the conditions
-				mentioend above hold, the minimum is already bracketed and the
+				mentioned above hold, the minimum is already bracketed and the
 				main bracketing routine isn't used. If the main routine is used,
-				it follows the course of <xref linkend="pr_1_frameMinimum_flow_chart"/>.
-				In the routine, the	golden ratio <inlineequation><mathphrase>&#934; = growthFactor &#8773; 1.618</mathphrase></inlineequation>,
-				unless the user	specifies a different factor.</para>
+				it follows the course of <xref linkend="pr_1_frameMinimum_flow_chart"/>.</para>
 			<figure xml:id="pr_1_frameMinimum_flow_chart">
 				<title>Bracketing Minimum Flow Chart</title>
 				<titleabbrev>Bracketing Minimum</titleabbrev>
@@ -202,10 +200,10 @@
 								with arrows	in the direction to be followed.
 								All objects are pointed at by at one or more
 								other objects. Terminators and processes only
-								point to one other object. Decisions can point
-								to two objects, depending on the outcome of
-								the decision. By starting at the "Given"
-								terminator and following the processes and
+								point to one other object. Decisions point to
+								two objects; the flow direction depends on the
+								outcome of the decision. By starting at the
+								Given terminator and following the processes and
 								decisions, one may see how the algorithm
 								described by the flow chart works.</phrase>
 						</textobject>
@@ -214,11 +212,109 @@
 				<caption>
 					<para>On each iteration, a comparison for bracketing is
 						made, along with other comparisons for necessary
-						stopping conditions. If all comparisons are false, the
-						growthFactor is used to create a new frame, and a new
-						iteration begins.</para>
+						stopping conditions. If the stopping comparisons are
+						false, the growthFactor is used to create a new frame,
+						and a new iteration begins.</para>
 				</caption>
 			</figure>
+			<variablelist>
+				<varlistentry>
+					<term>f</term>
+					<listitem>
+						<para>f is a function of the independant variable. In
+							the actual source code, f is named function.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>a</term><term>b</term><term>c</term>
+					<listitem>
+						<para>These are abscissas at which the function is
+							evaluated. They are always in consecutively
+							increasing or decreasing order. As the algorithm
+							continues, the interval [a,c] moves in the downhill
+							direction and also expands.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>fa</term><term>fb</term><term>fc</term>
+					<listitem>
+						<para>These are ordinates at a particular abscissa. The
+							algorithm will stop when fb is lower than fc.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>limitLeft</term><term>limitRight</term>
+					<listitem>
+						<para>These are numbers that limit the minimum and
+							maximum values of c. The default to the minimum
+							and maximum machine number that can be represented
+							in Mathematica, though the user can change them, as
+							seen in EXAMPLE BLAH BLAH.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>growthFactor</term>
+					<listitem>
+						<para>The growth factor is a somewhat arbitrary factor
+							by which to grow the interval [b,c] on each
+							iteration FACT CHECK PLEASE. It is typically chosen to be equal to
+							the golden ratio from mathematics.
+							<inlineequation><mathphrase>&#934; = growthFactor &#8773; 1.618</mathphrase></inlineequation>.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>frameBound</term>
+					<listitem>
+						<para>A boolean variable that when true, causes the
+							termination of the bracketing routine. frameBound
+							is set to true when fb is lower than fc.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>domainBound</term>
+					<listitem>
+						<para>A boolean variable that when true, causes the
+							termination of the bracketing routine and the
+							issuance of an error message stating that the
+							routine stopped on the edge of its domain.
+							domainBound	is set to true when c is equal to either
+							limitLeft or limitRight.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>iterationBound</term>
+					<listitem>
+						<para>A boolean variable that when true, causes the
+							termination of the bracketing routine and the
+							issuance of an error message stating that the
+							routine stopped because it used too many iterations.
+							iterationBound is set to true when iteration is
+							equal to maxWideningIterations.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>iteration</term>
+					<listitem>
+						<para>In integer indicating the present iteration.
+							Iteration is incremented for each function
+							evaluation.</para>
+					</listitem>
+				</varlistentry>				
+				<varlistentry>
+					<term>maxWideningIterations</term>
+					<listitem>
+						<para>This indicates the maximum number of iterations
+							allowed by the bracketing routine. It can be set by
+							the	option "MaxWideningIterations" as in
+							<command>FindMinimum[<varargs/>,Method&#8594;{"Unimodal","MaxWideningIterations"&#8594;#}]</command>.
+							If "MaxWideningIterations" is not set, it defaults
+							to Automatic, where it will be set to half the value
+							of the MaxIterations option of FindMinimum.
+							MaxIterations has a default value of 100, so the
+							default value of maxWideningIterations is 50.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
 		</section>
 	</section>
 </chapter>
