@@ -172,13 +172,14 @@
 				a coordinate pair. In addition, all sets of ordinates are
 				written as flat lists. So, the above coordinates are written
 				{fa,a,fb,b,fc,c}.</para>
-			<para>Because it is possible that the minimum is contained within
-				the supplied initial interval [a,c], a middle point, b, is
-				chosen to make the first list of coordinates, which I call a
-				frame. If the conditions mentioend above hold, the minimum
-				is bracketed and the routine terminates. If it needs to
-				continue, the golden ratio, PHI = growthFactor ~= 1.68, is used
-				to create a new frame based on the difference between SDLELDASDL.</para>
+			<para>Because the minimum could be contained within	the initial
+				interval [a,c], a middle point, b, is chosen to make the first
+				list of coordinates, which I call a	frame. If the conditions
+				mentioend above hold, the minimum is already bracketed and the
+				main bracketing routine isn't used. If the main routine is used,
+				it follows the course of <xref linkend="pr_1_frameMinimum_flow_chart"/>.
+				In the routine, the	golden ratio <inlineequation><mathphrase>&#934; = growthFactor &#8773; 1.618</mathphrase></inlineequation>,
+				unless the user	specifies a different factor.</para>
 			<figure xml:id="pr_1_frameMinimum_flow_chart">
 				<title>Bracketing Minimum Flow Chart</title>
 				<titleabbrev>Bracketing Minimum</titleabbrev>
@@ -193,12 +194,29 @@
 								fileref="mout/pr_1_frameMinimum_flow_chart.eps"/>
 						</imageobject>
 						<textobject>
-							<phrase>DESCRIBE THIS FLOW CHART TO THE VISUALLY IMPAIRED</phrase>
+							<phrase>The picture contains a flow chart with light
+								blue objects. The objects are rounded
+								rectangles, regular rectangles, and rhombuses.
+								The shapes stand for terminators, processes, and
+								decisions. Dark blue lines connect all objects,
+								with arrows	in the direction to be followed.
+								All objects are pointed at by at one or more
+								other objects. Terminators and processes only
+								point to one other object. Decisions can point
+								to two objects, depending on the outcome of
+								the decision. By starting at the "Given"
+								terminator and following the processes and
+								decisions, one may see how the algorithm
+								described by the flow chart works.</phrase>
 						</textobject>
 					</mediaobject>
 				</screenshot>
 				<caption>
-					<para>FLOW CHART CAPTION TEXT</para>
+					<para>On each iteration, a comparison for bracketing is
+						made, along with other comparisons for necessary
+						stopping conditions. If all comparisons are false, the
+						growthFactor is used to create a new frame, and a new
+						iteration begins again.</para>
 				</caption>
 			</figure>
 		</section>
