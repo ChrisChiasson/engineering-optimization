@@ -73,7 +73,7 @@
 		only one independant variable.</para>
 	<para>The line search description follows in section XXX. I use the routine
 		to solve the requested problems in section XXX.</para>
-	<section>
+	<section xml:id="Description_of_Line_Search">
 		<title>Description of Line Search</title>
 		<para>In order to satisfy constraints in later assignments, I
 			eventually implemented a slightly different routine than that
@@ -106,7 +106,7 @@
 			and convergence routines, I provided an overall flow chart for the
 			line search in APPENDIX SECTION BLAH. In addition, the entire
 			SOURCE CODE FOR THIS ROUTINE IS AVAILABLE HERE.</para>
-		<section>
+		<section xml:id="Calling the Line Search">
 			<title>Calling the Line Search</title>
 			<para>The line search is called as follows from within Mathematica:
 				<command>FindMinimum[f,{x,xleft,xright},Method&#8594;"Unimodal"]</command><footnote>
@@ -143,8 +143,9 @@
 						<term>xleft</term><term>xright</term>
 						<listitem>
 							<para>xleft and xright must be numbers such that
-								xleft &lt; xright. The are the initial
-								interval endpoints for the bracketing step.</para>
+								<inlineequation><mathphrase>xleft &lt; xright</mathphrase></inlineequation>.
+								They are the initial interval endpoints for the
+								bracketing step.</para>
 						</listitem>
 					</varlistentry>
 					<varlistentry>
@@ -158,7 +159,7 @@
 					</varlistentry>
 				</variablelist>
 		</section>
-		<section>
+		<section xml:id="Bracketing">
 			<title>Bracketing</title>
 			<para>bracketing</para>
 		</section>
