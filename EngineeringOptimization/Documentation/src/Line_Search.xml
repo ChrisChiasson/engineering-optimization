@@ -94,11 +94,11 @@
 			involve interpolation, so I feel it would violate the spirit of the
 			assignment.</para>
 		<para>So, I implemented Brent's method after reading the description in
-			section 10.2 of	<olink targetdoc="self" targetptr="PTVFNRC"/>. I use
-			inverse	polynomial interpolation and the golden section method. The
-			method is usually able to converge much	faster than the golden
-			section method alone. SECTION BLAH has more	information about the
-			line search convergence.</para>
+			section 10.2 of	<citation><olink targetdoc="self" targetptr="PTVFNRC"/></citation>.
+			I use inverse polynomial interpolation and the golden section
+			method. The	method is usually able to converge much	faster than the
+			golden section method alone. <xref linkend="Narrowing"/> has more
+			information about the line search convergence.</para>
 		<para>My bracketing routine is the same as the one given in class. It
 			proceeds in a downhill direction until finding three points where
 			the middle point has a lower ordinate than the other two.
