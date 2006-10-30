@@ -306,7 +306,7 @@
 						<para>This indicates the maximum number of iterations
 							allowed by the bracketing routine. It can be set by
 							the	option "MaxWideningIterations" as in
-							<command>FindMinimum[<varargs/>,Method&#8594;{"Unimodal","MaxWideningIterations"&#8594;#}]</command>.
+							<command>FindMinimum[...,Method&#8594;{"Unimodal","MaxWideningIterations"&#8594;#}]</command>.
 							If "MaxWideningIterations" is not set, it defaults
 							to Automatic, where it will be set to half the value
 							of the MaxIterations option of FindMinimum.
