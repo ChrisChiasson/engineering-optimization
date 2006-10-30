@@ -216,7 +216,7 @@
 						made, along with other comparisons for necessary
 						stopping conditions. If all comparisons are false, the
 						growthFactor is used to create a new frame, and a new
-						iteration begins again.</para>
+						iteration begins.</para>
 				</caption>
 			</figure>
 		</section>
