@@ -106,7 +106,7 @@
 			and convergence routines, I provided an overall flow chart for the
 			line search in APPENDIX SECTION BLAH. In addition, the entire
 			SOURCE CODE FOR THIS ROUTINE IS AVAILABLE HERE.</para>
-		<section xml:id="Calling the Line Search">
+		<section xml:id="Calling_the_Line_Search">
 			<title>Calling the Line Search</title>
 			<para>The line search is called as follows from within Mathematica:
 				<command>FindMinimum[f,{x,xleft,xright},Method&#8594;"Unimodal"]</command><footnote>
