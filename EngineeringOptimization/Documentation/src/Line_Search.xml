@@ -81,23 +81,24 @@
 			The reason for this is that the routine from the class notes does
 			not provide for	convergence to a given tolerance. The notes simply
 			indicate that we should use a fixed number of iterations of the
-			golden section method, and then use inverse polynomial interpolation
+			golden section method and then use inverse polynomial interpolation
 			to find the	final abscissa. That method would at least guarantee a
-			certain	factor of reduction of the initial bracketing interval, but
-			there is very little assurance that the algorithm would converge. To
-			make matters worse, some of the routines for multidimensional
-			optimization that eventually depend on the line search routine
-			need a nearly exact line search to behave properly.</para>
+			certain	factor of reduction of the initial bracketing interval
+			width, but there is very little assurance that the algorithm would
+			converge. To make matters worse, some of the routines for
+			multidimensional optimization that eventually depend on the line
+			search routine need a nearly exact line search to behave properly.</para>
 		<para>One way to obtain convergence would be to exclusively use the
 			golden section routine. I have tried this, and the number of
 			function evaluations required is excessive. In addition, it does not
 			involve interpolation, so I feel it would violate the spirit of the
 			assignment.</para>
 		<para>So, I implemented Brent's method after reading the description in
-			NUMERICAL RECIPES. I use inverse polynomial	interpolation and the
-			golden section method. The method is usually able to converge much
-			faster than the golden section method alone. SECTION BLAH has more
-			information about the line search convergence.</para>
+			section 10.2 of	<olink targetdoc="self" targetptr="PTVFNRC"/>. I use
+			inverse	polynomial interpolation and the golden section method. The
+			method is usually able to converge much	faster than the golden
+			section method alone. SECTION BLAH has more	information about the
+			line search convergence.</para>
 		<para>My bracketing routine is the same as the one given in class. It
 			proceeds in a downhill direction until finding three points where
 			the middle point has a lower ordinate than the other two.
@@ -220,6 +221,10 @@
 						and a new iteration begins.</para>
 				</caption>
 			</figure>
+		</section>
+		<section xml:id="Narrowing">
+			<title>Narrowing</title>
+			<para></para>
 		</section>
 	</section>
 </chapter>

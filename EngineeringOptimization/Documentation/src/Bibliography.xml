@@ -68,6 +68,48 @@
 			<address><city>Berlin</city> <city>Heidelberg</city> <city>New York</city></address>
 		</publisher>
 	</biblioentry>
+	<biblioentry xml:id="PTVFNRC">
+		<authorgroup>
+			<author>
+				<personname>
+					<firstname>William</firstname>
+					<othername role="mi">H</othername>
+					<surname>Press</surname>
+				</personname>
+			</author>
+			<author>
+				<personname>
+					<firstname>Saul</firstname>
+					<othername role="mi">A</othername>
+					<surname>Teukolsky</surname>
+				</personname>
+			</author>
+			<author>
+				<personname>
+					<firstname>William</firstname>
+					<othername role="mi">T</othername>
+					<surname>Vetterling</surname>
+				</personname>
+			</author>
+			<author>
+				<personname>
+					<firstname>Brian</firstname>
+					<othername role="mi">P</othername>
+					<surname>Flannery</surname>
+				</personname>
+			</author>
+		</authorgroup>
+		<title>Numerical Recipes in C</title>
+		<subtitle>The Art of Scientific Computing</subtitle>
+		<edition>2nd</edition>
+		<copyright>
+			<year>1992</year>
+		</copyright>
+		<publisher>
+			<publishername>Cambridge University Press</publishername>
+			<address><city>Cambridge</city> <city>New York</city> <city>Port Chester</city> <city>Melbourne</city> <city>Sydney</city></address>
+		</publisher>		
+	</biblioentry>
 	<biblioentry xml:id="SRILPSA">
 		<author>
 			<personname 
