@@ -180,7 +180,8 @@
 				continue, the golden ratio, PHI = growthFactor ~= 1.68, is used
 				to create a new frame based on the difference between SDLELDASDL.</para>
 			<figure xml:id="pr_1_frameMinimum_flow_chart">
-				<title>Project 1 Assignment</title>
+				<title>Bracketing Minimum Flow Chart</title>
+				<titleabbrev>Bracketing Minimum</titleabbrev>
 				<screenshot>
 					<mediaobject>
 						<imageobject role="html">
