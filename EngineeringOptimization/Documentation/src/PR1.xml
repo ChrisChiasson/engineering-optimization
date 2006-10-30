@@ -75,11 +75,92 @@
 		to solve the requested problems in section XXX.</para>
 	<section>
 		<title>Description of Line Search</title>
-		<para>The line search follows NOTES ON EXPANDING INTERVAL - REFERENCE
-			GNVNOTED FIGURE FROM ABOVE AND NUMERICAL RECIPIES - THEN DO OTHER
-			STUFF.</para>
-		<para>In order to satisfy constraints in later
-			assignments, I implemented a slightly different routine than that
-			recommended in <xref linkend="pr_1_screenshot_flow_chart"/>.</para>
+		<para>In order to satisfy constraints in later assignments, I
+			eventually implemented a slightly different routine than that
+			recommended in <xref linkend="pr_1_screenshot_flow_chart"/>.
+			The reason for this is that the routine from the class notes does
+			not provide for	convergence to a given tolerance. The notes simply
+			indicate that we should use a fixed number of iterations of the
+			golden section method, and then use inverse polynomial interpolation
+			to find the	final abscissa. That method would at least guarantee a
+			certain	factor of reduction of the initial bracketing interval, but
+			there is very little assurance that the algorithm would converge. To
+			make matters worse, some of the routines for multidimensional
+			optimization that eventually depend on the line search routine
+			need a nearly exact line search to behave properly.</para>
+		<para>One way to obtain convergence would be to exclusively use the
+			golden section routine. I have tried this, and the number of
+			function evaluations required is excessive. In addition, it does not
+			involve interpolation, so I feel it would violate the spirit of the
+			assignment.</para>
+		<para>So, I implemented Brent's method after reading the description in
+			NUMERICAL RECIPES. I use inverse polynomial	interpolation and the
+			golden section method. The method is usually able to converge much
+			faster than the golden section method alone. SECTION BLAH has more
+			information about the line search convergence.</para>
+		<para>My bracketing routine is the same as the one given in class. It
+			proceeds in a downhill direction until finding three points where
+			the middle point has a lower ordinate than the other two. SECTION
+			BLAH has more information about the line search bracketing.</para>
+		<para>Even though flow charts were only requested for the bracketing
+			and convergence routines, I provided an overall flow chart for the
+			line search in APPENDIX SECTION BLAH. In addition, the entire
+			SOURCE CODE FOR THIS ROUTINE IS AVAILABLE HERE.</para>
+		<section>
+			<title>Calling the Line Search</title>
+			<para>The line search is called as follows from within Mathematica:
+				<command>FindMinimum[f,{x,xleft,xright},Method&#8594;"Unimodal"]</command><footnote>
+				<para>I have written this function three times. It was
+					originally called FindUnimodalMinimum. Problems with the
+					later constrained multidimensional optimization assignments
+					prompted me to reprogram all my code from the top-down.
+					While I was reprogramming, I used Mathematica's FindMinimum
+					routine to handle the low-level line search. So, when I was
+					ready to rewrite this routine again, I made it mostly
+					conform to the calling style of FindMinimum, but it executes
+					my code	when the option	Method&#8594;"Unimodal" is passed. This
+					is important, because if one leaves off the Method
+					statement, one of the built in methods, "Gradient",
+					"ConjugateGradient", "QuasiNewton", "Newton", or 
+					"LevenbergMarquardt", will be chosen automatically.</para></footnote>.
+					Its variable list follows. A simple example of this calling
+					structure is given in SIMPLE EXAMPLE.</para>
+				<variablelist>
+					<varlistentry>
+						<term>f</term>
+						<listitem>
+							<para>f is a function of the independant variable,
+								x in this case.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>x</term>
+						<listitem>
+							<para>x is the independant variable in f.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>xleft</term><term>xright</term>
+						<listitem>
+							<para>xleft and xright must be numbers such that
+								xleft &lt; xright. The are the initial
+								interval endpoints for the bracketing step.</para>
+						</listitem>
+					</varlistentry>
+					<varlistentry>
+						<term>Method</term>
+						<listitem>
+							<para>Method is an option that can be changed
+								with a rule such as Method&#8594;"Unimodal".
+								Using that rule causes Mathematica to execute my
+								unimodal line search.</para>
+						</listitem>
+					</varlistentry>
+				</variablelist>
+		</section>
+		<section>
+			<title>Bracketing</title>
+			<para>bracketing</para>
+		</section>
 	</section>
 </chapter>
