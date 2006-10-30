@@ -161,7 +161,45 @@
 		</section>
 		<section xml:id="Bracketing">
 			<title>Bracketing</title>
-			<para>bracketing</para>
+			<para>Assuming a one dimensional function is unimodal, its minimum
+				may be bracketed by three points, {a,fa}, {b,fb}, and {c,fc}
+				where the abscissas are related by <inlineequation><mathphrase>a &lt; b &lt; c</mathphrase></inlineequation>.
+				or <inlineequation><mathphrase>c &gt; b &gt; a</mathphrase></inlineequation>,
+				while the ordinates are related by <inlineequation><mathphrase>fb &lt; fc</mathphrase></inlineequation>
+				and <inlineequation><mathphrase>fb &lt; fc</mathphrase></inlineequation>.
+				Because the notation is convenient, for the rest of the
+				book I use the non-standard {ordinate,abscissa} way of writing
+				a coordinate pair. In addition, all sets of ordinates are
+				written as flat lists. So, the above coordinates are written
+				{fa,a,fb,b,fc,c}.</para>
+			<para>Because it is possible that the minimum is contained within
+				the supplied initial interval [a,c], a middle point, b, is
+				chosen to make the first list of coordinates, which I call a
+				frame. If the conditions mentioend above hold, the minimum
+				is bracketed and the routine terminates. If it needs to
+				continue, the golden ratio, PHI = growthFactor ~= 1.68, is used
+				to create a new frame based on the difference between SDLELDASDL.</para>
+			<figure xml:id="pr_1_frameMinimum_flow_chart">
+				<title>Project 1 Assignment</title>
+				<screenshot>
+					<mediaobject>
+						<imageobject role="html">
+							<imagedata
+								fileref="mout/pr_1_frameMinimum_flow_chart.png"/>
+						</imageobject>
+						<imageobject role="fo">
+							<imagedata
+								fileref="mout/pr_1_frameMinimum_flow_chart.eps"/>
+						</imageobject>
+						<textobject>
+							<phrase>DESCRIBE THIS FLOW CHART TO THE VISUALLY IMPAIRED</phrase>
+						</textobject>
+					</mediaobject>
+				</screenshot>
+				<caption>
+					<para>FLOW CHART CAPTION TEXT</para>
+				</caption>
+			</figure>
 		</section>
 	</section>
 </chapter>
