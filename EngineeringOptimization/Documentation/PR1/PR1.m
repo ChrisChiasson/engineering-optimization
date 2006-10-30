@@ -144,9 +144,13 @@ xpr[4]=FindMinimum[
 filesToTransport={"pr_1_screenshot_assignment.png",
 	"pr_1_screenshot_flow_chart.png",
 	"pr_1_frameMinimum_flow_chart.eps",
+	"pr_1_frameMinimum_flow_chart.png",
 	"pr_1_frameMinimumNarrow_flow_chart.eps",
+	"pr_1_frameMinimumNarrow_flow_chart.png",
 	"pr_1_perturb_flow_chart.eps",
-	"pr_1_Unimodal_FindMinimum_flow_chart.eps"
+	"pr_1_perturb_flow_chart.png",
+	"pr_1_Unimodal_FindMinimum_flow_chart.eps",
+	"pr_1_Unimodal_FindMinimum_flow_chart.png"
 	};
 
 If[EODExport===True,
