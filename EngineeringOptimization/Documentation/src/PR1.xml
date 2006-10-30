@@ -163,7 +163,7 @@
 			<title>Bracketing</title>
 			<para>Assuming a one dimensional function is unimodal, its minimum
 				may be bracketed by three points, {a,fa}, {b,fb}, and {c,fc}
-				where the abscissas are related by <inlineequation><mathphrase>a &lt; b &lt; c</mathphrase></inlineequation>.
+				where the abscissas are related by <inlineequation><mathphrase>a &lt; b &lt; c</mathphrase></inlineequation>
 				or <inlineequation><mathphrase>c &gt; b &gt; a</mathphrase></inlineequation>,
 				while the ordinates are related by <inlineequation><mathphrase>fb &lt; fc</mathphrase></inlineequation>
 				and <inlineequation><mathphrase>fb &lt; fc</mathphrase></inlineequation>.
