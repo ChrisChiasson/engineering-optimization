@@ -171,10 +171,10 @@
 				book I use the non-standard {ordinate,abscissa} way of writing
 				a coordinate pair. In addition, all sets of ordinates are
 				written as flat lists. So, the above coordinates are written
-				{fa,a,fb,b,fc,c}.</para>
+				{fa,a,fb,b,fc,c}. I call such a coordinate list a frame.</para>
 			<para>Because the minimum could be contained within	the initial
 				interval [a,c], a middle point, b, is chosen to make the first
-				list of coordinates, which I call a	frame. If the conditions
+				list of coordinates. If the conditions
 				mentioend above hold, the minimum is already bracketed and the
 				main bracketing routine isn't used. If the main routine is used,
 				it follows the course of <xref linkend="pr_1_frameMinimum_flow_chart"/>.
