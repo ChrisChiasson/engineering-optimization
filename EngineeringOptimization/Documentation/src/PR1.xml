@@ -123,8 +123,8 @@
 					statement, one of the built in methods, "Gradient",
 					"ConjugateGradient", "QuasiNewton", "Newton", or 
 					"LevenbergMarquardt", will be chosen automatically.</para></footnote>.
-					Its variable list follows. A simple example of this calling
-					structure is given in SIMPLE EXAMPLE.</para>
+					The call variable list follows. A simple example of this
+					calling	structure is given in SIMPLE EXAMPLE.</para>
 				<variablelist>
 					<varlistentry>
 						<term>f</term>
