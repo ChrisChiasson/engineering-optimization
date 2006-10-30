@@ -14,8 +14,9 @@
 		</author>
 	</info>
 	<xi:include href="HW1.xml"/>
-	<xi:include href="PR1.xml"/>	
+	<xi:include href="Line_Search.xml"/>
 	<xi:include href="Bibliography.xml"/>
 	<xi:include href="Glossary.xml"/>
 	<xi:include href="HW1_Appendix.xml"/>
+	<xi:include href="Line_Search_Appendix.xml"/>
 </book>
