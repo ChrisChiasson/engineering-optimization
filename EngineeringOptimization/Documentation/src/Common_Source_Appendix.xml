@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix xml:id="Common_Source_Appendix" xmlns="http://docbook.org/ns/docbook"
+	version="5">
+	<title>Common Source</title>
+	<para>This appendix contains material referred to in multiple sections of
+		the book. For now, that just means that it contains the optimization
+		source code.</para>
+	<example xml:id="Engineering_Optimization_Main_Code">
+		<?dbfo keep-together="auto"?>
+		<title>Engineering Optimization Main Code</title>
+		<para>This is my main optimization source code file.</para>
+		<programlisting><include xmlns="http://www.w3.org/2001/XInclude" 
+			href="mout/EngineeringOptimization.m"
+			parse="text"/></programlisting>
+	</example>
+	<example xml:id="Critical_Domain_Locations_Source">
+		<title>Critical Domain Locations Source</title>
+		<para>Part of the main program loads a file called
+			<filename>criticalDomainLocations.m</filename> to define an
+			optimized function, criticaDomainLocations. Another file,
+			<filename>criticalDomainLocationsSource.m</filename>, generates the
+			optimized definitions, but regeneration is only done when
+			<filename>criticalDomainLocationsSource.m</filename> changes. Here
+			is the source file.</para>
+		<programlisting><include xmlns="http://www.w3.org/2001/XInclude" 
+			href="mout/criticalDomainLocationsSource.m"
+			parse="text"/></programlisting>
+	</example>	
+	<example xml:id="Critical_Domain_Locations">
+		<?dbfo keep-together="auto"?>
+		<title>Critical Domain Locations</title>
+		<para>This is the result file,
+			<filename>criticalDomainLocations.m</filename>, mentioned in
+			<xref linkend="Critical_Domain_Locations_Source"/>.</para>
+		<programlisting><include xmlns="http://www.w3.org/2001/XInclude" 
+			href="mout/criticalDomainLocations.m"
+			parse="text"/></programlisting>
+	</example>	
+</appendix>

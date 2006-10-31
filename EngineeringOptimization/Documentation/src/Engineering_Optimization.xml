@@ -19,4 +19,5 @@
 	<xi:include href="Glossary.xml"/>
 	<xi:include href="HW1_Appendix.xml"/>
 	<xi:include href="Line_Search_Appendix.xml"/>
+	<xi:include href="Common_Source_Appendix.xml"/>
 </book>

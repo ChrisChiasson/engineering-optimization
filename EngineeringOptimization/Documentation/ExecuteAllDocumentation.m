@@ -8,16 +8,20 @@ Begin["`Private`"];
 Get["EngineeringOptimization`Documentation`"<>#<>"`"]&/@{"HW1","PR1"}
 
 If[EODExport===True,
-	eoSource=
-		FromRelativePath["EngineeringOptimization/EngineeringOptimization.m"];
+	eoSources=
+		FromRelativePath["EngineeringOptimization/"<>#]&/@
+			{"EngineeringOptimization.m",
+				"criticalDomainLocationsSource.m",
+				"criticalDomainLocations.m"
+				};
 	CopyFile[
-		eoSource,
+		#,
 		ToFileName[
 			EODExportDirectory,
-			FileBaseName@eoSource
+			FileBaseName@#
 			],
 		Overwrite->True
-		]
+		]&/@eoSources
 	];
 
 End[];
