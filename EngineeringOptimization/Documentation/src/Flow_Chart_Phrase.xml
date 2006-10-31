@@ -1,0 +1,16 @@
+<phrase xmlns="http://docbook.org/ns/docbook"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	version="5">The picture contains a flow chart with light
+	blue objects. The objects are rounded
+	rectangles, regular rectangles, and rhombuses.
+	The shapes stand for terminators, processes, and
+	decisions. Dark blue lines connect all objects,
+	with arrows	in the direction to be followed.
+	All objects are pointed at by at one or more
+	other objects. Terminators and processes only
+	point to one other object. Decisions point to
+	two objects; the flow direction depends on the
+	outcome of the decision. By starting at the
+	Given terminator and following the processes and
+	decisions, one may see how the algorithm
+	described by the flow chart works.</phrase>
