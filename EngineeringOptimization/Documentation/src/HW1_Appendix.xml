@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <appendix xml:id="HW1_Appendix" xmlns="http://docbook.org/ns/docbook"
 	version="5">
-	<title>Homework 1</title>
+	<title>Lagrange Multipliers — Homework 1</title>
+	<titleabbrev>Lagrange Multipliers</titleabbrev>
 	<example xml:id="HW1_code">
 		<?dbfo keep-together="auto"?>
 		<title>Homework 1 Code</title>
