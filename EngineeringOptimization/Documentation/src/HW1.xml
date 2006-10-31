@@ -6,6 +6,7 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="5">
 	<title>Lagrange Multipliers — Homework 1</title>
+	<titleabbrev>Lagrange Multipliers</titleabbrev>
 	<para><xref linkend="hw_1_screenshot"/> below shows our first homework
 		assignment as given by Dr. Mohamed El-Sayed.
 	</para>
