@@ -1,1 +1,25 @@
+BeginPackage["EngineeringOptimization`Documentation`ExecuteAllDocumentation`",
+	{"EngineeringOptimization`Documentation`",
+		"XML`DocBook`"}
+	];
+
+Begin["`Private`"];
+
 Get["EngineeringOptimization`Documentation`"<>#<>"`"]&/@{"HW1","PR1"}
+
+If[EODExport===True,
+	eoSource=
+		FromRelativePath["EngineeringOptimization/EngineeringOptimization.m"];
+	CopyFile[
+		eoSource,
+		ToFileName[
+			EODExportDirectory,
+			FileBaseName@eoSource
+			],
+		Overwrite->True
+		]
+	];
+
+End[];
+
+EndPackage[];
