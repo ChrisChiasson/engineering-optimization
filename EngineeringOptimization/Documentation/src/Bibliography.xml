@@ -99,7 +99,7 @@
 				</personname>
 			</author>
 		</authorgroup>
-		<title>Numerical Recipes in C</title>
+		<title xl:href="http://www.library.cornell.edu/nr/bookcpdf.html">Numerical Recipes in C</title>
 		<subtitle>The Art of Scientific Computing</subtitle>
 		<edition>2nd edition</edition>
 		<copyright>
