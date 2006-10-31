@@ -6,6 +6,7 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="5">
 	<title>Line Search &#x2014; Project 1</title>
+	<titleabbrev>Line Search</titleabbrev>
 	<para><xref linkend="pr_1_screenshot_assignment"/> and
 		<xref linkend="pr_1_screenshot_flow_chart"/> below show our first
 		project	as assigned by Dr. Mohamed El-Sayed.</para>
@@ -104,11 +105,11 @@
 			the middle point has a lower ordinate than the other two.
 			<xref linkend="Bracketing"/> has more information about the line
 			search bracketing.</para>
-		<para>All major variables are given in ALL MAJOR VARIABLES APPENDIX SECTION.
+		<para>The requested variable list is in <olink targetdoc="self" targetptr="Line_Search_Major_Variables"/>.
 			Also, even though flow charts were only requested for the bracketing
 			and convergence routines, I provided an overall flow chart for the
-			line search in APPENDIX SECTION BLAH. Finally, the entire
-			source code for this routine along with most of the code for the
+			line search in <olink targetdoc="self" targetptr="pr_1_frameMinimum_flow_chart"/>.
+			Finally, the entire source code for this routine along with most of the code for the
 			class is available HERE.</para>
 		<section xml:id="Calling_the_Line_Search">
 			<title>Calling the Line Search</title>
@@ -189,27 +190,16 @@
 					<mediaobject>
 						<imageobject role="html">
 							<imagedata
-								fileref="mout/pr_1_frameMinimum_flow_chart.png"/>
+								fileref="mout/pr_1_frameMinimum_flow_chart.png"
+								/>
 						</imageobject>
 						<imageobject role="fo">
 							<imagedata
-								fileref="mout/pr_1_frameMinimum_flow_chart.eps"/>
+								fileref="mout/pr_1_frameMinimum_flow_chart.eps"
+								/>
 						</imageobject>
 						<textobject>
-							<phrase>The picture contains a flow chart with light
-								blue objects. The objects are rounded
-								rectangles, regular rectangles, and rhombuses.
-								The shapes stand for terminators, processes, and
-								decisions. Dark blue lines connect all objects,
-								with arrows	in the direction to be followed.
-								All objects are pointed at by at one or more
-								other objects. Terminators and processes only
-								point to one other object. Decisions point to
-								two objects; the flow direction depends on the
-								outcome of the decision. By starting at the
-								Given terminator and following the processes and
-								decisions, one may see how the algorithm
-								described by the flow chart works.</phrase>
+							<xi:include href="Flow_Chart_Phrase.xml"/>							
 						</textobject>
 					</mediaobject>
 				</screenshot>
