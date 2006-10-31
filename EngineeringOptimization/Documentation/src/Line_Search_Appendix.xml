@@ -5,12 +5,15 @@
 	xmlns:xl="http://www.w3.org/1999/xlink"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="5">
-	<title>Line Search</title>
-	<para>The overall <xref linkend="pr_1_frameMinimum_flow_chart"/> isn't as
-		informative as the other charts nor was it requested in the assignment,
-		but it is included here for completeness. In addition, the <xref 
-		linkend="Line_Search_Major_Variables"/> list is available below.</para>
-	<figure xml:id="pr_1_frameMinimum_flow_chart">
+	<title>Line Search &#x2014; Project 1</title>
+	<titleabbrev>Line Search</titleabbrev>
+	<para>This appendix contains companion material to <olink targetdoc="self"
+		targetptr="Line_Search"/>.</para>
+	<para>The overall <xref linkend="pr_1_Unimodal_FindMinimum_flow_chart"/>
+		isn't as informative as the other charts nor was it requested in the
+		assignment, but it is included here for completeness. In addition, the
+		<xref linkend="Line_Search_Major_Variables"/> list is available below.</para>
+	<figure xml:id="pr_1_Unimodal_FindMinimum_flow_chart">
 		<title>Bracketing Minimum Flow Chart</title>
 		<titleabbrev>Bracketing Minimum</titleabbrev>
 		<screenshot>
