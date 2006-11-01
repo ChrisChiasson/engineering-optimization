@@ -14,8 +14,8 @@
 		assignment, but it is included here for completeness. In addition, the
 		<xref linkend="Line_Search_Major_Variables"/> list is available below.</para>
 	<figure xml:id="pr_1_Unimodal_FindMinimum_flow_chart">
-		<title>Bracketing Minimum Flow Chart</title>
-		<titleabbrev>Bracketing Minimum</titleabbrev>
+		<title>Line Search Flow Chart</title>
+		<titleabbrev>Line Search</titleabbrev>
 		<screenshot>
 			<mediaobject>
 				<imageobject role="html">
@@ -51,54 +51,32 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>a</term><term>b</term><term>c</term>
+				<term>a</term><term>b</term><term>c</term><term>u</term>
+				<term>v</term><term>w</term><term>x</term>
+				<term>newAbscissa</term>
 				<listitem>
 					<para>These are abscissas at which the function is
-						evaluated. They are always in consecutively
-						increasing or decreasing order. As the algorithm
-						continues, the interval [a,c] moves in the downhill
-						direction and also expands.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>fa</term><term>fb</term><term>fc</term>
-				<listitem>
-					<para>These are ordinates at a particular abscissa. The
-						algorithm will stop when fb is lower than fc.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>limitLeft</term><term>limitRight</term>
-				<listitem>
-					<para>These are numbers that limit the minimum and
-						maximum values of c. The default to the minimum
-						and maximum machine number that can be represented
-						in Mathematica, though the user can change them, as
-						seen in EXAMPLE BLAH BLAH.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>growthFactor</term>
-				<listitem>
-					<para>The growth factor is a somewhat arbitrary factor
-						by which to grow the interval [b,c] on each
-						iteration FACT CHECK PLEASE. It is typically chosen to be equal to
-						the golden ratio from mathematics.
-						<inlineequation><mathphrase>&#934; = growthFactor &#8773; 1.618</mathphrase></inlineequation>.</para>
-				</listitem>
-			</varlistentry>
-			<varlistentry>
-				<term>frameBound</term>
-				<listitem>
-					<para>A boolean variable that when true, causes the
-						termination of the bracketing routine. frameBound
-						is set to true when fb is lower than fc.</para>
+						evaluated. Their respective corresponding ordinates are
+						fa, fb, fc, fu, fv, fw, fx, and newOrdinate. The
+						interval [a,c] always includes the other points. b is
+						used as the middle abscissa in the bracketing routine. u
+						records the location of the last evaluation in Brent's
+						method. v, w, and x are the abscissas that correspond to
+						the lowest thre ordinates found in Brent's method.
+						newAbscissa is the point at which the present iteration
+						will evaluate f.</para>
+					<para>Sometimes, newAbscissa is a list with one or zero
+						elements, depending on wether Brent's method needs to
+						fall back on regular golden section steps instead of
+						perturbed steps. However, newAbscissa is always
+						transformed into a plain number before f is
+						evaluated.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
 				<term>domainBound</term>
 				<listitem>
-					<para>A boolean variable that when true, causes the
+					<para>A boolean variable that, when true, causes the
 						termination of the bracketing routine and the
 						issuance of an error message stating that the
 						routine stopped on the edge of its domain.
@@ -107,9 +85,46 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
+				<term>fa</term><term>fb</term><term>fc</term><term>fu</term>
+				<term>fv</term><term>fw</term><term>fx</term>
+				<term>newOrdinate</term>				
+				<listitem>
+					<para>These are function (f), ordinates at a particular
+						abscissa. Their respective corresponding abscissas are
+						a, b, c, u, v, w, x, and newAbscissa.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>frameBound</term>
+				<listitem>
+					<para>A boolean variable that, when true, causes the
+						termination of the bracketing routine. frameBound
+						is set to true when fb is lower than fc.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>growthFactor</term>
+				<listitem>
+					<para>The growth factor is a (somewhat arbitrary) factor
+						by which to grow the interval [b,c] on each bracketing
+						iteration FACT CHECK PLEASE. It is typically chosen to
+						be equal to	the golden ratio, &#934;, from mathematics;
+						<inlineequation><mathphrase>&#934; = growthFactor &#8773; 1.618</mathphrase></inlineequation>.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>iteration</term>
+				<listitem>
+					<para>In integer indicating the present iteration.
+						Iteration is incremented for each function
+						evaluation. It is reset to zero between the bracketing
+						and narrowing routines.</para>
+				</listitem>
+			</varlistentry>				
+			<varlistentry>
 				<term>iterationBound</term>
 				<listitem>
-					<para>A boolean variable that when true, causes the
+					<para>A boolean variable that, when true, causes the
 						termination of the bracketing routine and the
 						issuance of an error message stating that the
 						routine stopped because it used too many iterations.
@@ -118,13 +133,15 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>iteration</term>
+				<term>limitLeft</term><term>limitRight</term>
 				<listitem>
-					<para>In integer indicating the present iteration.
-						Iteration is incremented for each function
-						evaluation.</para>
+					<para>These are numbers that limit the minimum and
+						maximum values of a and c. The default to the minimum
+						and maximum machine number that can be represented
+						in Mathematica, though the user can change them, as
+						seen in EXAMPLE BLAH BLAH.</para>
 				</listitem>
-			</varlistentry>				
+			</varlistentry>
 			<varlistentry>
 				<term>maxWideningIterations</term>
 				<listitem>
@@ -139,6 +156,50 @@
 						of the MaxIterations option of FindMinimum.
 						MaxIterations has a default value of 100, so the
 						default value of maxWideningIterations is 50.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>ptol</term>
+				<listitem>
+					<para>This is the minimum distance a possible new abscissa
+						may be from any member of sameTestAbscissas. If the
+						distance is less than the tolerance (ptol), the routine
+						perturbs the possible abscissa away. The formula for
+						the tolerance is
+						<xi:include href="mout/pr_1_ptol.xml"/>, where # is the
+						present value of an abscissa that may eventually become
+						newAbscissa.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>shrinkFactor</term>
+				<listitem>
+					<para>This is the interval width fraction of [a,x] or [x,c]
+						&#x2014; whichever is larger &#x2014; into which the
+						golden section method steps from x.</para>
+					<para>There is some theoretical basis for the default value
+						of the shrinkFactor use in the narrowing process. By
+						default,
+						<inlineequation><mathphrase>2 - &#934; = shrinkFactor &#8773; 0.382</mathphrase></inlineequation>.
+						The default shrinkFactor can be determined analytically
+						by constraining the two possible left over intervals
+						from a new function evaluation to be of equal width and
+						then assuming that the rule is applied at every
+						iteration. By making sure that both possible leftover
+						intervals are the same size, the default shrinkFactor
+						does the best possible job with finding minima of
+						un-cooperative functions. &#167; 10.2 of
+						<citation><olink targetdoc="self" targetptr="PTVFNRC"/></citation>
+						has a detailed derivation of this factor.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>xtol</term>
+				<listitem>
+					<para>This is the tolerance to which a and c must come from
+						x for the narrowing routine to converge. The numerical
+						definition for xtol is the same as for ptol, except that
+						# should be replaced with x.</para>
 				</listitem>
 			</varlistentry>
 		</variablelist>
