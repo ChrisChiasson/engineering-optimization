@@ -111,7 +111,7 @@
 			<olink targetdoc="self" targetptr="Line_Search_Major_Variables"/>.
 			Also, even though flow charts were only requested for the bracketing
 			and narrowing routines, I provided an overall flow chart for the
-			line search in <olink targetdoc="self" targetptr="pr_1_frameMinimum_flow_chart"/>.
+			line search in <olink targetdoc="self" targetptr="pr_1_Unimodal_FindMinimum_flow_chart"/>.
 			Finally, the entire source code for this routine along with most of
 			the code for the class is available in
 			<olink targetdoc="self" targetptr="Engineering_Optimization_Main_Code"/>.</para>
