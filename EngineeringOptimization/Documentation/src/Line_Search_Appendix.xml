@@ -74,6 +74,47 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
+				<term>accuracyGoal,precisionGoal</term>
+				<listitem>
+					<para>These are the respective number of digits of accuracy
+						and precision within which we would like to obtain a
+						correct answer. The definition of xtol (and ptol)
+						should make it clear that these goals are not guaranteed
+						to be satisfied because the two tolerances resulting
+						from the goals are summed. accuracyGoal and
+						precisionGoal may be set by the AccruacyGoal and
+						PrecisionGoal options of the FindMinimum function:
+						<command>FindMinimum[...,AccuracyGoal&#8594;#A,PrecisionGoal&#8594;#B]</command>.
+						#A and #B are the desired number of digits of accuracy
+						and precision. By default, accuracyGoal and
+						precisionGoal are set to half of workingPrecision to
+						avoid issues where numerical error prevents
+						convergence.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>candidateAbscissa</term>
+				<listitem>
+					<para>Early in a narrowing iteration, candidateAbscissa is
+						a list containing an inverse parabolic interpolation
+						abscissa and a golden section abscissa. Sometimes, these
+						guesses are too close to points that have been evaluated
+						already. It is important to keep track of how far each
+						abscissa is perturbed, because the perturbation distance
+						of the abscissa that is eventually accepted as
+						newAbscissa is the lower bound of
+						maxAcceptableDisplacement for the next iteration.
+						Therefore, I used a variable called perturbed to store
+						the	abscissas that have been moved.</para>
+					<para>For the determination of maxAcceptableDisplacement,
+						newAbscissa and perturbed are used to find the
+						position of candidateAbscissa that corresponds to the
+						selected abscissa. candidateAbscissa is then assigned
+						to the value of the element that matched, changing it
+						from a list to a number.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
 				<term>domainBound</term>
 				<listitem>
 					<para>A boolean variable that, when true, causes the
@@ -107,8 +148,8 @@
 				<listitem>
 					<para>The growth factor is a (somewhat arbitrary) factor
 						by which to grow the interval [b,c] on each bracketing
-						iteration FACT CHECK PLEASE. It is typically chosen to
-						be equal to	the golden ratio, &#934;, from mathematics;
+						iteration. It is typically chosen to be equal to the
+						golden ratio, &#934;, from mathematics;
 						<inlineequation><mathphrase>&#934; = growthFactor &#8773; 1.618</mathphrase></inlineequation>.</para>
 				</listitem>
 			</varlistentry>
@@ -143,6 +184,27 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
+				<term>maxAcceptableDisplacement</term>
+				<listitem>
+					<para>This is the maximum acceptable displacement from x for
+						a perturbed abscissa in the narrowing routine. Any
+						abscissa that would require a larger displacement is
+						discarded.</para>
+					<para>maxAcceptableDisplacement is determined by the
+						previous iteration. It is the greater of half the
+						displacement from x and the perturbation distance.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>maxNarrowingIterations</term>
+				<listitem>
+					<para>maxNarrowingIterations is analogous to
+						maxWideningIterations. It controls the maximum number of
+						iterations for the narrowing routine. Its' corresponding
+						option is called "MaxWideningIterations".</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
 				<term>maxWideningIterations</term>
 				<listitem>
 					<para>This indicates the maximum number of iterations
@@ -159,6 +221,22 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
+				<term>perturbed</term>
+				<listitem>
+					<para>This variable is initialized to be the same as
+						candidateAbscissa at the beginning of the narrowing
+						iteration. However, all of perturbed's abscissas are
+						then moved away from the abscissas in sameTestAbscissas.
+						A newAbscissa is subsequently selected from the
+						perturbed abscissas that lie between a and c and
+						that represent a displacement within
+						maxAcceptableDisplacement from x. If no perturbed
+						entries meet those conditions, then the unperturbed
+						golden section method is used for newAbscissa. See
+						candidateAbscissa's	description for more information.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
 				<term>ptol</term>
 				<listitem>
 					<para>This is the minimum distance a possible new abscissa
@@ -169,6 +247,32 @@
 						<xi:include href="mout/pr_1_ptol.xml"/>, where # is the
 						present value of an abscissa that may eventually become
 						newAbscissa.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>reverse</term>
+				<listitem>
+					<para>reverse is a boolean variable that indicates wether
+						the	direction search should occur in the opposite
+						direction from normal. The "Reverse" option can be used
+						to manually set the value of reverse, though there
+						should not be a need to do so:
+						<command>FindMinimum[...,Method&#8594;{"Unimodal","Reverse"&#8594;bool}]</command>.
+						bool is True or False. The line search will
+						automatically issue a line search in the reverse
+						direction if a minimum was not bracketed and reverse is
+						False during the current search.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>sameTestAbscissas</term>
+				<listitem>
+					<para>This is a list containing every abscissa at which
+						the function f has already been evaluated. Evaluating
+						the function within the convergence tolerance to one of
+						these points runs the risk of wasting the evaluation
+						because the function will probably barely change over
+						such a short distance.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -191,6 +295,31 @@
 						un-cooperative functions. &#167; 10.2 of
 						<citation><olink targetdoc="self" targetptr="PTVFNRC"/></citation>
 						has a detailed derivation of this factor.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>vwxSequence</term>
+				<listitem>
+					<para>After the assignment of newOrdinate at newAbscissa in
+						the narrowing routine, a procedure is used to select the
+						lowest three coordinate pairs from all the points being
+						tracked on that iteration. These three pairs, in order
+						of decreasing ordinate, are assigned to vwxSequence. I
+						realize the variable name should have been
+						fvvfwwfxxSequence, but that was too cumbersome for my
+						taste.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>workingPrecision</term>
+				<listitem>
+					<para>This is the number of digits of precision used for all
+						calculations. It can be set by an option,
+						WorkingPrecision, as follows:
+						<command>FindMinimum[...,WorkingPrecision&#8594;#]</command>.
+						# is the desired number of digits of precision. The
+						default value is $MachinePrecision, which is about
+						15.9546.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
