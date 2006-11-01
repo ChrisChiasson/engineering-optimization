@@ -283,8 +283,7 @@
 			<para>As stated in the introduction to
 				<xref linkend="Description_of_Line_Search"/>, this routine is
 				designed to converge to a specified tolerance. The termination
-				condition is that both a and c are within BLAH tolerance from
-				x. Tolerance is defined as BLAH.</para>
+				condition is that both a and c are within xtol from x.</para>
 		</section>
 	</section>
 </chapter>
