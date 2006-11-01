@@ -6,6 +6,17 @@ BeginPackage["EngineeringOptimization`Documentation`PR1`",
 
 Begin["`Private`"];
 
+prefix="pr_1_";
+
+MakeBoxes[anAbscissa,_]="#";
+
+eqn[ptol]=ptol==10^-accuracyGoal+Abs[anAbscissa]*10^-precisionGoal;
+
+(export[#1]=XMLDocument[prefix<>#2<>".xml",
+	DocBookInlineEquation[prefix<>#2,#3,SetIdAttribute->#4],
+	PrependDirectory->EODExportDirectory
+	])&@@{ptol,"ptol",eqn[ptol],True};
+
 (*requested f[x]=(x-10)^2 example*)
 
 request[1]=FindMinimum[(x-10)^2,{x,1},Method->{"Unimodal",
