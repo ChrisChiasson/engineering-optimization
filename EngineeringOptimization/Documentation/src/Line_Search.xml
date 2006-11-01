@@ -72,7 +72,7 @@
 		a procedure for solving single-variable unconstrained minimization
 		problems. This is also referred to as a line search, since there is
 		only one independant variable.</para>
-	<para><xref linkend="Description_of_Line_Search"/> gives outlines my
+	<para><xref linkend="Description_of_Line_Search"/> outlines my
 		routine. I use the routine to solve the requested problems in section
 		XXX.</para>
 	<section xml:id="Description_of_Line_Search">
@@ -96,7 +96,8 @@
 			involve interpolation, so I feel it would violate the spirit of the
 			assignment.</para>
 		<para>So, I implemented Brent's method after reading the description in
-			section 10.2 of	<citation><olink targetdoc="self" targetptr="PTVFNRC"/></citation>.
+			&#167; 10.2 of
+			<citation><olink targetdoc="self" targetptr="PTVFNRC"/></citation>.
 			I use inverse polynomial interpolation and the golden section
 			method. The	routine is usually able to converge much faster than the
 			golden section method alone. <xref linkend="Narrowing"/> has more
