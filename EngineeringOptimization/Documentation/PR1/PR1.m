@@ -10,19 +10,59 @@ prefix="pr_1_";
 
 MakeBoxes[anAbscissa,_]="#";
 
-eqn[ptol]=ptol==10^-accuracyGoal+Abs[anAbscissa]*10^-precisionGoal;
+pTolLab="pTolLab";
 
-(export[#1]=XMLDocument[prefix<>#2<>".xml",
-	DocBookInlineEquation[prefix<>#2,#3,SetIdAttribute->#4],
+eqn[pTolLab]=ptol==10^-accuracyGoal+Abs[anAbscissa]*10^-precisionGoal;
+
+xMinusTenSquared="xMinusTenSquared";
+
+eqn[xMinusTenSquared]=f[x]==(x-10)^2;
+
+(export[#1]=XMLDocument[prefix<>#1<>".xml",
+	DocBookInlineEquation[prefix<>#1,eqn[#1],SetIdAttribute->#2],
 	PrependDirectory->EODExportDirectory
-	])&@@{ptol,"ptol",eqn[ptol],True};
+	])&@@@
+		{
+			{pTolLab,True},
+			{xMinusTenSquared,False}
+			};
 
-(*requested f[x]=(x-10)^2 example*)
+optimize="optimize_";
 
-request[1]=FindMinimum[(x-10)^2,{x,1},Method->{"Unimodal",
-	"MaxNarrowingIterations"->30},StepMonitor:>Sow[{"step",x}],
-	EvaluationMonitor:>Sow[{"eval",x}]];
+request[optimize<>xMinusTenSquared]:=
+	FindMinimum[
+		eqn[xMinusTenSquared][[2]],
+		{x,0,1},
+		Method->"Unimodal"
+		];
 
+export[optimize<>xMinusTenSquared]=
+	{ExportDelayed[
+		ToFileName[
+			EODExportDirectory,
+			prefix<>optimize<>xMinusTenSquared<>".m"
+			],
+		Block[
+			{FindMinimum},
+			ToString[
+				request[optimize<>xMinusTenSquared],
+				InputForm
+				]
+			],
+		"Text"
+		]};
+
+result="_result";
+
+export[optimize<>xMinusTenSquared<>result]=
+	{ExportDelayed[
+		ToFileName[
+			EODExportDirectory,
+			prefix<>optimize<>xMinusTenSquared<>result<>".m"
+			],
+		request[optimize<>xMinusTenSquared],
+		"Text"
+		]};
 (*Book Example Problem 2-1
 Numerical Optimization Techniques for
 Engineering Design
