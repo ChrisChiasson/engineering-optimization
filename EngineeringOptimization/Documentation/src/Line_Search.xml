@@ -89,12 +89,12 @@
 			width, but there is very little assurance that the algorithm would
 			converge. To make matters worse, some of the routines for
 			multidimensional optimization that eventually depend on the line
-			search routine need a nearly exact line search to behave properly.</para>
+			search routine need a nearly exact search to behave properly.</para>
 		<para>One way to obtain convergence would be to exclusively use the
 			golden section routine. I have tried this, and the number of
 			function evaluations required is excessive. In addition, it does not
-			involve interpolation, so I feel it would violate the spirit of the
-			assignment.</para>
+			involve inverse polynomial interpolation, so I feel it would violate
+			the spirit of the assignment.</para>
 		<para>So, I implemented Brent's method after reading the description in
 			&#167; 10.2 of
 			<citation><olink targetdoc="self" targetptr="PTVFNRC"/></citation>.
@@ -174,7 +174,7 @@
 				may be bracketed by three points, {a,fa}, {b,fb}, and {c,fc}
 				where the abscissas are related by <inlineequation><mathphrase>a &lt; b &lt; c</mathphrase></inlineequation>
 				or <inlineequation><mathphrase>c &gt; b &gt; a</mathphrase></inlineequation>,
-				while the ordinates are related by <inlineequation><mathphrase>fb &lt; fc</mathphrase></inlineequation>
+				while the ordinates are related by <inlineequation><mathphrase>fb &lt; fa</mathphrase></inlineequation>
 				and <inlineequation><mathphrase>fb &lt; fc</mathphrase></inlineequation>.
 				Because the notation is convenient, for the rest of the
 				book I use the non-standard {ordinate,abscissa} way of writing
@@ -222,7 +222,8 @@
 			<title>Narrowing</title>
 			<para><xref linkend="pr_1_frameMinimumNarrow_flow_chart"/> shows the
 				flow chart for my narrowing routine, which follows Brent's
-				method. <xref linkend="pr_1_perturb_flow_chart"/> shows the
+				method. The present inverse polynomial interpolation method is
+				quadratic. <xref linkend="pr_1_perturb_flow_chart"/> shows the
 				subroutine used to avoid evaluating the function too close to
 				points at which it has already been evaluated. Forgive me one
 				final reminder that the variable list for the entire line
@@ -277,7 +278,10 @@
 					</mediaobject>
 				</screenshot>
 				<caption>
-					<para>PERTURBATION CAPTION</para>
+					<para>This is the "perturb abscissas" process from
+						<xref linkend="pr_1_frameMinimumNarrow_flow_chart"/>.
+						It goes over each abscissa in perturbed, moves them
+						away from each abscissa in sameTestAbscissas.</para>
 				</caption>
 			</figure>
 			<para>As stated in the introduction to
