@@ -118,7 +118,7 @@
 		<section xml:id="Calling_the_Line_Search">
 			<title>Calling the Line Search</title>
 			<para>The line search is called as follows from within Mathematica:
-				<command>FindMinimum[f,{x,xleft,xright},Method&#8594;"Unimodal"]</command><footnote>
+				<command>FindMinimum[f, {x, xleft, xright}, Method -> "Unimodal"]</command><footnote>
 				<para>I have written this function three times. It was
 					originally called FindUnimodalMinimum. Problems with the
 					later constrained multidimensional optimization assignments
@@ -127,13 +127,14 @@
 					routine to handle the low-level line search. So, when I was
 					ready to rewrite this routine again, I made it mostly
 					conform to the calling style of FindMinimum, but it executes
-					my code	when the option	Method&#8594;"Unimodal" is passed.
+					my code	when the option	Method &#8594; "Unimodal" is passed.
 					This is important, because if one leaves off the Method
 					statement, one of the built in methods, "Gradient",
 					"ConjugateGradient", "QuasiNewton", "Newton", or 
 					"LevenbergMarquardt", will be chosen automatically.</para></footnote>.
 					The call variable list follows. A simple example of this
-					calling	structure is given in SIMPLE EXAMPLE.</para>
+					calling	structure is given in
+					<xref linkend="pr_1_xMinusTenSquared_qandaentry"/>.</para>
 				<variablelist>
 					<varlistentry>
 						<term>f</term>
@@ -161,7 +162,7 @@
 						<term>Method</term>
 						<listitem>
 							<para>Method is an option that can be changed
-								with a rule such as Method&#8594;"Unimodal".
+								with a rule such as Method &#8594; "Unimodal".
 								Using that rule causes Mathematica to execute my
 								unimodal line search.</para>
 						</listitem>
@@ -288,5 +289,31 @@
 				</caption>
 			</figure>
 		</section>
+	</section>
+	<section xml:id="Line_Search_Problems">
+		<title>Line Search Problems</title>
+		<para>This section contains the assigned problems from project one.</para>
+		<qandaset>
+			<!--?dbhtml label-width="15%"?-->
+			<qandaentry xml:id="pr_1_xMinusTenSquared_qandaentry">
+				<question>
+					<!--label>Minimize <xi:include href="mout/pr_1_xMinusTenSquared.xml"/></label-->
+					<para>Test the program using <xi:include href="mout/pr_1_xMinusTenSquared.xml"/>.</para>
+				</question>
+				<answer>
+					<para>The proper Mathematica command to invoke my unimodal
+						line search is
+						<command><xi:include href="mout/pr_1_optimize_xMinusTenSquared.m" parse="text"/></command>.
+						The result is in the form
+						<computeroutput>{fmin, {x -> xmin}}</computeroutput>,
+						where fmin is the lowest function value found, x is the
+						given independant variable, and xmin is the abscissa
+						corresponding to the lowest function value. In this
+						case, the output is
+						<computeroutput><xi:include href="mout/pr_1_optimize_xMinusTenSquared_result.m" parse="text"/></computeroutput>,
+						which is the correct answer.</para>
+				</answer>
+			</qandaentry>
+		</qandaset>
 	</section>
 </chapter>
