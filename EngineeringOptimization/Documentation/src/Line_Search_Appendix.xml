@@ -11,7 +11,7 @@
 		targetptr="Line_Search"/>.</para>
 	<para>The overall <xref linkend="pr_1_Unimodal_FindMinimum_flow_chart"/>
 		isn't as informative as the other charts nor was it requested in the
-		assignment, but it is included here for completeness. In addition, the
+		assignment, but it is included here for completeness. In addition,
 		<xref linkend="Line_Search_Major_Variables"/> list is available below.</para>
 	<figure xml:id="pr_1_Unimodal_FindMinimum_flow_chart">
 		<title>Line Search Flow Chart</title>
@@ -74,7 +74,7 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>accuracyGoal,precisionGoal</term>
+				<term>accuracyGoal</term>,<term>precisionGoal</term>
 				<listitem>
 					<para>These are the respective number of digits of accuracy
 						and precision within which we would like to obtain a
