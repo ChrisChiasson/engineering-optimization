@@ -237,6 +237,15 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
+				<term>perturbFactor</term>
+				<listitem>
+					<para>This factor is a multiplier for in the perturbation
+						routine whose present definition causes abscissas to be
+						perturbed half the magnitude of ptol toward a or c 
+						&#x2014; whichever endpoint is further from x.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
 				<term>ptol</term>
 				<listitem>
 					<para>This is the minimum distance a possible new abscissa
