@@ -84,7 +84,7 @@
 						from the goals are summed. accuracyGoal and
 						precisionGoal may be set by the AccruacyGoal and
 						PrecisionGoal options of the FindMinimum function:
-						<command>FindMinimum[...,AccuracyGoal&#8594;#A,PrecisionGoal&#8594;#B]</command>.
+						<command>FindMinimum[..., AccuracyGoal -> #A, PrecisionGoal -> #B]</command>.
 						#A and #B are the desired number of digits of accuracy
 						and precision. By default, accuracyGoal and
 						precisionGoal are set to half of workingPrecision to
@@ -210,7 +210,7 @@
 					<para>This indicates the maximum number of iterations
 						allowed by the bracketing routine. It can be set by
 						the	option "MaxWideningIterations" as in
-						<command>FindMinimum[...,Method&#8594;{"Unimodal","MaxWideningIterations"&#8594;#}]</command>,
+						<command>FindMinimum[..., Method -> {"Unimodal", "MaxWideningIterations" -> #}]</command>,
 						where # is the integer number of
 						maxWideningIterations.</para>
 					<para>If "MaxWideningIterations" is not set, it defaults
@@ -266,7 +266,7 @@
 						direction from normal. The "Reverse" option can be used
 						to manually set the value of reverse, though there
 						should not be a need to do so:
-						<command>FindMinimum[...,Method&#8594;{"Unimodal","Reverse"&#8594;bool}]</command>.
+						<command>FindMinimum[..., Method -> {"Unimodal", "Reverse" -> bool}]</command>.
 						bool is True or False. The line search will
 						automatically issue a line search in the reverse
 						direction if a minimum was not bracketed and reverse is
@@ -325,7 +325,7 @@
 					<para>This is the number of digits of precision used for all
 						calculations. It can be set by an option,
 						WorkingPrecision, as follows:
-						<command>FindMinimum[...,WorkingPrecision&#8594;#]</command>.
+						<command>FindMinimum[..., WorkingPrecision -> #]</command>.
 						# is the desired number of digits of precision. The
 						default value is $MachinePrecision, which is about
 						15.9546.</para>
