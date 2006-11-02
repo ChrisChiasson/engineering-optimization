@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <appendix xml:id="Common_Source_Appendix" xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
 	version="5">
 	<title>Common Source</title>
 	<para>This appendix contains material referred to in multiple sections of
@@ -9,8 +10,7 @@
 		<?dbfo keep-together="auto"?>
 		<title>Engineering Optimization Main Code</title>
 		<para>This is my main optimization source code file.</para>
-		<programlisting><include xmlns="http://www.w3.org/2001/XInclude" 
-			href="mout/EngineeringOptimization.m"
+		<programlisting><xi:include href="mout/EngineeringOptimization.m"
 			parse="text"/></programlisting>
 	</example>
 	<example xml:id="Critical_Domain_Locations_Source">
@@ -22,8 +22,7 @@
 			optimized definitions, but regeneration is only done when
 			<filename>criticalDomainLocationsSource.m</filename> changes. Here
 			is the source file.</para>
-		<programlisting><include xmlns="http://www.w3.org/2001/XInclude" 
-			href="mout/criticalDomainLocationsSource.m"
+		<programlisting><xi:include href="mout/criticalDomainLocationsSource.m"
 			parse="text"/></programlisting>
 	</example>	
 	<example xml:id="Critical_Domain_Locations">
@@ -32,8 +31,7 @@
 		<para>This is the result file,
 			<filename>criticalDomainLocations.m</filename>, mentioned in
 			<xref linkend="Critical_Domain_Locations_Source"/>.</para>
-		<programlisting><include xmlns="http://www.w3.org/2001/XInclude" 
-			href="mout/criticalDomainLocations.m"
+		<programlisting><xi:include href="mout/criticalDomainLocations.m"
 			parse="text"/></programlisting>
 	</example>	
 </appendix>
