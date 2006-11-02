@@ -225,9 +225,12 @@
 				method. The present inverse polynomial interpolation method is
 				quadratic. <xref linkend="pr_1_perturb_flow_chart"/> shows the
 				subroutine used to avoid evaluating the function too close to
-				points at which it has already been evaluated. Forgive me one
-				final reminder that the variable list for the entire line
-				search proceedure is located in
+				points at which it has already been evaluated. As stated in the
+				introduction to	<xref linkend="Description_of_Line_Search"/>,
+				this routine is	designed to converge to a specified tolerance.
+				The termination	condition is that both a and c are within xtol
+				from x. Forgive me one final reminder that the variable list for
+				the entire line	search proceedure is located in
 				<olink targetdoc="self" targetptr="Line_Search_Major_Variables"/>.</para>
 			<figure xml:id="pr_1_frameMinimumNarrow_flow_chart">
 				<title>Bracket Narrowing Flow Chart</title>
@@ -280,14 +283,10 @@
 				<caption>
 					<para>This is the "perturb abscissas" process from
 						<xref linkend="pr_1_frameMinimumNarrow_flow_chart"/>.
-						It goes over each abscissa in perturbed, moves them
+						It goes over each abscissa in perturbed, moving it
 						away from each abscissa in sameTestAbscissas.</para>
 				</caption>
 			</figure>
-			<para>As stated in the introduction to
-				<xref linkend="Description_of_Line_Search"/>, this routine is
-				designed to converge to a specified tolerance. The termination
-				condition is that both a and c are within xtol from x.</para>
 		</section>
 	</section>
 </chapter>
