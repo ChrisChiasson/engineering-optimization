@@ -11,8 +11,10 @@
 		targetptr="Line_Search"/>.</para>
 	<para>The overall <xref linkend="pr_1_Unimodal_FindMinimum_flow_chart"/>
 		isn't as informative as the other charts nor was it requested in the
-		assignment, but it is included here for completeness. In addition,
-		<xref linkend="Line_Search_Major_Variables"/> list is available below.</para>
+		assignment, but it is included here for completeness.
+		<xref linkend="Line_Search_Major_Variables"/> list is also available.
+		Finally, you will find problem calculations in
+		<xref linkend="PR1_Code"/> at the end of this appendix.</para>
 	<figure xml:id="pr_1_Unimodal_FindMinimum_flow_chart">
 		<title>Line Search Flow Chart</title>
 		<titleabbrev>Line Search</titleabbrev>
@@ -74,7 +76,7 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>accuracyGoal</term>,<term>precisionGoal</term>
+				<term>accuracyGoal</term><term>precisionGoal</term>
 				<listitem>
 					<para>These are the respective number of digits of accuracy
 						and precision within which we would like to obtain a
@@ -341,5 +343,11 @@
 				</listitem>
 			</varlistentry>
 		</variablelist>
+	</example>
+	<example xml:id="PR1_Code">
+		<?dbfo keep-together="auto"?>
+		<title>Project 1 Code</title>
+		<para>This is the code for the project 1 calculations.</para>
+		<programlisting><xi:include href="mout/PR1.m" parse="text"/></programlisting>		
 	</example>
 </appendix>
