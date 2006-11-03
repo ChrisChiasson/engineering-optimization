@@ -314,6 +314,32 @@
 						which is the correct answer.</para>
 				</answer>
 			</qandaentry>
+			<qandaentry>
+				<question>
+					<para>Example 2-1 in
+						<citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>
+						talks about a idealized beam leaning up
+						against a smooth wall with a pin support at the floor.
+						The beam is supports a vertical load P at the wall. The
+						beam is of length L, cross sectional area A, Young's
+						modulus E, and second area moment of inertia I about its
+						neutral axis. The beam touches the wall at an inital
+						height, H, from the floor when P is zero. As downward
+						load P increases, the beam's contact point with the wall
+						moves down a distance X. The axial force in the beam is
+						F. Given the following equations, we are asked to solve
+						for the maximum of P that the structure can support, as
+						well as the two X locations at which P is equal to
+						20,000 N.</para>
+					 <xi:include href="mout/pr_1_ex21given.xml"/>
+				</question>
+				<answer>
+					<para>Because they are long, I do not show the commands to
+						solve the problem here but, you may find them in
+						<olink targetdoc="self" targetptr="PR1_Code"/>. The
+						requested solutions are found in FIGURE and TABLE</para>
+				</answer>
+			</qandaentry>
 		</qandaset>
 	</section>
 </chapter>
