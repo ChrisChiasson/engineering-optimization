@@ -63,6 +63,7 @@ export[optimize<>xMinusTenSquared<>result]=
 		request[optimize<>xMinusTenSquared],
 		"Text"
 		]};
+
 (*Book Example Problem 2-1
 Numerical Optimization Techniques for
 Engineering Design
@@ -72,7 +73,8 @@ by Garret Vanderplaats*)
 	{{SectionModulus,"I"},
 		{YoungsModulus,"E"},
 		{Meter,"m"},
-		{Newton,"N"}
+		{Newton,"N"},
+		{Pascal,"Pa"}
 		};
 
 $Assumptions=#>0&/@{Newton,X,Meter,YoungsModulus,SectionModulus};
@@ -89,22 +91,72 @@ numbersToMachinePrecisionRep=x_Real:>SetPrecision[x,MachinePrecision];
 
 cm=Centi*Meter;
 
+GPa=Giga*Pascal;
+
 Function[Format[#[a_]]=Subscript[#,a]]/@{F};
 
 (*given values*)
 
-rep[1]={H->25 cm, L->250 cm, A->25 cm^2, SectionModulus->750 cm^4,
-	YoungsModulus->70 Giga Pascal};
+rep[1]:={H->25 cm, L->250 cm, A->25 cm^2, SectionModulus->750 cm^4,
+	YoungsModulus->70 GPa};
 
 rep[2]={Centi->1/100,Giga->10^9,Pascal->Newton/Meter^2};
 
-eqn[1]=F[1]==A YoungsModulus (1-Sqrt[1+(X^2-2 H X)/L^2]);
+eqn[1]=F[1]==A*YoungsModulus*(1-Sqrt[1+(X^2-2 H X)/L^2]);
 
 eqn[2]=F[cr]==Pi^2*YoungsModulus*SectionModulus/L^2;
 
 eqn[3]=F==Min[eqn[1][[2]],eqn[2][[2]]];
 
 eqn[4]=P==(H-X)*F/Sqrt[L^2+X^2-2*H*X];
+
+(*export given equations*)
+
+ex21given="ex21given";
+
+eqn[ex21given]=
+	DocBookEquationSequence@@
+		Flatten@
+			{
+				Part[
+					Cases[
+						DownValues[rep],
+						HoldPattern[Verbatim[HoldPattern[rep[1]]]:>_]
+						]/.HoldPattern[Rule[args__]]:>HoldForm[Equal[args]],
+					1,
+					2
+					],
+				{eqn[1],
+					eqn[2],
+					ReplacePart[eqn[3],eqn/@{1,2},{{2,1},{2,2}},{{1,1},{2,1}}],
+					eqn[4]
+					}
+				};
+
+export[ex21given]=XMLDocument[
+	prefix<>ex21given<>".xml",
+	DocBookEquation[
+		prefix<>ex21given,
+		XMLChain@
+			Hold@
+				XMLElement[
+					"phrase",
+					{},
+					{"Given Equations from Example 2-1 of ",
+						XMLElement[
+							"olink",
+							{"targetdoc"->"self",
+								"targetptr"->"GNVNOTED"
+								},
+								{}
+							]
+						}
+					],
+		eqn[ex21given],
+		TitleAbbrev->"Given Equations"
+		],
+	PrependDirectory->EODExportDirectory
+	];
 
 (*Define the function to maximize.*)
 
@@ -123,34 +175,24 @@ gr[1]=Plot[{beamLoad[X]/.dropSIUnitsRep,loadLine},
 		}
 	];
 
-(*Solve the problem in the standard Mathematica way.*)
+(*Solve the problem in the standard Mathematica way for comparison with mine.*)
 
-(*This is the maximum load given to 10 digits of precision.*)
+(*This is the maximum load.*)
 
-xpr[1]=N[Maximize[{beamLoad[X],0<X<=H/.rep[1]/.rep[2]}/.dropSIUnitsRep,{X}],10];
+xpr[1]=Maximize[{beamLoad[X],0<X<=H/.rep[1]/.rep[2]}/.dropSIUnitsRep,{X}];
 
-(*These are the x locations, shown to 10 digits of precision,
-where the load is 20000 Newtons.*)
+(*These are the x locations where the load is 20000 Newtons.*)
 
-eqn[5]=N[
-	Refine@
-		Reduce[
+xprList[1]=
+	{loadLine,#}&/@
+		{ToRules@
 			Refine@
 				Reduce[
-					loadLine*Newton==
-						eqn[4][[2]]&&
-							0*Meter<X<=H/.
-								Rule@@eqn[3]/.
-									rep[1]/.
-										rep[2]/.
-											deUnitizeVariablesRep,
-					X
-					]/.
-						unitizeVariablesRep,
-			X
-			],
-	10
-	];
+					loadLine*Newton==eqn[4][[2]]&&0<X<=H/.
+						Rule@@eqn[3]/.rep[1]/.rep[2]/.deUnitizeVariablesRep,X]
+		};
+
+PrependTo[xprList[1],xpr[1]];
 
 (*Solve the same problem again using our methods.*)
 
@@ -183,14 +225,17 @@ xpr[4]=FindMinimum[
 	Evaluate[Abs[beamLoad[X]-loadLine/.dropSIUnitsRep]],
 	Evaluate@
 		Prepend[
-			{X,(H+X)/2,X,H}/.
-				rep[1]/.
-					rep[2]/.
-						dropSIUnitsRep/.
-							xpr[2][[2]],
+			{X,(H+X)/2,X,H}/.rep[1]/.rep[2]/.dropSIUnitsRep/.xpr[2][[2]],
 			X],
 	Method->"Unimodal"
 	];
+
+xprList[2]=xpr/@{2,3,4};
+
+xprList[3]=
+	MapThread[{#1,#2[[2]]}&,
+		{beamLoad[X]/.dropSIUnitsRep/.xprList[2][[All,2]],xprList[2]}
+		];
 
 filesToTransport={"pr_1_screenshot_assignment.png",
 	"pr_1_screenshot_flow_chart.png",
