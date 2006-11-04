@@ -73,8 +73,8 @@
 		problems. This is also referred to as a line search, since there is
 		only one independant variable.</para>
 	<para><xref linkend="Description_of_Line_Search"/> outlines my
-		routine. I use the routine to solve the requested problems in section
-		XXX.</para>
+		routine. I use the routine to solve the requested problems in
+		<xref linkend="Line_Search_Problems"/>.</para>
 	<section xml:id="Description_of_Line_Search">
 		<title>Description of Line Search</title>
 		<para>In order to satisfy constraints in later assignments, I
@@ -337,7 +337,9 @@
 					<para>Because they are long, I do not show the commands to
 						solve the problem here but, you may find them in
 						<olink targetdoc="self" targetptr="PR1_Code"/>. The
-						requested solutions are found in FIGURE and TABLE</para>
+						requested solutions are found in FIGURE and
+						<xref linkend="pr_1_ex21table"/></para>
+					<xi:include href="mout/pr_1_ex21table.xml"/>
 				</answer>
 			</qandaentry>
 		</qandaset>
