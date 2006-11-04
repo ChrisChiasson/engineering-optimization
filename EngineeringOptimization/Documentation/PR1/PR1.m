@@ -6,6 +6,9 @@ BeginPackage["EngineeringOptimization`Documentation`PR1`",
 
 Begin["`Private`"];
 
+{Attributes[#]={NHoldAll},Format[#[i:__Integer|__Symbol]]=Subscript[#,i]}&/@
+	{F,P,X};
+
 prefix="pr_1_";
 
 MakeBoxes[anAbscissa,_]="#";
@@ -22,8 +25,7 @@ eqn[xMinusTenSquared]=f[x]==(x-10)^2;
 	DocBookInlineEquation[prefix<>#1,eqn[#1],SetIdAttribute->#2],
 	PrependDirectory->EODExportDirectory
 	])&@@@
-		{
-			{pTolLab,True},
+		{{pTolLab,True},
 			{xMinusTenSquared,False}
 			};
 
@@ -192,7 +194,7 @@ xprList[1]=
 						Rule@@eqn[3]/.rep[1]/.rep[2]/.deUnitizeVariablesRep,X]
 		};
 
-PrependTo[xprList[1],xpr[1]];
+xprList[2]=N[Prepend[xprList[1],xpr[1]],10];
 
 (*Solve the same problem again using our methods.*)
 
@@ -230,12 +232,54 @@ xpr[4]=FindMinimum[
 	Method->"Unimodal"
 	];
 
-xprList[2]=xpr/@{2,3,4};
+xprList[3]=xpr/@{2,3,4};
 
-xprList[3]=
+xprList[4]=
 	MapThread[{#1,#2[[2]]}&,
-		{beamLoad[X]/.dropSIUnitsRep/.xprList[2][[All,2]],xprList[2]}
+		{beamLoad[X]/.dropSIUnitsRep/.xprList[3][[All,2]],xprList[3]}
 		];
+
+ex21FigandTabTitle=
+	XMLElement["phrase",{},
+		{XMLElement["olink",
+			{"targetdoc"->"self","targetptr"->"GNVNOTED"},
+			{}
+			],
+		" Example 2-1 Solution"}
+		];
+
+tab[1]={
+	{SequenceForm["Maximum ",P[X]],
+		SequenceForm[loadLine Newton," ",X[1]],
+		SequenceForm[loadLine Newton," ",X[2]]
+		},
+	Apply[Sequence,
+		Flatten@{xprList[#][[1,1]],X/.xprList[#][[Range[2,3],2]]}&/@{2,4}
+		]
+	};
+
+tab[2]=Prepend[Transpose@tab[1],{"","Reference",Method->"\"Unimodal\""}];
+
+ex21table="ex21table";
+
+export[ex21table]=XMLDocument[
+	prefix<>ex21table<>".xml",
+	DocBookTable[
+		prefix<>ex21table,
+		ex21FigandTabTitle,
+		"This is a three column table with one header row and oneheader "<>
+			"column. The first row with numeric data gives the maximum "<>
+			"function value of P. The second and third rows with numeric "<>
+			"data give the X locations at which P is 20000 Newtons. The "<>
+			"first column with numeric data gives reference results from an "<>
+			"exact solution that has been truncated. The second column with "<>
+			"numeric data gives results from my numeric solution.",
+		tab[2],
+		Caption->"The reference column is an exact solution to ten digits of "<>
+			"precision. The Unimodal column is my numeric solution."
+		],
+	PrependDirectory->EODExportDirectory
+	];
 
 filesToTransport={"pr_1_screenshot_assignment.png",
 	"pr_1_screenshot_flow_chart.png",
