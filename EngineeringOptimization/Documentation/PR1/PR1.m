@@ -276,7 +276,8 @@ export[ex21table]=XMLDocument[
 			"numeric data gives results from my numeric solution.",
 		tab[2],
 		Caption->"The reference column is an exact solution to ten digits of "<>
-			"precision. The Unimodal column is my numeric solution."
+			"precision. The Unimodal column is my numeric solution.",
+		TitleAbbrev->"Ex. 2-1 Solution"
 		],
 	PrependDirectory->EODExportDirectory
 	];
