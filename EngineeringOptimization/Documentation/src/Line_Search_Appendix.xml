@@ -255,9 +255,9 @@
 						distance is less than the tolerance (ptol), the routine
 						perturbs the possible abscissa away. The formula for
 						the tolerance is
-						<xi:include href="mout/pr_1_ptol.xml"/>, where # is the
-						present value of an abscissa that may eventually become
-						newAbscissa.</para>
+						<xi:include href="mout/pr_1_pTolLab.xml"/>, where # is
+						the	present value of an abscissa that may eventually
+						become newAbscissa.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
