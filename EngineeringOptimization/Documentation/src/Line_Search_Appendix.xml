@@ -304,7 +304,7 @@
 						intervals are the same size, the default shrinkFactor
 						does the best possible job with finding minima of
 						un-cooperative functions. &#167; 10.2 of
-						<citation><olink targetdoc="self" targetptr="PTVFNRC"/></citation>
+						<olink targetdoc="self" targetptr="PTVFNRC"/>
 						has a detailed derivation of this factor.</para>
 				</listitem>
 			</varlistentry>

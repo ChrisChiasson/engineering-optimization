@@ -60,7 +60,7 @@
 		<caption>
 			<para>This video screen capture contains the flowchart that goes
 				with the first capture in this session. It references
-				two figures in <citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>.
+				two figures in <olink targetdoc="self" targetptr="GNVNOTED"/>.
 				Figure 2-11 contains a method for bounding a minimum. Figure 2-8
 				details a four point golden section method. The chart directs
 				us to bound the minimum, perform the golden section method,
@@ -97,7 +97,7 @@
 			the spirit of the assignment.</para>
 		<para>So, I implemented Brent's method after reading the description in
 			&#167; 10.2 of
-			<citation><olink targetdoc="self" targetptr="PTVFNRC"/></citation>.
+			<olink targetdoc="self" targetptr="PTVFNRC"/>.
 			I use inverse polynomial interpolation and the golden section
 			method. The	routine is usually able to converge much faster than the
 			golden section method alone. <xref linkend="Narrowing"/> has more
@@ -317,7 +317,7 @@
 			<qandaentry>
 				<question>
 					<para>Example 2-1 in
-						<citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>
+						<olink targetdoc="self" targetptr="GNVNOTED"/>
 						talks about a idealized beam leaning up
 						against a smooth wall with a pin support at the floor.
 						The beam is supports a vertical load P at the wall. The
