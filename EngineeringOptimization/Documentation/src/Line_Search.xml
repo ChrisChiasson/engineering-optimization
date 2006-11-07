@@ -314,7 +314,7 @@
 						which is the correct answer.</para>
 				</answer>
 			</qandaentry>
-			<qandaentry>
+			<qandaentry xml:id="pr_1_ex21_qandaentry">
 				<question>
 					<para>Example 2-1 in
 						<olink targetdoc="self" targetptr="GNVNOTED"/>
@@ -337,9 +337,11 @@
 					<para>Because they are long, I do not show the commands to
 						solve the problem here but, you may find them in
 						<olink targetdoc="self" targetptr="PR1_Code"/>. The
-						requested solutions are found in FIGURE and
-						<xref linkend="pr_1_ex21table"/></para>
+						requested solutions are found in
+						<xref linkend="pr_1_ex21table"/> and
+						<xref linkend="pr_1_ex21plot"/>.</para>
 					<xi:include href="mout/pr_1_ex21table.xml"/>
+					<xi:include href="mout/pr_1_ex21plot.xml"/>
 				</answer>
 			</qandaentry>
 		</qandaset>
