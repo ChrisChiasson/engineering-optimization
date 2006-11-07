@@ -181,8 +181,9 @@
 					<para>These are numbers that limit the minimum and
 						maximum values of a and c. The default to the minimum
 						and maximum machine number that can be represented
-						in Mathematica, though the user can change them, as
-						seen in EXAMPLE BLAH BLAH.</para>
+						in Mathematica, though the user can change them. These
+						settings are used to isolate the load line intersections
+						in <olink targetdoc="self" targetptr="pr_1_ex21_qandaentry"/>.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
