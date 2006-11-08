@@ -989,6 +989,7 @@ is zero, then no changes takes place*)
 							displacementVector.Transpose[gamma])
 					]
 			];
+		monitorRules[variables,solutionRulesNew,StepMonitor,opts];
 		gradientNumericNew=fixIndeterminateGradient[
 			solutionRulesNew,
 			gradientSymbolic,
@@ -1040,6 +1041,7 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			options];
 		gradient=List/@D[function,{variables,1}];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
+		monitorRules[variables,solutionRules,StepMonitor,options];
 		solutionRules=
 			NestWhile[
 				Apply[
@@ -1093,6 +1095,7 @@ sDKernel[function_,variables:multipleExpressionPatternObject,
 			Block[{FindMinimum},FindMinimum[function,
 				{displacement,0,1},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
+		monitorRules[variables,solutionRulesNew,StepMonitor,opts];
 		gradientNumericNew=gradientSymbolic/.solutionRulesNew;
 		{solutionRulesNew,gradientNumericNew}];
 
@@ -1121,6 +1124,7 @@ FindMinimum[function_,
 			options];
 		gradient=List/@D[function,{variables,1}];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
+		monitorRules[variables,solutionRules,StepMonitor,options];
 		solutionRules=NestWhile[Apply[sDKernel[function,variables,#1,gradient,
 			#2,options]&,#]&,
 			{solutionRules,gradient/.solutionRules},
@@ -1156,6 +1160,7 @@ fRKernel[function_,variables:multipleExpressionPatternObject,
 			Block[{FindMinimum},FindMinimum[function,
 				{displacement,0,1},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
+		monitorRules[variables,solutionRulesNew,StepMonitor,opts];
 		gradientNumericNew=gradientSymbolic/.solutionRulesNew;
 		betaNew=Transpose[gradientNumericNew].gradientNumericNew/
 			Transpose[gradientNumeric].gradientNumeric//singleElementScalar;
@@ -1182,6 +1187,7 @@ FindMinimum[function_,
 			options];
 		gradient=List/@D[function,{variables,1}];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
+		monitorRules[variables,solutionRules,StepMonitor,options];
 		solutionRules=NestWhile[Apply[fRKernel[function,variables,#1,gradient,
 			##2,options]&,#]&,
 			{solutionRules,
@@ -1212,7 +1218,11 @@ PowKernelKernel[function_,
 			solutionRulesNew/.rulesSets;
 			Block[{FindMinimum},FindMinimum[function,
 				{displacement,0,1},opts]]][[2]];
-		solutionRulesNew/.displacementRule
+		monitorRules[variables,
+			solutionRulesNew/.displacementRule,
+			StepMonitor,
+			opts
+			]
 		];
 
 defineBadArgs@PowKernelKernel;
@@ -1246,6 +1256,7 @@ PowKernel[function_,variables:multipleExpressionPatternObject,
 			Block[{FindMinimum},FindMinimum[function,
 				{displacement,0,1},findMinimumOptions]]][[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
+		monitorRules[variables,solutionRulesNew,StepMonitor,opts];
 		{solutionRulesNew,
 			If[Mod[iteration,variablesLength+1]===0,
 				Map[List,IdentityMatrix[variablesLength],{2}],
@@ -1270,6 +1281,7 @@ FindMinimum[function_,
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
+		monitorRules[variables,solutionRules,StepMonitor,options];
 		solutionRules=NestWhile[Apply[PowKernel[function,variables,##,options]&,
 			#]&,
 			{solutionRules,
@@ -1310,6 +1322,7 @@ INKernel[function_,variables:multipleExpressionPatternObject,
 			Block[{FindMinimum},FindMinimum[function,
 				{displacement,0,1},findMinimumOptions]]])[[2]];
 		solutionRulesNew=solutionRulesNew/.displacementRule;
+		monitorRules[variables,solutionRulesNew,StepMonitor,opts];
 		{solutionRulesNew,gradientSymbolic/.solutionRulesNew}];
 
 defineBadArgs@INKernel;
@@ -1331,6 +1344,7 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			options];
 		gradient=List/@D[function,{variables,1}];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
+		monitorRules[variables,solutionRules,StepMonitor,options];
 		hessian=Experimental`OptimizeExpression[D[function,{variables,2}]];
 		solutionRules=NestWhile[Apply[INKernel[function,variables,#1,gradient,
 			#2,hessian,options]&,#]&,
