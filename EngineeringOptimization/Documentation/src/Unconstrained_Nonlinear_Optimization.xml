@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="Unconstrained_Nonlinear_Optimization"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xl="http://www.w3.org/1999/xlink"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	version="5">
+	<title>Unconstrained Nonlinear Optimization  &#x2014; Homework 2</title>
+	<para>As Dr. Mohamed El-Sayed shows in
+		<xref linkend="hw_2_screenshot_assignment"/>, the assignment is to solve
+		<olink targetdoc="self" targetptr="GNVNOTED"/> problems 3-2 through 3-7.
+		The block quotation below gives the problem statements in their
+		entirety. By the way, I realize screenshot says <quote>Ex:,</quote> but
+		since there are no more examples in chapter 3 after example 3-3 and Dr.
+		El-Sayed verbally mentioned problems rather than examples, I am doing
+		the problems.</para>
+	<figure id="hw_2_screenshot_assignment">
+		<title>Homework 2 Assignment</title>
+		<screenshot>
+			<mediaobject>
+				<imageobject role="html">
+					<imagedata fileref="mout/hw_2_screenshot_assignment.png"/>
+				</imageobject>
+				<imageobject role="fo">
+					<imagedata contentwidth="5in" 
+						fileref="mout/hw_2_screenshot_assignment.png"/>
+				</imageobject>
+				<textobject>
+					<phrase>Ex: (3-2)&#x2014;(3-7) HW. underlined followed by
+						Chapter (4) underlined</phrase>
+				</textobject>
+			</mediaobject>
+		</screenshot>
+		<caption>
+			<para>This is a screenshot from part B of the fourth lecture at
+				8:36.</para>
+		</caption>
+	</figure>
+	<blockquote>
+		<attribution><citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>, p129</attribution>
+		<para><emphasis role="strong">3-2</emphasis> Given the
+			unconstrained minimization problem</para>
+		<para>Minimize: <xi:include href="mout/hw2.objective.inline-eqns.xml"/></para>
+		<xi:include href="hw2/mout/hw2.minimization.start-eqns.xml"/>
+		<para>Apply three iterations of the method of steepest descent to
+			this problem. List the values of all critical parameters at each
+			step.</para>
+		<para><emphasis role="strong">3-3</emphasis> Solve Prob. 3-2 using
+			the Fletcher-Reeves conjugate direction method.</para>
+		<para><emphasis role="strong">3-4</emphasis> Solve Prob. 3-2 using
+			the Davidon-Fletcher-Powell variable metric algorithm.</para>
+		<para><emphasis role="strong">3-5</emphasis> Solve Prob. 3-2 using
+			the Broyden-Fletcher-Shanno-Goldfarb algorithm.</para>
+		<para><emphasis role="strong">3-6</emphasis> Solve Prob. 3-2 using
+			Powell's method. Use six search directions.</para>
+		<para><emphasis role="strong">3-7</emphasis> Solve Prob. 3-2 using
+			Newton's method.</para>
+	</blockquote>
+	<para>The solution to all of the quoted questions is presented in
+		<xref linkend="fig.hw2.minimizationpathsonfunctiondensityplot"/>
+		and
+		<xref linkend="table.hw2.ungraphedcriticalminimizationparameters"/>.
+		The	calculations are available in APPENDIX . I suppose I could leave it at that, since the
+		solution and its meaning is complete and self-evident to someone
+		knowledgeable in optimization, but I think some comments
+		are appropriate.</para>
+	<para>A first thing to note about the graph is that I have
+		iterated each method to converge on the minimum, not just through
+		the requisite three steps. Doing so involved actually programming
+		each method, instead of completing the problems <quote>by
+			hand</quote>. In lecture, Dr. El-Sayed argued that programming
+		each method is more a test of programming skill or in my case,
+		doggedness, than engineering acumen. I agree, but I used the plot
+		and table as a way to "debug" my work, so programming the methods
+		was mainly to help me rather than show off.</para>
+	
+</chapter>
