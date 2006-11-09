@@ -1010,8 +1010,9 @@ fMCommonConvergenceTest[variables:multipleExpressionPatternObject,
 	Module[{solutionRules,solution},
 		solutionRules[solution_Integer]:={arguments}[[solution,1]];
 		And@@MapThread[nSameQ[#1,#2,accuracyGoal,precisionGoal]&,
-			{variables/.solutionRules[1],
-				variables/.solutionRules[2]}
+			{variables/.solutionRules[2](*correct order*),
+				variables/.solutionRules[1]
+				}
 			]
 		];
 
@@ -1231,8 +1232,8 @@ defineBadArgs@PowKernelKernel;
 
 PowKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
-	searchDirections:multipleVectorNonComplexNumberPatternObject,
 	iteration_Integer,
+	searchDirections:multipleVectorNonComplexNumberPatternObject,
 	opts___?OptionQ]:=Module[{displacement,displacementRule,displacementVector,
 		findMinimumOptions,searchDirection,solutionRulesNew,
 		variablesLength=Length@variables},
@@ -1258,10 +1259,11 @@ PowKernel[function_,variables:multipleExpressionPatternObject,
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		monitorRules[variables,solutionRulesNew,StepMonitor,opts];
 		{solutionRulesNew,
+			iteration+1,
 			If[Mod[iteration,variablesLength+1]===0,
 				Map[List,IdentityMatrix[variablesLength],{2}],
-  				Rest@searchDirections~Join~{searchDirection}],
-			iteration+1}];
+  				Rest@searchDirections~Join~{searchDirection}]
+			}];
 
 defineBadArgs@PowKernel;
 
@@ -1285,8 +1287,8 @@ FindMinimum[function_,
 		solutionRules=NestWhile[Apply[PowKernel[function,variables,##,options]&,
 			#]&,
 			{solutionRules,
-				Map[List,IdentityMatrix[Length[variableStarts]],{2}],
-				1
+				1,
+				Map[List,IdentityMatrix[Length[variableStarts]],{2}]				
 				},
 			Not@fMCommonConvergenceTest[
 				variables,
