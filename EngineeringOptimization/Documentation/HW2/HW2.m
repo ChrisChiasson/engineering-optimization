@@ -7,7 +7,7 @@ BeginPackage["EngineeringOptimization`Documentation`HW2`",
 
 Begin["`Private`"];
 
-{Attributes[#]={NHoldAll},Format[#[i_]]=Subscript[#,i]}&/@{X};
+{Attributes[#]={NHoldAll},Format[#[i_]]=Subscript[#,i]}&/@{X,\[Beta]};
 
 (*for displaying a formatted inverse hessian*)
 
@@ -44,19 +44,17 @@ var[poly]=Union@Reap[eqn[poly]/.var:X[_]:>Sow[var]][[2,1]];
 
 startList[poly]={2,2};
 
-export[poly]=XMLDocument[prefix<>poly<>dotxml,
-	DocBookInlineEquation[prefix<>poly,eqn[poly]],
-	PrependDirectory->EODExportDirectory
-	];
-
 start="start";
 
 eqn[start]=Superscript[X,0]==MatrixForm[startList[poly]];
 
-export[start]=XMLDocument[prefix<>start<>dotxml,
-	DocBookInformalEquation[prefix<>start,eqn[start]],
+(export[#1]=XMLDocument[prefix<>#1<>".xml",
+	DocBookInlineEquation[prefix<>#1,eqn[#1],SetIdAttribute->#2],
 	PrependDirectory->EODExportDirectory
-	];
+	])&@@@
+		{{poly,False},
+			{start,False}
+			};
 
 ids={dfp="dfp",sd="sd",fr="fr",bfgs="bfgs",pow="pow",in="in"};
 
@@ -109,7 +107,8 @@ findMinStartSpecs[poly]=Transpose@{var[poly],startList[poly]};
 If[ValueQ[oldFMCTDV],
 	DownValues[
 		EngineeringOptimization`Private`fMCommonConvergenceTest
-		]=oldFMCTDV
+		]=oldFMCTDV;
+	oldFMCTDV=.
 	];
 
 (*pull out critical paramters from convergence test tracking -- note that
@@ -424,6 +423,42 @@ export[crits]=
 			],
 		PrependDirectory->EODExportDirectory
 		];
+
+fletcherReevesDirection="fletcher_reeves_direction";
+
+xpr[fletcherReevesDirection]=HoldForm[S^q=-\[Del]F[X^q]+\[Beta][q]*S^(q-1)];
+
+idealDirection="ideal_direction";
+
+xpr[idealDirection]=-inverseHessian[F].\[Del]F;
+
+MakeBoxes[Reals,_]="\[DoubleStruckCapitalR]";
+
+domain="domain";
+
+xpr[domain]=
+	Element[
+		SequenceForm["(",Sequence@@BoxForm`Intercalate[var[poly],","],")"],
+		Reals^2
+		];
+
+minimum="minimum";
+
+xpr[minimum]=
+	SequenceForm["(",
+		Sequence@@BoxForm`Intercalate[steps[poly,sd][[1,-1]],","],
+		")"
+		];
+
+(export[#1]=XMLDocument[prefix<>#1<>".xml",
+	DocBookInlineEquation[prefix<>#1,xpr[#1],SetIdAttribute->#2],
+	PrependDirectory->EODExportDirectory
+	])&@@@
+		{{idealDirection,False},
+			{fletcherReevesDirection,False},
+			{domain,False},
+			{minimum,False}
+			};
 
 filesToTransport={"hw_2_screenshot_assignment.png"};
 
