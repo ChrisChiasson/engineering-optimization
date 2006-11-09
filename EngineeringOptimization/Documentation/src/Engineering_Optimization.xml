@@ -15,9 +15,11 @@
 	</info>
 	<xi:include href="HW1.xml"/>
 	<xi:include href="Line_Search.xml"/>
+	<xi:include href="Unconstrained_Nonlinear_Optimization.xml"/>
 	<xi:include href="Bibliography.xml"/>
 	<xi:include href="Glossary.xml"/>
 	<xi:include href="HW1_Appendix.xml"/>
 	<xi:include href="Line_Search_Appendix.xml"/>
+	<xi:include href="Unconstrained_Nonlinear_Optimization_Appendix.xml"/>
 	<xi:include href="Common_Source_Appendix.xml"/>
 </book>
