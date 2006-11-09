@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix xml:id="Unconstrained_Nonlinear_Optimization_Appendix"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	version="5">
+	<title>Unconstrained Nonlinear Optimization — Homework 2</title>
+	<titleabbrev>Unconstrained Nonlinear Optimization</titleabbrev>
+	<para>The negative gradient and negative inverse Hessian dotted
+		with gradient (ideal) field plots are shown below superimposed on
+		a contour plot of the objective function from
+		<olink targetdoc="self" targetptr="Unconstrained_Nonlinear_Optimization"/>
+		and its	associated minimization paths.</para>
+	<para><xref linkend="HW2_code"/> gives the commands to solve the problems in
+		<olink targetdoc="self" targetptr="Unconstrained_Nonlinear_Optimization"/>
+		and create the graphs and tables.</para>
+	<xi:include href="mout/hw_2_minimization_paths_negative_gradient.xml"/>
+	<xi:include
+		href="mout/hw_2_minimization_paths_negative_inverse_hessian_dot_gradient.xml"
+		/>
+	<example xml:id="HW2_code">
+		<?dbfo keep-together="auto"?>
+		<title>Homework 2 Code</title>
+		<para>This is the code for the homework 2 calculations.</para>
+		<programlisting><xi:include href="mout/HW2.m"
+			parse="text"/></programlisting>
+	</example>
+</appendix>
