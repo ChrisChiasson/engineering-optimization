@@ -377,17 +377,16 @@ If[EODExport===True,
 	Export@@@#&/@ReleaseHold@DownValues[export][[All,1]];
 		pwd=InputDirectoryName[];
 		CopyFile[
-				ToFileName[
-					pwd,
-					#
-					],
-				ToFileName[
-					EODExportDirectory,
-					#
-					],
-				Overwrite->True
-				]&/@
-					filesToTransport;
+			ToFileName[
+				pwd,
+				#
+				],
+			ToFileName[
+				EODExportDirectory,
+				#
+				],
+			Overwrite->True
+			]&/@filesToTransport;
 		CopyFile[InputFileName[],
 			ToFileName[EODExportDirectory,InputFileBaseName[]],
 			Overwrite->True
