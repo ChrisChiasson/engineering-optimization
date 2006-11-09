@@ -7,7 +7,28 @@ BeginPackage["EngineeringOptimization`Documentation`HW2`",
 
 Begin["`Private`"];
 
-{Attributes[#]={NHoldAll},Format[#[i_]]=Subscript[#,i]}&/@{X,Y};
+{Attributes[#]={NHoldAll},Format[#[i_]]=Subscript[#,i]}&/@{X};
+
+(*for displaying a formatted inverse hessian*)
+
+MakeBoxes[inverseHessian[function_],format_]:=
+	SuperscriptBox[
+		RowBox[{
+			"(",
+			RowBox[{
+				SuperscriptBox[
+					"\[Del]",
+					"2"
+					],
+				MakeBoxes[
+					function,
+					format
+					]
+				}],
+			")"
+			}],
+		RowBox[{"-","1"}]
+		];
 
 prefix="hw_2_";
 
@@ -17,6 +38,12 @@ dotxml=".xml";
 
 eqn[poly]=F==X[1]+X[1]^2-X[2]-3*X[1]*X[2]+4*X[2]^2;
 
+xpr[poly]=eqn[poly][[2]];
+
+var[poly]=Union@Reap[eqn[poly]/.var:X[_]:>Sow[var]][[2,1]];
+
+startList[poly]={2,2};
+
 export[poly]=XMLDocument[prefix<>poly<>dotxml,
 	DocBookInlineEquation[prefix<>poly,eqn[poly]],
 	PrependDirectory->EODExportDirectory
@@ -24,36 +51,100 @@ export[poly]=XMLDocument[prefix<>poly<>dotxml,
 
 start="start";
 
-eqn[start]=Superscript[X,0]==MatrixForm[{{2},{2}}];
+eqn[start]=Superscript[X,0]==MatrixForm[startList[poly]];
 
 export[start]=XMLDocument[prefix<>start<>dotxml,
 	DocBookInformalEquation[prefix<>start,eqn[start]],
 	PrependDirectory->EODExportDirectory
 	];
 
-ids={dfp="dfp",bfgs="bfgs",sd="sd",fr="fr",pow="pow",in="in"};
+ids={dfp="dfp",sd="sd",fr="fr",bfgs="bfgs",pow="pow",in="in"};
 
 (*here are methods I wrote that can solve this problem*)
 
-method[dfp]={"VariableMetric","Theta"->0};
-method[bfgs]={"VariableMetric","Theta"->1};
-method[sd]="SteepestDescent";
-method[fr]="FletcherReeves";
-method[pow]="Powell";
-method[in]="IsaacNewton";
+method[dfp]={methodName[dfp]="VariableMetric","Theta"->0};
+method[bfgs]={methodName[bfgs]="VariableMetric","Theta"->1};
+method[sd]=methodName[sd]="SteepestDescent";
+method[fr]=methodName[fr]="FletcherReeves";
+method[pow]=methodName[pow]="Powell";
+method[in]=methodName[in]="IsaacNewton";
+
+(*This code modifies the Engineering Optimization code for the convergence test
+to record (Sow) whatever arguments are passed to it. This is how I pull out the
+critical optimization parameters.*)
+
+If[!ValueQ[oldFMCTDV],
+	DownValues[
+		EngineeringOptimization`Private`fMCommonConvergenceTest
+		]=
+		Insert[
+			oldFMCTDV=
+				DownValues[
+					EngineeringOptimization`Private`fMCommonConvergenceTest
+					],
+			HoldComplete[
+				Sow[{EngineeringOptimization`Private`arguments},
+					solution
+					]
+				],
+			{1,2,2,1}
+			]/.HoldComplete->Identity
+	];
 
 (*these are the individual optimization solutions and lists of points to/from
 which the algorithms took steps -- includes sart and stop points*)
 
-({opt[#1],steps[#1]}=Reap@
+findMinStartSpecs[poly]=Transpose@{var[poly],startList[poly]};
+
+({opt[poly,#1],steps[poly,#1]}=Reap@
 	ReleaseHold@Hold[FindMinimum][
-		eqn[poly][[2]],
-		{{X[1],2},{X[2],2}},
+		xpr[poly],
+		findMinStartSpecs[poly],
 		Method->method@#1,
-		StepMonitor:>Sow@{X[1],X[2]}
+		StepMonitor:>Sow[var[poly],id]
 		])&/@ids;
 
-(*these are the different symbols I am going to use for the data points*)
+(*restore normal convergence test operation*)
+
+If[ValueQ[oldFMCTDV],
+	DownValues[
+		EngineeringOptimization`Private`fMCommonConvergenceTest
+		]=oldFMCTDV
+	];
+
+(*pull out critical paramters from convergence test tracking -- note that
+the inverse hessian is computed right before each newton's method line search,
+so it can't be pulled from the convergence test arguments*)
+
+(methodTracking[#]=First/@
+	Split[
+		Internal`BlockFlatten[
+			steps[poly,#][[2,All,All,-1]],
+			{{1,2}}
+			]
+		])&/@ids;
+
+(*take the matrix entries of powel's method out of their lists*)
+
+methodTracking[pow]=Internal`BlockFlatten[methodTracking[pow],{{-1,-2}}];
+
+(*as mentioned above, tracking for Newton's method is reconstructed after the
+fact because I don't pass the inverse hessian to the convergence algorithm*)
+
+methodTracking[in]=
+	Table[
+		Inverse[D[xpr[poly],{var[poly],2}]],
+		{Length@methodTracking[in]}
+		];
+
+(*format the tracked critical paramters*)
+
+(formattedMethodTracking[#]=
+	If[MatrixQ[methodTracking[#][[1]]],
+		MatrixForm/@methodTracking@#,
+		methodTracking@#])&/@ids;
+
+(*these are the different symbols I use for the step data points*)
 
 plotSymbol[dfp]=PlotSymbol[Diamond,6];
 plotSymbol[bfgs]=PlotSymbol[Box];
@@ -69,38 +160,292 @@ plotSymbol[in]=
 		Circle[{0,0},.05]}
 		];
 
-(*here are the line colors and styles I will use for the plot*)
+(*here are the line colors and styles I  use for the plot*)
 
-plotStyle[dfp]={Yellow,Dashing[{0.015}]};
-plotStyle[bfgs]={Green,Dashing[{0.005,0.015}]};
-plotStyle[sd]={Red};
-plotStyle[fr]={Orange,Dashing[{0.005}]};
-plotStyle[pow]={Blue,Dashing[{0.01}]};
-plotStyle[in]={Violet,Dashing[{0.02}]};
+plotStyle[dfp]=Sequence[Yellow,Dashing[{0.015}]];
+plotStyle[bfgs]=Sequence[Green,Dashing[{0.005,0.015}]];
+plotStyle[sd]=Sequence[Red];
+plotStyle[fr]=Sequence[Orange,Dashing[{0.005}]];
+plotStyle[pow]=Sequence[Blue,Dashing[{0.01}]];
+plotStyle[in]=Sequence[Violet,Dashing[{0.02}]];
 
 (*labelFun generates a sequence of graphics primitives to draw the line and
 text indicating a particular label*)
 
-labelFun=
-	Function[{name,height},
-		Identity[Sequence][
-			Line[{{-4/5,height},{-1/5,height}}],
-			Text[name,{0,height},{-1,0}]
+labelFun[poly]=
+	Function[{name,height,id},
+		Module[{coords={{-4/5,height},{-1/5,height}}},
+			Identity[Sequence][
+				{plotStyle[id],
+					Line[coords],
+					plotSymbol[id][Mean/@Transpose@coords],
+					Text[name,{0,height},{-1,0}]
+					}
+				]
 			]
 		];
 
 (*labels store the results of labelFun*)
 
-label[dfp]=labelFun["DFP",2-3/5];
-label[bfgs]=labelFun["BFGS",2+1/5];
-label[sd]=labelFun["Steepest Descent",2];
-label[fr]=labelFun["Fletcher Reeves",2-1/5];
-label[pow]=labelFun["Powell",2+2/5];
-label[in]=labelFun["Newton",2-2/5];
+label[poly,dfp]=labelFun[poly]["DFP",2-3/5,dfp];
+label[poly,bfgs]=labelFun[poly]["BFGS",2+1/5,bfgs];
+label[poly,sd]=labelFun[poly]["Steepest Descent",2,sd];
+label[poly,fr]=labelFun[poly]["Fletcher Reeves",2-1/5,fr];
+label[poly,pow]=labelFun[poly]["Powell",2+2/5,pow];
+label[poly,in]=labelFun[poly]["Newton",2-2/5,in];
 
+(*options for plotting the function and the steps*)
 
+plotOpts=Sequence[AspectRatio->Automatic,
+	ImageSize->$ExportWidth,
+	FrameLabel->{X[1],X[2]}
+	];
 
-Abort[];
+(*the plot range for X[1] and X[2] in the density and contour plots*)
+
+plotRangeSpecs[poly]=Sequence@@
+	MapThread[Flatten@{##}&,{var[poly],{-3,1}+#&/@startList[poly]}];
+
+(*various extra labels for the plot*)
+
+plotAnnotations[poly]=
+	{White,
+		Text["Start",startList[poly]+{0,.15}],
+		Text["Minimum",opt[poly,sd][[2,All,2]]-{0,.15}],
+		Text[HoldForm[Evaluate[eqn[poly]]]/.Equal->Set,
+			startList[poly]-{1,2.5}]
+		};
+
+Block[{$DisplayFunction=Identity},
+	densityPlot[poly]=ReleaseHold@
+		Hold[DensityPlot][
+			xpr[poly],
+			plotRangeSpecs[poly],
+			Mesh->False,
+			PlotPoints->400
+			];
+	contourPlot[poly]=ReleaseHold@
+		Hold[ContourPlot][
+			xpr[poly],
+			plotRangeSpecs[poly]
+			];
+	sdFieldPlot[poly]=ReleaseHold@
+		Hold[PlotVectorField][
+			-D[xpr[poly],{var[poly],1}],
+			plotRangeSpecs[poly],
+			ColorFunction->Function[White]
+			];
+	inFieldPlot[poly]=ReleaseHold@
+		Hold[PlotVectorField][
+			-Inverse[D[xpr[poly],{var[poly],2}]].D[xpr[poly],{var[poly],1}],
+			plotRangeSpecs[poly],
+			ColorFunction->Function[White]
+			]			
+	];
+
+minimizationPaths="minimization_paths";
+
+gr[minimizationPaths]=
+	Show[
+		densityPlot[poly],
+		Graphics[{
+			plotStyle@#,
+			Line[steps[poly,#][[1]]],
+			plotSymbol[#]/@steps[poly,#][[1]],
+			label[poly,#]
+			}&/@ids
+			],
+		Graphics@plotAnnotations@poly,
+		plotOpts
+		];
+
+export[minimizationPaths]=
+	XMLDocument[
+		prefix<>minimizationPaths<>dotxml,
+		DocBookFigure[
+			prefix<>minimizationPaths,
+			"Minimization Paths on F's Density Plot",
+			"Steepest Descent, Fletcher Reeves, DFP, BFGS, Powell, and "<>
+				"Newton minimization methods all start from "<>
+				ToString[startList[poly]]<>" and take different paths to "<>
+				"minimize the function at "<>ToString[opt[poly,sd][[2,All,2]]]<>
+				". The paths are superimposed on a denisty plot of the "<>
+				"function which, in this case, is a grayscale two "<>
+				"dimensional heightmap.",
+			gr[minimizationPaths],
+			Caption->"The BFGS, DFP, and Fletcher Reeves methods took the "<>
+				"same path. Newton's method goes to the minimum in one "<>
+				"step. Powell's	method takes N (N+1) line searches (but only "<>
+				"N steps), if N is the number of independant variables in F.",
+			TitleAbbrev->"Minimization Paths"
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+minimizationPathsNegativeGradient="minimization_paths_negative_gradient";
+
+gr[minimizationPathsNegativeGradient]=
+	Show[
+		contourPlot[poly],
+		sdFieldPlot[poly],
+		Graphics[{
+			plotStyle@#,
+			Line[steps[poly,#][[1]]],
+			plotSymbol[#]/@steps[poly,#][[1]],
+			label[poly,#]
+			}&/@ids
+			],
+		plotOpts
+		];
+
+export[minimizationPathsNegativeGradient]=
+	XMLDocument[
+		prefix<>minimizationPathsNegativeGradient<>dotxml,
+		DocBookFigure[
+			prefix<>minimizationPathsNegativeGradient,
+			"Minimization Paths with Negative Gradient Vector Field",
+			XMLElement[
+				"phrase",
+				{},
+				{"This plot is almost the same as ",
+					XMLElement[
+						"olink",
+						{"targetdoc"->"self",
+							"targetptr"->prefix<>minimizationPaths
+							},
+						{}
+						],
+					". Instead of a height map, it has a contour plot of F. ",
+					"It also has a negative gradient vector field overlay ",
+					"where the negative gradients (by definition) are ",
+					"perpendicular to the contours and become smaller in ",
+					"magnitude toward the minimum."
+					}
+				],
+			gr[minimizationPathsNegativeGradient],
+			Caption->"The steepest descent method follows the negative "<>
+				"gradient field.",
+			TitleAbbrev->"Paths with Negative Gradient"
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+minimizationPathsNegInvHDotGrad=
+	"minimization_paths_negative_inverse_hessian_dot_gradient";
+
+gr[minimizationPathsNegInvHDotGrad]=
+	Show[
+		contourPlot[poly],
+		inFieldPlot[poly],
+		Graphics[{
+			plotStyle@#,
+			Line[steps[poly,#][[1]]],
+			plotSymbol[#]/@steps[poly,#][[1]],
+			label[poly,#]
+			}&/@ids
+			],
+		plotOpts
+		];
+
+export[minimizationPathsNegInvHDotGrad]=
+	XMLDocument[
+		prefix<>minimizationPathsNegInvHDotGrad<>dotxml,
+		DocBookFigure[
+			prefix<>minimizationPathsNegInvHDotGrad,
+			"Minimization Paths with Ideal Search Direction Field",
+			XMLElement[
+				"phrase",
+				{},
+				{"This plot is almost the same as ",
+					XMLElement[
+						"olink",
+						{"targetdoc"->"self",
+							"targetptr"->prefix<>minimizationPaths
+							},
+						{}
+						],
+					". Instead of a height map, it has a contour plot of F. ",
+					"It also has an ideal search direction vector field ",
+					"overlay. The vectors become smaller toward the minimum."
+					}
+				],
+			gr[minimizationPathsNegativeGradient],
+			Caption->"Because F is a quadratic polynomial, the ideal "<>
+				"search direction is given by the negative of the hessian of "<>
+				"F dotted with the gradient of F. That happens to be the "<>
+				"very same method used by Newton to pick a search "<>
+				"direction, so it takes only one step (in the ideal "<>
+				"direction) to get the the minimum.",
+			TitleAbbrev->"Paths with Ideal Direction"
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+(*create a table of the ungraphed critical paramters*)
+
+crits="ungraphed_critical_parameters";
+
+tabIds=Sort@DeleteCases[ids,sd];
+
+tab[crits,1]=
+	Module[
+		{range=Range@3},
+		Prepend[
+			formattedMethodTracking[#][[range]]&/@tabIds,
+    		range
+    		]
+    	];
+
+tabLabels=
+	{SequenceForm["Step"],
+		SequenceForm["BFGS Approx. ",inverseHessian[F]],
+		SequenceForm["DFP Approx. ",inverseHessian[F]],
+		"Fletcher Reeves \[Beta]",
+		SequenceForm["Newton ",inverseHessian[F]],
+		"Powell Search Direction Matrix"
+		};
+
+tab[crits,2]=Prepend[Transpose@tab[crits,1],tabLabels];
+
+export[crits]=
+	XMLDocument[
+		prefix<>crits<>dotxml,
+		DocBookTable[
+			prefix<>crits,
+			"Ungraphed Critical Minimization Parameters",
+			"Aside from the \"step\" header, header row labels parameters"<>
+				"that can't be inferred from the minimization paths. The "<>
+				"more mathematical parts of the headers are for the inverse"<>
+				"Hessian of F (or its approximation).",
+			tab[crits,2],
+			TitleAbbrev->"Critical Paramters",
+			Caption->"These parameters are difficult to deduce from the "<>
+				"minimization paths plot, so they are tabulated here."
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+filesToTransport={"hw_2_screenshot_assignment.png"};
+
+If[EODExport===True,
+	Export@@@#&/@ReleaseHold@DownValues[export][[All,1]];
+		pwd=InputDirectoryName[];
+		CopyFile[
+			ToFileName[
+				pwd,
+				#
+				],
+			ToFileName[
+				EODExportDirectory,
+				#
+				],
+			Overwrite->True
+			]&/@filesToTransport;
+		CopyFile[InputFileName[],
+			ToFileName[EODExportDirectory,InputFileBaseName[]],
+			Overwrite->True
+			]
+	];
 
 End[];
 
