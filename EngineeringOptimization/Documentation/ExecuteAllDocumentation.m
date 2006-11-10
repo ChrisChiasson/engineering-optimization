@@ -5,7 +5,7 @@ BeginPackage["EngineeringOptimization`Documentation`ExecuteAllDocumentation`",
 
 Begin["`Private`"];
 
-Get["EngineeringOptimization`Documentation`"<>#<>"`"]&/@{"HW1","PR1"}
+Get["EngineeringOptimization`Documentation`"<>#<>"`"]&/@{"HW1","PR1","HW2"}
 
 If[EODExport===True,
 	eoSources=
