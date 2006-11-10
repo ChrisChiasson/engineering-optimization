@@ -14,7 +14,7 @@
 		since there are no more examples in chapter 3 after example 3-3 and Dr.
 		El-Sayed verbally mentioned problems rather than examples, I am doing
 		the problems.</para>
-	<figure id="hw_2_screenshot_assignment">
+	<figure xml:id="hw_2_screenshot_assignment">
 		<title>Homework 2 Assignment</title>
 		<screenshot>
 			<mediaobject>
@@ -40,8 +40,8 @@
 		<attribution><citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>, p129</attribution>
 		<para><emphasis role="strong">3-2</emphasis> Given the
 			unconstrained minimization problem</para>
-		<para>Minimize: <xi:include href="mout/hw2.objective.inline-eqns.xml"/></para>
-		<xi:include href="hw2/mout/hw2.minimization.start-eqns.xml"/>
+		<para>Minimize: <xi:include href="mout/hw_2_poly.xml"/></para>
+		<para><xi:include href="mout/hw_2_start.xml"/></para>
 		<para>Apply three iterations of the method of steepest descent to
 			this problem. List the values of all critical parameters at each
 			step.</para>
@@ -57,21 +57,130 @@
 			Newton's method.</para>
 	</blockquote>
 	<para>The solution to all of the quoted questions is presented in
-		<xref linkend="fig.hw2.minimizationpathsonfunctiondensityplot"/>
+		<xref linkend="hw_2_minimization_paths"/>
 		and
-		<xref linkend="table.hw2.ungraphedcriticalminimizationparameters"/>.
-		The	calculations are available in APPENDIX . I suppose I could leave it at that, since the
-		solution and its meaning is complete and self-evident to someone
-		knowledgeable in optimization, but I think some comments
-		are appropriate.</para>
-	<para>A first thing to note about the graph is that I have
-		iterated each method to converge on the minimum, not just through
-		the requisite three steps. Doing so involved actually programming
-		each method, instead of completing the problems <quote>by
-			hand</quote>. In lecture, Dr. El-Sayed argued that programming
-		each method is more a test of programming skill or in my case,
-		doggedness, than engineering acumen. I agree, but I used the plot
-		and table as a way to "debug" my work, so programming the methods
-		was mainly to help me rather than show off.</para>
-	
+		<xref linkend="hw_2_ungraphed_critical_parameters"/>.
+		The	calculations are available in
+		<olink targetdoc="self" targetptr="HW2_code"/>. I suppose I could omit any
+		further comments, since the referenced materials answer the questions.
+		However, I think some comments	are appropriate.</para>
+	<para>A first thing to note about the graph is that I have iterated each
+		method to converge on the minimum, not just through	the requisite three
+		steps. Doing so involved actually programming each method, instead of
+		completing the problems <quote>by hand</quote>. In lecture, Dr. El-Sayed
+		argued that programming	each method is more a test of programming skill,
+		than engineering acumen. I somewhat agree, but I used the plot and table
+		as a way to "debug" my work. So my programming of all the methods was
+		meant to help me rather than to show off any programming skill.</para>
+	<xi:include href="mout/hw_2_minimization_paths.xml"/>
+	<para>The graph shows the search direction and step size for each iteration.
+		For some methods, the graph does not show all critical information used
+		to obtain the search direction. For instance, while contours and thus
+		gradients (perpendicular to contours) are easy to infer from the graph,
+		the Hessian matrix isn't, at least for me. For this reason, I have
+		included <xref linkend="hw_2_ungraphed_critical_parameters"/>.</para>
+	<xi:include href="mout/hw_2_ungraphed_critical_parameters.xml"/>
+	<para>Since this problem has a quadratic objective function, each method's
+		ability to determine a search directions parallel to the negative of
+		<xi:include	href="mout/hw_2_ideal_direction.xml"/>, the ideal
+		direction for this problem, determines how well it will do relative to
+		the others. The ideal direction is otherwise known as the negative
+		inverse of the Hessian dotted with the gradient. Physically, it is a
+		vector that points from any location,
+		<xi:include href="mout/hw_2_domain.xml"/>, directly to the
+		minimum	at
+		<xi:include href="mout/hw_2_minimum.xml"/>.
+		To help the reader visualize the ideal and negative gradient fields for
+		this problem, I have included both field plots superimposed on contours
+		and the	optimization paths in
+		<olink targetdoc="self" targetptr="hw_2_minimization_paths_negative_inverse_hessian_dot_gradient"/>
+		and
+		<olink targetdoc="self" targetptr="hw_2_minimization_paths_negative_gradient"/>.</para>
+	<section>
+		<title>Method Discussion</title>
+		<section>
+			<title>Steepest Descent</title>
+			<para>The method of steepest descent is fairly easy to
+				understand. It follows a direction that is perpendicular to a
+				contour line in the declining direction from its
+				location. This direction is the negative of the gradient. As can
+				be seen from
+				<olink targetdoc="self" targetptr="hw_2_minimization_paths_negative_gradient"/>,
+				it zig-zags in perpendicular directions because the minimum of
+				the	line search along a gradient is located at the tangent of a
+				contour and the line search. The method takes
+				<quote>many</quote> iterations relative to the others, but does
+				converge.</para>
+		</section>
+		<section>
+			<title>Fletcher-Reeves</title>
+			<para>To be honest, I do not understand how the	Fletcher-Reeves
+				conjugate direction method works on a theoretical level. It
+				makes sense that turning the gradient a	bit via vector addition
+				in the direction of the previous gradient will give a more
+				controlled descent.
+				<olink targetdoc="self" targetptr="PTVFNRC"/> &#167; 10.6
+				carries a brief theoretical description. The vector
+				addition for the search direction, S, on iteration q is
+				<xi:include href="mout/hw_2_fletcher_reeves_direction.xml"/>,
+				where <xi:include href="mout/hw_2_fletcher_reeves_beta.xml"/>.
+				I don't know if this method qualifies as quasi-Newton, but it
+				certainly isn't just first order.</para>
+		</section>
+		<section xml:id="hw_2_dfp_detail">
+			<title>Davidon-Fletcher-Powell (DFP)</title>
+			<para>As mentioned in
+				<olink targetdoc="self" targetptr="GNVNOTED"/> at the beginning
+				of &#167; 3-3.3	Variable Metric Methods, the DFP quasi-Newton
+				method builds an N by N<footnote><para>N is the number of
+				variables in the optimization problem. In this case, N is
+				two.</para></footnote> matrix to approximate the inverse of
+				F's Hessian, which should help it converge to the minimum in
+				fewer iterations than Fletcher-Reeves, due to the retention of
+				more information and use of more computations per step. In my
+				limited testing of non-quadratic functions, the Variable
+				Metric Methods did converge in fewer iterations than the
+				Fletcher-Reeves method.</para>
+		</section>
+		<section xml:id="hw_2_bfgs_detail">
+			<title>Broyden-Fletcher-Shanno-Goldfarb (BFGS)</title>
+			<para>As mentioned in
+				<olink targetdoc="self" targetptr="MHEM"/>, the BFGS method is
+				another <link xl:href="http://eom.springer.de/Q/q120050.htm">quasi-Newton
+				method</link> (includes direction update equations) in the
+				Broyden family. From that source, I learned that the <link
+				linkend="hw_2_minimization_paths">search points generated by
+				both the DFP and BFGS methods are identical</link>, which is
+				confirmed by my plot. Also, the BFGS method is supposedly more
+				tolerant to loss of numerical precision, which I have not tried
+				to verify.</para>
+		</section>
+		<section>
+			<title>Powell</title>
+			<para>Powell's method is very special because it is a zero order
+				method, meaning it doesn't require a symbolic gradient or
+				numerical construction thereof. The tradeoff for this is a
+				relatively high number of function evaluations. The Powell
+				method finds search directions every N steps by discarding 
+				previous ones for an average direction over the last N
+				steps. Also, after each step, the search direction matrix column
+				corresponding to the present step number is replaced with the
+				actual step vector.</para>
+			<para>The forumlation given in <olink targetdoc="self"
+				targetptr="GNVNOTED"/>'s &#167; 3-2.2 only provides for an
+				initial search in each of the N independant directions. I am
+				not sure why the book mentions six starting directions in the
+				assignement.</para>
+		</section>
+		<section>
+			<title>Newton</title>
+			<para>This method is ideal for this type of problem,
+				where the negative of the Hessian inverse dotted with the
+				gradient at any point in the domain leads directly to the
+				minimum, the definition of the objective is simple, and the
+				number of independant variables is low. Because the search
+				direction points exactly to the minimum, the method moves to the
+				minimum in one step.</para>
+		</section>
+	</section>		
 </chapter>
