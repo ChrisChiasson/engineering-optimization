@@ -368,7 +368,7 @@ export[minimizationPathsNegInvHDotGrad]=
 					"overlay. The vectors become smaller toward the minimum."
 					}
 				],
-			gr[minimizationPathsNegativeGradient],
+			gr[minimizationPathsNegInvHDotGrad],
 			Caption->"Because F is a quadratic polynomial, the ideal "<>
 				"search direction is given by the negative of the hessian of "<>
 				"F dotted with the gradient of F. That happens to be the "<>
