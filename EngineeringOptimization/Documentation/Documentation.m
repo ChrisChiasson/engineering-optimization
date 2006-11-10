@@ -10,7 +10,7 @@ Optimization Documentaiton.";
 
 Begin["`Private`"];
 
-$TextStyle={FontSize->10,FontFamily->"Times New Roman"};
+$TextStyle={FontSize->12,FontFamily->"Times New Roman"};
 
 $FormatType=TraditionalForm;
 
