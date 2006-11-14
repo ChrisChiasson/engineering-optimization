@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Website Build" default="help">
+	<property environment="env"/>
+	<!--the next property is different from build-website.xml-->
+	<property name="basedir" location="."/>
+	<!--the next property is different from build-website.xml-->
+	<property name="mmade_xml_parent_dir" location="${env.MMADE_XML_PARENT_DIR}"/>
+	<!--property name="mmade_xml_parent_dir" location="C:\workspace\mmade\"/-->	
+	<import
+		file="${mmade_xml_parent_dir}/XML/Ant/sounds.xml"/>
+	<property name="mmade-buildfile"
+		location="${mmade_xml_parent_dir}/XML/Ant/build.xml"/>
+	<property name="build" location="build"/>
+	<!--the next property is different from build-website.xml-->
+	<property name="htdocs" location="English"/>
+	<property name="doc-dir" value="Documentation"/>
+	<property name="eo-webname" value="Engineering_Optimization"/>
+	<property name="eo-context" value="EngineeringOptimization"/>
+	<property name="eo-gname" value="engineering-optimization"/>
+	<!--the next path is different from build-website.xml-->
+	<path id="eo-mfiles" path="ExecuteAllDocumentation.m"/>
+	<target name="engineering-optimization">
+		<!--the dir attribute is different from build-website.xml-->
+		<ant antfile="${mmade-buildfile}"
+			inheritall="false"
+			dir="../../"
+			target="all">
+			<property name="mmade_xml_parent_dir" location="${mmade_xml_parent_dir}"/>
+			<property name="xml" value="${eo-webname}.xml"/>
+			<property name="build" location="${build}/${eo-webname}"/>
+			<!--the next property is different from build-website.xml-->
+			<property name="dist" location="${htdocs}"/>
+			<!--the next property is different from build-website.xml-->
+			<property name="documentation"
+				location="../../../${eo-gname}/${eo-context}/${doc-dir}"/>
+			<reference torefid="mfiles" refid="eo-mfiles"/>
+	  </ant>
+	</target>
+	<target name="all" depends="engineering-optimization"
+		description="builds all website sections"/>
+	<target name="clean">
+		<delete dir="${build}" includeemptydirs="true"/>
+	</target>
+	<target name="dist-clean" depends="clean">
+		<delete dir="${htdocs}" includeemptydirs="true"/>
+	</target>
+	<target name="help" description="Displays help about the project.">
+		<echo>os: ${os.name}</echo>
+		<echo>project: ${ant.project.name}</echo>
+		<echo>java: ${ant.java.version}</echo>
+		<echo>base directory: ${basedir}</echo>
+		<echo>Try ant -projecthelp</echo>
+	</target>
+</project>
