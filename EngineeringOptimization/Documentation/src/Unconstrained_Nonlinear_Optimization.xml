@@ -98,9 +98,9 @@
 		<olink targetdoc="self" targetptr="hw_2_minimization_paths_negative_inverse_hessian_dot_gradient"/>
 		and
 		<olink targetdoc="self" targetptr="hw_2_minimization_paths_negative_gradient"/>.</para>
-	<section>
+	<section xml:id="hw_2_method_detail">
 		<title>Method Discussion</title>
-		<section>
+		<section xml:id="hw_2_sd_detail">
 			<title>Steepest Descent</title>
 			<para>The method of steepest descent is fairly easy to
 				understand. It follows a direction that is perpendicular to a
@@ -114,7 +114,7 @@
 				<quote>many</quote> iterations relative to the others, but does
 				converge.</para>
 		</section>
-		<section>
+		<section xml:id="hw_2_fr_detail">
 			<title>Fletcher-Reeves</title>
 			<para>To be honest, I do not understand how the	Fletcher-Reeves
 				conjugate direction method works on a theoretical level. It
@@ -157,7 +157,7 @@
 				tolerant to loss of numerical precision, which I have not tried
 				to verify.</para>
 		</section>
-		<section>
+		<section xml:id="hw_2_pow_detail">
 			<title>Powell</title>
 			<para>Powell's method is very special because it is a zero order
 				method, meaning it doesn't require a symbolic gradient or
@@ -174,7 +174,7 @@
 				not sure why the book mentions six starting directions in the
 				assignement.</para>
 		</section>
-		<section>
+		<section xml:id="hw_2_in_detail">
 			<title>Newton</title>
 			<para>This method is ideal for this type of problem,
 				where the negative of the Hessian inverse dotted with the
