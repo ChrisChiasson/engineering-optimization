@@ -57,9 +57,9 @@
 			Newton's method.</para>
 	</blockquote>
 	<para>The solution to all of the quoted questions is presented in
-		<xref linkend="hw_2_minimization_paths"/>
-		and
-		<xref linkend="hw_2_ungraphed_critical_parameters"/>.
+		<xref linkend="hw_2_minimization_paths"/>,
+		<xref linkend="hw_2_ungraphed_critical_parameters_iHess"/>,
+		and <xref linkend="hw_2_ungraphed_critical_parameters_nonIHess"/>.
 		The	calculations are available in
 		<olink targetdoc="self" targetptr="HW2_code"/>. I suppose I could omit any
 		further comments, since the referenced materials answer the questions.
@@ -78,8 +78,10 @@
 		to obtain the search direction. For instance, while contours and thus
 		gradients (perpendicular to contours) are easy to infer from the graph,
 		the Hessian matrix isn't, at least for me. For this reason, I have
-		included <xref linkend="hw_2_ungraphed_critical_parameters"/>.</para>
-	<xi:include href="mout/hw_2_ungraphed_critical_parameters.xml"/>
+		included <xref linkend="hw_2_ungraphed_critical_parameters_iHess"/> and
+		<xref linkend="hw_2_ungraphed_critical_parameters_nonIHess"/>.</para>
+	<xi:include href="mout/hw_2_ungraphed_critical_parameters_iHess.xml"/>
+	<xi:include href="mout/hw_2_ungraphed_critical_parameters_nonIHess.xml"/>
 	<para>Since this problem has a quadratic objective function, each method's
 		ability to determine a search directions parallel to the negative of
 		<xi:include	href="mout/hw_2_ideal_direction.xml"/>, the ideal

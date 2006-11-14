@@ -380,46 +380,82 @@ export[minimizationPathsNegInvHDotGrad]=
 		PrependDirectory->EODExportDirectory
 		];
 
-(*create a table of the ungraphed critical paramters*)
+(*create two tables of the ungraphed critical paramters*)
 
 crits="ungraphed_critical_parameters";
 
-tabIds=Sort@DeleteCases[ids,sd];
+(*the first table will cover Newton and Quasi-Newton search methods that
+use an inverse Hessian matrix (or approximation)*)
 
-tab[crits,1]=
-	Module[
-		{range=Range@3},
-		Prepend[
-			formattedMethodTracking[#][[range]]&/@tabIds,
-    		range
-    		]
-    	];
+iHess="_iHess";
 
-tabLabels=
-	{SequenceForm["Step"],
-		SequenceForm["BFGS Approx. ",inverseHessian[F]],
-		SequenceForm["DFP Approx. ",inverseHessian[F]],
-		"Fletcher Reeves \[Beta]",
-		SequenceForm["Newton ",inverseHessian[F]],
-		"Powell Search Direction Matrix"
-		};
+tabIds[iHess]={step,dfp,bfgs,in};
 
-tab[crits,2]=Prepend[Transpose@tab[crits,1],tabLabels];
+(*the second table covers those that do not (Fletcher-Revves and Powell)*)
 
-export[crits]=
+nonIHess="_nonIHess";
+
+tabIds[nonIHess]={step,fr,pow};
+
+tabLabel[step]="Step";
+tabLabel[bfgs]=SequenceForm["BFGS Approximate ",inverseHessian[F]];
+tabLabel[dfp]=SequenceForm["DFP Approximate ",inverseHessian[F]];
+tabLabel[in]=SequenceForm["Newton ",inverseHessian[F]];
+tabLabel[fr]="Fletcher Reeves \[Beta]";
+tabLabel[pow]="Powell Search Direction Matrix";
+
+formattedMethodTracking/:formattedMethodTracking[step][[{i__Integer}]]={i};
+
+genTable[ids_List]:=Transpose@
+	Module[{range=Range[3]},
+		Prepend[formattedMethodTracking[#][[range]],tabLabel[#]]&/@ids
+		];
+
+tab[crits<>iHess]=genTable[tabIds[iHess]];
+
+tab[crits<>nonIHess]=genTable[tabIds[nonIHess]];
+
+export[crits<>iHess]=
 	XMLDocument[
-		prefix<>crits<>dotxml,
+		prefix<>crits<>iHess<>dotxml,
 		DocBookTable[
-			prefix<>crits,
-			"Ungraphed Critical Minimization Parameters",
-			"Aside from the \"step\" header, header row labels parameters"<>
-				"that can't be inferred from the minimization paths. The "<>
-				"more mathematical parts of the headers are for the inverse"<>
-				"Hessian of F (or its approximation).",
-			tab[crits,2],
-			TitleAbbrev->"Critical Paramters",
+			prefix<>crits<>iHess,
+			"Ungraphed Critical Minimization Parameters \[LongDash] Hessians "<>
+				"of F",
+			"Aside from the step column, the columns in this table are "<>
+				"approximate or exact Hessian matrices as calculated by the "<>
+				"optimization methods.",
+			tab[crits<>iHess],
+			TitleAbbrev->"Hessians of F",
 			Caption->"These parameters are difficult to deduce from the "<>
-				"minimization paths plot, so they are tabulated here."
+				"minimization paths plot, so they are tabulated here. "<>
+				"In particular, it would be almost impossible to guess the "<>
+				"approximations to the inverse Hessian from the variable "<>
+				"metric methods. Note that by the third iteration, all "<>
+				"significant digits of the approximate inverse Hessians "<>
+				"agree with the exact Newton's method."  
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+export[crits<>nonIHess]=
+	XMLDocument[
+		prefix<>crits<>nonIHess<>dotxml,
+		DocBookTable[
+			prefix<>crits<>nonIHess,
+			"Other Ungraphed Critical Minimization Parameters",
+			"Aside from the step column, the columns in this table are "<>
+				"critical optimization parameters used in the minimization "<>
+				"of F.",
+			tab[crits<>nonIHess],
+			TitleAbbrev->"Other Critical Paramters",
+			Caption->"Powell's method lists the (column) matrix of search "<>
+				"vectors from every step, which corresponds to N + 1 line "<>
+				"searches in this method - as opposed to the others. "<>
+				"The Fletcher-Reeves method uses the least storage of all "<>
+				"methods except the steepest descent - but manages to "<>
+				"take the same steps as the variable metric methods for this "<>
+				"particular objective function."
 			],
 		PrependDirectory->EODExportDirectory
 		];
