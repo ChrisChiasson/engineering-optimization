@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Website Build" default="help">
 	<property environment="env"/>
-	<!--two levels above the EngineeringOptimization directory-->
+	<!--this file was originally two levels above the EngineeringOptimization
+		directory (if I had left it there, you wouldn't be able to see it)
+		and still writes to a build directory on the level of the
+		engineering-optimization directory-->
 	<!--be careful if you execute this file that you have write permission to
 		the build directory-->
 	<property name="basedir" location="../../../"/>

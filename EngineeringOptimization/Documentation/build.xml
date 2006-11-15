@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="Website Build" default="help">
+<project name="Build" default="help">
+	<!--this file is not a good example of a build file to use with MMADE,
+		it was originally derived from the website-build.xml file - and
+		even that file originally sat one level above engineering-optimization
+		(and two levels above EngineeringOptimization and three levels above
+		this directory)-->
 	<property environment="env"/>
 	<!--the next property is different from build-website.xml-->
 	<property name="basedir" location="."/>
