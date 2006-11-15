@@ -1,0 +1,1 @@
+Get["EngineeringOptimization`Documentation`HW3`HW3`"];
