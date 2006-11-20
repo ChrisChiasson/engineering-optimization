@@ -8,6 +8,8 @@
 	<property environment="env"/>
 	<!--the next property is different from build-website.xml-->
 	<property name="basedir" location="."/>
+	<!--SVGMath-->
+	<property name="foMathMLIntermediate" value="true"/>
 	<!--the next property is different from build-website.xml-->
 	<property name="mmade_xml_parent_dir" location="${env.MMADE_XML_PARENT_DIR}"/>
 	<!--property name="mmade_xml_parent_dir" location="C:\workspace\mmade\"/-->	
