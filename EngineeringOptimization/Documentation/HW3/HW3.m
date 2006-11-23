@@ -9,6 +9,8 @@ Begin["`Private`"];
 
 {Attributes[#]={NHoldAll},Format[#[i_]]=Subscript[#,i]}&/@{X};
 
+prefix="hw_3";
+
 (*problem 4-4*)
 
 eqns[4,4,1][X1_,X2_]=F==2*X1+4*X2;
@@ -73,6 +75,17 @@ gr[4,4,3]=
           Dashing[{1}],Green,PointSize[0.03],Point[{X@1,X@2}/.sol[4,4][[2]]],
           Line[{{2/3,2/3},{2,0}}]}]];
 
+(*create markup for the graph*)
+gr44="_gr_4_4";
+
+export[gr44]=
+  XMLDocument[prefix<>gr44<>".xml",
+    DocBookFigure[prefix<>gr44,"P 4-4 Two Variable Function Space",
+      "A contour plot is shown on a non-rectangular domain. The minima of the \
+function occur on a solid green line marking the edge of the domain. A large \
+green point at one end of the green line indicates the point the simplex \
+algorithm found. Dotted red lines show the other edges of the domain.",
+      gr[4,4,3]]];
 
 (*problem 4-5*)
 
@@ -134,7 +147,32 @@ gr[4,5,3]=
           Line[{{0,2},{1,0},{3,0}}],Thickness[0.01],Dashing[{1}],Green,
           PointSize[0.03],Point[{X@1,X@2}/.sol[4,5][[2]]]}]];
 
-Abort[];
+gr45="_gr_4_5";
+
+(*create markup for the graph*)
+
+export[gr45]=
+  XMLDocument[prefix<>gr45<>".xml",
+    DocBookFigure[prefix<>gr45,"P 4-5 Two Variable Function Space",
+      "A contour plot is shown on a non-rectangular domain. A large green point \
+indicates the point that the simplex algorithm found to be the minimum on the \
+given domain. Dotted red lines show the other edges of the domain.",
+      gr[4,5,3]]];
+
+(*create xml for both sets of equations*)
+
+Outer[
+	Module[
+		{id=ToString[SequenceForm@@BoxForm`Intercalate[{prefix,eqns,##},"_"]]},
+		export[id]=
+			XMLDocument[id<>".xml",
+				DocBookInlineEquation[id,eqns[##]],
+				PrependDirectory->EODExportDirectory
+				]
+		]&,
+	{4,5},
+	Range[5]
+	];
 
 End[];
 
