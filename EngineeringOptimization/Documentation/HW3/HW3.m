@@ -1,5 +1,6 @@
 BeginPackage["EngineeringOptimization`Documentation`HW3`",
 	{"EngineeringOptimization`Documentation`",
+		"EngineeringOptimization`Documentation`Utility`",
 		"EngineeringOptimization`",
 		"Graphics`InequalityGraphics`",
 		"Graphics`FilledPlot`",
@@ -61,19 +62,49 @@ Block[{$DisplayFunction=Identity},
     gr[4,4,1]=
       ReleaseHold@
         Hold[ContourPlot][eqns[4,4,1][X@1,X@2][[2]],Sequence@@rangeSpec[4,4],
-          ColorFunction\[Rule](Hue[.7,1-#,1]&)];
+          ColorFunction->(Hue[.7,1-#,1]&)];
     gr[4,4,2]=
       InequalityPlot[!regionFunction[4,4][X@1,X@2],
           Apply[Sequence,#+{0,-0.02,0.02}&/@rangeSpec[4,4]],
-          Fills\[Rule]{White}]/.Line[__]\[Rule]Sequence[]];
+          Fills->{White}]/.Line[__]->Sequence[]];
+
+Print@Context@LabelLines;
 
 gr[4,4,3]=
-    Show[gr[4,4,1],gr[4,4,2],
-      Graphics[{Thickness[0.01],Dashing[{.05,.025}],Red,
-          Line[{{0,rangeSpec[4,4][[2,-1]]},{0,2},{2/3,2/3}}],
-          Line[{{2,0},{rangeSpec[4,4][[1,-1]],0}}],Thickness[0.01],
-          Dashing[{1}],Green,PointSize[0.03],Point[{X@1,X@2}/.sol[4,4][[2]]],
-          Line[{{2/3,2/3},{2,0}}]}]];
+	Show[gr[4,4,1],
+		gr[4,4,2],
+		With[{solVector={X@1,X@2}/.sol[4,4][[2]]},
+			Graphics[
+				{Thickness[0.01],Dashing[{.05,.025}],Red,
+					Line[{{0,rangeSpec[4,4][[2,-1]]},{0,2},{2/3,2/3}}],
+					Line[{{2,0},{rangeSpec[4,4][[1,-1]],0}}],Thickness[0.01],
+					Dashing[{1}],Green,PointSize[0.03],Point[solVector],
+					Line[{solVector,{2,0}}],Black,
+					Text[
+						DisplayForm@
+							Cell[
+								StripBoxes@
+									ToBoxes@
+										NumberForm[
+											eqns[4,4,1][Sequence@@#][[2]],
+											2
+											],
+								Background->White
+								],
+						#]&/@
+							Append[
+								LabelLines[
+									gr[4,4,1],
+									First@#&,
+									0.5,
+									RegionFunction->regionFunction[4,4]
+									],
+								Mean[{{X@1,X@2}/.sol[4,4][[2]],{2,0}}]
+								]
+					}
+				]
+			],
+		FrameLabel->X/@{1,2}];
 
 (*create markup for the graph*)
 gr44="_gr_4_4";
@@ -142,10 +173,33 @@ Block[{$DisplayFunction=Identity},
           Fills->{White}]/.Line[__]->Sequence[]];
 
 gr[4,5,3]=
-    Show[gr[4,5,1],gr[4,5,2],
-      Graphics[{Thickness[0.01],Dashing[{.05,.025}],Red,
-          Line[{{0,2},{1,0},{3,0}}],Thickness[0.01],Dashing[{1}],Green,
-          PointSize[0.03],Point[{X@1,X@2}/.sol[4,5][[2]]]}]];
+	With[{solVector={X@1,X@2}/.sol[4,5][[2]]},
+		Show[
+			gr[4,5,1],
+			gr[4,5,2],
+			Graphics[
+				{Thickness[0.01],Dashing[{.05,.025}],Red,
+					Line[{{0,2},{1,0},{3,0}}],Thickness[0.01],Dashing[{1}],
+					Green,PointSize[0.03],Point[solVector],Black,
+					Text[DisplayForm@
+						Cell[StripBoxes@ToBoxes@NumberForm[
+								eqns[4,5,1][Sequence@@#][[2]],
+								2
+								],
+							Background->White
+							],
+						#]&/@LabelLines[gr[4,5,1],First@#&,0.5,
+									RegionFunction->regionFunction[4,5]
+									],
+					Text[NumberForm[eqns[4,5,1][Sequence@@solVector][[2]],2],
+						solVector,
+						{1,1}
+						]
+					}
+				],
+			FrameLabel->X/@{1,2}
+			]
+		];
 
 gr45="_gr_4_5";
 
@@ -173,6 +227,15 @@ Outer[
 	{4,5},
 	Range[5]
 	];
+
+(*create xml for the solution vectors*)
+
+Module[{id=ToString[SequenceForm@@BoxForm`Intercalate[{prefix,sol,##},"_"]]},
+      export[id]=
+        XMLDocument[id<>".xml",
+          DocBookInlineEquation[id,
+            MatrixForm/@Equal@@Thread[sol[##][[2]],Rule]],
+          PrependDirectory->EODExportDirectory]]&@@@{{4,4},{4,5}};
 
 End[];
 
