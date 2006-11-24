@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix xml:id="Linear_Programming_HW3_Appendix"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	version="5">
+	<title>Linear Programming — Homework 3</title>
+	<titleabbrev>Linear Programming 3</titleabbrev>
+	<example xml:id="HW3_code">
+		<?dbfo keep-together="auto"?>
+		<title>Homework 3 Code</title>
+		<para>This is the code for the homework 3 calculations.</para>
+		<programlisting><xi:include href="mout/HW3.m"
+			parse="text"/></programlisting>
+	</example>
+</appendix>
