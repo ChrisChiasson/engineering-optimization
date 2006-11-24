@@ -35,6 +35,10 @@ FindMinimum::nfv="`1` is not a function of the given variable `2`.";
 General::badargs="Bad arguments were supplied to `1`. "<>
 "The call was as follows: `2`";
 General::badopts="Received bad options: `1`.";
+LinearMinimizeTableau::usage="LinearMinimizeTableau[tableau,basis] performs \
+the simplex method of linear minimization on tableau with a given basis. \
+tableau is a matrix, and basis is a list of positions for the basis variables.";
+LinearMinimizeTableau::unbound="The system can be minimized without bound.";
 
 Begin["`Private`"]
 (* Implementation of the package *)
@@ -1871,6 +1875,94 @@ to understand, and easier to debug.*)
 			MaxIterations/.{options}
 			][[1]];
 		{function/.solutionRules,solutionRules}];
+
+(*simplex method*)
+
+tableauQ[tableau_]:=MatchQ[tableau,{{__}..}];
+
+basisQ[basis_]:=MatchQ[basis,{{__?NumericQ}..}];
+
+pivot[inputtableau_?tableauQ,pivotpos:{_?NumericQ,_?NumericQ}]:=
+	Module[
+		{inputtabdim=Dimensions[inputtableau],
+			modrow=Extract[inputtableau,Most[pivotpos]]/
+				Extract[inputtableau,pivotpos]
+			},
+		{Sequence@@
+			Map[#-#[[pivotpos[[1]]]]*modrow&,
+				inputtableau[[Range[1,First[pivotpos]-1]]]
+				],
+			modrow,
+			Sequence@@
+				Map[#-#[[pivotpos[[1]]]]*modrow&,
+					inputtableau[[Range[First[pivotpos]+1,First[inputtabdim]]]]
+					]
+			}
+		];
+
+(*simphase2step1 returns the position within the optimization row that
+corresponds to the most negative variable coefficient and that is not in the
+basis or on the right hand side. If the most negative variable happens to be
+positive, the optimization is finished.*)
+
+simphase2step1[optimizationrow:{__},basis_?basisQ]:=
+	Position[
+		optimizationrow,
+		Function[If[Negative[#],#,Throw[simdone]]][
+			Min[Delete[optimizationrow,{{-1},Delete[Rest/@basis,0]}]]
+			]
+		][[1,1]];
+
+(*LinearMinimizeTableau checks to see if the solution is done, unbound, or
+neither (Null). If neither, then it calls itself after pivoting on the variable
+to enter the basis (with the column depending on what will create the biggest
+drop in the objective function as per simphase2step1 and the row depending on
+what variable has the minimum value of rhs/lhs[[column]]). The rhs/lhs[[column]]
+is the simplex method ratio test - it allows the maximal rise (in the variable
+entering the basis) by throwing away the variable causing the lowest bound (to
+the variable that enters the basis)*)
+
+(*the pure function that begins with "If[Positive" is the one that sets the row
+for the pivot *)
+
+(*the Catch is in case simphase2step1 returns simdone or in case the "If[FreeQ"
+pure function returns unbound.*)
+
+(*the&&NumericQ part makes the algorithm work even when the tableau is augmented
+(thus the objective function would be on the 2nd to last row and the right hand
+side of that row would have a variable in it instead of a numebr)*)
+
+LinearMinimizeTableau[inputtableau_?tableauQ,basis_?basisQ]:=
+	Module[
+		{blah,k,optimizationrow,r,unbound,b},
+		Which[
+			#1===simdone,
+			inputtableau,
+			#1===unbound,
+			LinearMinimizeTableau::unbound,
+			#1===Null,
+			(*recurse*)
+			LinearMinimizeTableau[
+				pivot[inputtableau,{r,k}],
+				basis/.b:{r,_}->{r,k}
+				]
+			]&[Catch[
+				k=simphase2step1[Last[inputtableau],basis];
+				If[FreeQ[#1,blah_?NumericQ],
+					Throw[unbound],
+					r=Position[#1,Min[#1]][[1,1]]
+					]&[
+						If[
+							Positive[#[[k]]]&&NumericQ[#[[-1]]],
+							#[[-1]]/#[[k]],
+							Infinity
+							]&/@Most[inputtableau]
+						];
+					]
+				]
+			];
+
+(*end of simplex method code*)
 
 Attributes[FindMinimum]=oldAttributesFindMinimum;
 Protect[NMinimize,FindMinimum];
