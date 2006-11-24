@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--a likely better file for adapting to other builds is build.xml--> 
 <project name="Website Build" default="help">
 	<property environment="env"/>
 	<!--this file was originally two levels above the EngineeringOptimization
 		directory (if I had left it there, you wouldn't be able to see it)
 		and still writes to a build directory on the level of the
 		engineering-optimization directory-->
-	<!--be careful if you execute this file that you have write permission to
+	<!--be careful, if you execute this file, that you have write permission to
 		the build directory-->
 	<property name="basedir" location="../../../"/>
 	<property name="mmade_xml_parent_dir" location="C:\workspace\mmade\"/>	
