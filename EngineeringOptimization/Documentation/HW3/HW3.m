@@ -91,8 +91,8 @@ exportTableau[
 				"other entries being 0 and with the the same row having a 0 ",
 				"in all other basis columns. Since the constraint equations ",
 				"can't easily be transformed into a canonical form with basis ",
-				"variables, auxillary variables, ",ToXML@artificialXMLChain,
-				", must be added."
+				"variables, auxillary variables \[LongDash] ",
+				ToXML@artificialXMLChain," \[LongDash] must be added."
 				}
 			]
 	];
@@ -105,7 +105,7 @@ exportTableau[
 	table[4,4,b],Automatic,
 	XMLChain@
 		XMLElement["para",{},
-			{"I added one artificial variable ,",
+			{"I added one artificial variable, ",
 				ToXML@artificialXMLChain,
 				", to each of the two constraint equations. I don't know if ",
 				"artificial variables are allowed to be added two at a time, ",
@@ -165,6 +165,11 @@ exportTableau["P 4-4 Canonical Form of Initial Tableau",
 			{"In this case, after eliminating the artificial variables and ",
 				"their sum, no further manipulations are necessary to find ",
 				"that the solution is ",
+				ToXML@
+					DocBookInlineEquation[prefix<>"F_sol_4_4",
+						eqns[4,4,1][X@1,X@2]/.sol[4,4][[2]]
+						],
+				" at ",
 				ToXML@
 					DocBookInlineEquation[prefix<>"sol_4_4",
 						MatrixForm/@Equal@@Thread[sol[4,4][[2]],Rule]
@@ -245,7 +250,15 @@ export[gr44]=
 function occur on a solid green line marking the edge of the domain. A large \
 green point at one end of the green line indicates the point the simplex \
 algorithm found. Dotted red lines show the other edges of the domain.",
-      gr[4,4,3]],PrependDirectory->EODExportDirectory];
+      gr[4,4,3],
+      Caption->"The red lines indicate constraints. The green point	"<>
+      	"indicates the optimimum achieved by the simplex method. The green "<>
+      	"line indicates an	entire edge of the domain that results in a "<>
+      	"minimum with the same value as the simplex	method optimum. This "<>
+      	"optimum edge arises as a consequence of the edge and the function "<>
+      	"contours being parallel. Function contours and the minimum are "<>
+      	"labeled."
+      ],PrependDirectory->EODExportDirectory];
 
 (*problem 4-5*)
 
@@ -306,6 +319,11 @@ exportTableau["P 4-5 Canonical Form of Initial Tableau",
 		XMLElement["para",{},
 			{"Again, the canonical form of the inital tableau is already ",
 				"optimized. The solution is ",
+				ToXML@
+					DocBookInlineEquation[prefix<>"F_sol_4_5",
+						eqns[4,5,1][X@1,X@2]/.sol[4,5][[2]]
+						],
+				" at ",
 				ToXML@
 					DocBookInlineEquation[prefix<>"sol_4_5",
 						MatrixForm/@Equal@@Thread[sol[4,5][[2]],Rule]
@@ -369,7 +387,11 @@ export[gr45]=
       "A contour plot is shown on a non-rectangular domain. A large green point \
 indicates the point that the simplex algorithm found to be the minimum on the \
 given domain. Dotted red lines show the other edges of the domain.",
-      gr[4,5,3]],PrependDirectory->EODExportDirectory];
+      gr[4,5,3],
+      Caption->"There is no optimum	edge because neither of the two edges "<>
+      	"that touch the minimum are parallel with the objective	contours."
+      ],
+      PrependDirectory->EODExportDirectory];
 
 (*create xml for both sets of equations*)
 
