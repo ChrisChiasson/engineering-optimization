@@ -17,10 +17,16 @@ prefix="hw_3_";
 table[4,problem_,letter:a|e|f]:=
 	Prepend[tableau[4,problem,letter],{X@1,X@2,excess@1,excess@1,b}];
 
-table[4,problem_,letter:b|c|d]:=
+table[4,4,letter:b|c|d]:=
 	Prepend[
-		tableau[4,problem,letter],
+		tableau[4,4,letter],
 		{X@1,X@2,excess@1,excess@1,artificial@1,artificial@2,b}
+		];
+
+table[4,5,letter:b|c|d]:=
+	Prepend[
+		tableau[4,5,letter],
+		{X@1,X@2,excess@1,excess@1,artificial@1,b}
 		];
 
 tabtab="table_tableau_";
@@ -158,7 +164,7 @@ exportTableau["P 4-4 Canonical Form of Initial Tableau",
 		XMLElement["para",{},
 			{"In this case, after eliminating the artificial variables and ",
 				"their sum, no further manipulations are necessary to find ",
-				"that the solution is ,",
+				"that the solution is ",
 				ToXML@
 					DocBookInlineEquation[prefix<>"sol_4_4",
 						MatrixForm/@Equal@@Thread[sol[4,4][[2]],Rule]
@@ -186,7 +192,7 @@ Block[{$DisplayFunction=Identity},
           Apply[Sequence,#+{0,-0.02,0.02}&/@rangeSpec[4,4]],
           Fills->{White}]/.Line[__]->Sequence[]];
 
-(*ImplicitPlot isn't as good as using DrawGraphics to create a mesh the blocks
+(*ImplicitPlot isn't as good as using DrawGraphics to create a mesh that blocks
 the "non plotted" white area, because it can leave small seams in the white
 area. However, cutting the dependancy on DrawGraphics means I can redistribute
 the project more easily.*)
@@ -255,13 +261,31 @@ eqns[4,5,5][X1_,X2_]=X2>=0;
 
 tableau[4,5,a]={{2,1,-1,0,2},{2,4,0,-1,-1},{2,4,0,0,F}};
 
+exportTableau["P 4-5 Initial Tableau",table[4,5,a],Automatic,None];
+
 tableau[4,5,b]={{2,1,-1,0,1,2},{-2,-4,0,1,0,1},{2,4,0,0,0,F},{0,0,0,0,1,w}};
+
+exportTableau["P 4-5 Augmented Tableau",table[4,5,b],Automatic,None];
 
 tableau[4,5,c]=
     ReplacePart[tableau[4,5,b],Last[tableau[4,5,b]]-tableau[4,5,b][[1]],
       Length[tableau[4,5,b]]];
 
+exportTableau[
+	"P 4-5 Augmented Tableau in Canonical Form",
+	table[4,5,c],
+	"P 4-5 Canonical Augmented Tableau",
+	None
+	];
+
 tableau[4,5,d]=LinearMinimizeTableau[tableau[4,5,c],{{1,5},{2,4}}];
+
+exportTableau[
+	"P 4-5 Augmented Tableau After Optimization",
+	table[4,5,d],
+	"P 4-5 Optimized Augmented Tableau",
+	None
+	];
 
 tableau[4,5,e]=Delete[Map[Delete[#,5]&,tableau[4,5,d],1],-1];
 
@@ -274,6 +298,22 @@ tableau[4,5,f]=LinearMinimizeTableau[tableau[4,5,e],{{1,1},{2,4}}];
 
 sol[4,5]=Minimize[{eqns[4,5,1][X@1,X@2][[2]],
       eqns[4,5,#][X@1,X@2]&/@Range[2,5]},{X@1,X@2}];
+
+exportTableau["P 4-5 Canonical Form of Initial Tableau",
+	table[4,5,e],
+	"P 4-5 Canonical Initial Tableau",
+	XMLChain@
+		XMLElement["para",{},
+			{"Again, the canonical form of the inital tableau is already ",
+				"optimized. The solution is ",
+				ToXML@
+					DocBookInlineEquation[prefix<>"sol_4_5",
+						MatrixForm/@Equal@@Thread[sol[4,5][[2]],Rule]
+						],
+				"."
+				}
+			]
+	];
 
 rangeSpec[4,5]={{X@1,X@1-2/.sol[4,5][[2]],X@1+2/.sol[4,5][[2]]},{X@2,
       X@2-2/.sol[4,5][[2]],X@2+2/.sol[4,5][[2]]}};
@@ -338,7 +378,7 @@ Outer[
 		{id=prefix<>ToString[SequenceForm@@BoxForm`Intercalate[{eqns,##},"_"]]},
 		export[id]=
 			XMLDocument[id<>".xml",
-				DocBookInlineEquation[id,eqns[##]],
+				DocBookInlineEquation[id,eqns[4,##][X@1,X@2]],
 				PrependDirectory->EODExportDirectory
 				]
 		]&,
@@ -347,13 +387,6 @@ Outer[
 	];
 
 (*create xml for the solution vectors*)
-
-Module[{id=prefix<>ToString[SequenceForm@@BoxForm`Intercalate[{sol,##},"_"]]},
-      xpt[id]=
-        XMLDocument[id<>".xml",
-          DocBookInlineEquation[id,
-            MatrixForm/@Equal@@Thread[sol[##][[2]],Rule]],
-          PrependDirectory->EODExportDirectory]]&@@@{(*{4,4},*){4,5}};
 
 filesToTransport={prefix<>"screenshot_assignment.png"};
 
