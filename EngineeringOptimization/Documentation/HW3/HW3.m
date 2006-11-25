@@ -12,7 +12,7 @@ Begin["`Private`"];
 
 (MakeBoxes[#1,_]=#2)&@@@{{excess,"e"},{artificial,"a"}};
 
-prefix="hw_3";
+prefix="hw_3_";
 
 table[4,problem_,letter:a|e|f]:=
 	Prepend[tableau[4,problem,letter],{X@1,X@2,excess@1,excess@1,b}];
@@ -23,15 +23,15 @@ table[4,problem_,letter:b|c|d]:=
 		{X@1,X@2,excess@1,excess@1,artificial@1,artificial@2,b}
 		];
 
-tabtab="_table_tableau";
+tabtab="table_tableau_";
 
 exportTableau=Function[{title,tabl,titleAbbrev,caption},
-	With[{id="_"<>StringReplace[titleAbbrev," "->"_"]},
-		export[tabtab<>titleAbbrev]=
+	With[{id=StringReplace[title," "->"_"]},
+		export[tabtab<>title]=
 			XMLDocument[
-				prefix<>id<>".xml",
+				prefix<>tabtab<>id<>".xml",
 				DocBookTable[
-					prefix<>id,
+					prefix<>tabtab<>id,
 					title,
 "The columns in this table represent the coefficients of a polynomial. \
 The header in each column gives the variable corresponding to the \
@@ -39,7 +39,7 @@ coefficients. The exception is the last column, labeled b. It is the right \
 hand side of the polynomial.",
 					tabl,
 					TitleAbbrev->titleAbbrev,
-					Caption->caption  
+					Caption->caption
 					],
 				PrependDirectory->EODExportDirectory
 				]
@@ -64,23 +64,53 @@ have equality*)
 
 tableau[4,4,a]={{2,1,-1,0,2},{2,4,0,-1,4},{2,4,0,0,F}};
 
-With[{title="P 4-4 Initial Tableau"},
-  exportTableau[title,table[4,4,a],title,
-    XMLChain@XMLElement[
-        "para",{},{"The inequalities of problem 4 are converted to linear \
-equations by the use of excess variables, ",
-          ToXML@DocBookInlineEquation["",excess[i],SetIdAttribute->False],
-          ". There must be as many basis variables as there are constraint \
-equations. A basis variable is identified by the header of a column in which \
-only one row has a 1, with all other entries being 0 and with the the same \
-row having a 0 in all other basis columns. Since the constraint equations \
-can't easily be transformed into a canonical form with basis variables, \
-auxillary variables, ",
-          ToXML@DocBookInlineEquation["",artificial[i],SetIdAttribute->False],
-          ", must be added."}]]];
+excessXMLChain=
+	DocBookInlineEquation[prefix<>"excess",excess[i],
+		SetIdAttribute->False];
+
+artificialXMLChain=
+	DocBookInlineEquation[prefix<>"artificial",artificial[i],
+		SetIdAttribute->False];
+
+exportTableau[
+	"P 4-4 Initial Tableau",
+	table[4,4,a],Automatic,
+	XMLChain@
+		XMLElement["para",{},
+			{"The inequalities of problem 4 are converted to linear equations ",
+				"by the use of excess variables, ",ToXML@excessXMLChain,
+				". There must be as many basis variables as there are ",
+				"constraint equations. A basis variable is identified by the ",
+				"header of a column in which only one row has a 1, with all ",
+				"other entries being 0 and with the the same row having a 0 ",
+				"in all other basis columns. Since the constraint equations ",
+				"can't easily be transformed into a canonical form with basis ",
+				"variables, auxillary variables, ",ToXML@artificialXMLChain,
+				", must be added."
+				}
+			]
+	];
 
 tableau[4,4,b]=
 	{{2,1,-1,0,1,0,2},{2,4,0,-1,0,1,4},{2,4,0,0,0,0,F},{0,0,0,0,1,1,w}};
+
+exportTableau[
+	"P 4-4 Augmented Tableau",
+	table[4,4,b],Automatic,
+	XMLChain@
+		XMLElement["para",{},
+			{"I added one artificial variable ,",
+				ToXML@artificialXMLChain,
+				", to each of the two constraint equations. I don't know if ",
+				"artificial variables are allowed to be added two at a time, ",
+				"but the answer comes out correctly this way. In addition to ",
+				"the ",
+				ToXML@artificialXMLChain,
+				", an objective function, w, is added to the tableau as the ",
+				"sum of the new variables."
+				}
+			]
+	];
 
 (*row operations to eliminate artificial variables from the equation for
 w*)
@@ -90,12 +120,26 @@ tableau[4,4,c]=
       Last[tableau[4,4,b]]-tableau[4,4,b][[1]]-tableau[4,4,b][[2]],
       Length[tableau[4,4,b]]];
 
+exportTableau["P 4-4 Augmented Tableau in Canonical Form",
+  table[4,4,c],
+  "P 4-4 Canonical Augmented Tableau","Row reduction options are used to \
+bring the artifical variables into the basis."];
+
 tableau[4,4,d]=LinearMinimizeTableau[tableau[4,4,c],{{1,5},{2,6}}];
+
+exportTableau["P 4-4 Augmented Tableau After Optimization",
+  table[4,4,d],
+  "P 4-4 Optimized Augmented Tableau","Application of the simplex method \
+minimizes the artificial variable sum to 0. Since the artificial variables \
+are restricted to be greater than or equal to 0, this means the artificial \
+variables have been reduced to 0 and that adding them to the original \
+constraint equations does not change those equations. The artificial \
+variables and their objective sum may be removed."];
 
 tableau[4,4,e]=Delete[Map[Drop[#,{5,6}]&,tableau[4,4,d],1],-1];
 
 (*notice that the problem is already optimized, 
-  so this next call does nothing*)
+  so this next call changes nothing*)
 
 tableau[4,4,f]=LinearMinimizeTableau[tableau[4,4,e],{{1,1},{2,2}}];
 
@@ -103,6 +147,28 @@ tableau[4,4,f]=LinearMinimizeTableau[tableau[4,4,e],{{1,1},{2,2}}];
 
 sol[4,4]=Minimize[{eqns[4,4,1][X@1,X@2][[2]],
         eqns[4,4,#][X@1,X@2]&/@Range[2,5]},{X@1,X@2}];
+
+(*now that I have created the solution vector, I can write the final tableau
+for problem 4*)
+
+exportTableau["P 4-4 Canonical Form of Initial Tableau",
+	table[4,4,e],
+	"P 4-4 Canonical Initial Tableau",
+	XMLChain@
+		XMLElement["para",{},
+			{"In this case, after eliminating the artificial variables and ",
+				"their sum, no further manipulations are necessary to find ",
+				"that the solution is ,",
+				ToXML@
+					DocBookInlineEquation[prefix<>"sol_4_4",
+						MatrixForm/@Equal@@Thread[sol[4,4][[2]],Rule]
+						],
+				". Generally the simplex method would need to be applied ",
+				"again, but since the coefficients of all the variables not ",
+				"in the basis are positive, I can stop here."
+				}
+			]
+	];
 
 rangeSpec[4,
       4]={{X@1,X@1-2/.sol[4,4][[2]],X@1+2/.sol[4,4][[2]]},{X@2,
@@ -164,7 +230,7 @@ gr[4,4,3]=
 
 (*create markup for the graph*)
 
-gr44="_gr_4_4";
+gr44="gr_4_4";
 
 export[gr44]=
   XMLDocument[prefix<>gr44<>".xml",
@@ -253,7 +319,7 @@ gr[4,5,3]=
 			]
 		];
 
-gr45="_gr_4_5";
+gr45="gr_4_5";
 
 (*create markup for the graph*)
 
@@ -269,7 +335,7 @@ given domain. Dotted red lines show the other edges of the domain.",
 
 Outer[
 	Module[
-		{id=ToString[SequenceForm@@BoxForm`Intercalate[{prefix,eqns,##},"_"]]},
+		{id=prefix<>ToString[SequenceForm@@BoxForm`Intercalate[{eqns,##},"_"]]},
 		export[id]=
 			XMLDocument[id<>".xml",
 				DocBookInlineEquation[id,eqns[##]],
@@ -282,14 +348,14 @@ Outer[
 
 (*create xml for the solution vectors*)
 
-Module[{id=ToString[SequenceForm@@BoxForm`Intercalate[{prefix,sol,##},"_"]]},
-      export[id]=
+Module[{id=prefix<>ToString[SequenceForm@@BoxForm`Intercalate[{sol,##},"_"]]},
+      xpt[id]=
         XMLDocument[id<>".xml",
           DocBookInlineEquation[id,
             MatrixForm/@Equal@@Thread[sol[##][[2]],Rule]],
-          PrependDirectory->EODExportDirectory]]&@@@{{4,4},{4,5}};
+          PrependDirectory->EODExportDirectory]]&@@@{(*{4,4},*){4,5}};
 
-filesToTransport={prefix<>"_screenshot_assignment.png"};
+filesToTransport={prefix<>"screenshot_assignment.png"};
 
 If[EODExport===True,
 	Export@@@#&/@ReleaseHold@DownValues[export][[All,1]];
