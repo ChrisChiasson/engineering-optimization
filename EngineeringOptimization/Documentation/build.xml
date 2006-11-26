@@ -12,6 +12,7 @@
 	<property name="build" location="build"/>
 	<property name="dist" location="English"/>
 	<property name="eo-name" value="Engineering_Optimization"/>
+	<property name="get-mfiles" value="true"/>	
 	<!--path is used instead of location because it may be useful to
 		execute more than one m file per build - though I have never tried
 		it this way-->
@@ -27,6 +28,7 @@
 			<property name="build" location="${build}/${eo-name}"/>
 			<property name="dist" location="${dist}"/>
 			<property name="documentation" location="."/>
+			<property name="get-mfiles" value="${get-mfiles}"/>
 			<reference torefid="mfiles" refid="eo-mfiles"/>
 			<!--SVGMath-->
 			<property name="foMathMLIntermediate" value="true"/>
