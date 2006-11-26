@@ -20,13 +20,13 @@ table[4,problem_,letter:a|e|f]:=
 table[4,4,letter:b|c|d]:=
 	Prepend[
 		tableau[4,4,letter],
-		{X@1,X@2,excess@1,excess@1,artificial@1,artificial@2,b}
+		{X@1,X@2,excess@1,excess@2,artificial@1,artificial@2,b}
 		];
 
 table[4,5,letter:b|c|d]:=
 	Prepend[
 		tableau[4,5,letter],
-		{X@1,X@2,excess@1,excess@1,artificial@1,b}
+		{X@1,X@2,excess@1,excess@2,artificial@1,b}
 		];
 
 tabtab="table_tableau_";
