@@ -161,20 +161,19 @@ export[ex21given]=XMLDocument[
 	DocBookEquation[
 		prefix<>ex21given,
 		XMLChain@
-			Hold@
-				XMLElement[
-					"phrase",
-					{},
-					{"Given Equations from Example 2-1 of ",
-						XMLElement[
-							"olink",
-							{"targetdoc"->"self",
-								"targetptr"->"GNVNOTED"
-								},
-								{}
-							]
-						}
-					],
+			XMLElement[
+				"phrase",
+				{},
+				{"Given Equations from Example 2-1 of ",
+					XMLElement[
+						"olink",
+						{"targetdoc"->"self",
+							"targetptr"->"GNVNOTED"
+							},
+							{}
+						]
+					}
+				],
 		eqn[ex21given],
 		TitleAbbrev->"Given Equations"
 		],

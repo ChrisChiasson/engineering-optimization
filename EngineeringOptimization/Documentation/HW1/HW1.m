@@ -183,7 +183,7 @@ export[5]=XMLDocument[
 	"hw_1_lagrangemultipliers.xml",
 		DocBookEquation[
 			"hw_1_lagrangemultipliers",
-			XMLChain[Hold@
+			XMLChain[
 				XMLElement[
 					"phrase",
 					{},
@@ -304,7 +304,7 @@ export[8]=XMLDocument[
 			"product of the displacement from point 1 to 4 and point 1 to 2. "<>
 			"The parallelogram is drawn over the ellipse.",
 		graph[1],
-		Caption->XMLChain[Hold@XMLElement[
+		Caption->XMLChain[XMLElement[
 			"para",
 			{},
 			{"The red parallelogram is not constrained to the ellipse in ",
