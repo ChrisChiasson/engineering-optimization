@@ -462,11 +462,15 @@ export[crits<>nonIHess]=
 
 fletcherReevesBeta="fletcher_reeves_beta";
 
-xpr[fletcherReevesBeta]=HoldForm[\[Beta]==\[Del]f*X^q/(\[Del]f*X^(q-1))];
+xpr[fletcherReevesBeta]=
+	HoldForm[\[Beta]==\[Del]F[Superscript[X,q]]/(\[Del]F[Superscript[X,q-1]])];
 
 fletcherReevesDirection="fletcher_reeves_direction";
 
-xpr[fletcherReevesDirection]=HoldForm[S^q==-\[Del]F[X^q]+\[Beta][q]*S^(q-1)];
+xpr[fletcherReevesDirection]=
+	HoldForm[
+		Superscript[S,q]==
+			-\[Del]F[Superscript[X,q]]+\[Beta][q]*Superscript[S,q-1]];
 
 idealDirection="ideal_direction";
 
