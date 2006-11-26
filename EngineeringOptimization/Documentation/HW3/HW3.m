@@ -15,7 +15,7 @@ Begin["`Private`"];
 prefix="hw_3_";
 
 table[4,problem_,letter:a|e|f]:=
-	Prepend[tableau[4,problem,letter],{X@1,X@2,excess@1,excess@1,b}];
+	Prepend[tableau[4,problem,letter],{X@1,X@2,excess@1,excess@2,b}];
 
 table[4,4,letter:b|c|d]:=
 	Prepend[
