@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="Variable_Metric_Unconstrained_Optimization_Methods"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xl="http://www.w3.org/1999/xlink"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	version="5">
+	<title>Variable Metric Unconstrained Optimization Methods &#x2014; Project 2</title>
+	<para>As Dr. Mohamed El-Sayed shows in
+		<xref linkend="pr_2_screenshot_assignment"/>, the assignment is to solve
+		<olink targetdoc="self" targetptr="GNVNOTED"/> example 3-3 using the DFP
+		and BFGS variable metric methods, which were developed as flow charts in
+		class. I am also to provide the program code and a report.</para>
+	<para>As presented in <olink targetdoc="self" targetptr="GNVNOTED"/>,
+		example 3-3 is rather long. I present it here in my own words, rather
+		than quoting it.  The requested code is available in
+		<olink targetdoc="self" targetptr="PR2_code"/>, which contains my
+		application of the methods to the problem, and
+		<olink targetdoc="self" targetptr="Common_Source_Appendix"/>, which
+		contains the variable metric method algorithm.</para>
+	<figure xml:id="pr_2_screenshot_assignment">
+		<title>Homework 2 Assignment</title>
+		<screenshot>
+			<mediaobject>
+				<imageobject role="html">
+					<imagedata fileref="mout/pr_2_screenshot_assignment.png"/>
+				</imageobject>
+				<imageobject role="fo">
+					<imagedata contentwidth="5in" 
+						fileref="mout/pr_2_screenshot_assignment.png"/>
+				</imageobject>
+				<textobject>
+					<phrase>Project 2 (25%, 9th week) 1) Develop the DFP, BFGS
+						code for multivariable unconstrained optimization
+						programs using the flow chart developed in class. 2) Use
+						project	(1) program to solve for the single variable
+						sub-optimization problem. 3) Hand out, program, report,
+						soln of the assigned problem. 4) use example 3-3 as the
+						assigned problem to solve, *project due Monday 9th week
+						(25%)</phrase>
+				</textobject>
+			</mediaobject>
+		</screenshot>
+		<caption>
+			<para>This is a screenshot from part A of the fifth lecture at 9:57.</para>
+		</caption>
+	</figure>
+	<para>Example 3-3 shows five masses attached to six springs in a string or
+		necklace formation. The left and right ends are attached to fixed pin
+		supports. The masses are under the influence of gravity. My reproduction
+		of the deformed layout is presented in <xref linkend="hw_2_animation"/>.
+		In my version, springs are represented with lines.
+		<phrase role="animation">The animation was created by assuming each
+		spring also acts as a damper. To solve the dynamic version of the
+		problem, a Lagrangian formulation was used, as discussed in
+		<xref linkend="Lagrangian_Mechanics_Formulation"/>.</phrase></para>
+	<xi:include href="mout/hw_2_animation.xml"/>
+	<para>The multidimensional variable metric method implemented for this
+		assignment is the same as that presented in
+		<olink targetdoc="self" targetptr="hw_2_dfp_detail"/> and
+		<olink targetdoc="self" targetptr="hw_2_bfgs_detail"/>.</para>
+	<para>Values of the problem <emphasis role="strong">constants</emphasis> are
+		given in <xref linkend="hw_2_constants_by_index"/> below. I numbered the
+		springs in increasing consecutive order from left to right across
+		<xref linkend="hw_2_animation"/>, and that value is	reflected in the
+		subscript of the stiffness, K, for each. According to
+		<olink targetdoc="self" targetptr="GNVNOTED"/>, the free length,
+		<xi:include href="mout/hw_2_l_naught.xml"/>, of each spring is ten
+		meters. I also numbered the weights, W, in increasing order from left to
+		right. Points, (X, Y) pairs, occur at the each end of a spring and are
+		numbered sequentially from left to right. There are a total of seven
+		points, six	springs, and five weights. Note that weight 1 is at point 2,
+		weight 2 is	at point 3, and so on.</para>
+	<xi:include href="mout/hw_2_constants_by_index.xml"/>
+	<para>Initial<phrase condition="no-animation"> optimization</phrase> values
+		for the objective function and independant variables are given in
+		<xref linkend="hw_2_initialValues"/>. The initial configuration
+		corresponds to all points being at the same zero height datum and spaced
+		<xi:include href="mout/hw_2_l_naught.xml"/> from their nearest
+		neighbors, forming a horizontal line.</para>
+	<xi:include href="mout/hw_2_initialValues.xml"/>
+	<para>The potential energy function, PE, is given in
+		<xref linkend="hw_2_potential_energy"/>. Its minimum, as derived by
+		Mathematica's reference NMinimize command and by my variable metric
+		methods is presented in
+		<xref linkend="hw_2_method_comparison"/>. The
+		table shows that both variations of my method agree with the
+		reference to at least three significant figures.</para>
+	<xi:include href="mout/hw_2_potential_energy.xml"/>
+	<xi:include href="mout/hw_2_method_comparison.xml"/>
+	<section xml:id="Lagrangian_Mechanics_Formulation" condition="animation">
+		<title>Lagrangian Mechanics Formulation of
+			<olink targetdoc="self" targetptr="GNVNOTED"/> Example 3-3</title>
+		<para>In the book, the example only deals with the steady state
+			equilibrium problem, correctly relying on the minimization of
+			the potential energy to indicate the final state of the
+			system. However, this student is also interested in how the
+			system goes from its inital position, with all the weights
+			level at zero height, to the deformed necklace shown at the end
+			of <xref linkend="hw_2_animation"/>.</para>
+		<para>To achieve the steady state, a method must exist for the
+			system to bleed off energy. I inserted some non-conservative
+			elements &#x2014; linear dampers with a coefficient, c, of 10
+			Newtons for each meter per second of relative velocity between
+			any two spring-connected points &#x2014; into the problem
+			formulation, as mentioned above.</para>
+		<para>Example 3-3 already provides the system potential energy,
+			while <xref linkend="hw_2_kinetic_energy"/><note><para>The symbol g
+				stands for Earth's local gravitation acceleration, nominally
+				taken to be <xi:include href="mout/hw_2_gravity.xml"/></para></note>
+			and	<xref linkend="hw_2_rayleigh_dissipation"/> are
+			straightforward to calculate, making the Lagrangian mechanics
+			formulation a natural fit.<!--good spot for a book reference--></para>
+		<xi:include href="mout/hw_2_kinetic_energy.xml"/>
+		<xi:include href="mout/hw_2_rayleigh_dissipation.xml"/>
+		<para><xref linkend="hw_2_lagrange_equation_of_motion"/> governs
+			this problem. <xi:include href="mout/hw_2_Qj_capital.xml"/>
+			corresponds	to each entry in the Q vector of generalized forces. For
+			this problem, Q is a zero vector.
+			<xi:include href="mout/hw_2_qj_lower.xml"/>	corresponds to each
+			entry in the q vector of generalized
+			coordinates. For this problem, q's entries correspond to each
+			ordinate of each of the	five unfixed points in this problem; thus,
+			q has ten entries and there are ten second order equations of motion
+			&#x2014; one for each degree of freedom of the system.</para>
+		<xi:include href="mout/hw_2_lagrange_equation_of_motion.xml"/>
+		<para>The ten equations are not reproduced here, because they are long
+			and rather uninformative. The solution to these equations
+			<emphasis>is</emphasis> available here, in the animation of
+			<xref linkend="hw_2_animation"/>. Finally, once the
+			vibrations die off, the Lagrange formulation yields the same
+			result as the PE minimization.</para>
+	</section>
+</chapter>
