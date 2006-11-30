@@ -1,16 +1,19 @@
 BeginPackage["EngineeringOptimization`Documentation`PR2`",
 	{"EngineeringOptimization`Documentation`",
+		"Graphics`Animation`",
 		"XML`DocBook`"}];
 
 Begin["`Private`"];
 
-{Attributes[#]={NHoldAll},Format[#[i(_Integer|_Symbol)]]=Subscript[#,i]}&/@
+{Attributes[#]={NHoldAll},Format[#[i:(_Integer|_Symbol)]]=Subscript[#,i]}&/@
 	{W,K,L,dL,X,Y,Q,q,num};
 
 (MakeBoxes[#1,_]=#2)&@@@
 	{{dL,"\[CapitalDelta]L"},
 		{num,"N"},
 		{naught,"0"}};
+
+prefix="hw_2_";
 
 (*export this as an equation or a table?*)
 rep[1]={num[W]->5,num[S]->num[W]+1,num[P]->num[S]+1};
@@ -125,14 +128,72 @@ eqn@12=Join[
 
 finalAnimationTime=60(*seconds*);
 
-frameRate=4(*frames per second*);
-
 (*the solution of the Lagrangian equations of motion is carried out numerically
 	to 3 times the final animation time*)
 
 sol@4=
 	NDSolve[Flatten[eqn/@{11,12}],var@1/.v_[t]->v,{t,0,3*finalAnimationTime},
 		MaxSteps->10^6];
+
+(*how vast does the scene appear to be moving at each time?*)
+
+velocityIntensity[t_]=Total[Norm/@Partition[D[var[1],t],2]/.sol[4][[1]]];
+
+(*what is the maximum rate of change over the time interval 0 to
+finalAnimationTime?*)
+
+sol[5]=NMaximize[{velocityIntensity[t],0<t<finalAnimationTime},t];
+
+(*what is the time rate of change of movement at each time?*)
+
+accelerationIntensity[t_]=
+    Total[Norm/@Partition[D[var[1],{t,2}],2]/.sol[4][[1]]];
+
+(*what is the maximum rate of change of momvement over the time interval
+0 to finalAnimationTime?*)
+
+sol[6]=NMaximize[{accelerationIntensity[t],0<t<finalAnimationTime},t];
+
+(*Unset the base frame rate in case the package is executed again*)
+baseFrameRate=.
+
+(*the frame rate is a function of the base frame rate and the present time -
+acceleration and velocity have equal weighting here*)
+
+frameRate[t_]=Max[
+	baseFrameRate*
+		(accelerationIntensity[t]/sol[6][[1]]+velocityIntensity[t]/sol[5][[1]]),
+	1
+	];
+
+(*these are functions for creating the list of times at which each frame is
+rendered - it chooses the time for a new frame base on the instant frame rate
+at the point before it*)
+
+frameTimesNest[t_/;t>=finalAnimationTime]=finalAnimationTime;
+
+frameTimesNest[t_]:={t,frameTimesNest[t+1/frameRate[t]]};
+
+frameTimes:=Block[{$RecursionLimit=Infinity},Flatten@frameTimesNest[0]]
+
+numberOfFrames[frameRate_?NumberQ]:=
+	Block[{baseFrameRate=frameRate},Length@frameTimes]
+
+(*here we find a base frame rate that will give us the same total number of
+frames as a constant four frames per second would over the 0 to
+finalAnimationTime interval*)
+
+sol[7]=
+	NMinimize[
+		{Abs[numberOfFrames[rate]-finalAnimationTime*4],0<rate<30},
+		rate
+		];
+
+If[sol[7][[1]]!=0,Print[prefix<>" The frame rate is wrong."];Abort[]];
+
+Block[{baseFrameRate=sol[7][[2,1,2]]},frameTimes=frameTimes];
+
+displayTimes=Append[ListConvolve[{1,-1},frameTimes],0];
 
 (*radius of the colored disk representing a weight in the spring system*)
 
@@ -158,32 +219,128 @@ animationPrimitives[t_]=
 coordinates at all (plotted) times*)
 
 plotRange={
-	{0,60},
+	{0,X[num@P][t]/.rep[2]/.rep[6]/.rep[2]/.rep[3]},
 	{
 		Min[
-			Table[
-				Evaluate[Y[#][t]&/@Range[num@P/.rep@2]/.sol[4][[1]]/.rep@6],
-				{t,0,finalAnimationTime,1/frameRate}
-				]
+			Function[t,
+				Evaluate[Y[#][t]&/@Range[num@P/.rep@2]/.sol[4][[1]]/.rep@6]]/@
+				frameTimes
 			]-weightRadius,
 		0+weightRadius
 		}
 	};
 
-(*a label showing the current time helps the viewer understand when the
-animation resets*)
+(*a label showing the current time helps the viewer understand the passage of
+time in the animation*)
+
+labels[finalAnimationTime]=Sequence[];
 
 labels[t_?NumericQ]:=
-	Text[SequenceForm["t=",N[t,3]],plotRange[[All,1]]+{1,1},{-1,-1}];
+	Text[SequenceForm["t=",NumberForm[N@t,3]],plotRange[[All,1]]+{1,1},{-1,-1}];
 
 (*generating the primitives at all polotted times gives the animation*)
 
-animation=
-    Table[Graphics[Through[{labels,animationPrimitives}[t]],
+animationGraphics[t_]:=
+	Graphics[Through[{labels,animationPrimitives}[t]],
         PlotRange->plotRange,AspectRatio->Automatic,
         Frame->True,
-        FrameLabel->{SequenceForm[X["t"],"(m)"],SequenceForm[Y["t"],"(m)"]},
-        ImageSize->$ExportWidth],{t,0,finalAnimationTime,1/frameRate}];
+        FrameLabel->{SequenceForm[X["t"]," (m)"],SequenceForm[Y["t"]," (m)"]},
+        ImageSize->$ExportWidth];
+
+animation=animationGraphics/@frameTimes;
+
+(*export the animation*)
+
+animStr="animation";
+
+export[prefix<>animStr]=XMLDocument[prefix<>animStr<>".xml",
+    DocBookFigure[prefix<>animStr,
+      "Deformation of Spring-Mass System Under Gravity",
+      XMLElement[
+        "phrase",{},{"This ",
+          XMLElement["phrase",{"condition"->"animation"},{"animated"}],
+          XMLElement["phrase",{"condition"->"no-animation"},{"non-animated"}],
+          " graphic shows the spring-mass",
+          XMLElement["phrase",{"condition"->"animation"},{"-damper"}],
+          " system under consideration."}],animation,
+      Exports->ExportsOption[DocBookFigure,"html",ExportType->"GIF",
+          ConversionOptions->{"AnimationDisplayTime"->displayTimes,
+              "Loop"->True}],
+      Caption->XMLElement[
+          "para",{},{"Five different ball masses under the influence of \
+gravity and represented by colored balls are attached in a ",
+            XMLElement["quote",{},{"string"}],
+            " via six springs represented by black lines. The left and right \
+ends of the string are fixed. After gravity does its work, the masses hang \
+like a necklace."}]],PrependDirectory->EODExportDirectory];
+
+(*create some informational tables and export them*)
+
+(*constant variables indexed by i*)
+
+constantsByIndex="constants_by_index";
+
+tab[constantsByIndex]=
+    Prepend[With[{nP=num@P/.rep@2,nW=num@W/.rep@2,nS=num@S/.rep@2},
+        Table[{i,If[i==nP||i==1,
+                      SequenceForm["(",X[i][t],",",Y[i][t],")"],""],
+                    If[i<=nS,K@i,""],
+                    If[i<=nW,W@i,""]}/.rep@6/.rep@3/.rep@
+                2/.num_Rational:>N[num,4],{i,1,nP}]],{i,
+        SequenceForm["(",X[i][t],",",Y[i][t],") (m)"],
+        SequenceForm[K@i," (N/m)"],SequenceForm[W@i," (N)"]}];
+
+export[constantsByIndex]=
+    XMLDocument[prefix<>constantsByIndex<>".xml",
+      DocBookTable[prefix<>constantsByIndex,"Problem Constants by Index, i",
+        "The first column gives the index, i, while the other columns are, in \
+order, (X,Y) coordinates for points, spring constants, and mass weights.",
+        tab[constantsByIndex],TitleAbbrev->"Problem Constants",
+        Caption->
+          "All entries on a particular row correspond to the same index, i. \
+However, variables with the same index do not necessairily correspond to the \
+same physical location."],PrependDirectory->EODExportDirectory];
+
+methodComparison="method_comparison";
+
+tab@methodComparison=
+  Prepend[Transpose@
+      With[{nMax=num@P-1/.rep@2},
+        Prepend[{sol[#][[1]],
+                  Sequence@@
+                    Table[SequenceForm["(",X[i][t],",",Y[i][t],")"],{i,2,
+                        nMax}]}/.sol[#][[2]]&/@Range@3,{"PE (J)",
+            Sequence@@
+              Table[SequenceForm["(",X[i],",",Y[i],") (m)"],{i,2,
+                  nMax}]}]],{"Variable", "Reference","My BFGS","My DFP"}];
+
+export[methodComparison]=
+    XMLDocument[prefix<>methodComparison<>".xml",
+      DocBookTable[prefix<>methodComparison,
+        "Method Comparison of Steady State Values",
+        "The first column gives the variable names. Other columns give the \
+values of the variables when using different methods. The first row is \
+potential energy. The second through last rows are (X,Y) coordinate pairs of \
+different points.",tab[methodComparison],
+        TitleAbbrev\[Rule]"Method Comparison" ,
+        Caption\[Rule]
+          "In the objective, PE, and all the variables, the Mathematica \
+reference and my two variations on the variable metric method all agree to \
+within six digits of precision."],PrependDirectory\[Rule]EODExportDirectory];
+
+initialValues="initialValues";
+
+tab@initialValues=
+    With[{nMax=num@P-1/.\[InvisibleSpace]rep@2},
+      Prepend[Transpose@{{"PE (J)",
+              Sequence@@
+                Table[SequenceForm["(",X[i] ,"," ,Y[i],") (m)"],{i,2,
+                    nMax}]},{eqn[4][[2]],
+                    Sequence@@
+                      Table[SequenceForm["(",X[i][t] ,"," ,Y[i][t], ")"],{i,2,
+                          nMax}]}/.t\[Rule]0/.rep[7]/.rep[3]},{"Variable",
+          "Initial Value"}]];
+
 
 End[];
 
