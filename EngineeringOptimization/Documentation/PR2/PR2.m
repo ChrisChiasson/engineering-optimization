@@ -5,7 +5,7 @@ BeginPackage["EngineeringOptimization`Documentation`PR2`",
 
 Begin["`Private`"];
 
-{Attributes[#]={NHoldAll},Format[#[i:(_Integer|_Symbol)]]=Subscript[#,i]}&/@
+{Attributes[#]={NHoldAll},Format[#[i:Except["t"]]]=Subscript[#,i]}&/@
 	{W,K,L,dL,X,Y,Q,q,num};
 
 (MakeBoxes[#1,_]=#2)&@@@
@@ -341,6 +341,116 @@ tab@initialValues=
                           nMax}]}/.t\[Rule]0/.rep[7]/.rep[3]},{"Variable",
           "Initial Value"}]];
 
+export[initialValues]=
+    XMLDocument[prefix<>initialValues<>".xml",
+      DocBookTable[prefix<>initialValues,"Initial Values",
+        "The first column gives the variable names. Other columns give the \
+values of the variables when using different methods. The first row is \
+potential energy. The second through last rows are (X,Y) coordinate pairs of \
+different points.",tab[initialValues],
+        Caption\[Rule]
+          "These are the initial values of the variables that can change in \
+the potential energy minimization problem."],
+      PrependDirectory\[Rule]EODExportDirectory];
+
+(*export the (equation) definition of the potential energy*)
+
+potentialEnergy="potential_energy";
+
+export[potentialEnergy]=
+    XMLDocument[prefix<>potentialEnergy<>".xml",
+      DocBookEquation[prefix<>potentialEnergy,
+        "Potential Energy (PE) Function",
+        DocBookEquationSequence[eqn[3],Sequence@@(Equal@@@rep[5]/.rep[4])],
+        TitleAbbrev->"Potential Energy",
+        Caption->
+          "The potential energy increases when energy is stored by changing \
+the length of the springs (away from the free length) and decreases when the \
+weights move downward."],PrependDirectory\[Rule]EODExportDirectory];
+
+(*export the equation for the kinetic energy*)
+
+kineticEnergy="kinetic_energy";
+
+export@kineticEnergy=
+    XMLDocument[prefix<>kineticEnergy<>".xml",
+      DocBookEquation[prefix<>kineticEnergy,"Kinetic Energy (KE) Function",
+        eqn@5,TitleAbbrev->"Kinetic Energy",
+        Caption->
+          "The kinetic energy is proportional to the sum of the squares of \
+the velocities of the weights."],PrependDirectory\[Rule]EODExportDirectory];
+
+rayleighDissipation="rayleigh_dissipation";
+
+export@rayleighDissipation=
+    XMLDocument[prefix<>rayleighDissipation<>".xml",
+      DocBookEquation[prefix<>rayleighDissipation,
+        "Rayleigh Dissipation (RD) Function",eqn@7,
+        TitleAbbrev->"Rayleigh Dissipation",
+        Caption\[Rule]
+          "The rate of dissipation of energy is proportional to the time rate \
+of change of the spring lengths and the damping coefficient, c."],
+      PrependDirectory\[Rule]EODExportDirectory];
+
+Qj="Qj";
+
+export@Qj=
+	XMLDocument[
+		prefix<>Qj<>".xml",
+		embeded@Qj=DocBookInlineEquation[prefix<>Qj,Q@j],
+		PrependDirectory->EODExportDirectory
+		];
+
+qj="qj";
+
+export@qj=
+	XMLDocument[
+		prefix<>qj<>".xml",
+		embeded@qj=DocBookInlineEquation[prefix<>qj,q@j],
+		PrependDirectory->EODExportDirectory
+		];
+
+lagrangeEOM="lagrange_equation_of_motion";
+
+export@lagrangeEOM=
+    XMLDocument[prefix<>lagrangeEOM<>".xml",
+    	DocBookEquation[prefix<>lagrangeEOM,
+    		"Lagrange's Equation of Motion (EOM)",
+    		eqn[9],TitleAbbrev->"Lagrange's Equation",
+    		Caption->XMLChain@
+    			XMLElement["para",{},
+    				{"Lagrange's equation expresses the interplay between \
+kinetic and potential energy, along with the bleeding of energy through \
+Rayleigh dissipation. External forces that do work are ,",
+					XMLElement["quote",{},{"generalized"}]," as ",
+					ToXML@embeded[Qj],". The ",
+					ToXML@embeded[qj]," are ,",
+					XMLElement["quote",{},{"generalized"}]," coordinates."
+					}]
+			],PrependDirectory->EODExportDirectory
+		];
+
+filesToTransport={"pr_2_screenshot_assignment.png"};
+
+If[EODExport===True,
+	Export@@@#&/@ReleaseHold@DownValues[export][[All,1]];
+		pwd=InputDirectoryName[];
+		CopyFile[
+			ToFileName[
+				pwd,
+				#
+				],
+			ToFileName[
+				EODExportDirectory,
+				#
+				],
+			Overwrite->True
+			]&/@filesToTransport;
+		CopyFile[InputFileName[],
+			ToFileName[EODExportDirectory,InputFileBaseName[]],
+			Overwrite->True
+			]
+	];
 
 End[];
 
