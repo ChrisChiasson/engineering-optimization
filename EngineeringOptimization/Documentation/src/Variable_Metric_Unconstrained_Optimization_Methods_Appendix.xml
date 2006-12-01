@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix xml:id="Variable_Metric_Unconstrained_Optimization_Methods_Appendix"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	version="5">
+	<title>Variable Metric Unconstrained Optimization Methods — Project 2</title>
+	<titleabbrev>Variable Metric Unconstrained Optimization Methods</titleabbrev>
+	<example xml:id="PR2_code">
+		<?dbfo keep-together="auto"?>
+		<title>Project 2 Code</title>
+		<para>This is the code for the project 2 calculations.</para>
+		<programlisting><xi:include href="mout/PR2.m" parse="text"/></programlisting>
+	</example>
+</appendix>
