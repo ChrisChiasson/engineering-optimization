@@ -108,7 +108,7 @@
 		<para>Example 3-3 already provides the system potential energy,
 			while <xref linkend="hw_2_kinetic_energy"/><footnote><para>The
 				symbol g stands for Earth's local gravitation acceleration,
-				nominally taken to be <xi:include href="mout/hw_2_gravity.xml"/></para></footnote>
+				nominally taken to be <xi:include href="mout/hw_2_gravity.xml"/>.</para></footnote>
 			and	<xref linkend="hw_2_rayleigh_dissipation"/> are
 			straightforward to calculate, making the Lagrangian mechanics
 			formulation a natural fit.<!--good spot for a book reference--></para>
