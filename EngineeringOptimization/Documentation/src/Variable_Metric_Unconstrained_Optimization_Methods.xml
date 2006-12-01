@@ -5,7 +5,8 @@
 	xmlns:xl="http://www.w3.org/1999/xlink"
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="5">
-	<title>Variable Metric Unconstrained Optimization Methods &#x2014; Project 2</title>
+	<title>Variable Metric Unconstrained Optimization Methods — Project 2</title>
+	<titleabbrev>Variable Metric Unconstrained Optimization Methods</titleabbrev>
 	<para>As Dr. Mohamed El-Sayed shows in
 		<xref linkend="pr_2_screenshot_assignment"/>, the assignment is to solve
 		<olink targetdoc="self" targetptr="GNVNOTED"/> example 3-3 using the DFP
@@ -50,7 +51,7 @@
 		supports. The masses are under the influence of gravity. My reproduction
 		of the deformed layout is presented in <xref linkend="hw_2_animation"/>.
 		In my version, springs are represented with lines.
-		<phrase role="animation">The animation was created by assuming each
+		<phrase condition="animation">The animation was created by assuming each
 		spring also acts as a damper. To solve the dynamic version of the
 		problem, a Lagrangian formulation was used, as discussed in
 		<xref linkend="Lagrangian_Mechanics_Formulation"/>.</phrase></para>
@@ -100,14 +101,14 @@
 			of <xref linkend="hw_2_animation"/>.</para>
 		<para>To achieve the steady state, a method must exist for the
 			system to bleed off energy. I inserted some non-conservative
-			elements &#x2014; linear dampers with a coefficient, c, of 10
+			elements — linear dampers with a coefficient, c, of 10
 			Newtons for each meter per second of relative velocity between
-			any two spring-connected points &#x2014; into the problem
+			any two spring-connected points — into the problem
 			formulation, as mentioned above.</para>
 		<para>Example 3-3 already provides the system potential energy,
-			while <xref linkend="hw_2_kinetic_energy"/><note><para>The symbol g
-				stands for Earth's local gravitation acceleration, nominally
-				taken to be <xi:include href="mout/hw_2_gravity.xml"/></para></note>
+			while <xref linkend="hw_2_kinetic_energy"/><footnote><para>The
+				symbol g stands for Earth's local gravitation acceleration,
+				nominally taken to be <xi:include href="mout/hw_2_gravity.xml"/></para></footnote>
 			and	<xref linkend="hw_2_rayleigh_dissipation"/> are
 			straightforward to calculate, making the Lagrangian mechanics
 			formulation a natural fit.<!--good spot for a book reference--></para>
@@ -122,7 +123,7 @@
 			coordinates. For this problem, q's entries correspond to each
 			ordinate of each of the	five unfixed points in this problem; thus,
 			q has ten entries and there are ten second order equations of motion
-			&#x2014; one for each degree of freedom of the system.</para>
+			— one for each degree of freedom of the system.</para>
 		<xi:include href="mout/hw_2_lagrange_equation_of_motion.xml"/>
 		<para>The ten equations are not reproduced here, because they are long
 			and rather uninformative. The solution to these equations
