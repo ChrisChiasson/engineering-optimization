@@ -38,23 +38,16 @@
 	</figure>
 	<blockquote>
 		<attribution><citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>, p129</attribution>
-		<para><emphasis role="strong">3-2</emphasis> Given the
-			unconstrained minimization problem</para>
-		<para>Minimize: <xi:include href="mout/hw_2_poly.xml"/></para>
-		<para><xi:include href="mout/hw_2_start.xml"/></para>
-		<para>Apply three iterations of the method of steepest descent to
-			this problem. List the values of all critical parameters at each
-			step.</para>
-		<para><emphasis role="strong">3-3</emphasis> Solve Prob. 3-2 using
-			the Fletcher-Reeves conjugate direction method.</para>
-		<para><emphasis role="strong">3-4</emphasis> Solve Prob. 3-2 using
-			the Davidon-Fletcher-Powell variable metric algorithm.</para>
-		<para><emphasis role="strong">3-5</emphasis> Solve Prob. 3-2 using
-			the Broyden-Fletcher-Shanno-Goldfarb algorithm.</para>
-		<para><emphasis role="strong">3-6</emphasis> Solve Prob. 3-2 using
-			Powell's method. Use six search directions.</para>
-		<para><emphasis role="strong">3-7</emphasis> Solve Prob. 3-2 using
-			Newton's method.</para>
+		<literallayout><emphasis role="strong">3-2</emphasis> Given the unconstrained minimization problem
+      Minimize: <xi:include href="mout/hw_2_poly.xml"/>
+                                          <xi:include href="mout/hw_2_start.xml"/>
+      Apply three iterations of the method of steepest descent to this problem.
+      List the values of all critical parameters at each step.
+<emphasis role="strong">3-3</emphasis> Solve Prob. 3-2 using the Fletcher-Reeves conjugate direction method.
+<emphasis role="strong">3-4</emphasis> Solve Prob. 3-2 using the Davidon-Fletcher-Powell variable metric algorithm.
+<emphasis role="strong">3-5</emphasis> Solve Prob. 3-2 using the Broyden-Fletcher-Shanno-Goldfarb algorithm.
+<emphasis role="strong">3-6</emphasis> Solve Prob. 3-2 using Powell's method. Use six search directions.
+<emphasis role="strong">3-7</emphasis> Solve Prob. 3-2 using Newton's method.</literallayout>
 	</blockquote>
 	<para>The solution to all of the quoted questions is presented in
 		<xref linkend="hw_2_minimization_paths"/>,
