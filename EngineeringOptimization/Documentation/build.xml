@@ -17,10 +17,14 @@
 		execute more than one m file per build - though I have never tried
 		it this way-->
 	<path id="eo-mfiles" path="ExecuteAllDocumentation.m"/>	
+	<!--The dir attribute is important because mmade automatically adds that
+		location to Mathematica's $Path. This provides a way to call one's
+		project with <<ProjectName` - where ProjectName is the folder
+		containing the project.-->
 	<target name="engineering-optimization">
 		<ant antfile="${mmade_xml_parent_dir}/XML/Ant/build.xml"
 			inheritall="false"
-			dir="."
+			dir="../../"
 			target="all">
 			<property name="mmade_xml_parent_dir"
 				location="${mmade_xml_parent_dir}"/>
