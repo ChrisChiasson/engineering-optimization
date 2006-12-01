@@ -5,8 +5,20 @@ BeginPackage["EngineeringOptimization`Documentation`PR2`",
 
 Begin["`Private`"];
 
-{Attributes[#]={NHoldAll},Format[#[i:Except["t"]]]=Subscript[#,i]}&/@
+{Attributes[#]={NHoldAll},Format[#[i_]]=Subscript[#,i]}&/@
 	{W,K,L,dL,X,Y,Q,q,num};
+
+(Format[#[i_][t]]=Subscript[#,i])&/@{X,Y};
+
+(Format[Derivative[1][#[i_]][t]]=Derivative[1][#[i]])&/@{X,Y};
+
+Format[Meter]="m";
+
+Unprotect@Second;
+Update@Second;
+Format[Second]="s";
+Protect@Second;
+Update@Second;
 
 (MakeBoxes[#1,_]=#2)&@@@
 	{{dL,"\[CapitalDelta]L"},
@@ -154,13 +166,10 @@ accelerationIntensity[t_]=
 
 sol[6]=NMaximize[{accelerationIntensity[t],0<t<finalAnimationTime},t];
 
-(*Unset the base frame rate in case the package is executed again*)
-baseFrameRate=.
-
 (*the frame rate is a function of the base frame rate and the present time -
 acceleration and velocity have equal weighting here*)
 
-frameRate[t_]=Max[
+frameRate[baseFrameRate_,t_]=Max[
 	baseFrameRate*
 		(accelerationIntensity[t]/sol[6][[1]]+velocityIntensity[t]/sol[5][[1]]),
 	1
@@ -170,28 +179,31 @@ frameRate[t_]=Max[
 rendered - it chooses the time for a new frame base on the instant frame rate
 at the point before it*)
 
-frameTimesNest[t_/;t>=finalAnimationTime]=finalAnimationTime;
+frameTimesNest[_,t_/;t>=finalAnimationTime]=finalAnimationTime;
 
-frameTimesNest[t_]:={t,frameTimesNest[t+1/frameRate[t]]};
+frameTimesNest[baseFrameRate_,t_]:=
+	{t,frameTimesNest[baseFrameRate,t+1/frameRate[baseFrameRate,t]]};
 
-frameTimes:=Block[{$RecursionLimit=Infinity},Flatten@frameTimesNest[0]]
+frameTimesFunc[baseFrameRate_]:=
+	Block[{$RecursionLimit=Infinity},
+		Flatten@frameTimesNest[baseFrameRate,0]
+		]
 
-numberOfFrames[frameRate_?NumberQ]:=
-	Block[{baseFrameRate=frameRate},Length@frameTimes]
+numberOfFrames[baseFrameRate_?NumberQ]:=Length@frameTimesFunc[baseFrameRate];
 
 (*here we find a base frame rate that will give us the same total number of
 frames as a constant four frames per second would over the 0 to
 finalAnimationTime interval*)
 
 sol[7]=
-	NMinimize[
-		{Abs[numberOfFrames[rate]-finalAnimationTime*4],0<rate<30},
-		rate
+	FindMinimum[
+		Abs[numberOfFrames[baseFrameRate]-finalAnimationTime*4],
+		{baseFrameRate,4,10,0,30}
 		];
 
 If[sol[7][[1]]!=0,Print[prefix<>" The frame rate is wrong."];Abort[]];
 
-Block[{baseFrameRate=sol[7][[2,1,2]]},frameTimes=frameTimes];
+frameTimes=frameTimesFunc[baseFrameRate/.sol[7][[2]]]
 
 displayTimes=Append[ListConvolve[{1,-1},frameTimes],0];
 
@@ -244,7 +256,7 @@ animationGraphics[t_]:=
 	Graphics[Through[{labels,animationPrimitives}[t]],
         PlotRange->plotRange,AspectRatio->Automatic,
         Frame->True,
-        FrameLabel->{SequenceForm[X["t"]," (m)"],SequenceForm[Y["t"]," (m)"]},
+        FrameLabel->{SequenceForm[X," (m)"],SequenceForm[Y," (m)"]},
         ImageSize->$ExportWidth];
 
 animation=animationGraphics/@frameTimes;
@@ -392,23 +404,17 @@ export@rayleighDissipation=
 of change of the spring lengths and the damping coefficient, c."],
       PrependDirectory\[Rule]EODExportDirectory];
 
-Qj="Qj";
+qj="qj_lower";
 
-export@Qj=
+Qj="Qj_capital";
+
+(export@#1=
 	XMLDocument[
-		prefix<>Qj<>".xml",
-		embeded@Qj=DocBookInlineEquation[prefix<>Qj,Q@j],
+		prefix<>#1<>".xml",
+		embeded@#1=DocBookInlineEquation[prefix<>#1,#2,SetIdAttribute->#3],
 		PrependDirectory->EODExportDirectory
-		];
-
-qj="qj";
-
-export@qj=
-	XMLDocument[
-		prefix<>qj<>".xml",
-		embeded@qj=DocBookInlineEquation[prefix<>qj,q@j],
-		PrependDirectory->EODExportDirectory
-		];
+		])&@@@{{qj,q@j,False},{Qj,Q@j,False},{"l_naught",L@naught,False},
+			{"gravity",(g/.rep@8)*Meter/Second^2,True}};
 
 lagrangeEOM="lagrange_equation_of_motion";
 
@@ -421,10 +427,10 @@ export@lagrangeEOM=
     			XMLElement["para",{},
     				{"Lagrange's equation expresses the interplay between \
 kinetic and potential energy, along with the bleeding of energy through \
-Rayleigh dissipation. External forces that do work are ,",
+Rayleigh dissipation. External forces that do work are ",
 					XMLElement["quote",{},{"generalized"}]," as ",
 					ToXML@embeded[Qj],". The ",
-					ToXML@embeded[qj]," are ,",
+					ToXML@embeded[qj]," are ",
 					XMLElement["quote",{},{"generalized"}]," coordinates."
 					}]
 			],PrependDirectory->EODExportDirectory
