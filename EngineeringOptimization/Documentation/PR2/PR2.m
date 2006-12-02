@@ -334,23 +334,23 @@ export[methodComparison]=
 values of the variables when using different methods. The first row is \
 potential energy. The second through last rows are (X,Y) coordinate pairs of \
 different points.",tab[methodComparison],
-        TitleAbbrev\[Rule]"Method Comparison" ,
-        Caption\[Rule]
+        TitleAbbrev->"Method Comparison" ,
+        Caption->
           "In the objective, PE, and all the variables, the Mathematica \
 reference and my two variations on the variable metric method all agree to \
-within six digits of precision."],PrependDirectory\[Rule]EODExportDirectory];
+within six digits of precision."],PrependDirectory->EODExportDirectory];
 
 initialValues="initialValues";
 
 tab@initialValues=
-    With[{nMax=num@P-1/.\[InvisibleSpace]rep@2},
+    With[{nMax=num@P-1/.rep@2},
       Prepend[Transpose@{{"PE (J)",
               Sequence@@
                 Table[SequenceForm["(",X[i] ,"," ,Y[i],") (m)"],{i,2,
                     nMax}]},{eqn[4][[2]],
                     Sequence@@
                       Table[SequenceForm["(",X[i][t] ,"," ,Y[i][t], ")"],{i,2,
-                          nMax}]}/.t\[Rule]0/.rep[7]/.rep[3]},{"Variable",
+                          nMax}]}/.t->0/.rep[7]/.rep[3]},{"Variable",
           "Initial Value"}]];
 
 export[initialValues]=
@@ -360,10 +360,10 @@ export[initialValues]=
 values of the variables when using different methods. The first row is \
 potential energy. The second through last rows are (X,Y) coordinate pairs of \
 different points.",tab[initialValues],
-        Caption\[Rule]
+        Caption->
           "These are the initial values of the variables that can change in \
 the potential energy minimization problem."],
-      PrependDirectory\[Rule]EODExportDirectory];
+      PrependDirectory->EODExportDirectory];
 
 (*export the (equation) definition of the potential energy*)
 
@@ -378,19 +378,43 @@ export[potentialEnergy]=
         Caption->
           "The potential energy increases when energy is stored by changing \
 the length of the springs (away from the free length) and decreases when the \
-weights move downward."],PrependDirectory\[Rule]EODExportDirectory];
+weights move downward."],PrependDirectory->EODExportDirectory];
 
 (*export the equation for the kinetic energy*)
 
 kineticEnergy="kinetic_energy";
 
 export@kineticEnergy=
-    XMLDocument[prefix<>kineticEnergy<>".xml",
-      DocBookEquation[prefix<>kineticEnergy,"Kinetic Energy (KE) Function",
-        eqn@5,TitleAbbrev->"Kinetic Energy",
-        Caption->
-          "The kinetic energy is proportional to the sum of the squares of \
-the velocities of the weights."],PrependDirectory\[Rule]EODExportDirectory];
+	XMLDocument[
+		prefix<>kineticEnergy<>".xml",
+		DocBookEquation[
+			prefix<>kineticEnergy,
+			"Kinetic Energy (KE) Function",
+			eqn@5,
+			TitleAbbrev->"Kinetic Energy",
+			Caption->XMLChain@
+				XMLElement["para",{},
+					{"The kinetic energy",
+						XMLElement["footnote",{},
+							{XMLElement["para",{},
+								{"The symbol g, in the definition of the ",
+									"kinetic energy, stands for Earth's ",
+									"surface gravitational acceleration. It's ",
+									"nominally taken to be ",ToXML@
+										DocBookInlineEquation[prefix<>"gravity",
+											(g/.rep@8)*
+												HoldForm[Meter/Second^2]],
+									"."
+									}
+								]}
+							],
+						" is proportional to the sum of the squares of the ",
+						"velocities of the weights."
+						}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 rayleighDissipation="rayleigh_dissipation";
 
@@ -399,10 +423,10 @@ export@rayleighDissipation=
       DocBookEquation[prefix<>rayleighDissipation,
         "Rayleigh Dissipation (RD) Function",eqn@7,
         TitleAbbrev->"Rayleigh Dissipation",
-        Caption\[Rule]
+        Caption->
           "The rate of dissipation of energy is proportional to the time rate \
 of change of the spring lengths and the damping coefficient, c."],
-      PrependDirectory\[Rule]EODExportDirectory];
+      PrependDirectory->EODExportDirectory];
 
 qj="qj_lower";
 
@@ -413,8 +437,7 @@ Qj="Qj_capital";
 		prefix<>#1<>".xml",
 		embeded@#1=DocBookInlineEquation[prefix<>#1,#2,SetIdAttribute->#3],
 		PrependDirectory->EODExportDirectory
-		])&@@@{{qj,q@j,False},{Qj,Q@j,False},{"l_naught",L@naught,False},
-			{"gravity",(g/.rep@8)*Meter/Second^2,True}};
+		])&@@@{{qj,q@j,False},{Qj,Q@j,False},{"l_naught",L@naught,False}};
 
 lagrangeEOM="lagrange_equation_of_motion";
 
