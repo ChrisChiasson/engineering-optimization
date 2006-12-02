@@ -495,11 +495,18 @@ xpr[minimum]=
 		];
 
 (export[#1]=XMLDocument[prefix<>#1<>".xml",
-	DocBookInlineEquation[prefix<>#1,xpr[#1],SetIdAttribute->#2],
+	DocBookInlineEquation[prefix<>#1,xpr[#1],SetIdAttribute->#2,##3],
 	PrependDirectory->EODExportDirectory
 	])&@@@
 		{{idealDirection,False},
-			{fletcherReevesBeta,False},
+			{fletcherReevesBeta,
+				False,
+				Exports->
+					ExportsOption[
+						DocBookInlineEquation,
+						"html",AlternateSizePacketMethod->True
+						]
+				},
 			{fletcherReevesDirection,False},
 			{domain,False},
 			{minimum,False}
