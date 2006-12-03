@@ -1883,18 +1883,18 @@ tableauQ[tableau_]:=MatchQ[tableau,{{__}..}];
 basisQ[basis_]:=MatchQ[basis,{{__?NumericQ}..}];
 
 pivot[inputtableau_?tableauQ,pivotpos:{_?NumericQ,_?NumericQ}]:=
-	Module[
+	With[
 		{inputtabdim=Dimensions[inputtableau],
 			modrow=Extract[inputtableau,Most[pivotpos]]/
 				Extract[inputtableau,pivotpos]
 			},
 		{Sequence@@
-			Map[#-#[[pivotpos[[1]]]]*modrow&,
+			Map[#-#[[pivotpos[[2]]]]*modrow&,
 				inputtableau[[Range[1,First[pivotpos]-1]]]
 				],
 			modrow,
 			Sequence@@
-				Map[#-#[[pivotpos[[1]]]]*modrow&,
+				Map[#-#[[pivotpos[[2]]]]*modrow&,
 					inputtableau[[Range[First[pivotpos]+1,First[inputtabdim]]]]
 					]
 			}
