@@ -15,6 +15,12 @@ Begin["`Private`"];
 
 prefix="hw_4_";
 
+(export[prefix<>#1]=
+	XMLDocument[prefix<>#1<>".xml",
+		DocBookInlineEquation[prefix<>#1,#2,SetIdAttribute->False],
+		PrependDirectory->EODExportDirectory
+		])&@@@({"X_"<>ToString@#,X@#}&/@Range@4)
+
 tabtab="table_tableau_";
 
 exportTableau=Function[{func,title,tabl,titleAbbrev,caption},
@@ -57,13 +63,25 @@ tableau[4,1,b]=LinearMinimizeTableau[tableau[4,1,a],{{1,1},{2,2}}];
 
 eqns[4,1,1][X3_,X4_]=F==-2*X3-X4+10;
 
-eqns[4,1,2][X3_,X4_]=2 X3+X4\[LessEqual]4;
+eqns[4,1,2][X3_,X4_]=2*X3+X4\[LessEqual]4;
 
 eqns[4,1,3][X3_,X4_]=X3+3 X4\[LessEqual]6;
 
 eqns[4,1,4][X3_,X4_]=X3\[GreaterEqual]0;
 
 eqns[4,1,5][X3_,X4_]=X4\[GreaterEqual]0;
+
+eq1="eqns_4_1";
+
+export[eq1]=XMLDocument[prefix<>eq1<>".xml",
+	DocBookEquation[
+		prefix<>eq1,
+		"P 4-1 Symbolic Formulation",
+		eqns[4,1,#][X@3,X@4]&/@DocBookEquationSequence@@Range@5,
+		Caption->"This is one possible interpretation of the given tableau."
+		],
+	PrependDirectory->EODExportDirectory
+	];
 
 sol[4,1]=Minimize[{eqns[4,1,1][X@3,X@4][[2]],
         eqns[4,1,#][X@3,X@4]&/@Range[2,5]},{X@3,X@4}];
@@ -319,7 +337,7 @@ With[{id=prefix<>ToString[SequenceForm@@BoxForm`Intercalate[{eqns,##3},"_"]]},
 			DocBookInlineEquation[id,eqns[4,##3][#1,#2]],
 			PrependDirectory->EODExportDirectory
 			]
-	]&@@@Join[Thread@{X@3,X@4,1,Range@4},Thread@{X@1,X@2,3,Range@5}];
+	]&@@@Thread@{X@1,X@2,3,Range@4};
 
 filesToTransport={prefix<>"screenshot_assignment.png"};
 
