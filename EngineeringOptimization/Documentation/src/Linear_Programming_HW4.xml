@@ -41,9 +41,9 @@
 				<para>Problems 4-1 and 4-2</para>
 				<blockquote>
 					<attribution><citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>, p149</attribution>
-					<literallayout><emphasis role="strong">4-1</emphasis> Consider the following simplex tableau:
-<xi:include href="mout/hw_4_table_tableau_P_4-1_and_P_4-2_Initial_Tableau.xml"/>
-      a. What are the current basic variables?
+					<literallayout><emphasis role="strong">4-1</emphasis> Consider the following simplex tableau:</literallayout>
+					<xi:include href="mout/hw_4_table_tableau_P_4-1_and_P_4-2_Initial_Tableau.xml"/>
+					<literallayout>      a. What are the current basic variables?
       b. What are the current values of all design variables?
       c. What is the current value of the objective function?
       d. What variable is next to enter the basis?
@@ -74,9 +74,9 @@
 					column divided by the coefficient in the entering variable
 					column. In this case, the variable leaving the basis is
 					<xi:include href="mout/hw_4_X_1.xml"/>, since
-					<inlineequation>4/2 = 2</inlineequation> is less
+					<inlineequation><mathphrase>4/2 = 2</mathphrase></inlineequation> is less
 					than
-					<inlineequation>6/1 = 6</inlineequation>. One system
+					<inlineequation><mathphrase>6/1 = 6</mathphrase></inlineequation>. One system
 					represented by the given tableau is
 					<xref linkend="hw_4_eqns_4_1"/>. The solution of the tableau
 					via the simplex method is given in
