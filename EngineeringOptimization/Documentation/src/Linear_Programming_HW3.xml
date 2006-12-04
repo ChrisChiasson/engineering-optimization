@@ -6,6 +6,7 @@
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="5">
 	<title>Linear Programming &#x2014; Homework 3</title>
+	<titleabbrev>Linear Programming 3</titleabbrev>
 	<para>As Dr. Mohamed El-Sayed shows in
 		<xref linkend="hw_3_screenshot_assignment"/>, the assigment is to put
 		<olink targetdoc="self" targetptr="GNVNOTED"/> problems 4-4 and 4-5
@@ -49,7 +50,7 @@
       Minimize: <xi:include href="mout/hw_3_eqns_4_1.xml"/>
       Subject to:
             <xi:include href="mout/hw_3_eqns_4_2.xml"/>
-            <xi:include href="mout/hw_3_eqns_4_3.xml"/> [sic]
+            <xi:include href="mout/hw_3_eqns_4_3.xml"/>
             <xi:include href="mout/hw_3_eqns_4_4.xml"/>      <xi:include href="mout/hw_3_eqns_4_5.xml"/>
       a. Solve this problem using the simplex method.
       b. Draw the two-variable function space to verify your solution.</literallayout>
@@ -57,9 +58,8 @@
 			</question>
 			<answer>
 				<para>This problem gives one optimization function and four
-					constraints. As given, the second constraint can't be active
-					due to the first. The equations,
-					since they are linear, can be translated into a tableau and
+					constraints.  Since they are linear, the equations can be
+					translated into a tableau and
 					operated on by the simplex method to iteratively find the
 					objective's minimum. The reader	is expected to know or
 					reference linear programming terminology, which can be found
@@ -115,18 +115,19 @@
       Minimize: <xi:include href="mout/hw_3_eqns_5_1.xml"/>
       Subject to:
             <xi:include href="mout/hw_3_eqns_5_2.xml"/>
-            <xi:include href="mout/hw_3_eqns_5_3.xml"/>
+            <xi:include href="mout/hw_3_eqns_5_3.xml"/> [<emphasis role="italic">sic</emphasis>]
             <xi:include href="mout/hw_3_eqns_5_4.xml"/>      <xi:include href="mout/hw_3_eqns_5_5.xml"/>
       a. Solve this problem using the simplex method.
       b. Draw the two-variable function space to verify your solution.</literallayout>
 				</blockquote>
 			</question>
 			<answer>
-				<para>Problem 4-5 is the same as its predecessor, except that it
-					has a different right hand value on one of its contraints
-					that changes the domain of the optimization. Except for the
-					inital part, the problem follows exactly the same solution
-					steps. The problem, as given, is not in	canonical form. This
+				<para>Problem 4-5 is the same as its predecessor, except that
+					its constraints lead to a different domain of optimization.
+					The second constraint in this problem can't be active
+					due to the first. Except for the inital part, the problem
+					follows exactly the same solution steps. as the first.
+					The problem, as given, is not in canonical form. This
 					time, because one of the excess	variables is negative and
 					its corresponding constraint is	negative, I can just
 					multiply that equation by negative one. However, the
