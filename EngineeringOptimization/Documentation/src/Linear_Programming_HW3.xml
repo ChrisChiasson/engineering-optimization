@@ -49,15 +49,16 @@
       Minimize: <xi:include href="mout/hw_3_eqns_4_1.xml"/>
       Subject to:
             <xi:include href="mout/hw_3_eqns_4_2.xml"/>
-            <xi:include href="mout/hw_3_eqns_4_3.xml"/>
+            <xi:include href="mout/hw_3_eqns_4_3.xml"/> [sic]
             <xi:include href="mout/hw_3_eqns_4_4.xml"/>      <xi:include href="mout/hw_3_eqns_4_5.xml"/>
       a. Solve this problem using the simplex method.
       b. Draw the two-variable function space to verify your solution.</literallayout>
 				</blockquote>
 			</question>
 			<answer>
-				<para>This problem gives one
-					optimization function and four constraints. Its equations,
+				<para>This problem gives one optimization function and four
+					constraints. As given, the second constraint can't be active
+					due to the first. The equations,
 					since they are linear, can be translated into a tableau and
 					operated on by the simplex method to iteratively find the
 					objective's minimum. The reader	is expected to know or
