@@ -176,14 +176,13 @@ exportTableau["P 4-4 Canonical Form of Initial Tableau",
 						],
 				". Generally the simplex method would need to be applied ",
 				"again, but since the coefficients of all the variables not ",
-				"in the basis are positive, I can stop here."
+				"in the basis are non-negative, I can stop here."
 				}
 			]
 	];
 
-rangeSpec[4,
-      4]={{X@1,X@1-2/.sol[4,4][[2]],X@1+2/.sol[4,4][[2]]},{X@2,
-        X@2-2/.sol[4,4][[2]],X@2+2/.sol[4,4][[2]]}};
+rangeSpec[4,4]={{X@1,X@1-2/.sol[4,4][[2]],X@1+2/.sol[4,4][[2]]},
+	{X@2,X@2-2/.sol[4,4][[2]],X@2+2/.sol[4,4][[2]]}};
 
 regionFunction[4,4][X1_,X2_]=eqns[4,4,#][X1,X2]&/@And@@Range[2,5];
 
@@ -251,6 +250,7 @@ function occur on a solid green line marking the edge of the domain. A large \
 green point at one end of the green line indicates the point the simplex \
 algorithm found. Dotted red lines show the other edges of the domain.",
       gr[4,4,3],
+      TitleAbbrev->"P 4-4 Function Space",
       Caption->"The red lines indicate constraints. The green point	"<>
       	"indicates the optimimum achieved by the simplex method. The green "<>
       	"line indicates an	entire edge of the domain that results in a "<>
@@ -266,13 +266,13 @@ eqns[4,5,1][X1_,X2_]=F==2 X1+4 X2;
 
 eqns[4,5,2][X1_,X2_]=2 X1+X2>=2;
 
-eqns[4,5,3][X1_,X2_]=2 X1+4 X2>=-1;
+eqns[4,5,3][X1_,X2_]=2 X1+X2>=-1;
 
 eqns[4,5,4][X1_,X2_]=X1>=0;
 
 eqns[4,5,5][X1_,X2_]=X2>=0;
 
-tableau[4,5,a]={{2,1,-1,0,2},{2,4,0,-1,-1},{2,4,0,0,F}};
+tableau[4,5,a]={{2,1,-1,0,2},{2,1,0,-1,-1},{2,4,0,0,F}};
 
 exportTableau["P 4-5 Initial Tableau",table[4,5,a],Automatic,None];
 
@@ -355,8 +355,9 @@ gr[4,5,3]=
 			gr[4,5,2],
 			Graphics[
 				{Thickness[0.01],Dashing[{.05,.025}],Red,
-					Line[{{0,2},{1,0},{3,0}}],Thickness[0.01],Dashing[{1}],
-					Green,PointSize[0.03],Point[solVector],Black,
+					Line[{{0,rangeSpec[4,5][[2,-1]]},{0,2},{1,0},
+						{rangeSpec[4,5][[1,-1]],0}}],Thickness[0.01],
+					Dashing[{1}],Green,PointSize[0.03],Point[solVector],Black,
 					Text[DisplayForm@
 						Cell[StripBoxes@ToBoxes@NumberForm[
 								eqns[4,5,1][Sequence@@#][[2]],
@@ -388,6 +389,7 @@ export[gr45]=
 indicates the point that the simplex algorithm found to be the minimum on the \
 given domain. Dotted red lines show the other edges of the domain.",
       gr[4,5,3],
+      TitleAbbrev->"P 4-5 Function Space",
       Caption->"There is no optimum	edge because neither of the two edges "<>
       	"that touch the minimum are parallel with the objective	contours."
       ],
@@ -396,7 +398,7 @@ given domain. Dotted red lines show the other edges of the domain.",
 (*create xml for both sets of equations*)
 
 Outer[
-	Module[
+	With[
 		{id=prefix<>ToString[SequenceForm@@BoxForm`Intercalate[{eqns,##},"_"]]},
 		export[id]=
 			XMLDocument[id<>".xml",
@@ -407,8 +409,6 @@ Outer[
 	{4,5},
 	Range[5]
 	];
-
-(*create xml for the solution vectors*)
 
 filesToTransport={prefix<>"screenshot_assignment.png"};
 
