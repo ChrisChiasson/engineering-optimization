@@ -18,6 +18,7 @@
 	<xi:include href="Unconstrained_Nonlinear_Optimization.xml"/>
 	<xi:include href="Linear_Programming_HW3.xml"/>
 	<xi:include href="Variable_Metric_Unconstrained_Optimization_Methods.xml"/>
+	<xi:include href="Linear_Programming_HW4.xml"/>
 	<xi:include href="Bibliography.xml"/>
 	<xi:include href="Glossary.xml"/>
 	<xi:include href="HW1_Appendix.xml"/>
@@ -25,5 +26,6 @@
 	<xi:include href="Unconstrained_Nonlinear_Optimization_Appendix.xml"/>
 	<xi:include href="Linear_Programming_HW3_Appendix.xml"/>
 	<xi:include href="Variable_Metric_Unconstrained_Optimization_Methods_Appendix.xml"/>
+	<xi:include href="Linear_Programming_HW4_Appendix.xml"/>
 	<xi:include href="Common_Source_Appendix.xml"/>
 </book>
