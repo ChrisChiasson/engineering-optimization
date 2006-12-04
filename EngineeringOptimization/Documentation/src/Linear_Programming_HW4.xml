@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="Linear_Programming_HW4"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xl="http://www.w3.org/1999/xlink"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace"
+	version="5">
+	<title>Linear Programming &#x2014; Homework 4</title>
+	<titleabbrev>Linear Programming 4</titleabbrev>
+	<para>Dr. Mohamed El-Sayed assigned a second homework on linear	programming,
+		as shown in <xref linkend="hw_4_screenshot_assignment"/>. The assignment
+		is to complete <olink targetdoc="self" targetptr="GNVNOTED"/> problems
+		4-1 through 4-3. My homework calculations are available in
+		<olink targetdoc="self" targetptr="HW4_code"/>, while my simplex method
+		implementation, LinearMinimizeTableau, is toward the end of
+		<olink targetdoc="self" targetptr="Engineering_Optimization_Main_Code"/>.</para>
+	<figure xml:id="hw_4_screenshot_assignment">
+		<title>Homework 4 Assignment</title>
+		<screenshot>
+			<mediaobject>
+				<imageobject role="html">
+					<imagedata fileref="mout/hw_4_screenshot_assignment.png"/>
+				</imageobject>
+				<imageobject role="fo">
+					<imagedata contentwidth="5in" 
+						fileref="mout/hw_4_screenshot_assignment.png"/>
+				</imageobject>
+				<textobject>
+					<phrase>Ex. problems 4-1 — 4-3 Home work</phrase>
+				</textobject>
+			</mediaobject>
+		</screenshot>
+		<caption>
+			<para>This is a screenshot from part B of the fifth lecture at
+				24:22.</para>
+		</caption>
+	</figure>
+	<qandaset>
+		<qandaentry>
+			<question>
+				<para>Problems 4-1 and 4-2</para>
+				<blockquote>
+					<attribution><citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>, p149</attribution>
+					<literallayout><emphasis role="strong">4-1</emphasis> Consider the following simplex tableau:
+<xi:include href="mout/hw_4_table_tableau_P_4-1_and_P_4-2_Initial_Tableau.xml"/>
+      a. What are the current basic variables?
+      b. What are the current values of all design variables?
+      c. What is the current value of the objective function?
+      d. What variable is next to enter the basis?
+      e. What variable will leave the basis?
+<emphasis role="strong">4-2</emphasis> For Prob. 4-1, complete the solution using the simplex method.
+      a. What is [<emphasis role="italic">sic</emphasis>] the optimum value of the objective and the values of the design variables?
+      b. Is this solution unique? Why or why not?</literallayout>
+				</blockquote>
+			</question>
+			<answer>
+				<para>The current basic variables are
+					<xi:include href="mout/hw_4_X_1.xml"/> and
+					<xi:include href="mout/hw_4_X_2.xml"/>.
+					<xi:include href="mout/hw_4_X_3.xml"/> and
+					<xi:include href="mout/hw_4_X_4.xml"/> are zero because all
+					non	basis variables are zero. By that same rule and use of
+					the equations represented by the tableau rows,
+					<xi:include href="mout/hw_4_X_1.xml"/> is 4,
+					<xi:include href="mout/hw_4_X_2.xml"/> is 6, and the value
+					of the objective function is 10. The variable that is
+					entering the basis is <xi:include href="mout/hw_4_X_3.xml"/>
+					because its coefficient, -2, in the objective function is
+					the most negative. The variable that is leaving the	basis is
+					the basic variable that first prevents the entering variable
+					from rising. By that logic, and since all variables must be
+					positive, the variable that leaves is the one that has a 1
+					on the row that has the lowest value of the	right hand side
+					column divided by the coefficient in the entering variable
+					column. In this case, the variable leaving the basis is
+					<xi:include href="mout/hw_4_X_1.xml"/>, since
+					<inlineequation>4/2 = 2</inlineequation> is less
+					than
+					<inlineequation>6/1 = 6</inlineequation>. One system
+					represented by the given tableau is
+					<xref linkend="hw_4_eqns_4_1"/>. The solution of the tableau
+					via the simplex method is given in
+					<xref linkend="hw_4_table_tableau_P_4-1_and_P_4-2_Optimized_Tableau"/>
+					and <xref linkend="hw_4_gr_4_1"/>.</para>
+				<xi:include href="mout/hw_4_eqns_4_1.xml"/>
+				<xi:include href="mout/hw_4_table_tableau_P_4-1_and_P_4-2_Optimized_Tableau.xml"/>
+				<xi:include href="mout/hw_4_gr_4_1.xml"/>
+			</answer>
+		</qandaentry>
+		<qandaentry>
+			<question>
+				<para>Problem 4-3</para>
+				<blockquote>
+					<attribution><citation><olink targetdoc="self" targetptr="GNVNOTED"/></citation>, p149</attribution>
+					<literallayout><emphasis role="strong">4-3</emphasis> Consider the LP problem
+      Minimize: <xi:include href="mout/hw_4_eqns_3_1.xml"/>
+      Subject to:
+            <xi:include href="mout/hw_4_eqns_3_2.xml"/>
+            <xi:include href="mout/hw_4_eqns_3_3.xml"/>      <xi:include href="mout/hw_4_eqns_3_4.xml"/>
+      a. Solve this problem using the simplex method.
+      b. Draw the two-variable function space to verify your solution.</literallayout>
+				</blockquote>
+			</question>
+			<answer>
+				<para>Problem 4-3 is interesting because it has only one
+					constraint, as opposed to the other linear programming
+					problems covered so far. The single constraint means there
+					is only one variable in the basis. Otherwise, it is similar
+					to the problems in
+					<olink targetdoc="self" targetptr="Linear_Programming_HW3"/>.
+					I show the problem solution steps from
+					<xref linkend="hw_4_table_tableau_P_4-3_Initial_Tableau"/>
+					through
+					<xref linkend="hw_4_table_tableau_P_4-3_Canonical_Form_of_Initial_Tableau"/>.
+					Finally, I provide the requested graph as
+					<xref linkend="hw_4_gr_4_3"/>.
+				</para>
+				<xi:include href="mout/hw_4_table_tableau_P_4-3_Initial_Tableau.xml"/>
+				<xi:include href="mout/hw_4_table_tableau_P_4-3_Augmented_Tableau.xml"/>
+				<xi:include href="mout/hw_4_table_tableau_P_4-3_Augmented_Tableau_in_Canonical_Form.xml"/>
+				<xi:include href="mout/hw_4_table_tableau_P_4-3_Augmented_Tableau_After_Optimization.xml"/>
+				<xi:include href="mout/hw_4_table_tableau_P_4-3_Canonical_Form_of_Initial_Tableau.xml"/>
+				<xi:include href="mout/hw_4_gr_4_3.xml"/>
+			</answer>
+		</qandaentry>
+	</qandaset>
+</chapter>
