@@ -191,7 +191,7 @@ ruleNumeric[workingPrecision:(_?NumericQ|MachinePrecision):MachinePrecision]:=
 
 defineBadArgs@ruleNumeric;
 
-ruleLhsUnion[rules___]:=
+ruleLhsUnion[rules___?OptionQ]:=
 	Sequence@@Module[{encounteredLhses=Alternatives[],Lhs,rule,ruleParser},
 	ruleParser[Pattern[rule,ruleHeadPatternObject[Lhs_,_]]]:=
 		If[MatchQ[Lhs,encounteredLhses],
