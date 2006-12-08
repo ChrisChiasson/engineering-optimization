@@ -15,6 +15,8 @@ MakeBoxes[rp,form_]:=Block[{r,p},MakeBoxes[Subscript[r,p],form]]
 
 MakeBoxes[rpPrime,form_]:=MakeBoxes[Derivative[1][rp],form]
 
+(MakeBoxes[#1,_]=#2)&@@@{{plus,"+"},{minus,"-"}};
+
 Through[{Unprotect,Update}[Piecewise]];
 
 Format[Piecewise[{{val_,condition_}},otherval:Except[0]]]:=
@@ -148,13 +150,23 @@ gr[5,4,3,rp_]:=gr[5,4,3,rp]=solutionLabel[X/@Range@2/.sol[5,4,1][[2]],{-1,1}];
 
 gr[5,4,4,rp_]:=gr[5,4,4,rp]=Show@@(gr[5,4,#,rp]&)/@Range@3;
 
-(*prepare the rpPrime mini equations*)
+(*prepare some penalty parameter expressions*)
 
 (rpPrimeXMLChain[#1]=
-	(*XMLDocument[prefix<>#2<>".xml",*)
-		DocBookInlineEquation[prefix<>#2,rpPrime==#1,SetIdAttribute->False](*,
+		DocBookInlineEquation[prefix<>#2,rpPrime==#1,SetIdAttribute->False])&@@@
+			{{1,rp1="rpPrime_Equal_1"},{1/2,rpHalf="rpPrime_Equal_Half"}};
+
+(export[prefix<>#1]=
+	XMLDocument[prefix<>#1<>".xml",
+		DocBookInlineEquation[prefix<>#1,##2],
 		PrependDirectory->EODExportDirectory
-		]*))&@@@{{1,rp1="rpPrimeEq1"},{1/2,rpHalf="rpPrimeEqHalf"}};
+		])&@@@{
+				{"rp",rp,SetIdAttribute->False},
+				{"rpPrime",rpPrime,SetIdAttribute->False},
+				{"epsilon",\[Epsilon],SetIdAttribute->False},
+				{"rpPrime_Limit",rpPrime->Superscript[0,plus]},
+				{"epsilon_Limit",\[Epsilon]->Superscript[0,minus]}
+				};
 
 gr54="graph_5_4_";
 
