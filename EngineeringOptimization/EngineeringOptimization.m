@@ -1365,9 +1365,15 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			MaxIterations/.{options}][[1]];
 		{function/.solutionRules,solutionRules}];
 
-(*augmented Lagrange multiplier*) 
+(*augmented Lagrange multiplier section beginning - ends at simplex method*) 
 
-defineBadArgs@aLMKernel;
+(*constraintRateMultiplier, constraintPenaltyTransformation, & chooseMethod
+are old functions - the first two are for constraint rate scaling and the
+last is for argument checking via partial evaluation*)
+
+(*there are other attempts at constraint scaling elsewhere in the repository,
+but I'm keeping these two functions in the trunk's Head revision so they will be
+easy to find in the future*)
 
 constraintRateMultiplier[function_,variables:multipleExpressionPatternObject,
 	constraintValue_,opts___?OptionQ]:=
@@ -1735,8 +1741,7 @@ Options@NMinimize`AugmentedLagrangeMultiplier={"InitialLagrangeMultipliers"->0,
 aLMKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	penalties_,
-	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,
-		_],
+	penaltyMultiplierRule:Rule[penaltyMultiplier_Symbol,_],
 	penaltyMultiplierGrowthFactor_,
 	lagrangeMultiplierRules:multipleRulePatternObject,
 	lagrangeMultiplierUpdates:multipleExpressionPatternObject,opts___?OptionQ]:=
@@ -1774,8 +1779,11 @@ aLMKernel[function_,variables:multipleExpressionPatternObject,
 					/.solutionNewRules}];
 		{solutionNewRules,penaltyMultiplierNewRule,lagrangeMultiplierNewRules}];
 
-(*this is an attempt to reformulate NMinimize in the calling structure I used
-in FindMinimum -- instead of the original Trott-Strzebonski partial evaluation*)
+defineBadArgs@aLMKernel;
+
+(*these NMinimize definitions are an attempt to reformulate NMinimize in the
+calling structure I used for FindMinimum -- instead of the original
+Trott-Strzebonski partial evaluation*)
 
 NMinimize[{function_,constraint:constraintPatternObject},
 	variableStartRanges:multipleGuessRangePseudoPatternObject,
@@ -1838,8 +1846,8 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 (*It is somewhat inefficient to have different function calls generate the
 penalties and the multiplier updates -- these could easily be defined at the
 same time. In fact, they were defined by one function call in the previous
-version of this routine. This way, however, the code can be more modular, easier
-to understand, and easier to debug.*)
+version of this routine (which also did rate scaling). This way, however, the
+code can be more modular, easier to understand, and easier to debug.*)
 		lagrangeMultiplierUpdates=
 			MapThread[2*penaltyMultiplier*
 				augmentInequalityConstraint[#,
