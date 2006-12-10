@@ -6,8 +6,9 @@
 	version="5">
 	<glossentry xml:id="unimodal"><glossterm>unimodal</glossterm>
 		<glossdef>
-			<para>A function with one local minimum or maximum that is also
-				a global minimum or maximum.</para>
+			<para>A function with a single local minimum (or maximum) such that
+				the local minimum (or maximum) is also the global minimum (or
+				maximum).</para>
 		</glossdef>
 	</glossentry>
 </glossary>
