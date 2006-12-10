@@ -24,6 +24,14 @@ not included when writing the labels."},
 			StringReplace[RegionFunction::usage,message->""]<>" "<>message]
 	];
 
+StringSequence::usage="StringSequence[args] will execute ToString@SequenceForm[\
+args]"
+
+GenUC::usage="GenUC[args] will create a underscorer separated string from \
+args. GenUC[{lhsUC,rhsUC},args], where lhsUC and rhsUC are boolean values, \
+will put an underscore before the first argument in args if lhsUC is True, and \
+an underscore after the last argument is rhsUC is True.";
+
 Begin["`Private`"];
 
 (*duplicatePositionsToDelete is based off of the PositionOfRuns function in the
@@ -105,6 +113,15 @@ LabelLines[
 
 LabelLines[graph_,textFunction_,fraction_?NumericQ,options___]:=
 	LabelLines[graph,textFunction,{fraction},options];
+
+StringSequence[args__]:=ToString@SequenceForm[args];
+
+GenUC[{leftUC:(True|False):False,rightUC:(True|False):False},designators__]:=
+  With[{lrReps={True->"_",False->""}},
+    ToString@SequenceForm[leftUC/.lrReps,
+      BoxForm`Intercalate[SequenceForm[designators],"_"],rightUC/.lrReps]];
+
+GenUC[designators__]:=GenUC[{},designators];
 
 End[];
 
