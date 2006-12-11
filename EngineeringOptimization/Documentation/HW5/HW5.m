@@ -160,7 +160,7 @@ gr[5,4,3,rp_]:=gr[5,4,3,rp]=
 
 gr[5,4,4,rp_]:=gr[5,4,4,rp]=Show@@(gr[5,4,#,rp]&)/@Range@3;
 
-(*prepare some penalty parameter expressions*)
+(*prepare some penalty parameter and other expressions*)
 
 (rpPrimeXMLChain[#1]=
 		DocBookInlineEquation[prefix<>#2,rpPrime==#1,SetIdAttribute->False])&@@@
@@ -177,9 +177,14 @@ gr[5,4,4,rp_]:=gr[5,4,4,rp]=Show@@(gr[5,4,#,rp]&)/@Range@3;
 				{"rpPrime_Limit",rpPrime->Superscript[0,plus]},
 				{"epsilon_Limit",\[Epsilon]->Superscript[0,minus]},
 				{"rp_Equal_1",rp==1,SetIdAttribute->False},
+				{"rpPrime_Equal_Half",rpPrime==0.5,SetIdAttribute->False},
+				{"rpPrime_Equal_1",rpPrime==NumberForm[1.0,2],
+					SetIdAttribute->False},
 				Sequence@@({GenUC["lambda_Equal",#],\[Lambda]==#,
 							SetIdAttribute->False
-							}&/@{-4,-1,0,1,2})
+							}&/@{-4,-1,0,1,2}),
+				{"X_1",X@1,SetIdAttribute->False},
+				{"X_2",X@1,SetIdAttribute->False}
 				};
 
 gr54="graph_5_4_";
@@ -193,14 +198,22 @@ indicates the minimum of the function on the domain."
 	XMLDocument[prefix<>gr54<>#1<>".xml",
 		DocBookFigure[prefix<>gr54<>#1,
 			XMLChain@XMLElement["phrase",{},
-				{"P 5-4 Objective Function, \[CapitalPhi], Contour Plot with ",
-					ToXML@rpPrimeXMLChain[#2]
+				{"P 5-4 Pseudo Objective Function, \[CapitalPhi], Contour Plot",
+				 	"with ",ToXML@rpPrimeXMLChain[#2]
 					}],
-			unboundContourPlotAltText,gr[5,4,4,#2]
+			unboundContourPlotAltText,gr[5,4,4,#2],Caption->#3,
+			TitleAbbrev->XMLChain@XMLElement["phrase",{},{"P 5-4 ",
+				"\[CapitalPhi] Contour Plot with ",ToXML@rpPrimeXMLChain[#2]}]
 			],
 		PrependDirectory->EODExportDirectory
 		]
-	)&@@@{{rp1,1},{rpHalf,1/2}};
+	)&@@@{{rp1,1,None},
+		{rpHalf,1/2,XMLChain@XMLElement["para",{},{"Normally, this plot ",
+		"would be more distorted than ",XMLElement["xref",{"linkend"->
+		prefix<>gr54<>rp1},{}],". However, ",ToXML@DocBookInlineEquation[
+		prefix<>gr54<>"epsilon",\[Epsilon]]," was not decreased in step with ",
+		ToXML@DocBookInlineEquation[prefix<>gr54<>"rp",rp],". That makes this ",
+		"plot more like the objective function, F."}]}};
 
 (*export the analytical solutions to the minimization problems (these correspond
 to the graphs)*)
@@ -214,15 +227,18 @@ With[{solEqn=Reduce[D[F==objective[5,4][whatever,#2,-2][varSeq],{varList,1}],
 		XMLDocument[prefix<>sol54<>#1<>".xml",
 			DocBookEquation[prefix<>sol54<>#1,
 				XMLChain[XMLElement["phrase",{},
-					{"P 5-4 Objective Function, \[CapitalPhi], Analytic",
-						" Solution with ",ToXML[rpPrimeXMLChain[#2]]
+					{"P 5-4 Pseduo Objective Function, \[CapitalPhi], Analytic",
+						" Minimum Solution with ",ToXML[rpPrimeXMLChain[#2]]
 						}
 					]],
 				DocBookEquationSequence[
-					\[CapitalPhi]==objective[5,4][whatever,#,-2][varSeq]/.
+					\[CapitalPhi]==objective[5,4][whatever,#2,-2][varSeq]/.
 						ToRules@solEqn,
 					Sequence@@solEqn
-					]
+					],
+				TitleAbbrev->XMLChain@XMLElement["phrase",{},{"P 5-4 ",
+					"\[CapitalPhi] Analytic Minimum with ",
+					ToXML@rpPrimeXMLChain[#2]}]
 				],
 			PrependDirectory->EODExportDirectory
 			]
