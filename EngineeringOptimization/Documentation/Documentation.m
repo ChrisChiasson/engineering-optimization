@@ -1,6 +1,4 @@
-BeginPackage["EngineeringOptimization`Documentation`",
-	{"EngineeringOptimization`",
-		"XML`DocBook`"}];
+BeginPackage["EngineeringOptimization`Documentation`",{"XML`DocBook`"}];
 
 EODExport::usage"EODExport is a boolean variable that indicates wether the \
 documentation should be exported";
