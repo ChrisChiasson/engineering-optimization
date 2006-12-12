@@ -92,6 +92,7 @@
 	<section xml:id="Lagrangian_Mechanics_Formulation" condition="animation">
 		<title>Lagrangian Mechanics Formulation of
 			<olink targetdoc="self" targetptr="GNVNOTED"/> Example 3-3</title>
+		<titleabbrev>Lagrangian Mechanics of Ex. 3-3</titleabbrev>
 		<para>In the book, the example only deals with the steady state
 			equilibrium problem, correctly relying on the minimization of
 			the potential energy to indicate the final state of the
