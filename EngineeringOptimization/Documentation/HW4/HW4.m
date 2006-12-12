@@ -122,7 +122,7 @@ Block[{$DisplayFunction=Identity},
     gr[4,1,2]=
       InequalityPlot[!regionFunction[4,1][X@3,X@4],
           Apply[Sequence,#+{0,-0.02,0.02}&/@rangeSpec[4,1]],
-          Fills->{White}]/.Line[__]->Sequence[];
+          Fills->{White},PlotStyle->{White}];
 	];
 
 gr[4,1,3]=
@@ -274,7 +274,7 @@ Block[{$DisplayFunction=Identity},
     gr[4,3,2]=
       InequalityPlot[!regionFunction[4,3][X@1,X@2],
           Apply[Sequence,#+{0,-0.02,0.02}&/@rangeSpec[4,3]],
-          Fills->{White}]/.Line[__]->Sequence[];
+          Fills->{White},PlotStyle->{White}];
 	];
 
 gr[4,3,3]=
@@ -360,7 +360,6 @@ If[EODExport===True,
 			Overwrite->True
 			]
 	];
-
 
 End[];
 
