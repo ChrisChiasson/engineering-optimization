@@ -26,7 +26,7 @@ Update@Second;
 		{num,"N"},
 		{naught,"0"}};
 
-prefix="hw_2_";
+prefix="pr_2_";
 
 (*export this as an equation or a table?*)
 rep[1]={num[W]->5,num[S]->num[W]+1,num[P]->num[S]+1};
