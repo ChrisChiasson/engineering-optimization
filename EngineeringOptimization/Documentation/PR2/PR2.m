@@ -1,5 +1,6 @@
 BeginPackage["EngineeringOptimization`Documentation`PR2`",
 	{"EngineeringOptimization`Documentation`",
+		"EngineeringOptimization`",
 		"Graphics`Animation`",
 		"XML`DocBook`"}];
 
@@ -278,6 +279,7 @@ export[prefix<>animStr]=XMLDocument[prefix<>animStr<>".xml",
       Exports->ExportsOption[DocBookFigure,"html",ExportType->"GIF",
           ConversionOptions->{"AnimationDisplayTime"->displayTimes,
               "Loop"->True}],
+      TitleAbbrev->"Deformation of Spring-Mass System",
       Caption->XMLElement[
           "para",{},{"Five different ball masses under the influence of \
 gravity and represented by colored balls are attached in a ",
