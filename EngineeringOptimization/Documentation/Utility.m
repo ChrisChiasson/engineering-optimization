@@ -32,6 +32,13 @@ args. GenUC[{lhsUC,rhsUC},args], where lhsUC and rhsUC are boolean values, \
 will put an underscore before the first argument in args if lhsUC is True, and \
 an underscore after the last argument is rhsUC is True.";
 
+GetClosest::usage="GetClosest[list,item] gives the the entry in list closest \
+to item."
+
+TitleStyle::usage="TitleStyle[xpr] blocks the value of $TextStyle to be in \
+line with the default formatting of a DocBook title for a figure, equation, \
+or example."
+
 Begin["`Private`"];
 
 (*duplicatePositionsToDelete is based off of the PositionOfRuns function in the
@@ -42,7 +49,7 @@ duplicatePositionsToDelete[x_List]:=
       Map[Last,Split[Transpose[{x,Range[Length[x]]}],
           First[#1]===First[#2]&],{2}],{_}]
 
-(*inspiration for using ListInterpolation:
+(*FractionAlongCoordinates inspiration for using ListInterpolation:
 http://groups.google.com/group/comp.soft-
 	sys.math.mathematica/browse_thread/thread/c306f0895081b78c
 *)
@@ -122,6 +129,17 @@ GenUC[{leftUC:(True|False):False,rightUC:(True|False):False},designators__]:=
       BoxForm`Intercalate[SequenceForm[designators],"_"],rightUC/.lrReps]];
 
 GenUC[designators__]:=GenUC[{},designators];
+
+GetClosest[list_List,item_]:=
+	First@With[{diffList=Abs[#-item]&/@list},Pick[list,diffList,Min@diffList]];
+
+Attributes@TitleStyle={HoldFirst};
+
+TitleStyle[xpr_]:=
+	Block[{$TextStyle=Join[{FontSize->12,FontWeight->"Bold"},
+				DeleteCases[$TextStyle,_?(!FreeQ[#,FontSize|FontWeight]&)]]},
+		xpr
+		];
 
 End[];
 
