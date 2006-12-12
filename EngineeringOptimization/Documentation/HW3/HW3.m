@@ -194,7 +194,7 @@ Block[{$DisplayFunction=Identity},
     gr[4,4,2]=
       InequalityPlot[!regionFunction[4,4][X@1,X@2],
           Apply[Sequence,#+{0,-0.02,0.02}&/@rangeSpec[4,4]],
-          Fills->{White}]/.Line[__]->Sequence[]];
+          Fills->{White},PlotStyle->{White}]];
 
 (*ImplicitPlot isn't as good as using DrawGraphics to create a mesh that blocks
 the "non plotted" white area, because it can leave small seams in the white
@@ -346,7 +346,7 @@ Block[{$DisplayFunction=Identity},
     gr[4,5,2]=
       InequalityPlot[!regionFunction[4,5][X@1,X@2],
           Apply[Sequence,#+{0,-0.02,0.02}&/@rangeSpec[4,5]],
-          Fills->{White}]/.Line[__]->Sequence[]];
+          Fills->{White},PlotStyle->{White}]];
 
 gr[4,5,3]=
 	With[{solVector={X@1,X@2}/.sol[4,5][[2]]},
