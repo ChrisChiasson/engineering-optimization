@@ -94,7 +94,7 @@ obj54="objective_5_4";
 export[obj54]=
 	XMLDocument[prefix<>obj54<>".xml",
 		DocBookEquation[prefix<>obj54,
-			"P 5-4 Pseudo Objective Function, \[CapitalPhi]",
+			"Problem 5-4 Pseudo Objective Function, \[CapitalPhi]",
 			Block[{Plus,HoldForm},HoldForm@Reverse@#]&@
 				objective[5,4][rp,rpPrime,\[CurlyEpsilon]][varSeq],
 			TitleAbbrev->"P 5-4 \[CapitalPhi]"
@@ -166,6 +166,10 @@ gr[5,4,4,rp_]:=gr[5,4,4,rp]=Show@@(gr[5,4,#,rp]&)/@Range@3;
 		DocBookInlineEquation[prefix<>#2,rpPrime==#1,SetIdAttribute->False])&@@@
 			{{1,rp1="rpPrime_Equal_1"},{1/2,rpHalf="rpPrime_Equal_Half"}};
 
+(rpPrimeTitleStyleXMLChain[#1]=TitleStyle@
+		DocBookInlineEquation[prefix<>#2,rpPrime==#1,SetIdAttribute->False])&@@@
+			{{1,GenUC[rp1,TitleStyle]},{1/2,GenUC[rpHalf,TitleStyle]}};
+
 (export[prefix<>#1]=
 	XMLDocument[prefix<>#1<>".xml",
 		DocBookInlineEquation[prefix<>#1,##2],
@@ -177,9 +181,8 @@ gr[5,4,4,rp_]:=gr[5,4,4,rp]=Show@@(gr[5,4,#,rp]&)/@Range@3;
 				{"rpPrime_Limit",rpPrime->Superscript[0,plus]},
 				{"epsilon_Limit",\[CurlyEpsilon]->Superscript[0,minus]},
 				{"rp_Equal_1",rp==1,SetIdAttribute->False},
-				{"rpPrime_Equal_Half",rpPrime==0.5,SetIdAttribute->False},
-				{"rpPrime_Equal_1",rpPrime==1``1.3,
-					SetIdAttribute->False},
+				{"rpPrime_Equal_0.5",rpPrime==0.5,SetIdAttribute->False},
+				{"rpPrime_Equal_1.0",rpPrime==1``1.3,SetIdAttribute->False},
 				Sequence@@({GenUC["lambda_Equal",#],\[Lambda]==#,
 							SetIdAttribute->False
 							}&/@{-4,-1,0,1,2}),
@@ -198,9 +201,8 @@ indicates the minimum of the function on the domain."
 	XMLDocument[prefix<>gr54<>#1<>".xml",
 		DocBookFigure[prefix<>gr54<>#1,
 			XMLChain@XMLElement["phrase",{},
-				{"P 5-4 Pseudo Objective Function, \[CapitalPhi], Contour ",
-					"Plot with ",ToXML@TitleStyle@DocBookInlineEquation[GenUC[
-						prefix<>gr54<>#1,"bold"],rpPrime==#2]
+				{"Problem 5-4 Pseudo Objective Function, \[CapitalPhi], ",
+					"Contour Plot with ",ToXML@rpPrimeTitleStyleXMLChain@#2
 					}],
 			unboundContourPlotAltText,gr[5,4,4,#2],Caption->#3,
 			TitleAbbrev->XMLChain@XMLElement["phrase",{},{"P 5-4 ",
@@ -229,9 +231,9 @@ With[{solEqn=Reduce[D[F==objective[5,4][whatever,#2,-2][varSeq],{varList,1}],
 		XMLDocument[prefix<>sol54<>#1<>".xml",
 			DocBookEquation[prefix<>sol54<>#1,
 				XMLChain[XMLElement["phrase",{},
-					{"P 5-4 Pseduo Objective Function, \[CapitalPhi], Analytic",
-						" Minimum Solution with ",ToXML@
-							rpPrimeXMLChain@#2
+					{"Problem 5-4 Pseduo Objective Function, \[CapitalPhi], ",
+						"Analytic Minimum Solution with ",
+						ToXML@rpPrimeTitleStyleXMLChain@#2
 						}
 					]],
 				DocBookEquationSequence[
@@ -272,11 +274,12 @@ augLag="augmented_lagrangian";
 (export[GenUC[augLag,#1,#2]]=
 	XMLDocument[prefix<>GenUC[augLag,#1,#2]<>".xml",
 		DocBookEquation[prefix<>GenUC[augLag,#1,#2],
-			StringSequence["P ",#1,"-",#2," Augmented Lagrangian"],
+			StringSequence["Problem ",#1,"-",#2," Augmented Lagrangian"],
 			Function[rp,\[CapitalPhi]==eqns[#1,#2,1][varSeq][[2]]+
 				EngineeringOptimization`Private`penalty[{eqns[#1,#2,2][varSeq]},
 					rp,{\[Lambda]},Method->"AugmentedLagrangeMultiplier"
 					]]/@DocBookEquationSequence[rp,1],
+			TitleAbbrev->StringSequence["P ",#1,"-",#2," Augmented Lagrangian"],
 			Caption->XMLElement["para",{},{"\[Lambda] is the Lagrange ",
 				"Multiplier. As requested, in the second equation ",
 				ToXML@DocBookInlineEquation[GenUC[eqns,#1,#2,"rp"],rp==1],".",
@@ -328,13 +331,14 @@ almTable[command_,lagrangeMultipliers:{__?NumberQ}]:=
 					Range@4
 					]/.{{x1_?NumberQ,x2_?NumberQ}:>
 							SequenceForm["(",NumberForm[x1,3],
-								",",NumberForm[x2,3],")"
+								", ",NumberForm[x2,3],")"
 								],
 							GoldenRatio->N@GoldenRatio
 							}&/@lagrangeMultipliers,
 			{{1,2}}
 			],
-		{"Iteration, p",SequenceForm["Maximum Ordinates,\n(",X[1],",",X[2],")"],
+		{"Iteration, p",
+			SequenceForm["Maximum Ordinates,\n(",X[1],", ",X[2],")"],
 			SequenceForm["Penalty Scale\nFactor, ",rp],
 			"Lagrange\nMultiplier, \[Lambda]"
 			}
@@ -509,8 +513,8 @@ optGr[Sequence@@problemSpec]
 (export[GenUC[optgraph,##]]=
 	XMLDocument[prefix<>GenUC[optgraph,##]<>".xml",
 		DocBookFigure[prefix<>GenUC[optgraph,##],
-			StringSequence["P ",#1,"-",#2" Constrained Contour Plot of F ",
-				"with Minimum"],
+			StringSequence["Problem ",#1,"-",#2" Constrained Contour Plot of ",
+				"F with Minimum"],
 			boundContourPlotAltText,
 			optGr[##],
 			TitleAbbrev->StringSequence["P ",#1,"-",#2" Contour Plot of F"],
