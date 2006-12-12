@@ -11,4 +11,12 @@
 				maximum).</para>
 		</glossdef>
 	</glossentry>
+	<glossentry xml:id="pseudo_objective_function">
+		<glossterm>pseudo objective function</glossterm>
+		<glossdef>
+			<para>An objective function plus a penalty function that raises the
+				value of the objective when the constraints are violated and, in
+				some cases, inside the feasible region as well.</para>
+		</glossdef>
+	</glossentry>
 </glossary>
