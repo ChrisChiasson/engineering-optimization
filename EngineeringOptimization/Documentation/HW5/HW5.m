@@ -254,11 +254,13 @@ eqns[5,6,2][x1_,x2_]=x1+x2-1/2<=0;
 
 (*inline exports of all given equations in this homework*)
 
-(export[prefix<>GenUC[eqns,##]]=
-	XMLDocument[prefix<>GenUC[eqns,##]<>".xml",
-		DocBookInlineEquation[prefix<>GenUC[eqns,##],eqns[##2][varSeq]],
+(export[prefix<>GenUC[eqns,#1,#2,#3]]=
+	XMLDocument[prefix<>GenUC[eqns,#1,#2,#3]<>".xml",
+		DocBookInlineEquation[prefix<>GenUC[eqns,#1,#2,#3],
+			eqns[#1,#2,#3][varSeq],##4],
 		PrependDirectory->EODExportDirectory
-		])&@@@{{5,All,1},{5,4,3},Sequence@@({5,#,2}&/@Range[4,6])};
+		])&@@@{{5,All,1,SetIdAttribute->False},{5,4,3},
+				Sequence@@({5,#,2}&/@Range[4,6])};
 
 (*the augmented lagrangian equations with rp = 1*)
 
@@ -273,12 +275,15 @@ augLag="augmented_lagrangian";
 					rp,{\[Lambda]},Method->"AugmentedLagrangeMultiplier"
 					]]/@DocBookEquationSequence[rp,1],
 			Caption->XMLElement["para",{},{"\[Lambda] is the Lagrange ",
-				"Multiplier. As requested, in the second equation ",
-				ToXML@DocBookInlineEquation[GenUC[eqns,#1,#2,"rp"],rp==1],"."}
+				"Multiplier. As requested, in the second equation, ",
+				ToXML@DocBookInlineEquation[GenUC[eqns,#1,#2,"rp"],rp==1],".",
+				##3}
 				]
 			],
 		PrependDirectory->EODExportDirectory]
-	)&@@@{{5,5},{5,6}};
+	)&@@@{{5,5},{5,6," The presence of Max functions in this Lagrangian is "<>
+						"due to the corresponding presence of an inequality "<>
+						"in its constraint."}};
 
 (*the requested tables*)
 
@@ -336,7 +341,7 @@ almTable[command_,lagrangeMultipliers:{__?NumberQ}]:=
 
 tab55="table_5_5";
 
-tab[55]=
+tab[tab55]=
 	almTable[
 		NMinimize[{eqns[5,5,1][varSeq][[2]],eqns[5,5,2][varSeq]},
 			{{X@1,-13,-11},{X@2,19,21}},
@@ -357,6 +362,33 @@ tab[tab56]=
 				}],
 		{0,2,-1}
 		];
+
+optgraph="optimum_graph";
+
+(*export the tables*)
+
+aLMParameterTable="ALM_parameter_table";
+
+(export@GenUC[aLMParameterTable,#1,#2]=
+	XMLDocument[prefix<>GenUC[aLMParameterTable,#1,#2]<>".xml",
+		DocBookTable[prefix<>GenUC[aLMParameterTable,#1,#2],
+			StringSequence["Problem ",#1,"-",#2," (b-d) ALM Optimization Data"],
+			"The columns of this table give different Augmented Lagrange "<>
+				"Multiplier Sequential Unconstrained Minimization "<>
+				"parameters. The first column gives the present iteration, "<>
+				"while the other paramters on that row correspond to that "<>
+				"iteration.",
+			tab@GenUC[table,#1,#2],
+			TitleAbbrev->
+				StringSequence["P ",#1,"-",#2," (b-d) ALM Data"],
+			Caption->XMLElement["para",{},{"All three starting Lagrange ",
+				"multipliers result in convergence to the minimum shown in ",
+				XMLElement["xref",{"linkend"->prefix<>GenUC[optgraph,#1,#2]},
+					{}],"."}
+				]
+			],
+		PrependDirectory->EODExportDirectory
+	])&@@@{{5,5},{5,6}};
 
 (*now that the work is done, it's time to shine 'em on with some cool plots of
 the optima*)
@@ -470,8 +502,6 @@ A large green point indicates the minimum of the function on the domain. \
 Dotted red lines show the edges of the domain."
 
 optGr[Sequence@@problemSpec]
-
-optgraph="optimum_graph";
 
 (export[GenUC[optgraph,##]]=
 	XMLDocument[prefix<>GenUC[optgraph,##]<>".xml",
