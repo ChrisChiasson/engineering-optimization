@@ -96,7 +96,7 @@ export[obj54]=
 		DocBookEquation[prefix<>obj54,
 			"P 5-4 Pseudo Objective Function, \[CapitalPhi]",
 			Block[{Plus,HoldForm},HoldForm@Reverse@#]&@
-				objective[5,4][rp,rpPrime,\[Epsilon]][varSeq],
+				objective[5,4][rp,rpPrime,\[CurlyEpsilon]][varSeq],
 			TitleAbbrev->"P 5-4 \[CapitalPhi]"
 			],
 		PrependDirectory->EODExportDirectory
@@ -173,12 +173,12 @@ gr[5,4,4,rp_]:=gr[5,4,4,rp]=Show@@(gr[5,4,#,rp]&)/@Range@3;
 		])&@@@{
 				{"rp",rp,SetIdAttribute->False},
 				{"rpPrime",rpPrime,SetIdAttribute->False},
-				{"epsilon",\[Epsilon],SetIdAttribute->False},
+				{"epsilon",\[CurlyEpsilon],SetIdAttribute->False},
 				{"rpPrime_Limit",rpPrime->Superscript[0,plus]},
-				{"epsilon_Limit",\[Epsilon]->Superscript[0,minus]},
+				{"epsilon_Limit",\[CurlyEpsilon]->Superscript[0,minus]},
 				{"rp_Equal_1",rp==1,SetIdAttribute->False},
 				{"rpPrime_Equal_Half",rpPrime==0.5,SetIdAttribute->False},
-				{"rpPrime_Equal_1",rpPrime==NumberForm[1.0,2],
+				{"rpPrime_Equal_1",rpPrime==1``1.3,
 					SetIdAttribute->False},
 				Sequence@@({GenUC["lambda_Equal",#],\[Lambda]==#,
 							SetIdAttribute->False
@@ -198,8 +198,9 @@ indicates the minimum of the function on the domain."
 	XMLDocument[prefix<>gr54<>#1<>".xml",
 		DocBookFigure[prefix<>gr54<>#1,
 			XMLChain@XMLElement["phrase",{},
-				{"P 5-4 Pseudo Objective Function, \[CapitalPhi], Contour Plot",
-				 	"with ",ToXML@rpPrimeXMLChain[#2]
+				{"P 5-4 Pseudo Objective Function, \[CapitalPhi], Contour ",
+					"Plot with ",ToXML@TitleStyle@DocBookInlineEquation[GenUC[
+						prefix<>gr54<>#1,"bold"],rpPrime==#2]
 					}],
 			unboundContourPlotAltText,gr[5,4,4,#2],Caption->#3,
 			TitleAbbrev->XMLChain@XMLElement["phrase",{},{"P 5-4 ",
@@ -211,9 +212,10 @@ indicates the minimum of the function on the domain."
 		{rpHalf,1/2,XMLChain@XMLElement["para",{},{"Normally, this plot ",
 		"would be more distorted than ",XMLElement["xref",{"linkend"->
 		prefix<>gr54<>rp1},{}],". However, ",ToXML@DocBookInlineEquation[
-		prefix<>gr54<>"epsilon",\[Epsilon]]," was not decreased in step with ",
-		ToXML@DocBookInlineEquation[prefix<>gr54<>"rp",rp],". That makes this ",
-		"plot more like the objective function, F."}]}};
+		prefix<>gr54<>"epsilon",\[CurlyEpsilon]]," was not decreased in step ",
+		"with ",ToXML@DocBookInlineEquation[prefix<>gr54<>"rp",rp],". That ",
+		"makes this plot more like the objective function, F, which has ",
+		"concentric circular contours."}]}};
 
 (*export the analytical solutions to the minimization problems (these correspond
 to the graphs)*)
@@ -228,7 +230,8 @@ With[{solEqn=Reduce[D[F==objective[5,4][whatever,#2,-2][varSeq],{varList,1}],
 			DocBookEquation[prefix<>sol54<>#1,
 				XMLChain[XMLElement["phrase",{},
 					{"P 5-4 Pseduo Objective Function, \[CapitalPhi], Analytic",
-						" Minimum Solution with ",ToXML[rpPrimeXMLChain[#2]]
+						" Minimum Solution with ",ToXML@
+							rpPrimeXMLChain@#2
 						}
 					]],
 				DocBookEquationSequence[
@@ -275,7 +278,7 @@ augLag="augmented_lagrangian";
 					rp,{\[Lambda]},Method->"AugmentedLagrangeMultiplier"
 					]]/@DocBookEquationSequence[rp,1],
 			Caption->XMLElement["para",{},{"\[Lambda] is the Lagrange ",
-				"Multiplier. As requested, in the second equation, ",
+				"Multiplier. As requested, in the second equation ",
 				ToXML@DocBookInlineEquation[GenUC[eqns,#1,#2,"rp"],rp==1],".",
 				##3}
 				]
@@ -414,7 +417,7 @@ inequalityBoundaryGraphics[inequalityList_List,{varRange1:{x1_,__?NumberQ},
 
 (*domainConPlot is a rather ridiculous function used to mash up the results
 of a contour plot, some inequality borders, some contour labels, and a solution
-labels -- it requires a lot of inputs*)
+label -- it requires a lot of inputs*)
 
 (*on a good day domainConPlot's output is a nicely formatted contour plot - 
 it is easily affected by where ContourPlot decides to begin and end its lines
