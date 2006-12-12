@@ -1,5 +1,6 @@
 BeginPackage["EngineeringOptimization`Documentation`HW2`",
 	{"EngineeringOptimization`Documentation`",
+		"EngineeringOptimization`",
 		"Graphics`Colors`",
 		"Graphics`MultipleListPlot`",
 		"Graphics`PlotField`",
