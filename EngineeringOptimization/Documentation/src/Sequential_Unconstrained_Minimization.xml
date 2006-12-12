@@ -11,7 +11,7 @@
     	homework assignment as given by Dr. Mohamed El-Sayed. The assignment is
     	to complete <olink targetdoc="self" targetptr="GNVNOTED"/> problems 5-4
     	through 5-6. My homework calculations are available in
-    	<olink targetdoc="self" targetptr="HW4_code"/>. My code for the
+    	<olink targetdoc="self" targetptr="HW5_code"/>. My code for the
     	Augmented Lagrange Multiplier method (<acronym>ALM</acronym>), which is
     	used to create <xref linkend="hw_5_ALM_parameter_table_5_5"/> and
     	<xref linkend="hw_5_ALM_parameter_table_5_6"/>, is in
@@ -49,10 +49,10 @@
             <xi:include href="mout/hw_5_eqns_5_4_2.xml"/>
             <xi:include href="mout/hw_5_eqns_5_4_3.xml"/>
       a. Using the quadratic extended penalty function of Eq. (5-15a)-(5-15b),
-         draw the two-variable function space for <xi:include href="mout/hw_5_rpPrime_Equal_1.xml"/> and <xi:include href="mout/hw_5_rpPrime_Equal_Half.xml"/>. Show
+         draw the two-variable function space for <xi:include href="mout/hw_5_rpPrime_Equal_1.0.xml"/> and <xi:include href="mout/hw_5_rpPrime_Equal_0.5.xml"/>. Show
          contours of <inlineequation><mathphrase>Φ = 5, 10, and 15</mathphrase></inlineequation> for each case. Use <inlineequation><mathphrase>ε = -02</mathphrase></inlineequation> [<emphasis role="italic">sic</emphasis>].
       b. Analytically determine the optimum value of Φ and the associated values
-         of <xi:include href="mout/hw_5_X_1.xml"/> and <xi:include href="mout/hw_5_X_2.xml"/> for <xi:include href="mout/hw_5_rpPrime_Equal_1.xml"/> and <xi:include href="mout/hw_5_rpPrime_Equal_Half.xml"/>.</literallayout>
+         of <xi:include href="mout/hw_5_X_1.xml"/> and <xi:include href="mout/hw_5_X_2.xml"/> for <xi:include href="mout/hw_5_rpPrime_Equal_1.0.xml"/> and <xi:include href="mout/hw_5_rpPrime_Equal_0.5.xml"/>.</literallayout>
 				</blockquote>
 			</question>
 			<answer>
@@ -94,7 +94,7 @@
 					<literallayout><emphasis role="strong">5-5</emphasis> Consider the equality-constrained minimization problem
       Minimize: <xi:include href="mout/hw_5_eqns_5_All_1.xml"/>
       Subject to:
-            <xi:include href="mout/hw_5_eqns_5_5_2.xml"/> [originally ≤]
+            <xi:include href="mout/hw_5_eqns_5_5_2.xml"/> [<emphasis role="italic">originally </emphasis>≤]
       a. Write the expression for the augmented Lagrangian with <xi:include href="mout/hw_5_rp_Equal_1.xml"/>.
       b. Beginning with <xi:include href="mout/hw_5_lambda_Equal_0.xml"/>, perform three iterations of the ALM method.
       c. Repeat part (b), beginning with <xi:include href="mout/hw_5_lambda_Equal_1.xml"/>.
