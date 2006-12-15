@@ -62,9 +62,9 @@
 		method to converge on the minimum, not just through	the requisite three
 		steps. Doing so involved actually programming each method, instead of
 		completing the problems <quote>by hand</quote>. In lecture, Dr. El-Sayed
-		argued that programming	each method is more a test of programming skill,
+		argued that programming	each method is more a test of programming skill
 		than engineering acumen. I somewhat agree, but I used the plot and table
-		as a way to "debug" my work. So my programming of all the methods was
+		as a way to debug my work. So my programming of all the methods was
 		meant to help me rather than to show off any programming skill.</para>
 	<xi:include href="mout/hw_2_minimization_paths.xml"/>
 	<para>The graph shows the search direction and step size for each iteration.
