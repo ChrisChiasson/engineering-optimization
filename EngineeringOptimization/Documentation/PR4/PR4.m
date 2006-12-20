@@ -1,4 +1,5 @@
-BeginPackage["EngineeringOptimization`Documentation`PR4`"];
+BeginPackage["EngineeringOptimization`Documentation`PR4`",
+	{"Graphics`FilledPlot`"}];
 
 Begin["`Private`"];
 
@@ -7,7 +8,7 @@ Begin["`Private`"];
 (MakeBoxes[#,_]=#2)&@@@
 	{{sectionModulus,"I"},{youngsModulus,"E"},{displacement,"y"},{shear,"V"},
 		{moment,"M"},{load,"q"},{segmentLength,"l"},{beamLength,"L"},
-		{endLoad,"P"}
+		{endLoad,"P"},{base,"b"},{height,"h"},{overallX,"x"}
 		};
 
 (Format[#[i_,args__]]:=Subscript[#,i][args])&/@{shear,moment,displacement};
@@ -37,15 +38,32 @@ centi=1/100;
 (*given*)
 
 rep@1={endLoad->-50000,youngsModulus->2.0*10^7/centi^2,beamLength->500*centi,
-		maxSigmaX->14000/centi^2,maxDeflection->2.5 centi};
+		maxSigmaX->14000/centi^2,maxDeflection->2.5*centi,segmentLength[_]->1};
 
-(*old rep - unused*)
+(*section modulus for a rectangular cross section aligned with the axes*)
 
-rep@2={Derivative[_][sectionModulus][_]->0,sectionModulus[_]->sectionModulus};
+rep@2={sectionModulus[i_]->
+	Integrate[
+		Integrate[y^2,{y,-height[i]/2,height[i]/2}],
+		{z,-base[i]/2,base[i]/2}
+		]
+	};
 
 (*our beam has five segments*)
 
 maxI=5;
+
+(*
+mechanics of materials sign convention for beam flexure:
+integration of the load (F/L) gives shear (F), while integration of shear
+gives moment (FL) ... no signs have to be flipped due to the convention for the
+sense of the forces:
+
+moment is positive if it is cw on left
+shear is positive if it is up on left
+shear is positive if it is down on right
+moment is positive if it is ccw on right
+*)
 
 (*the first part of rep@3 is the differential equation controling elastic
 (Hookean) prismatic beam bending under the assumptions that the (transverse)
@@ -133,7 +151,7 @@ segment's length -- the conditions on the right side of a segment are equal
 to the conditions on the left side of another segment (due to continuity and
 to moment and shear sign conventions)*)
 
-(*reps 4, 5 & 6help rewrite the equations so that it is apparent they are only
+(*reps 4, 5 & 6 help rewrite the equations so that it is apparent they are only
 applicable within a section - not across the discontinuities (from cross
 section changes)*)
 
@@ -248,7 +266,34 @@ with rep@7, it is possible to use rep@8 to tranlate overallX into a local x[i]*)
 
 rep@8=x[i]->overallX-Sum[segmentLength[w],{w,1,i-1}];
 
+(*xpr@1 gives an explicit formula for the right hand sides of equation six
+in terms of overallX (aka x[1] or just x) (and the optimization variables,
+segmentLengths, and the rep@1 replacements)*)
 
+xpr[1][overallX_]=eqn[6][[All,2]]/.sol@3/.rep@8/.rep@7/.rep@2;
+
+(*xpr@2 takes just the moment and shear overall expressions and factors
+constants out of the two (otherwise identical) sums - which are left with just
+this form Sum[segmentLength[iter_],{iter_,1,i}], one plus and one minus - these
+forms can be canceled out*)
+
+xpr@2=xpr[1][x][[{3,4}]]//.factorOut;
+
+(*the only way MMA is going to recognize the sums are the same is if the
+iterators are the same symbol - rep@9 collects the iterators and gives a rule to
+make them the same*)
+
+rep@9=Rule[Alternatives@@Most@#,Last@#]&@
+    Cases[xpr@2,
+      HoldPattern[Sum[_,{iterator_Symbol,_,_}]]:>iterator,{0,Infinity}];
+
+(*eqn@10 has some expanded equations that are much like xpr@1, execept that the
+moment and shear expressions are simplified (and these aren't just expressions,
+but are also equations)*)
+
+eqn@10=Thread[
+    Join[eqn[3][[{1,2},1]],eqn[4][[All,1]]]==
+      Join[xpr[1][x][[{1,2},1]],xpr@2/.rep@9//Simplify]];
 
 Abort[];
 
