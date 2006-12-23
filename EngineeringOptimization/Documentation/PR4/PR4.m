@@ -1,5 +1,5 @@
-BeginPackage["EngineeringOptimization`Documentation`PR4`",
-	{"Graphics`FilledPlot`"}];
+BeginPackage["EngineeringOptimization`Documentation`PR4`"(*,
+	{"Graphics`FilledPlot`"}*)];
 
 Begin["`Private`"];
 
@@ -8,20 +8,26 @@ Begin["`Private`"];
 (MakeBoxes[#,_]=#2)&@@@
 	{{sectionModulus,"I"},{youngsModulus,"E"},{displacement,"y"},{shear,"V"},
 		{moment,"M"},{load,"q"},{segmentLength,"l"},{beamLength,"L"},
-		{endLoad,"P"},{base,"b"},{height,"h"},{overallX,"x"}
+		{endLoad,"P"},{base,"b"},{height,"h"},{overallX,"x"},
+		{staticAreaMoment,"Q"}
 		};
 
-(Format[#[i_,args__]]:=Subscript[#,i][args])&/@{shear,moment,displacement};
+(Format[#[i_,args__]]:=Subscript[#,i][args])&/@{shear,moment,displacement,
+												staticAreaMoment};
 
 (Format[#[args__]]:=Subscript[#,args])&/@{x,sectionModulus,segmentLength,c};
+
+(Format[#1]=#2)&@@@{{sig,\[Sigma]},{lam,\[Lambda]}};
 
 Format[Derivative[0,dNum_][displacement][i_,x_]]:=
 	D[Subscript[displacement,i][x],{x,dNum}];
 
 (*evaluate an expression as if rules were set*)
 
-symbolsInContext[xpr_]:=Union@Cases[xpr,symb_Symbol/;
-	Context@Unevaluated@symb===Context[],{0,Infinity},Heads->True];
+symbolsInContext[xpr_,context_]:=Union@Cases[xpr,symb_Symbol/;
+	Context@Unevaluated@symb===context,{0,Infinity},Heads->True];
+
+symbolsInContext[xpr_]:=symbolsInContext[xpr,Context[]];
 
 evaluateWithRules[xpr_,rules:{(_Rule|_RuleDelayed)...}]:=
 	Block[Evaluate[symbolsInContext@{xpr,rules}],
@@ -70,8 +76,9 @@ moment is positive if it is ccw on right
 deflections are small (so 1 over the radius of curvature can be approximated by
 the second derivative of transverse displacement with respect to the axial
 coordinate) and that plane sections of the beam remain plane after bending
-(so that strain[x]=y/rho (where rho is the radius of curvature))
-(use of Hooke's law stress[x]=E*strain[x] and sum of the moments and forces to
+(so that strain=-y/rho (where rho is the radius of curvature and
+strain=strain[x] if the material is elastic))
+(use of Hooke's law (stress[x]=E*strain[x]) and sum of the moments and forces to
 show M=E*I/rho is also required)
 (ref section 8-2, 14-2 and 14-3 of Engineering Mechanics of Solids 2nd ed. by
 Popov)*)
@@ -228,11 +235,20 @@ replaces it.
 The second problem is that the dummy summation variable indices look ugly, so
 endRSolve madness formats the unique index as the expression provided in the
 second argument.
+
+A different problem arises in MMA6, it causes the unknown variable to be zero,
+generating a sequence of garbage terms that will be canceled out by terms in
+the remaining sum.
+
 *)
 
 endRSolveMadness[initCondIndex_,newIndex_]=
-	HoldPattern[Sum[xpr_,{index_Symbol,start_Symbol,end_}]]:>
-	(Format[index]=newIndex;Sum[xpr,{index,initCondIndex,end}]);
+	{HoldPattern[Sum[xpr_,{index_Symbol,start_Symbol,end_}]]:>
+		(Format[index]=newIndex;Sum[xpr,{index,initCondIndex,end}]),
+		Sum[pat_,{iter_,initial_Integer,end_}]/;initial<initCondIndex:>
+			(Format[iter]=newIndex;Sum[pat,{iter,initCondIndex,end}]+Total@
+				Table[pat,{iter,initial,initCondIndex-1}])
+		};
 
 (*eqn 9 and sol 2 contain the aformentioned general expressions for the initial
 conditions on each segment - the expressions are compact and explicit (the
@@ -285,7 +301,7 @@ make them the same*)
 
 rep@9=Rule[Alternatives@@Most@#,Last@#]&@
     Cases[xpr@2,
-      HoldPattern[Sum[_,{iterator_Symbol,_,_}]]:>iterator,{0,Infinity}];
+      HoldPattern[Sum[_,{iterator_,_,_}]]:>iterator,{0,Infinity}];
 
 (*eqn@10 has some expanded equations that are much like xpr@1, execept that the
 moment and shear expressions are simplified (and these aren't just expressions,
@@ -294,6 +310,182 @@ but are also equations)*)
 eqn@10=Thread[
     Join[eqn[3][[{1,2},1]],eqn[4][[All,1]]]==
       Join[xpr[1][x][[{1,2},1]],xpr@2/.rep@9//Simplify]];
+
+(*somewhat simpler expressions for the transverse displacement and its
+derivative may be obtained by assuming the segmentLengths are all equal, as in
+rep@10 and eqn@11*)
+
+rep@10={segmentLength[_]->segmentLength,i->Ceiling[x/segmentLength]};
+
+eqn@11=Thread[eqn[10][[All,1]]==(eqn[6][[All,2]]/.sol@3/.rep@8/.rep@10//.
+									factorOut//Simplify)/.rep@2
+	];
+
+(*rep@11 gives a rule for Q - the first or static moment of area with respect
+to the height above the neutral axis*)
+
+rep@11={staticAreaMoment[i_,shearheight_]->
+	Module[{y,z},
+		Integrate[
+			Integrate[y,{y,shearheight,height@i/2}],
+			{z,-base@i/2,base@i/2}
+			]
+		]//Simplify
+	};
+
+(*eqn@12 defines the axial stress (due to bending) as a function of axial and
+transverse position*)
+
+(*derivation of shear stress expression is given in section 10-4 of Popov
+(basically, find the shear stress necessary to stop the bending moment stress
+from carrying the section away) -- note the negative sign in the sigmaXY
+expression - that is because the default direction for the shear, V, is opposite
+that of the default direction for the shear stress, sigmaXY*)
+
+eqn@12={sigmaXX[x,y]==-moment[x]*y/sectionModulus[i],
+	sigmaXY[x,y]==-shear[x]*staticAreaMoment[i,y]/sectionModulus[i]/base@i
+	};
+
+(*sol@4 uses the moment and shear solutions along with the definition of
+staticAreaMoment, Q, and sectionModulus, I to obtain an expression for the
+axial stress and shear in the axial-vertical plane (x-y plane)*)
+
+sol@4=ToRules[And@@(eqn@12/.rep@11/.rep@2/.ToRules[And@@eqn@10]//Simplify)];
+
+(*now it is time to try different failure criteria*)
+
+(*we would like to use the distortion energy theory - so we need to calculate
+the octahedral shear stress (if this level of shear stress exceeds the
+octahedral shear stress achieved at yield in a tension test (where sigma 1
+would be equal to the von Mises stress - so there is your way to convert), then
+the material will yield)*)
+
+(*octahedral plane, octahedral normal stress, and octahedral shear stress are
+defined in section 3.3 of Malvern, specifically in review questions 8, 9 and 10,
+which state that the octahedral plane is a plane whose normal makes equal angles
+with all three principal stress directions, that octahedral normal stress is 1/3
+that of the first invariant of the general stress tensor, and that the
+octahedral shear stress is the square root of (2*second invariant of the
+deviatoric stress tensor/3)*)
+
+(*von Mises stress is the uniaxial stress that would cause the same maximum
+shear stress as the general stress state it represents (section 6.5 part 2 and
+6.6 part 1 of Malvern)(this follows from the assumption that yielding in ductile
+materials is due to shear (instead of the compression or dialation effects of
+normal stress))*)
+
+(*to obtain the maximum shear stress from a general stress state, take the
+square root of the second invariant of the deviatoric stress tensor for that
+state*)
+
+(*these commented out equations + Solve command summarize the relationships just
+given and also provide a conversion from octahedral shear stress to von Mises
+stress*)
+
+(*Solve[{IIs==vonMisesYieldShearStress^2==Coefficient[Det[#-IdentityMatrix@
+Length@#*Tr[#]/3-IdentityMatrix@Length@#*lam],lam]&[{{vonMisesStress,0,0},
+{0,0,0},{0,0,0}}],octShearStress==Sqrt[2*IIs/3]},(*vonMisesYieldShearStress*)
+octShearStress,{IIs,vonMisesYieldShearStress}]//Last*)
+
+(*rep@12 functions can be used to transform the general stress tensor into the
+von Mises Stress*)
+
+rep@12={CharPoly[sig_]->Function[Det[#-sig IdentityMatrix[Length[#]]]],
+	Deviate->Function[#-IdentityMatrix[Length[#]] Tr[#]/Length[#]],
+	OctahedralShearStress[SecondInvariant]->Function[Sqrt[2#/3]],
+	OctahedralShearStress[vonMisesStress]->Function[Sqrt[2] #/3],
+	PrincipalStresses[sig_]->Function[Solve[#==0,sig]],
+	SecondInvariant[sig_]->Function[Coefficient[#,sig]],
+	vonMisesStress[OctahedralShearStress]->Function[3#/Sqrt[2]]
+	};
+
+(*rep@13 is based on the symmetry of the stress tensor*)
+
+rep@13=sig[blah__]:>sig@@Sort[{blah}];
+
+(*octMisesCheck gives the von Mises stress expressed as a function of arbitrary
+cartesian stress tensor components, as derived from the general stress tensor
+and the Mises Yield Condition of Levy-Mises perfect plasticity (defined in sec
+6.5 part 2 of Malvern)*)
+
+(*the first check is the definition of the von Mises stress (equating the shear
+(via stress transformation) of a uniaxial stress state to the shear of a
+general stress state) -- see comments before rep@12*)
+
+octMisesCheck@1=Y/.Last@
+	Solve[SecondInvariant[lam][
+		CharPoly[lam][Deviate[{{Y,0,0},{0,0,0},{0,0,0}}]]
+		]==SecondInvariant[lam][
+				CharPoly[lam][Deviate[Outer[sig,{x,y,z},{x,y,z}]]]
+				]/.rep@13/.rep@12,
+		Y]//FullSimplify;
+
+(*the second check is the transformation of the second invariant of the
+deviatoric stress tensor to octahedral shear stress and then to the von Mises
+stress*)
+
+octMisesCheck@2=
+	vonMisesStress[OctahedralShearStress][
+		OctahedralShearStress[SecondInvariant][
+			SecondInvariant[lam][
+				CharPoly[lam][Deviate[Outer[sig,{x,y,z},{x,y,z}]]]
+				]
+			]
+		]/.rep@13/.rep@12//FullSimplify;
+
+(*the third check uses the difference between the principal stresses as derived
+from the Mises yield condition to determine the von Mises stress (as can be
+inferred from Malvern's section 6.6 part 1 eqn 6.6.11a or taken from Shigley and
+Mischke section 6-5 eqn h)*)
+
+octMisesCheck@3=
+	Sqrt[Total[Power[Subtract[##],2]&@@@
+			Subsets[
+				ReplaceAll[lam,
+					PrincipalStresses[lam][
+						CharPoly[lam][Outer[sig,{x,y,z},{x,y,z}]]
+						]/.rep[12]
+					],{2}
+				]
+			]/2
+		]/.rep[13]/.rep[12]//FullSimplify;
+
+(*there should be a 1:1 correspondence between a given von Mises stress and an
+octahedral shear stress, which forms the fourth check*)
+
+octMisesCheck@4=
+	vonMisesStress[OctahedralShearStress][
+		OctahedralShearStress[vonMisesStress][a]
+		]==a/.rep@12;
+
+(*if these results are not all the same (or in the case of number 4, True),
+something is wrong*)
+
+If[Not[SameQ@@(octMisesCheck/@{1,2,3})]&&octMisesCheck@4,
+	Print["The methods for determining the von Mises stress and octahedral "<>
+		"shear stress are incorrect."];Abort[]
+	];
+
+(*so now I feel I can trust rep 12*)
+
+(*rep@14 takes care of the tranformation from x and y being used to designate
+faces and directions with respect to a differential cube of material to being
+material coordinates -- it also zeroes out all those stress components that
+aren't at play in this problem*)
+
+rep[14]={sig[x,x]->sigmaXX[x,y],sig[x,y]->sigmaXY[x,y],sig[__]->0}
+
+(*rep@15 creates two different replacements for y - one where it is at
+height@i/2 and one where it is always at the point of maximum von Mises stress,
+which is usually height@i/2 - but not always*)
+
+rep@15={{y->height@i/2},
+	{y->(
+		Piecewise[{{y,Im[y]==0&&y<height@i/2}},height@i/2]/.
+			Last@Solve[D[octMisesCheck@3==maxSigmaX/.rep@14/.sol@4,y],y]
+			)//FullSimplify
+		}
+	};
 
 Abort[];
 
