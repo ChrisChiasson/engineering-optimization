@@ -1,12 +1,15 @@
+(* ::Package:: *)
+
 BeginPackage["EngineeringOptimization`Documentation`PR4`"(*,
 	{"Graphics`FilledPlot`"}*)];
 
+
 Begin["`Private`"];
 
-(*formatting*)
 
+(*formatting*)
 (MakeBoxes[#,_]=#2)&@@@
-	{{sectionModulus,"I"},{youngsModulus,"E"},{displacement,"y"},{shear,"V"},
+	{{sectionModulus,"I"},{youngsModulus,"E"},{displacement,"v"},{shear,"V"},
 		{moment,"M"},{load,"q"},{segmentLength,"l"},{beamLength,"L"},
 		{endLoad,"P"},{base,"b"},{height,"h"},{overallX,"x"},
 		{staticAreaMoment,"Q"}
@@ -22,8 +25,8 @@ Begin["`Private`"];
 Format[Derivative[0,dNum_][displacement][i_,x_]]:=
 	D[Subscript[displacement,i][x],{x,dNum}];
 
-(*evaluate an expression as if rules were set*)
 
+(*evaluate an expression as if rules were set*)
 symbolsInContext[xpr_,context_]:=Union@Cases[xpr,symb_Symbol/;
 	Context@Unevaluated@symb===context,{0,Infinity},Heads->True];
 
@@ -37,27 +40,39 @@ evaluateWithRules[xpr_,rules:{(_Rule|_RuleDelayed)...}]:=
 				,{1}];
 		xpr];
 
-(*unit prefix*)
 
+(*simplify or otherwise modify a Function*)
+rep[simplify][func_]=HoldPattern[Function[var_,fun_]]:>With[{sfun=func@fun},Identity[Function][var,sfun]];
+
+
+(*unit prefix*)
 centi=1/100;
 
+
 (*given*)
+rep@given={endLoad->-50000,youngsModulus->2.0*10^7/centi^2,beamLength->500*centi,
+		maxSigmaX->14000/centi^2,maxDeflection->2.5*centi};
 
-rep@1={endLoad->-50000,youngsModulus->2.0*10^7/centi^2,beamLength->500*centi,
-		maxSigmaX->14000/centi^2,maxDeflection->2.5*centi,segmentLength[_]->1};
 
-(*section modulus for a rectangular cross section aligned with the axes*)
-
-rep@2={sectionModulus[i_]->
+(*section modulus, I, and first or static moment of area, Q, with respect to height above the neutral axis for a rectangular cross section aligned with the axes*)
+rep@areaMoment={sectionModulus[i_]->
 	Integrate[
 		Integrate[y^2,{y,-height[i]/2,height[i]/2}],
 		{z,-base[i]/2,base[i]/2}
-		]
+		],
+	staticAreaMoment[i_,shearheight_]->
+	Module[{y,z},
+		Integrate[
+			Integrate[y,{y,shearheight,height@i/2}],
+			{z,-base@i/2,base@i/2}
+			]
+		]//Simplify
 	};
 
-(*our beam has five segments*)
 
+(*our beam has five segments*)
 maxI=5;
+
 
 (*
 mechanics of materials sign convention for beam flexure:
@@ -71,7 +86,7 @@ shear is positive if it is down on right
 moment is positive if it is ccw on right
 *)
 
-(*the first part of rep@3 is the differential equation controling elastic
+(*the first part of rep@momentShearLoad@displacement is the differential equation controling elastic
 (Hookean) prismatic beam bending under the assumptions that the (transverse)
 deflections are small (so 1 over the radius of curvature can be approximated by
 the second derivative of transverse displacement with respect to the axial
@@ -86,27 +101,31 @@ Popov)*)
 (*the second derivative of the moment being the load comes from combining the
 results of the sum of the moments (transverse to the beam) and the sum of the
 forces (axially) (ref section 7-9 Popov)*)
+rep@momentShearLoad@loading=DSolve[{moment''[x]==0,
+		moment'[beamLength]==endLoad,
+		moment[beamLength]==0,
+		shear[x]==moment'[x],
+		load[x]==shear'[x]},
+	{moment,shear,load},
+	x
+	]/.rep[simplify][Simplify];
 
-rep@3={moment[x_]->displacement''[x]*youngsModulus*sectionModulus,
-		shear[x]->moment'[x],load[x]->moment''[x]
-		};
 
-(*eqn@1 is the differential equation that is active on all segments of our beam
+(*rep@momentShearLoad@displacement is the differential equation that is active on all segments of our beam
 because there are no distributed loads*)
 
 (*there is one point load, but it is included as a shear boundary condition
 instead of a singularity function (Dirac delta)*)
+rep@momentShearLoad@displacement={moment[x_]->displacement''[x]*youngsModulus*sectionModulus,
+		shear[x_]->moment'[x],load[x_]->moment''[x]
+		};
 
-eqn@1=evaluateWithRules[load[x]==0,rep@3];
 
 (*in fact, I am going to use the static determinacy of the problem to avoid
 solving simultanous equations for several integration coefficients*)
 
 (*notice I am specifying the boundary conditions on the left hand side -- that
 is because I am using the reactions*)
-
-eqn@2=And@@{evaluateWithRules[moment'[0],rep@3]==shear[0],
-			(moment[0]/.rep@3)==moment[0]};
 
 (*the solution on any segment (where x is a variable that is the location on the
 axis of that segment - not the overall x location) is a function of C[1], which
@@ -118,10 +137,8 @@ I will assume them to both be zero. Given these values on the left hand end, I
 can use the solution to compute them at the right hand end -- which corresponds
 to the left hand end of the next segment -- so I can propagate the solution
 easily.*)
+rep@displacement[i_,x_]=Collect[DSolve[{0==Derivative[0,4][displacement][i,x],moment[i,0]==Derivative[0,2][displacement][i,0]*youngsModulus*sectionModulus[i],shear[i,0]==Derivative[0,3][displacement][i,0]*youngsModulus*sectionModulus[i]},displacement[i,x],x,GeneratedParameters->(c[i,#]&)],x];
 
-sol@1=DSolve[eqn/@And[1,2],displacement,x,GeneratedParameters->c]/.
-	HoldPattern[Function[arg_,xpr_]]:>
-		With[{collected=Collect[xpr,_c]},Identity[Function][arg,collected]];
 
 (*
 1. The shear will be constant if the load function is zero. Thus, the shear at
@@ -138,20 +155,6 @@ except the displacment.
 displacement is dependant on all the other boundary conditions on the left end.
 *)
 
-(*eqn 3 is the listing of zero through fourth order derivatives with respect
-from - of the transverse displacment*)
-
-eqn@3=Derivative[#][displacement][x]==Simplify[Derivative[#][displacement][x]/.
-	sol[1][[1]]]&/@Range[0,4];
-
-(*the moment and shear are based on the second and thrid derivatives of the
-transverse displacement*)
-
-eqn@4=#@x==Simplify[evaluateWithRules[#@x,rep@3]/.sol[1][[1]]]&/@{moment,shear};
-
-
-eqn@5=Join[eqn[3][[Range@2]],eqn@4];
-
 (*a condition update list can be used to express equation sets three and four in
 a discrete form by replacing the segment's local axial position with the
 segment's length -- the conditions on the right side of a segment are equal
@@ -162,31 +165,15 @@ to moment and shear sign conventions)*)
 applicable within a section - not across the discontinuities (from cross
 section changes)*)
 
-rep@4={xpr:(c|displacement|shear|moment)[__]:>Prepend[xpr,i]};
+(*eqn 3 is the listing of zero through fourth order derivatives of the transverse displacment*)
 
-rep@5={xpr:sectionModulus|segmentLength|x->xpr@i};
-
-segPattern=_?(!FreeQ[#,segmentLength]&);
-
-rep@6={displacement[i_,segPattern]->c[i+1,1],
-		Derivative[1][displacement][segPattern]->c[i+1,2],
-		(xpr:shear|moment)[i_,segPattern]->xpr[i+1,0]
-		};
-
-eqn@6=eqn@5/.rep@4/.rep@5
+(*the moment and shear are based on the second and third derivatives of the
+transverse displacement*)
 
 (*equation set 7 is a set of difference equations that are separable - I solve
 them using RSolve after determining the boundary/initial conditions (see comment
 above about using statically determinate reactions to convert the boundary value
 problem into an inital value problem)*)
-
-eqn@7=eqn@5/.x->segmentLength/.rep@4/.rep@5/.rep@6
-
-(*I will provide initial conditions at index 1, the recurrence relations or
-difference equations in equation set 7 will be used to back out the generalized
-expression for the inital conditions of all sections*)
-
-initCondIndex=1;
 
 (*eqn 8 contains the initial conditions, two of which are obtained by using
 the static determinacy of the problem to eliminate boundary conditions*)
@@ -194,7 +181,7 @@ the static determinacy of the problem to eliminate boundary conditions*)
 (*as is the custom with vectors represented by unknown scalar components, a
 direction is first assumed -- then all component scalars are determined*)
 
-(*in this case, all vectors are assumed to line in the positive direction of the
+(*in this case, all vectors are assumed to be in line with the positive direction of the
 coordinate axis to which they are parallel*)
 
 (*the cantilever beam end load is assumed to act vertically upward (even though
@@ -205,22 +192,30 @@ assumption)*)
 reaction vector being opposite that of our sign convention for internal
 moments*)
 
-eqn@8={c[initCondIndex,1]==0,c[initCondIndex,2]==0,
-		moment[initCondIndex,0]==-(-(beamLength*endLoad)),
-		shear[1,0]==-(endLoad)
-		};
+
+(*I will provide initial conditions at index 1, the recurrence relations or
+difference equations in equation set 7 will be used to back out the generalized
+expression for the inital conditions of all sections*)
+initCondIndex=1;
+
+
+eqn@c[i_]={c[i+1,1]==displacement[i,segmentLength[i]]/.rep[displacement[i,segmentLength[i]]][[1]],c[i+1,2]==D[displacement[i,x[i]]/.rep[displacement[i,x[i]]][[1]],x[i]]/.x[i]->segmentLength[i]};
+
+
+eqn@cInitialConditions={c[initCondIndex,1]==0,c[initCondIndex,2]==0};
+
 
 (*these are the initial condition variables at the beginning of each segment*)
+var@cInitialConditions={c[i,1],c[i,2]};
 
-var@1={c[i,1],c[i,2],moment[i,0],shear[i,0]};
 
 (*factorOut is from Allen Hayes at
 http://groups-beta.google.com/group/comp.soft-sys.math.mathematica/
 browse_thread/thread/c07002e609d93bbc
 *)
-
 factorOut={HoldPattern[Sum[expr_ a_,its__]]/;
 	FreeQ[a,Alternatives@@First/@{its}]:>a*Sum[expr,its]};
+
 
 (*endRSolveMadness takes care of two problems simultaneously:
 
@@ -241,7 +236,6 @@ generating a sequence of garbage terms that will be canceled out by terms in
 the remaining sum.
 
 *)
-
 endRSolveMadness[initCondIndex_,newIndex_]=
 	{HoldPattern[Sum[xpr_,{index_Symbol,start_Symbol,end_}]]:>
 		(Format[index]=newIndex;Sum[xpr,{index,initCondIndex,end}]),
@@ -250,19 +244,63 @@ endRSolveMadness[initCondIndex_,newIndex_]=
 				Table[pat,{iter,initial,initCondIndex-1}])
 		};
 
+
 (*eqn 9 and sol 2 contain the aformentioned general expressions for the initial
 conditions on each segment - the expressions are compact and explicit (the
 original differential equation solution after substitution of the segment
 length along with undetermined initial conditions on each segment andthe initial
 conditions for the entire beam could be taken as implicit implict expressions
 ...)*)
-
-eqn@9=Equal@@@Flatten@
+eqn@rSolvedC[i_]=Equal@@@Flatten@
 	MapThread[
-		Simplify[RSolve[{#1,#2},#3,i]/.endRSolveMadness[initCondIndex,#4]//.
+		Simplify[RSolve[{#1,#2},#3,i]/.K[1]->Module[{K},K]/.endRSolveMadness[initCondIndex,#4]//.
 			factorOut]&,
-		{eqn@8,eqn@7,var@1,{s,t,u,v}}
+		{eqn[c[i]],eqn[cInitialConditions],var[cInitialConditions],{a,b}}
 		];
+
+rep@rSolvedC=Thread[(eqn[rSolvedC[i]][[All,1]]/.i->i_)->eqn[rSolvedC[i]][[All,2]]];
+
+
+rep@xi=x[i_]->x-Sum[segmentLength[c],{c,1,i-1}];
+
+
+rep@momentSheari=(xpr:moment|shear)[i_,0]->xpr[Sum[segmentLength[d],{d,1,i-1}]];
+
+
+rep@ix={i[x_]->Piecewise[{#1,x<=#2}&@@@
+	Take[FoldList[#+{1,segmentLength@#2}&,{0,0},Range@maxI],{2,-2}],maxI]}
+
+
+displacement[i[x],x[i[x]]]/.
+	rep[displacement[i[x],x[i[x]]]][[1]]//.
+	rep@rSolvedC/.
+	rep@xi/.
+	rep@momentSheari/.
+	rep[momentShearLoad@loading][[1]]/.
+	rep@ix/.
+	rep@areaMoment/.
+	x->5/.
+	segmentLength[_]->1/.
+	rep@given/.
+
+
+2.5`*^-12 (5400000/(b[1] (h[1])^3)+4200000/(b[2] (h[2])^3)+3000000/(b[3] (h[3])^3)+1800000/(b[4] (h[4])^3))+8.333333333333333`*^-13 (8400000/(b[1] (h[1])^3)+(12 (550000+(1350000 b[2] (h[2])^3)/(b[1] (h[1])^3)))/(b[2] (h[2])^3)+(12 (400000+1/4 b[3] (5400000/(b[1] (h[1])^3)+4200000/(b[2] (h[2])^3)) (h[3])^3))/(b[3] (h[3])^3)+(12 (250000+1/4 b[4] (5400000/(b[1] (h[1])^3)+4200000/(b[2] (h[2])^3)+3000000/(b[3] (h[3])^3)) (h[4])^3))/(b[4] (h[4])^3))+1.0000000000000002`*^-6/(b[5] (h[5])^3)/.{b[1]->0.0313362,b[2]->0.0288309,b[3]->0.0257998,b[4]->0.0220456,b[5]->0.0174976,h[1]->0.626724,h[2]->0.576618,h[3]->0.515997,h[4]->0.440911,h[5]->0.349951}
+
+
+eqn@3=Derivative[#][displacement][x]==Simplify[Derivative[#][displacement][x]/.
+	sol[1][[1]]]&/@Range[0,4];
+eqn@4=#@x==Simplify[evaluateWithRules[#@x,rep@3]/.sol[1][[1]]]&/@{moment,shear};
+eqn@5=Join[eqn[3][[Range@2]],eqn@4];
+rep@4={xpr:(c|displacement|shear|moment)[__]:>Prepend[xpr,i]};
+rep@5={xpr:sectionModulus|segmentLength|x->xpr@i};
+segPattern=_?(!FreeQ[#,segmentLength]&);
+rep@6={displacement[i_,segPattern]->c[i+1,1],
+		Derivative[1][displacement][segPattern]->c[i+1,2],
+		(xpr:shear|moment)[i_,segPattern]->xpr[i+1,0]
+		};
+eqn@6=eqn@5/.rep@4/.rep@5
+eqn@7=eqn@5/.x->segmentLength/.rep@4/.rep@5/.rep@6
+
 
 sol@2=ReplacePart[#,#[[1]]/.i->i_,1]&/@ToRules[And@@eqn@9]
 
@@ -278,13 +316,14 @@ rep@7={i->Piecewise[{#1,overallX<=#2}&@@@
 	Take[FoldList[#+{1,segmentLength@#2}&,{0,0},Range@maxI],{2,-2}],maxI]};
 
 (*rep@8 gives an expression for x[i] as a fiunction of i and overallX - combined
-with rep@7, it is possible to use rep@8 to tranlate overallX into a local x[i]*)
+with rep@7, it is possible to use rep@8 to translate overallX into a local
+x[i]*)
 
 rep@8=x[i]->overallX-Sum[segmentLength[w],{w,1,i-1}];
 
 (*xpr@1 gives an explicit formula for the right hand sides of equation six
 in terms of overallX (aka x[1] or just x) (and the optimization variables,
-segmentLengths, and the rep@1 replacements)*)
+segmentLengths, and the given replacements)*)
 
 xpr[1][overallX_]=eqn[6][[All,2]]/.sol@3/.rep@8/.rep@7/.rep@2;
 
@@ -309,29 +348,19 @@ but are also equations)*)
 
 eqn@10=Thread[
     Join[eqn[3][[{1,2},1]],eqn[4][[All,1]]]==
-      Join[xpr[1][x][[{1,2},1]],xpr@2/.rep@9//Simplify]];
+      Join[xpr[1][x][[{1,2}]],xpr@2/.rep@9//Simplify]];
 
 (*somewhat simpler expressions for the transverse displacement and its
 derivative may be obtained by assuming the segmentLengths are all equal, as in
-rep@10 and eqn@11*)
+given0 and eqn@11*)
 
-rep@10={segmentLength[_]->segmentLength,i->Ceiling[x/segmentLength]};
+given0={segmentLength[_]->segmentLength,i->Ceiling[x/segmentLength]};
 
-eqn@11=Thread[eqn[10][[All,1]]==(eqn[6][[All,2]]/.sol@3/.rep@8/.rep@10//.
+eqn@11=Thread[eqn[10][[All,1]]==(eqn[6][[All,2]]/.sol@3/.rep@8/.given0//.
 									factorOut//Simplify)/.rep@2
 	];
 
-(*rep@11 gives a rule for Q - the first or static moment of area with respect
-to the height above the neutral axis*)
 
-rep@11={staticAreaMoment[i_,shearheight_]->
-	Module[{y,z},
-		Integrate[
-			Integrate[y,{y,shearheight,height@i/2}],
-			{z,-base@i/2,base@i/2}
-			]
-		]//Simplify
-	};
 
 (*eqn@12 defines the axial stress (due to bending) as a function of axial and
 transverse position*)
