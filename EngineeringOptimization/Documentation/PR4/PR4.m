@@ -496,7 +496,7 @@ constr@2=And@@Table[height[i]-20base[i]<=0,{i,maxI}]
 
 
 (*the beam is only allowed to deflect to maxDeflection (the displacement is always negative, since the load is negative -- also, maxDeflection is positive)*)
-constr@3=maxDeflection/(-displacement@5)-1<=0
+constr@3=-displacement@5/maxDeflection-1<=0
 
 
 (*all bases must be at least 1 cm;all heights must be at least 5 cm*)
@@ -516,9 +516,16 @@ nminarg@0={objective[1],constr/@And[1,2,3,4,5]}
 
 
 {nminarg@1,nminarg@2}=nminarg@0/.rep@vonMisesStressMostlySolved/.rep@displacementMostlySolved/.rep@y;
+{nminarg@3,nminarg@4}={nminarg@1,nminarg@2}/.rep@ix/.segmentLength[_]->1/.rep@given;
 
 
-nminarg@1/.rep@ix/.segmentLength[_]->1/.rep@given
+var@1=Union@Cases[nminarg@3,(base|height)[_],{0,Infinity}];
+
+
+sol@1=NMinimize[nminarg@3,var@1]
+
+
+Transpose@ReleaseHold[{Hold@MapAt[Sequence@@#&,nminarg@0,{2}],MapAt[Sequence@@#&,MapAt[First/@#&,nminarg@1,{2}],{2}],MapAt[Sequence@@#&,nminarg@1,{2}]}/.rep@ix/.segmentLength[_]->1/.rep@given/.sol[1][[2]]]//TableForm
 
 
 Transpose@ReleaseHold[{Hold@MapAt[Sequence@@#&,nminarg@0,{2}],MapAt[Sequence@@#&,MapAt[First/@#&,nminarg@1,{2}],{2}],MapAt[Sequence@@#&,nminarg@1,{2}]}/.rep@ix/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum]//TableForm
