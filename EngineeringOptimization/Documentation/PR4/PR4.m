@@ -519,7 +519,10 @@ objective[1]=Sum[Times[base[i],height[i],segmentLength[i]],{i,1,maxI}]
 nminarg@0={objective[1],constr/@And[1,2,3,4,5]}
 
 
-{nminarg@1,nminarg@2}=nminarg@0/.LessEqual->List/.rep@vonMisesStressMostlySolved/.rep@displacementMostlySolved/.rep@y/.rep@ix/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum
+{nminarg@1,nminarg@2}=nminarg@0/.rep@vonMisesStressMostlySolved/.rep@displacementMostlySolved/.rep@y/.rep@ix;
+
+
+Transpose@{MapAt[Sequence@@#&,nminarg@0,{2}],MapAt[Sequence@@#&,MapAt[First/@#&,nminarg@1,{2}],{2}]/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum,MapAt[Sequence@@#&,nminarg@1,{2}]/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum}//TableForm
 
 
 (*End[];
