@@ -102,7 +102,7 @@ Popov)*)
 results of the sum of the moments (transverse to the beam) and the sum of the
 forces (axially) (ref section 7-9 Popov)*)
 rep@momentShearLoad@loading=DSolve[{moment''[x]==0,
-		moment'[beamLength]==endLoad,
+		moment'[beamLength]==-endLoad,
 		moment[beamLength]==0,
 		shear[x]==moment'[x],
 		load[x]==shear'[x]},
