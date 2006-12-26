@@ -311,17 +311,13 @@ rep@displacementMostlySolved=displacement[x_]->
 	rep@xi/.
 	rep@momentSheari/.
 	rep[momentShearLoad@loading][[1]]/.
-	rep@ix/.
 	rep@areaMoment)
 
 
 rep@anOldOptimum={b[1]->0.0313362,b[2]->0.0288309,b[3]->0.0257998,b[4]->0.0220456,b[5]->0.0174976,h[1]->0.626724,h[2]->0.576618,h[3]->0.515997,h[4]->0.440911,h[5]->0.349951}/.{b->base,h->height};
 
 
-rep@given
-
-
-displacement[5]/.rep@displacementMostlySolved/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum
+displacement[5]/.rep@displacementMostlySolved/.rep@ix/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum
 
 
 (*eqn@12 defines the axial stress (due to bending) as a function of axial and
@@ -519,10 +515,13 @@ objective[1]=Sum[Times[base[i],height[i],segmentLength[i]],{i,1,maxI}]
 nminarg@0={objective[1],constr/@And[1,2,3,4,5]}
 
 
-{nminarg@1,nminarg@2}=nminarg@0/.rep@vonMisesStressMostlySolved/.rep@displacementMostlySolved/.rep@y/.rep@ix;
+{nminarg@1,nminarg@2}=nminarg@0/.rep@vonMisesStressMostlySolved/.rep@displacementMostlySolved/.rep@y;
 
 
-Transpose@{MapAt[Sequence@@#&,nminarg@0,{2}],MapAt[Sequence@@#&,MapAt[First/@#&,nminarg@1,{2}],{2}]/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum,MapAt[Sequence@@#&,nminarg@1,{2}]/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum}//TableForm
+nminarg@1/.rep@ix/.segmentLength[_]->1/.rep@given
+
+
+Transpose@ReleaseHold[{Hold@MapAt[Sequence@@#&,nminarg@0,{2}],MapAt[Sequence@@#&,MapAt[First/@#&,nminarg@1,{2}],{2}],MapAt[Sequence@@#&,nminarg@1,{2}]}/.rep@ix/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum]//TableForm
 
 
 (*End[];
