@@ -1,10 +1,10 @@
 (* ::Package:: *)
 
 BeginPackage["EngineeringOptimization`Documentation`PR4`"(*,
-	{"Graphics`FilledPlot`"}*)];
+	{"Graphics`FilledPlot`"}*)]
 
 
-Begin["`Private`"];
+Begin["`Private`"]
 
 
 (*formatting*)
@@ -13,24 +13,24 @@ Begin["`Private`"];
 		{moment,"M"},{load,"q"},{segmentLength,"l"},{beamLength,"L"},
 		{endLoad,"P"},{base,"b"},{height,"h"},{overallX,"x"},
 		{staticAreaMoment,"Q"}
-		};
+		}
 
 (Format[#[i_,args__]]:=Subscript[#,i][args])&/@{shear,moment,displacement,
-												staticAreaMoment};
+												staticAreaMoment}
 
-(Format[#[args__]]:=Subscript[#,args])&/@{x,sectionModulus,segmentLength,c};
+(Format[#[args__]]:=Subscript[#,args])&/@{x,sectionModulus,segmentLength,c,height,base}
 
-(Format[#1]=#2)&@@@{{sig,\[Sigma]},{lam,\[Lambda]}};
+(Format[#1]=#2)&@@@{{sig,\[Sigma]},{lam,\[Lambda]}}
 
 Format[Derivative[0,dNum_][displacement][i_,x_]]:=
-	D[Subscript[displacement,i][x],{x,dNum}];
+	D[Subscript[displacement,i][x],{x,dNum}]
 
 
 (*evaluate an expression as if rules were set*)
 symbolsInContext[xpr_,context_]:=Union@Cases[xpr,symb_Symbol/;
-	Context@Unevaluated@symb===context,{0,Infinity},Heads->True];
+	Context@Unevaluated@symb===context,{0,Infinity},Heads->True]
 
-symbolsInContext[xpr_]:=symbolsInContext[xpr,Context[]];
+symbolsInContext[xpr_]:=symbolsInContext[xpr,Context[]]
 
 evaluateWithRules[xpr_,rules:{(_Rule|_RuleDelayed)...}]:=
 	Block[Evaluate[symbolsInContext@{xpr,rules}],
@@ -38,20 +38,20 @@ evaluateWithRules[xpr_,rules:{(_Rule|_RuleDelayed)...}]:=
 						ruleXpr_RuleDelayed:>SetDelayed@@ruleXpr
 						}
 				,{1}];
-		xpr];
+		xpr]
 
 
 (*simplify or otherwise modify a Function*)
-rep[simplify][func_]=HoldPattern[Function[var_,fun_]]:>With[{sfun=func@fun},Identity[Function][var,sfun]];
+rep[simplify][func_]=HoldPattern[Function[var_,fun_]]:>With[{sfun=func@fun},Identity[Function][var,sfun]]
 
 
 (*unit prefix*)
-centi=1/100;
+centi=1/100
 
 
 (*given*)
 rep@given={endLoad->-50000,youngsModulus->2.0*10^7/centi^2,beamLength->500*centi,
-		maxSigmaX->14000/centi^2,maxDeflection->2.5*centi};
+		maxSigmaX->14000/centi^2,maxDeflection->2.5*centi}
 
 
 (*section modulus, I, and first or static moment of area, Q, with respect to height above the neutral axis for a rectangular cross section aligned with the axes*)
@@ -67,11 +67,11 @@ rep@areaMoment={sectionModulus[i_]->
 			{z,-base@i/2,base@i/2}
 			]
 		]//Simplify
-	};
+	}
 
 
 (*our beam has five segments*)
-maxI=5;
+maxI=5
 
 
 (*
@@ -108,7 +108,7 @@ rep@momentShearLoad@loading=DSolve[{moment''[x]==0,
 		load[x]==shear'[x]},
 	{moment,shear,load},
 	x
-	]/.rep[simplify][Simplify];
+	]/.rep[simplify][Simplify]
 
 
 (*rep@momentShearLoad@displacement is the differential equation that is active on all segments of our beam
@@ -118,7 +118,7 @@ because there are no distributed loads*)
 instead of a singularity function (Dirac delta)*)
 rep@momentShearLoad@displacement={moment[x_]->displacement''[x]*youngsModulus*sectionModulus,
 		shear[x_]->moment'[x],load[x_]->moment''[x]
-		};
+		}
 
 
 (*in fact, I am going to use the static determinacy of the problem to avoid
@@ -137,7 +137,7 @@ I will assume them to both be zero. Given these values on the left hand end, I
 can use the solution to compute them at the right hand end -- which corresponds
 to the left hand end of the next segment -- so I can propagate the solution
 easily.*)
-rep@displacement[i_,x_]=Collect[DSolve[{0==Derivative[0,4][displacement][i,x],moment[i,0]==Derivative[0,2][displacement][i,0]*youngsModulus*sectionModulus[i],shear[i,0]==Derivative[0,3][displacement][i,0]*youngsModulus*sectionModulus[i]},displacement[i,x],x,GeneratedParameters->(c[i,#]&)],x];
+rep@displacement[i_,x_]=Collect[DSolve[{0==Derivative[0,4][displacement][i,x],moment[i,0]==Derivative[0,2][displacement][i,0]*youngsModulus*sectionModulus[i],shear[i,0]==Derivative[0,3][displacement][i,0]*youngsModulus*sectionModulus[i]},displacement[i,x],x,GeneratedParameters->(c[i,#]&)],x]
 
 
 (*
@@ -196,17 +196,17 @@ moments*)
 (*I will provide initial conditions at index 1, the recurrence relations or
 difference equations in equation set 7 will be used to back out the generalized
 expression for the inital conditions of all sections*)
-initCondIndex=1;
+initCondIndex=1
 
 
-eqn@c[i_]={c[i+1,1]==displacement[i,segmentLength[i]]/.rep[displacement[i,segmentLength[i]]][[1]],c[i+1,2]==D[displacement[i,x[i]]/.rep[displacement[i,x[i]]][[1]],x[i]]/.x[i]->segmentLength[i]};
+eqn@c[i_]={c[i+1,1]==displacement[i,segmentLength[i]]/.rep[displacement[i,segmentLength[i]]][[1]],c[i+1,2]==D[displacement[i,x[i]]/.rep[displacement[i,x[i]]][[1]],x[i]]/.x[i]->segmentLength[i]}
 
 
-eqn@cInitialConditions={c[initCondIndex,1]==0,c[initCondIndex,2]==0};
+eqn@cInitialConditions={c[initCondIndex,1]==0,c[initCondIndex,2]==0}
 
 
 (*these are the initial condition variables at the beginning of each segment*)
-var@cInitialConditions={c[i,1],c[i,2]};
+var@cInitialConditions={c[i,1],c[i,2]}
 
 
 (*factorOut is from Allen Hayes at
@@ -214,7 +214,7 @@ http://groups-beta.google.com/group/comp.soft-sys.math.mathematica/
 browse_thread/thread/c07002e609d93bbc
 *)
 factorOut={HoldPattern[Sum[expr_ a_,its__]]/;
-	FreeQ[a,Alternatives@@First/@{its}]:>a*Sum[expr,its]};
+	FreeQ[a,Alternatives@@First/@{its}]:>a*Sum[expr,its]}
 
 
 (*endRSolveMadness takes care of two problems simultaneously:
@@ -242,15 +242,48 @@ endRSolveMadness[initCondIndex_,newIndex_]=
 		Sum[pat_,{iter_,initial_Integer,end_}]/;initial<initCondIndex:>
 			(Format[iter]=newIndex;Sum[pat,{iter,initCondIndex,end}]+Total@
 				Table[pat,{iter,initial,initCondIndex-1}])
-		};
+		}
 
 
 (*eqn 9 and sol 2 contain the aformentioned general expressions for the initial
 conditions on each segment - the expressions are compact and explicit (the
 original differential equation solution after substitution of the segment
-length along with undetermined initial conditions on each segment andthe initial
-conditions for the entire beam could be taken as implicit implict expressions
+length along with undetermined initial conditions on each segment and the initial
+conditions for the entire beam could be taken as implict expressions
 ...)*)
+
+(*in sol@3 these explicit formulas have been substituted into each other to make
+them standalone formulas suitable for use in ReplaceAll*)
+
+(*rep@7 gives an expression for iteratior i as a function of overallX (which is
+essentially x[1]) - remember that i indicates the current segment*)
+
+(*rep@8 gives an expression for x[i] as a fiunction of i and overallX - combined
+with rep@7, it is possible to use rep@8 to translate overallX into a local
+x[i]*)
+
+(*xpr@1 gives an explicit formula for the right hand sides of equation six
+in terms of overallX (aka x[1] or just x) (and the optimization variables,
+segmentLengths, and the given replacements)*)
+
+(*xpr@2 takes just the moment and shear overall expressions and factors
+constants out of the two (otherwise identical) sums - which are left with just
+this form Sum[segmentLength[iter_],{iter_,1,i}], one plus and one minus - these
+forms can be canceled out*)
+
+(*the only way MMA is going to recognize the sums are the same is if the
+iterators are the same symbol - rep@9 collects the iterators and gives a rule to
+make them the same*)
+
+(*eqn@10 has some expanded equations that are much like xpr@1, execept that the
+moment and shear expressions are simplified (and these aren't just expressions,
+but are also equations)*)
+
+(*somewhat simpler expressions for the transverse displacement and its
+derivative may be obtained by assuming the segmentLengths are all equal, as in
+given0 and eqn@11*)
+
+
 eqn@rSolvedC[i_]=Equal@@@Flatten@
 	MapThread[
 		Simplify[RSolve[{#1,#2},#3,i]/.K[1]->Module[{K},K]/.endRSolveMadness[initCondIndex,#4]//.
@@ -258,108 +291,37 @@ eqn@rSolvedC[i_]=Equal@@@Flatten@
 		{eqn[c[i]],eqn[cInitialConditions],var[cInitialConditions],{a,b}}
 		];
 
-rep@rSolvedC=Thread[(eqn[rSolvedC[i]][[All,1]]/.i->i_)->eqn[rSolvedC[i]][[All,2]]];
+rep@rSolvedC=Thread[(eqn[rSolvedC[i]][[All,1]]/.i->i_)->eqn[rSolvedC[i]][[All,2]]]
 
 
-rep@xi=x[i_]->x-Sum[segmentLength[c],{c,1,i-1}];
+rep@xi=x[i_]->x-Sum[segmentLength[c],{c,1,i-1}]
 
 
-rep@momentSheari=(xpr:moment|shear)[i_,0]->xpr[Sum[segmentLength[d],{d,1,i-1}]];
+rep@momentSheari=(xpr:moment|shear)[i_,0]->xpr[Sum[segmentLength[d],{d,1,i-1}]]
 
 
 rep@ix={i[x_]->Piecewise[{#1,x<=#2}&@@@
 	Take[FoldList[#+{1,segmentLength@#2}&,{0,0},Range@maxI],{2,-2}],maxI]}
 
 
-displacement[i[x],x[i[x]]]/.
+rep@displacementMostlySolved=displacement[x_]->
+	(displacement[i[x],x[i[x]]]/.
 	rep[displacement[i[x],x[i[x]]]][[1]]//.
 	rep@rSolvedC/.
 	rep@xi/.
 	rep@momentSheari/.
 	rep[momentShearLoad@loading][[1]]/.
 	rep@ix/.
-	rep@areaMoment/.
-	x->5/.
-	segmentLength[_]->1/.
-	rep@given/.
+	rep@areaMoment)
 
 
-2.5`*^-12 (5400000/(b[1] (h[1])^3)+4200000/(b[2] (h[2])^3)+3000000/(b[3] (h[3])^3)+1800000/(b[4] (h[4])^3))+8.333333333333333`*^-13 (8400000/(b[1] (h[1])^3)+(12 (550000+(1350000 b[2] (h[2])^3)/(b[1] (h[1])^3)))/(b[2] (h[2])^3)+(12 (400000+1/4 b[3] (5400000/(b[1] (h[1])^3)+4200000/(b[2] (h[2])^3)) (h[3])^3))/(b[3] (h[3])^3)+(12 (250000+1/4 b[4] (5400000/(b[1] (h[1])^3)+4200000/(b[2] (h[2])^3)+3000000/(b[3] (h[3])^3)) (h[4])^3))/(b[4] (h[4])^3))+1.0000000000000002`*^-6/(b[5] (h[5])^3)/.{b[1]->0.0313362,b[2]->0.0288309,b[3]->0.0257998,b[4]->0.0220456,b[5]->0.0174976,h[1]->0.626724,h[2]->0.576618,h[3]->0.515997,h[4]->0.440911,h[5]->0.349951}
+rep@anOldOptimum={b[1]->0.0313362,b[2]->0.0288309,b[3]->0.0257998,b[4]->0.0220456,b[5]->0.0174976,h[1]->0.626724,h[2]->0.576618,h[3]->0.515997,h[4]->0.440911,h[5]->0.349951}/.{b->base,h->height};
 
 
-eqn@3=Derivative[#][displacement][x]==Simplify[Derivative[#][displacement][x]/.
-	sol[1][[1]]]&/@Range[0,4];
-eqn@4=#@x==Simplify[evaluateWithRules[#@x,rep@3]/.sol[1][[1]]]&/@{moment,shear};
-eqn@5=Join[eqn[3][[Range@2]],eqn@4];
-rep@4={xpr:(c|displacement|shear|moment)[__]:>Prepend[xpr,i]};
-rep@5={xpr:sectionModulus|segmentLength|x->xpr@i};
-segPattern=_?(!FreeQ[#,segmentLength]&);
-rep@6={displacement[i_,segPattern]->c[i+1,1],
-		Derivative[1][displacement][segPattern]->c[i+1,2],
-		(xpr:shear|moment)[i_,segPattern]->xpr[i+1,0]
-		};
-eqn@6=eqn@5/.rep@4/.rep@5
-eqn@7=eqn@5/.x->segmentLength/.rep@4/.rep@5/.rep@6
+rep@given
 
 
-sol@2=ReplacePart[#,#[[1]]/.i->i_,1]&/@ToRules[And@@eqn@9]
-
-(*in sol@3 these explicit formulas have been substituted into each other to make
-them standalone formulas suitable for use in ReplaceAll*)
-
-sol@3=Thread[sol[2][[All,1]]->(sol[2][[All,2]]//.sol@2)]
-
-(*rep@7 gives an expression for iteratior i as a function of overallX (which is
-essentially x[1]) - remember that i indicates the current segment*)
-
-rep@7={i->Piecewise[{#1,overallX<=#2}&@@@
-	Take[FoldList[#+{1,segmentLength@#2}&,{0,0},Range@maxI],{2,-2}],maxI]};
-
-(*rep@8 gives an expression for x[i] as a fiunction of i and overallX - combined
-with rep@7, it is possible to use rep@8 to translate overallX into a local
-x[i]*)
-
-rep@8=x[i]->overallX-Sum[segmentLength[w],{w,1,i-1}];
-
-(*xpr@1 gives an explicit formula for the right hand sides of equation six
-in terms of overallX (aka x[1] or just x) (and the optimization variables,
-segmentLengths, and the given replacements)*)
-
-xpr[1][overallX_]=eqn[6][[All,2]]/.sol@3/.rep@8/.rep@7/.rep@2;
-
-(*xpr@2 takes just the moment and shear overall expressions and factors
-constants out of the two (otherwise identical) sums - which are left with just
-this form Sum[segmentLength[iter_],{iter_,1,i}], one plus and one minus - these
-forms can be canceled out*)
-
-xpr@2=xpr[1][x][[{3,4}]]//.factorOut;
-
-(*the only way MMA is going to recognize the sums are the same is if the
-iterators are the same symbol - rep@9 collects the iterators and gives a rule to
-make them the same*)
-
-rep@9=Rule[Alternatives@@Most@#,Last@#]&@
-    Cases[xpr@2,
-      HoldPattern[Sum[_,{iterator_,_,_}]]:>iterator,{0,Infinity}];
-
-(*eqn@10 has some expanded equations that are much like xpr@1, execept that the
-moment and shear expressions are simplified (and these aren't just expressions,
-but are also equations)*)
-
-eqn@10=Thread[
-    Join[eqn[3][[{1,2},1]],eqn[4][[All,1]]]==
-      Join[xpr[1][x][[{1,2}]],xpr@2/.rep@9//Simplify]];
-
-(*somewhat simpler expressions for the transverse displacement and its
-derivative may be obtained by assuming the segmentLengths are all equal, as in
-given0 and eqn@11*)
-
-given0={segmentLength[_]->segmentLength,i->Ceiling[x/segmentLength]};
-
-eqn@11=Thread[eqn[10][[All,1]]==(eqn[6][[All,2]]/.sol@3/.rep@8/.given0//.
-									factorOut//Simplify)/.rep@2
-	];
-
+displacement[5]/.rep@displacementMostlySolved/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum
 
 
 (*eqn@12 defines the axial stress (due to bending) as a function of axial and
@@ -370,16 +332,15 @@ transverse position*)
 from carrying the section away) -- note the negative sign in the sigmaXY
 expression - that is because the default direction for the shear, V, is opposite
 that of the default direction for the shear stress, sigmaXY*)
+rep@sigmaXXSigmaXY={sigmaXX[x_,y_]->-moment[x]*y/sectionModulus[i],
+	sigmaXY[x_,y_]->-shear[x]*staticAreaMoment[i,y]/sectionModulus[i]/base@i
+	}
 
-eqn@12={sigmaXX[x,y]==-moment[x]*y/sectionModulus[i],
-	sigmaXY[x,y]==-shear[x]*staticAreaMoment[i,y]/sectionModulus[i]/base@i
-	};
 
 (*sol@4 uses the moment and shear solutions along with the definition of
 staticAreaMoment, Q, and sectionModulus, I to obtain an expression for the
 axial stress and shear in the axial-vertical plane (x-y plane)*)
 
-sol@4=ToRules[And@@(eqn@12/.rep@11/.rep@2/.ToRules[And@@eqn@10]//Simplify)];
 
 (*now it is time to try different failure criteria*)
 
@@ -418,19 +379,19 @@ octShearStress,{IIs,vonMisesYieldShearStress}]//Last*)
 
 (*rep@12 functions can be used to transform the general stress tensor into the
 von Mises Stress*)
-
-rep@12={CharPoly[sig_]->Function[Det[#-sig IdentityMatrix[Length[#]]]],
+rep@tensorOps={CharPoly[sig_]->Function[Det[#-sig IdentityMatrix[Length[#]]]],
 	Deviate->Function[#-IdentityMatrix[Length[#]] Tr[#]/Length[#]],
 	OctahedralShearStress[SecondInvariant]->Function[Sqrt[2#/3]],
 	OctahedralShearStress[vonMisesStress]->Function[Sqrt[2] #/3],
 	PrincipalStresses[sig_]->Function[Solve[#==0,sig]],
 	SecondInvariant[sig_]->Function[Coefficient[#,sig]],
 	vonMisesStress[OctahedralShearStress]->Function[3#/Sqrt[2]]
-	};
+	}
+
 
 (*rep@13 is based on the symmetry of the stress tensor*)
+rep@tensorSubscriptSort=sig[blah__]:>sig@@Sort[{blah}]
 
-rep@13=sig[blah__]:>sig@@Sort[{blah}];
 
 (*octMisesCheck gives the von Mises stress expressed as a function of arbitrary
 cartesian stress tensor components, as derived from the general stress tensor
@@ -440,19 +401,18 @@ and the Mises Yield Condition of Levy-Mises perfect plasticity (defined in sec
 (*the first check is the definition of the von Mises stress (equating the shear
 (via stress transformation) of a uniaxial stress state to the shear of a
 general stress state) -- see comments before rep@12*)
-
 octMisesCheck@1=Y/.Last@
 	Solve[SecondInvariant[lam][
 		CharPoly[lam][Deviate[{{Y,0,0},{0,0,0},{0,0,0}}]]
 		]==SecondInvariant[lam][
 				CharPoly[lam][Deviate[Outer[sig,{x,y,z},{x,y,z}]]]
-				]/.rep@13/.rep@12,
-		Y]//FullSimplify;
+				]/.rep@tensorSubscriptSort/.rep@tensorOps,
+		Y]//FullSimplify
+
 
 (*the second check is the transformation of the second invariant of the
 deviatoric stress tensor to octahedral shear stress and then to the von Mises
 stress*)
-
 octMisesCheck@2=
 	vonMisesStress[OctahedralShearStress][
 		OctahedralShearStress[SecondInvariant][
@@ -460,64 +420,108 @@ octMisesCheck@2=
 				CharPoly[lam][Deviate[Outer[sig,{x,y,z},{x,y,z}]]]
 				]
 			]
-		]/.rep@13/.rep@12//FullSimplify;
+		]/.rep@tensorSubscriptSort/.rep@tensorOps//FullSimplify
+
 
 (*the third check uses the difference between the principal stresses as derived
 from the Mises yield condition to determine the von Mises stress (as can be
 inferred from Malvern's section 6.6 part 1 eqn 6.6.11a or taken from Shigley and
 Mischke section 6-5 eqn h)*)
-
 octMisesCheck@3=
 	Sqrt[Total[Power[Subtract[##],2]&@@@
 			Subsets[
 				ReplaceAll[lam,
 					PrincipalStresses[lam][
 						CharPoly[lam][Outer[sig,{x,y,z},{x,y,z}]]
-						]/.rep[12]
+						]/.rep@tensorOps
 					],{2}
 				]
 			]/2
-		]/.rep[13]/.rep[12]//FullSimplify;
+		]/.rep@tensorSubscriptSort/.rep@tensorOps//FullSimplify
+
 
 (*there should be a 1:1 correspondence between a given von Mises stress and an
 octahedral shear stress, which forms the fourth check*)
-
 octMisesCheck@4=
 	vonMisesStress[OctahedralShearStress][
 		OctahedralShearStress[vonMisesStress][a]
-		]==a/.rep@12;
+		]==a/.rep@tensorOps
+
 
 (*if these results are not all the same (or in the case of number 4, True),
-something is wrong*)
-
+something is wrong; otherwise, I feel I can trust rep@12*)
 If[Not[SameQ@@(octMisesCheck/@{1,2,3})]&&octMisesCheck@4,
 	Print["The methods for determining the von Mises stress and octahedral "<>
 		"shear stress are incorrect."];Abort[]
-	];
+	]
 
-(*so now I feel I can trust rep 12*)
 
 (*rep@14 takes care of the tranformation from x and y being used to designate
 faces and directions with respect to a differential cube of material to being
 material coordinates -- it also zeroes out all those stress components that
 aren't at play in this problem*)
+rep@sigToSigma={sig[x,x]->sigmaXX[x,y],sig[x,y]->sigmaXY[x,y],sig[__]->0}
 
-rep[14]={sig[x,x]->sigmaXX[x,y],sig[x,y]->sigmaXY[x,y],sig[__]->0}
+
+(*coordinates where the maximum von Mises stress occurrs below the top surface*)
+(*{x->4.5,base@i->5,height@i->3}*)
+
+
+rep@i=i->i[x]
+
+
+rep@vonMisesStressMostlySolved=vonMisesStress[x_,y_]->octMisesCheck@3/.rep@sigToSigma/.rep@sigmaXXSigmaXY/.rep@areaMoment/.rep[momentShearLoad@loading][[1]]/.rep@i
+
 
 (*rep@15 creates two different replacements for y - one where it is at
 height@i/2 and one where it is always at the point of maximum von Mises stress,
 which is usually height@i/2 - but not always*)
-
-rep@15={{y->height@i/2},
-	{y->(
-		Piecewise[{{y,Im[y]==0&&y<height@i/2}},height@i/2]/.
-			Last@Solve[D[octMisesCheck@3==maxSigmaX/.rep@14/.sol@4,y],y]
+rep@y={{y[x_]->height@i/2/.rep@i},
+	{y[x_]->(
+		Piecewise[{{y,Im[y]==0&&y<height@i/2}},height@i/2]/.rep@i/.
+			Last@Solve[D[vonMisesStress[x,y]==maxSigmaX/.rep@vonMisesStressMostlySolved,y],y]
 			)//FullSimplify
 		}
-	};
+	}
 
-Abort[];
 
-End[];
+(*epsilon is used to ensure that x is really within the segment - because at the far left end of a segment, i changes to i of the previous segment (which is bad if one wants to test the critical section)*)
 
-EndPackage[];
+
+epsilon=1.*10^-10
+
+
+(*the maximum shear stress must be less than the maximum allowable stress*)
+constr@1=Apply[And,vonMisesStress[#,y[#]]/maxSigmaX-1<=0&/@FoldList[Plus,0,MapAt[#-eps&,MapAt[#+eps&,segmentLength/@Range@maxI,1],5]]/.eps->epsilon]
+
+
+(*the height of a section may not be more than 20 times its base*)
+constr@2=And@@Table[height[i]-20base[i]<=0,{i,maxI}]
+
+
+(*the beam is only allowed to deflect to maxDeflection (the displacement is always negative, since the load is negative -- also, maxDeflection is positive)*)
+constr@3=maxDeflection/(-displacement@5)-1<=0
+
+
+(*all bases must be at least 1 cm;all heights must be at least 5 cm*)
+constr@4=And@@Table[And[centi-base[i]<=0,5*centi-height[i]<=0],{i,1,maxI}]
+
+
+(*the segment lengths total to the beam length*)
+constr@5=Sum[segmentLength[i],{i,1,maxI}]==beamLength
+
+
+(*the objective to be minimized is the volume of the material used*)
+objective[1]=Sum[Times[base[i],height[i],segmentLength[i]],{i,1,maxI}]
+
+
+(*this concatenates the objective and constraints into the first argument of NMinimize*)
+nminarg@0={objective[1],constr/@And[1,2,3,4,5]}
+
+
+{nminarg@1,nminarg@2}=nminarg@0/.LessEqual->List/.rep@vonMisesStressMostlySolved/.rep@displacementMostlySolved/.rep@y/.rep@ix/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum
+
+
+(*End[];
+
+EndPackage[];*)
