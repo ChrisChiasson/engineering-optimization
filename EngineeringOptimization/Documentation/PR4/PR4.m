@@ -1,7 +1,7 @@
 (* ::Package:: *)
 
-BeginPackage["EngineeringOptimization`Documentation`PR4`"(*,
-	{"Graphics`FilledPlot`"}*)]
+BeginPackage["EngineeringOptimization`Documentation`PR4`",
+	{"Graphics`FilledPlot`","XML`DocBook`","EngineeringOptimization`"}]
 
 
 Begin["`Private`"]
@@ -18,7 +18,8 @@ Begin["`Private`"]
 (Format[#[i_,args__]]:=Subscript[#,i][args])&/@{shear,moment,displacement,
 												staticAreaMoment}
 
-(Format[#[args__]]:=Subscript[#,args])&/@{x,sectionModulus,segmentLength,c,height,base}
+(Format[#[args__]]:=Subscript[#,args])&/@
+	{x,sectionModulus,segmentLength,c,height,base}
 
 (Format[#1]=#2)&@@@{{sig,\[Sigma]},{lam,\[Lambda]}}
 
@@ -40,9 +41,26 @@ evaluateWithRules[xpr_,rules:{(_Rule|_RuleDelayed)...}]:=
 				,{1}];
 		xpr]
 
+bConsHandler[{nMinArgF_,nMinArgCons_And/;Length[nMinArgCons]>=2},vars_List]:=
+Module[{symb},
+With[{blockSymbols=symbolsInContext[vars]},
+	{symb[{1}][args__?NumericQ]:=
+		Block[blockSymbols,vars={args};nMinArgF];symb[{1}]@@vars,
+		MapIndexed[(With[{pos=Prepend[#2,2]},
+						symb[pos][args__?NumericQ]:=
+						Block[blockSymbols,vars={args};#1];
+						symb[pos]@@vars
+						])&,
+			nMinArgCons,
+			{2}
+			]
+		}
+	]]
+
 
 (*simplify or otherwise modify a Function*)
-rep[simplify][func_]=HoldPattern[Function[var_,fun_]]:>With[{sfun=func@fun},Identity[Function][var,sfun]]
+rep[simplify][func_]=HoldPattern[Function[var_,fun_]]:>
+	With[{sfun=func@fun},Identity[Function][var,sfun]]
 
 
 (*unit prefix*)
@@ -54,7 +72,9 @@ rep@given={endLoad->-50000,youngsModulus->2.0*10^7/centi^2,beamLength->500*centi
 		maxSigmaX->14000/centi^2,maxDeflection->2.5*centi}
 
 
-(*section modulus, I, and first or static moment of area, Q, with respect to height above the neutral axis for a rectangular cross section aligned with the axes*)
+(*section modulus, I, and first or static moment of area, Q, with respect to
+height above the neutral axis for a rectangular cross section aligned with the
+axes*)
 rep@areaMoment={sectionModulus[i_]->
 	Integrate[
 		Integrate[y^2,{y,-height[i]/2,height[i]/2}],
@@ -86,7 +106,8 @@ shear is positive if it is down on right
 moment is positive if it is ccw on right
 *)
 
-(*the first part of rep@momentShearLoad@displacement is the differential equation controling elastic
+(*the first part of rep@momentShearLoad@displacement is the differential
+equation controling elastic
 (Hookean) prismatic beam bending under the assumptions that the (transverse)
 deflections are small (so 1 over the radius of curvature can be approximated by
 the second derivative of transverse displacement with respect to the axial
@@ -111,12 +132,13 @@ rep@momentShearLoad@loading=DSolve[{moment''[x]==0,
 	]/.rep[simplify][Simplify]
 
 
-(*rep@momentShearLoad@displacement is the differential equation that is active on all segments of our beam
-because there are no distributed loads*)
+(*rep@momentShearLoad@displacement is the differential equation that is active
+on all segments of our beam because there are no distributed loads*)
 
 (*there is one point load, but it is included as a shear boundary condition
 instead of a singularity function (Dirac delta)*)
-rep@momentShearLoad@displacement={moment[x_]->displacement''[x]*youngsModulus*sectionModulus,
+rep@momentShearLoad@displacement={
+		moment[x_]->displacement''[x]*youngsModulus*sectionModulus,
 		shear[x_]->moment'[x],load[x_]->moment''[x]
 		}
 
@@ -137,7 +159,20 @@ I will assume them to both be zero. Given these values on the left hand end, I
 can use the solution to compute them at the right hand end -- which corresponds
 to the left hand end of the next segment -- so I can propagate the solution
 easily.*)
-rep@displacement[i_,x_]=Collect[DSolve[{0==Derivative[0,4][displacement][i,x],moment[i,0]==Derivative[0,2][displacement][i,0]*youngsModulus*sectionModulus[i],shear[i,0]==Derivative[0,3][displacement][i,0]*youngsModulus*sectionModulus[i]},displacement[i,x],x,GeneratedParameters->(c[i,#]&)],x]
+rep@displacement[i_,x_]=
+	Collect[
+		DSolve[
+			{0==Derivative[0,4][displacement][i,x],
+				moment[i,0]==Derivative[0,2][displacement][i,0]*youngsModulus*
+					sectionModulus[i],
+				shear[i,0]==Derivative[0,3][displacement][i,0]*youngsModulus*
+					sectionModulus[i]
+				},
+			displacement[i,x],
+			x,
+			GeneratedParameters->(c[i,#]&)
+			],
+		x]
 
 
 (*
@@ -165,7 +200,8 @@ to moment and shear sign conventions)*)
 applicable within a section - not across the discontinuities (from cross
 section changes)*)
 
-(*eqn 3 is the listing of zero through fourth order derivatives of the transverse displacment*)
+(*eqn 3 is the listing of zero through fourth order derivatives of the
+transverse displacment*)
 
 (*the moment and shear are based on the second and third derivatives of the
 transverse displacement*)
@@ -181,8 +217,8 @@ the static determinacy of the problem to eliminate boundary conditions*)
 (*as is the custom with vectors represented by unknown scalar components, a
 direction is first assumed -- then all component scalars are determined*)
 
-(*in this case, all vectors are assumed to be in line with the positive direction of the
-coordinate axis to which they are parallel*)
+(*in this case, all vectors are assumed to be in line with the positive
+direction of the coordinate axis to which they are parallel*)
 
 (*the cantilever beam end load is assumed to act vertically upward (even though
 after substitution of the endLoad variable, we see that this is the wrong
@@ -199,7 +235,13 @@ expression for the inital conditions of all sections*)
 initCondIndex=1
 
 
-eqn@c[i_]={c[i+1,1]==displacement[i,segmentLength[i]]/.rep[displacement[i,segmentLength[i]]][[1]],c[i+1,2]==D[displacement[i,x[i]]/.rep[displacement[i,x[i]]][[1]],x[i]]/.x[i]->segmentLength[i]}
+eqn@c[i_]={c[i+1,1]==displacement[i,segmentLength[i]]/.
+				rep[displacement[i,segmentLength[i]]][[1]],
+			c[i+1,2]==
+				D[displacement[i,x[i]]/.rep[displacement[i,x[i]]][[1]],
+					x[i]
+					]/.x[i]->segmentLength[i]
+			}
 
 
 eqn@cInitialConditions={c[initCondIndex,1]==0,c[initCondIndex,2]==0}
@@ -247,8 +289,8 @@ endRSolveMadness[initCondIndex_,newIndex_]=
 
 (*eqn 9 and sol 2 contain the aformentioned general expressions for the initial
 conditions on each segment - the expressions are compact and explicit (the
-original differential equation solution after substitution of the segment
-length along with undetermined initial conditions on each segment and the initial
+original differential equation solution after substitution of the segment length
+along with undetermined initial conditions on each segment and the initial
 conditions for the entire beam could be taken as implict expressions
 ...)*)
 
@@ -286,12 +328,15 @@ given0 and eqn@11*)
 
 eqn@rSolvedC[i_]=Equal@@@Flatten@
 	MapThread[
-		Simplify[RSolve[{#1,#2},#3,i]/.K[1]->Module[{K},K]/.endRSolveMadness[initCondIndex,#4]//.
-			factorOut]&,
+		Simplify[RSolve[{#1,#2},#3,i]/.K[1]->Module[{K},K]/.
+			endRSolveMadness[initCondIndex,#4]//.factorOut
+			]&,
 		{eqn[c[i]],eqn[cInitialConditions],var[cInitialConditions],{a,b}}
 		];
 
-rep@rSolvedC=Thread[(eqn[rSolvedC[i]][[All,1]]/.i->i_)->eqn[rSolvedC[i]][[All,2]]]
+rep@rSolvedC=Thread[(eqn[rSolvedC[i]][[All,1]]/.i->i_)->
+						eqn[rSolvedC[i]][[All,2]]
+					]
 
 
 rep@xi=x[i_]->x-Sum[segmentLength[c],{c,1,i-1}]
@@ -314,10 +359,10 @@ rep@displacementMostlySolved=displacement[x_]->
 	rep@areaMoment)
 
 
-rep@anOldOptimum={b[1]->0.0313362,b[2]->0.0288309,b[3]->0.0257998,b[4]->0.0220456,b[5]->0.0174976,h[1]->0.626724,h[2]->0.576618,h[3]->0.515997,h[4]->0.440911,h[5]->0.349951}/.{b->base,h->height};
-
-
-displacement[5]/.rep@displacementMostlySolved/.rep@ix/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum
+rep@anOldOptimum={b[1]->0.0313362,b[2]->0.0288309,b[3]->0.0257998,
+	b[4]->0.0220456,b[5]->0.0174976,h[1]->0.626724,h[2]->0.576618,
+	h[3]->0.515997,h[4]->0.440911,h[5]->0.349951
+	}/.{b->base,h->height};
 
 
 (*eqn@12 defines the axial stress (due to bending) as a function of axial and
@@ -466,7 +511,9 @@ rep@sigToSigma={sig[x,x]->sigmaXX[x,y],sig[x,y]->sigmaXY[x,y],sig[__]->0}
 rep@i=i->i[x]
 
 
-rep@vonMisesStressMostlySolved=vonMisesStress[x_,y_]->octMisesCheck@3/.rep@sigToSigma/.rep@sigmaXXSigmaXY/.rep@areaMoment/.rep[momentShearLoad@loading][[1]]/.rep@i
+rep@vonMisesStressMostlySolved=vonMisesStress[x_,y_]->octMisesCheck@3/.
+	rep@sigToSigma/.rep@sigmaXXSigmaXY/.rep@areaMoment/.
+	rep[momentShearLoad@loading][[1]]/.rep@i
 
 
 (*rep@15 creates two different replacements for y - one where it is at
@@ -475,28 +522,35 @@ which is usually height@i/2 - but not always*)
 rep@y={{y[x_]->height@i/2/.rep@i},
 	{y[x_]->(
 		Piecewise[{{y,Im[y]==0&&y<height@i/2}},height@i/2]/.rep@i/.
-			Last@Solve[D[vonMisesStress[x,y]==maxSigmaX/.rep@vonMisesStressMostlySolved,y],y]
+			Last@Solve[D[vonMisesStress[x,y]==maxSigmaX/.
+				rep@vonMisesStressMostlySolved,y],y]
 			)//FullSimplify
 		}
 	}
 
 
-(*epsilon is used to ensure that x is really within the segment - because at the far left end of a segment, i changes to i of the previous segment (which is bad if one wants to test the critical section)*)
+(*epsilon is used to ensure that x is really within the segment - because at the
+far left end of a segment, i changes to i of the previous segment (which is bad
+if one wants to test the critical section)*)
 
 
 epsilon=1.*10^-10
 
 
 (*the maximum shear stress must be less than the maximum allowable stress*)
-constr@1=Apply[And,vonMisesStress[#,y[#]]/maxSigmaX-1<=0&/@FoldList[Plus,0,MapAt[#-eps&,MapAt[#+eps&,segmentLength/@Range@maxI,1],5]]/.eps->epsilon]
+constr@1=Apply[And,vonMisesStress[#,y[#]]/maxSigmaX-1<=0&/@
+	FoldList[Plus,0,MapAt[#-eps&,MapAt[#+eps&,segmentLength/@Range@maxI,1],5]]/.
+		eps->epsilon]
 
 
 (*the height of a section may not be more than 20 times its base*)
 constr@2=And@@Table[height[i]-20base[i]<=0,{i,maxI}]
 
 
-(*the beam is only allowed to deflect to maxDeflection (the displacement is always negative, since the load is negative -- also, maxDeflection is positive)*)
-constr@3=-displacement@5/maxDeflection-1<=0
+(*the beam is only allowed to deflect to maxDeflection (the displacement is
+always negative, since the load is negative -- also, maxDeflection is positive)
+*)
+constr@3=-displacement@beamLength/maxDeflection-1<=0
 
 
 (*all bases must be at least 1 cm;all heights must be at least 5 cm*)
@@ -504,31 +558,149 @@ constr@4=And@@Table[And[centi-base[i]<=0,5*centi-height[i]<=0],{i,1,maxI}]
 
 
 (*the segment lengths total to the beam length*)
-constr@5=Sum[segmentLength[i],{i,1,maxI}]==beamLength
+constr@5=And[Sum[segmentLength[i],{i,1,maxI}]==beamLength,segmentLength[#]>0&/@
+	And@@Range@maxI]
 
 
 (*the objective to be minimized is the volume of the material used*)
 objective[1]=Sum[Times[base[i],height[i],segmentLength[i]],{i,1,maxI}]
 
 
-(*this concatenates the objective and constraints into the first argument of NMinimize*)
+(*this concatenates the objective and constraints into the first argument of
+NMinimize*)
 nminarg@0={objective[1],constr/@And[1,2,3,4,5]}
 
 
-{nminarg@1,nminarg@2}=nminarg@0/.rep@vonMisesStressMostlySolved/.rep@displacementMostlySolved/.rep@y;
-{nminarg@3,nminarg@4}={nminarg@1,nminarg@2}/.rep@ix/.segmentLength[_]->1/.rep@given;
+rep@baseHeight@all={(xpr:base|height)[_]->xpr@all}
 
 
-var@1=Union@Cases[nminarg@3,(base|height)[_],{0,Infinity}];
+{nminarg@standard,nminarg@criticalVonMises}=nminarg@0/.
+	rep@vonMisesStressMostlySolved/.rep@displacementMostlySolved/.rep@y;
+
+{nminarg@standard@equalSegmentLength,
+	nminarg@criticalVonMises@equalSegmentLength}=
+	{nminarg@standard,nminarg@criticalVonMises}/.
+		rep@ix/.segmentLength[_]->beamLength/maxI/.rep@given;
+
+nminarg@standard@equalBaseHeightSegmentLength=
+	nminarg@standard@equalSegmentLength/.rep@baseHeight@all;
+
+{nminarg@standard@general,nminarg@criticalVonMises@general}=
+	{nminarg@standard,nminarg@criticalVonMises}/.rep@ix/.rep@given;
 
 
-sol@1=NMinimize[nminarg@3,var@1]
+var@baseHeight=Union@
+	Cases[nminarg@standard@equalSegmentLength,(base|height)[_],{0,Infinity}]
 
 
-Transpose@ReleaseHold[{Hold@MapAt[Sequence@@#&,nminarg@0,{2}],MapAt[Sequence@@#&,MapAt[First/@#&,nminarg@1,{2}],{2}],MapAt[Sequence@@#&,nminarg@1,{2}]}/.rep@ix/.segmentLength[_]->1/.rep@given/.sol[1][[2]]]//TableForm
+var@baseHeightSegmentLength=Union@Flatten@
+	{var@baseHeight/.base->segmentLength,var@baseHeight}
 
 
-Transpose@ReleaseHold[{Hold@MapAt[Sequence@@#&,nminarg@0,{2}],MapAt[Sequence@@#&,MapAt[First/@#&,nminarg@1,{2}],{2}],MapAt[Sequence@@#&,nminarg@1,{2}]}/.rep@ix/.segmentLength[_]->1/.rep@given/.rep@anOldOptimum]//TableForm
+var@baseHeight@all=Union[var@baseHeight/.rep@baseHeight@all]
+
+
+var@regularSolGuessRegion=
+	Flatten/@Thread@{var@baseHeight,Sort[{1-1*10^-10,1+1*10^-10}*#]&/@
+		(var@baseHeight/.{base[_]->5*centi,height[_]->40*centi})}
+
+
+NMinimize[nminarg@standard@equalSegmentLength,var@regularSolGuessRegion,Method->{"AugmentedLagrangeMultiplier","InitialLagrangeMultipliers"->1}]
+
+
+({sol@standard@equalSegmentLength,evals@standard@equalSegmentLength}=
+	With[{evaluationSeed=First[nminarg@standard@equalSegmentLength]},
+		Reap@NMinimize[
+			nminarg@standard@equalSegmentLength,
+			var@baseHeight,
+			EvaluationMonitor:>Sow[evaluationSeed]
+			]
+		])[[1]]
+
+
+Module[{iter=0},
+	{ReleaseHold@Hold[FindMinimum][
+		bConsHandler[nminarg@criticalVonMises@equalSegmentLength,var@baseHeight],
+		{#,Mean@{##2}}&@@@(var@regularSolGuessRegion),EvaluationMonitor:>++iter],
+		iter
+		}
+	]
+
+
+Module[{iter=0},
+	{sol@criticalVonMises@equalSegmentLength=
+		NMinimize[nminarg@criticalVonMises@equalSegmentLength,var@baseHeight,
+		Method->"DifferentialEvolution",EvaluationMonitor:>++iter],
+		iter
+		}
+	]
+
+
+sol@standard@equalBaseHeightSegmentLength=NMinimize[nminarg@standard@equalBaseHeightSegmentLength,var@baseHeight@all]
+
+
+rep@bestSolGuess@1=
+	Flatten@
+		{base[_]->base@all,
+			height[_]->height@all,
+			MapIndexed[segmentLength@@#2->#1&,
+				Reverse[(beamLength*#)/(Total@#)&@Rest@FoldList[Plus,0,Range@maxI]/.rep@given]
+				]
+			}/.sol[standard@equalBaseHeightSegmentLength][[2]]
+
+
+rep@bestSolGuess@2=Flatten@{sol[standard@equalSegmentLength][[2]],segmentLength[_]->1}
+
+
+var@bestSolGuessRegion=Flatten/@Thread@{var@baseHeightSegmentLength,Sort/@Transpose[var@baseHeightSegmentLength/.(rep[bestSolGuess@#]&/@{1,2})]}
+
+
+Timing@Module[{iter=0},
+	{ReleaseHold@Hold[FindMinimum][
+		bConsHandler[nminarg@standard@general,var@baseHeightSegmentLength],
+		{#,Mean@{##2}}&@@@(var@bestSolGuessRegion),EvaluationMonitor:>++iter],
+		iter
+		}
+	]
+
+
+sol@standard@general=
+	NMinimize[
+		bConsHandler[nminarg@standard@general,var@baseHeightSegmentLength],
+		var@bestSolGuessRegion
+		]
+
+
+(*{0.064830561026339`,{Subscript[b, 1]->0.030806973794659274`,Subscript[b, 2]->0.02685073475945523`,Subscript[b, 3]->0.022518659909013455`,Subscript[b, 4]->0.01811527239253911`,Subscript[b, 5]->0.013154814732555536`,Subscript[h, 1]->0.616139444474876`,Subscript[h, 2]->0.5370146519442265`,Subscript[h, 3]->0.4503731319736097`,Subscript[h, 4]->0.36230531913171177`,Subscript[h, 5]->0.26309597635297316`,Subscript[l, 1]->1.5647366000081775`,Subscript[l, 2]->1.304341830065507`,Subscript[l, 3]->1.0212356825990807`,Subscript[l, 4]->0.6847544872330826`,Subscript[l, 5]->0.42493140009406943`}}*)
+
+
+Timing@Module[{iter=0},
+	{ReleaseHold@Hold[FindMinimum][
+		bConsHandler[nminarg@criticalVonMises@general,var@baseHeightSegmentLength],
+		{#,Mean@{##2}}&@@@(var@bestSolGuessRegion),EvaluationMonitor:>++iter],
+		iter
+		}
+	]
+
+
+sol@criticalVonMises@general=
+	NMinimize[
+		bConsHandler[nminarg@criticalVonMises@general,var@baseHeightSegmentLength],
+		var@bestSolGuessRegion
+		]
+
+
+(*{0.0648305617183495`,{Subscript[b, 1]->0.030806950033416342`,Subscript[b, 2]->0.02685070800241055`,Subscript[b, 3]->0.022518742917759495`,Subscript[b, 4]->0.01811534876168483`,Subscript[b, 5]->0.01315487657702747`,Subscript[h, 1]->0.6161389670706109`,Subscript[h, 2]->0.537014113803073`,Subscript[h, 3]->0.4503747875309719`,Subscript[h, 4]->0.3623068376281646`,Subscript[h, 5]->0.2630971913027377`,Subscript[l, 1]->1.5647392832665528`,Subscript[l, 2]->1.3043419144008312`,Subscript[l, 3]->1.0212190943963713`,Subscript[l, 4]->0.6847624544505139`,Subscript[l, 5]->0.42493725348552863`}}*)
+
+
+Transpose@ReleaseHold[{Hold@MapAt[Sequence@@#&,nminarg@0,{2}],MapAt[Sequence@@#&,MapAt[First/@#&,nminarg@criticalVonMises@general,{2}],{2}],MapAt[Sequence@@#&,nminarg@criticalVonMises@general,{2}]}//.sol[criticalVonMises@general][[2]]]//TableForm
+
+
+InputDirectoryName[]
+
+
+importedDataAndStuff=Import["EngineeringOptimization\\Documentation\\PR4\\GNVNOTED SUMT Method Comparison.xls","XLS"];
+TableForm/@importedDataAndStuff
 
 
 (*End[];
