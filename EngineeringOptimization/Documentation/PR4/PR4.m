@@ -12,16 +12,16 @@ Begin["`Private`"]
 	{{sectionModulus,"I"},{youngsModulus,"E"},{displacement,"v"},{shear,"V"},
 		{moment,"M"},{load,"q"},{segmentLength,"l"},{beamLength,"L"},
 		{endLoad,"P"},{base,"b"},{height,"h"},{overallX,"x"},
-		{staticAreaMoment,"Q"}
+		{staticAreaMoment,"Q"},{sig,"\[Sigma]"},{lam,"\[Lambda]"},
+		{maxSigmaX,OverscriptBox["\[Sigma]","_"],
+		{maxDeflection,OverscriptBox["v","_"]}}
 		}
 
 (Format[#[i_,args__]]:=Subscript[#,i][args])&/@{shear,moment,displacement,
 												staticAreaMoment}
 
 (Format[#[args__]]:=Subscript[#,args])&/@
-	{x,sectionModulus,segmentLength,c,height,base}
-
-(Format[#1]=#2)&@@@{{sig,\[Sigma]},{lam,\[Lambda]}}
+	{x,sectionModulus,segmentLength,c,height,base,sig}
 
 Format[Derivative[0,dNum_][displacement][i_,x_]]:=
 	D[Subscript[displacement,i][x],{x,dNum}]
@@ -605,104 +605,156 @@ var@regularSolGuessRegion=
 		(var@baseHeight/.{base[_]->5*centi,height[_]->40*centi})}
 
 
-NMinimize[nminarg@standard@equalSegmentLength,var@regularSolGuessRegion,Method->{"AugmentedLagrangeMultiplier","InitialLagrangeMultipliers"->1}]
-
-
-({sol@standard@equalSegmentLength,evals@standard@equalSegmentLength}=
-	With[{evaluationSeed=First[nminarg@standard@equalSegmentLength]},
-		Reap@NMinimize[
-			nminarg@standard@equalSegmentLength,
-			var@baseHeight,
-			EvaluationMonitor:>Sow[evaluationSeed]
+(*my solution for the assignment*)
+myEvaluationCount=0;
+{sol@standard@equalSegmentLength,evals@standard@equalSegmentLength}=
+	With[{evaluationSeed=
+			Prepend[var@baseHeight,First[nminarg@standard@equalSegmentLength]]},
+		Reap[
+			NMinimize[
+				nminarg@standard@equalSegmentLength,
+				var@regularSolGuessRegion,
+				StepMonitor:>Sow[evaluationSeed,"steps"],
+				EvaluationMonitor:>
+					(++myEvaluationCount;Sow[evaluationSeed,"evals"]),
+				Method->"AugmentedLagrangeMultiplier"
+				],
+			{"steps","evals"}
 			]
-		])[[1]]
+		]
+evals@standard@equalSegmentLength=Sequence@@@evals@standard@equalSegmentLength;
 
-
-Module[{iter=0},
-	{ReleaseHold@Hold[FindMinimum][
-		bConsHandler[nminarg@criticalVonMises@equalSegmentLength,var@baseHeight],
-		{#,Mean@{##2}}&@@@(var@regularSolGuessRegion),EvaluationMonitor:>++iter],
-		iter
-		}
-	]
-
-
-Module[{iter=0},
-	{sol@criticalVonMises@equalSegmentLength=
-		NMinimize[nminarg@criticalVonMises@equalSegmentLength,var@baseHeight,
-		Method->"DifferentialEvolution",EvaluationMonitor:>++iter],
-		iter
-		}
-	]
-
-
-sol@standard@equalBaseHeightSegmentLength=NMinimize[nminarg@standard@equalBaseHeightSegmentLength,var@baseHeight@all]
-
+(*preparation for the variable segment length assignment*)
+sol@standard@equalBaseHeightSegmentLength=
+	NMinimize[nminarg@standard@equalBaseHeightSegmentLength,var@baseHeight@all]
 
 rep@bestSolGuess@1=
 	Flatten@
 		{base[_]->base@all,
 			height[_]->height@all,
 			MapIndexed[segmentLength@@#2->#1&,
-				Reverse[(beamLength*#)/(Total@#)&@Rest@FoldList[Plus,0,Range@maxI]/.rep@given]
+				Reverse[(beamLength*#)/(Total@#)&@
+					Rest@FoldList[Plus,0,Range@maxI]/.rep@given]
 				]
 			}/.sol[standard@equalBaseHeightSegmentLength][[2]]
 
+rep@bestSolGuess@2=
+	Flatten@{sol[standard@equalSegmentLength][[2]],segmentLength[_]->1}
 
-rep@bestSolGuess@2=Flatten@{sol[standard@equalSegmentLength][[2]],segmentLength[_]->1}
-
-
-var@bestSolGuessRegion=Flatten/@Thread@{var@baseHeightSegmentLength,Sort/@Transpose[var@baseHeightSegmentLength/.(rep[bestSolGuess@#]&/@{1,2})]}
-
-
-Timing@Module[{iter=0},
-	{ReleaseHold@Hold[FindMinimum][
-		bConsHandler[nminarg@standard@general,var@baseHeightSegmentLength],
-		{#,Mean@{##2}}&@@@(var@bestSolGuessRegion),EvaluationMonitor:>++iter],
-		iter
-		}
-	]
+var@bestSolGuessRegion=
+	Flatten/@Thread@
+		{var@baseHeightSegmentLength,
+			Sort/@Transpose[
+				var@baseHeightSegmentLength/.(rep[bestSolGuess@#]&/@{1,2})
+				]
+			}
 
 
-sol@standard@general=
-	NMinimize[
-		bConsHandler[nminarg@standard@general,var@baseHeightSegmentLength],
-		var@bestSolGuessRegion
-		]
-
-
-(*{0.064830561026339`,{Subscript[b, 1]->0.030806973794659274`,Subscript[b, 2]->0.02685073475945523`,Subscript[b, 3]->0.022518659909013455`,Subscript[b, 4]->0.01811527239253911`,Subscript[b, 5]->0.013154814732555536`,Subscript[h, 1]->0.616139444474876`,Subscript[h, 2]->0.5370146519442265`,Subscript[h, 3]->0.4503731319736097`,Subscript[h, 4]->0.36230531913171177`,Subscript[h, 5]->0.26309597635297316`,Subscript[l, 1]->1.5647366000081775`,Subscript[l, 2]->1.304341830065507`,Subscript[l, 3]->1.0212356825990807`,Subscript[l, 4]->0.6847544872330826`,Subscript[l, 5]->0.42493140009406943`}}*)
-
-
-Timing@Module[{iter=0},
-	{ReleaseHold@Hold[FindMinimum][
-		bConsHandler[nminarg@criticalVonMises@general,var@baseHeightSegmentLength],
-		{#,Mean@{##2}}&@@@(var@bestSolGuessRegion),EvaluationMonitor:>++iter],
-		iter
-		}
-	]
-
-
+(*variable segment lengths (best) solution*)
+Off[Attributes::"ssle"](*MMA 5.2 incorrectly generates this message*)
 sol@criticalVonMises@general=
 	NMinimize[
-		bConsHandler[nminarg@criticalVonMises@general,var@baseHeightSegmentLength],
+		bConsHandler[nminarg@criticalVonMises@general,
+			var@baseHeightSegmentLength],
 		var@bestSolGuessRegion
+		]
+On[Attributes::"ssle"]
+
+
+(*read in GNVNOTED Table 5-3 through 5-5*)
+importedDataAndStuff=
+	Import[
+		ToFileName[InputDirectoryName[],"GNVNOTED SUMT Method Comparison.xls"],
+		"XLS"
 		]
 
 
-(*{0.0648305617183495`,{Subscript[b, 1]->0.030806950033416342`,Subscript[b, 2]->0.02685070800241055`,Subscript[b, 3]->0.022518742917759495`,Subscript[b, 4]->0.01811534876168483`,Subscript[b, 5]->0.01315487657702747`,Subscript[h, 1]->0.6161389670706109`,Subscript[h, 2]->0.537014113803073`,Subscript[h, 3]->0.4503747875309719`,Subscript[h, 4]->0.3623068376281646`,Subscript[h, 5]->0.2630971913027377`,Subscript[l, 1]->1.5647392832665528`,Subscript[l, 2]->1.3043419144008312`,Subscript[l, 3]->1.0212190943963713`,Subscript[l, 4]->0.6847624544505139`,Subscript[l, 5]->0.42493725348552863`}}*)
+(*replacement for displaying numbers with less precision than default*)
+rep@realNumberForm=x_Real?InexactNumberQ:>NumberForm[x,3]
 
 
-Transpose@ReleaseHold[{Hold@MapAt[Sequence@@#&,nminarg@0,{2}],MapAt[Sequence@@#&,MapAt[First/@#&,nminarg@criticalVonMises@general,{2}],{2}],MapAt[Sequence@@#&,nminarg@criticalVonMises@general,{2}]}//.sol[criticalVonMises@general][[2]]]//TableForm
+(*what I am calling my optimization method in export tables*)
+myMethodName="My ALM\nMethod"
 
 
-InputDirectoryName[]
+(*a repeated sequence of table cells that appears in my version of the GNVNOTED
+method comparison tables*)
+methodSequence=Sequence["1","2","3","4","5",myMethodName]
 
 
-importedDataAndStuff=Import["EngineeringOptimization\\Documentation\\PR4\\GNVNOTED SUMT Method Comparison.xls","XLS"];
-TableForm/@importedDataAndStuff
+(*a modification of the iteration history table from GNVNOTED to use my units
+and include my method --- all tables from GNVNOTED do this, actually*)
+GNVNOTEDVolumeTable=
+    importedDataAndStuff[[1]]/.volume_Real/;volume>1000\[RuleDelayed]
+        volume*centi^3;
+GNVNOTEDVolumeTable=
+  Prepend[MapThread[
+      Join,{Rest@GNVNOTEDVolumeTable,
+        List/@{GNVNOTEDVolumeTable[[2,2]],
+            Sequence@@
+              PadRight[evals[standard@equalSegmentLength][[1,All,1]],11,""],
+            Length@evals[standard@equalSegmentLength][[1]],
+            First@sol@standard@equalSegmentLength,
+            myEvaluationCount}}],{"Iteration\nNumber",methodSequence}]
 
 
-(*End[];
+(*the modifications are the same as mentioned in the comment for
+GNVNOTEDVolumeTable, but this one is for the design variables*)
+GNVNOTEDDesignVariableTable=
+    MapIndexed[If[#2[[1]]\[GreaterEqual]2&&NumberQ@#1,#1*centi,#1]&,
+      importedDataAndStuff[[2]],{2}];
+GNVNOTEDDesignVariableTable=
+  Prepend[MapThread[
+      Join,{List/@var[baseHeight],Rest/@Rest@GNVNOTEDDesignVariableTable,
+        List/@var[baseHeight]/.sol[standard@equalSegmentLength][[2]]}],
+    Join[GNVNOTEDDesignVariableTable[[1,{1,2}]],{methodSequence}]]
 
-EndPackage[];*)
+
+(*if the constraint violation vector has positive entries, the constraint is
+violated -- negative is okay*)
+constraintViolationVector=
+    EngineeringOptimization`Private`penaltyKernel[#,Method->"Basic"]&/@
+        List@@nminarg[standard@equalSegmentLength][[2,
+              Range@11]]/.segmentLength[_]\[Rule]1
+
+
+(*here, I recalculate the constraints based on the data from the design
+variable table -- the GNVNOTED table is untrustworthy*)
+constraintData=
+  Transpose[
+    constraintViolationVector/.Append[
+        Thread[var@baseHeight\[Rule]#]&/@
+          Rest@Rest[Transpose[Rest[GNVNOTEDDesignVariableTable]]],
+        sol[standard@equalSegmentLength][[2]]]]
+
+
+(*Instead of labeling the constraints 1-11, it is better to specify them
+explicitly, so that's what I do*)
+constraintLabelVector=
+  List@@nminarg[0][[2,DeleteCases[Range[1,12],6]]]/.{vMS_vonMisesStress/;
+          FreeQ[vMS,segmentLength]\[RuleDelayed]sig[max,1],
+      vMS_vonMisesStress:>
+        sig[max,Max[
+              Cases[vMS,
+                segmentLength[i_Integer]\[RuleDelayed]i,{0,Infinity}]]+1]}
+
+
+(*these are the headers for the method columns in the constraint values table*)
+constraintHeaders={"Constraint", methodSequence}
+
+
+(*assemble all the components of the constraint table*)
+GNVNOTEDFinalConstraintValuesTable=
+  Prepend[MapThread[{#1,Sequence@@#2}&,{constraintLabelVector,
+        constraintData}],constraintHeaders]
+
+
+(*here is an example of an actual "rendering" of the table*)
+(*GNVNOTEDFinalConstraintValuesTable/.rep@realNumberForm//TableForm*)
+
+
+Abort[]
+
+End[];
+
+EndPackage[];
