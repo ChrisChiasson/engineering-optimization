@@ -41,6 +41,9 @@ evaluateWithRules[xpr_,rules:{(_Rule|_RuleDelayed)...}]:=
 				,{1}];
 		xpr]
 
+
+(*handle the NMinimize:bcons error by hiding expressions behind a symbol which
+only evaluates with numeric arguments*)
 bConsHandler[{nMinArgF_,nMinArgCons_And/;Length[nMinArgCons]>=2},vars_List]:=
 Module[{symb},
 With[{blockSymbols=symbolsInContext[vars]},
@@ -57,6 +60,12 @@ With[{blockSymbols=symbolsInContext[vars]},
 		}
 	]]
 
+bConsHandler[arg_,vars_List]:=
+  Module[{symb},
+    With[{blockSymbols=symbolsInContext[vars],
+        optimArg=Experimental`OptimizeExpression[arg]},
+      symb[args__?NumericQ]:=Block[blockSymbols,vars={args};Normal@optimArg];
+      symb@@vars]];
 
 (*simplify or otherwise modify a Function*)
 rep[simplify][func_]=HoldPattern[Function[var_,fun_]]:>
@@ -589,6 +598,20 @@ nminarg@standard@equalBaseHeightSegmentLength=
 	{nminarg@standard,nminarg@criticalVonMises}/.rep@ix/.rep@given;
 
 
+(*PiecewiseExpand (base|height)[_Piecewise] expressions so NMinimize will see
+the optimization variables*)
+rep@piecewiseExpandBaseHeight={(xpr:_base|_height):>PiecewiseExpand[xpr]}
+
+
+(*in addition to the piecewise expand, we refine some of the general
+optimization expression based on the constraints*)
+nminarg@criticalVonMises@general=
+  With[{assumptions=Reduce[constr@4,var@baseHeight]&&constr@5/.rep@given},
+    MapAt[Refine[#,assumptions]&,
+      nminarg@criticalVonMises@general/.rep@piecewiseExpandBaseHeight,{2,#}&/@
+        Range@12]]
+
+
 var@baseHeight=Union@
 	Cases[nminarg@standard@equalSegmentLength,(base|height)[_],{0,Infinity}]
 
@@ -652,12 +675,14 @@ var@bestSolGuessRegion=
 
 (*variable segment lengths (best) solution*)
 Off[Attributes::"ssle"](*MMA 5.2 incorrectly generates this message*)
-sol@criticalVonMises@general=
-	NMinimize[
-		bConsHandler[nminarg@criticalVonMises@general,
-			var@baseHeightSegmentLength],
-		var@bestSolGuessRegion
-		]
+NMinimize[
+	MapAt[bConsHandler[#,var[baseHeightSegmentLength]]&,
+		nminarg@criticalVonMises@general,
+		{2,12,1}
+		],
+	var@bestSolGuessRegion,
+	Method->{"DifferentialEvolution"}
+	]
 On[Attributes::"ssle"]
 
 
