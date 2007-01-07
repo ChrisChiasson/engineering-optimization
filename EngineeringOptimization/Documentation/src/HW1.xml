@@ -174,7 +174,7 @@
 			<xi:include href="mout/hw_1_lagrangeconstraints.xml"/>
 			<para>By combining the solutions to
 				<xref linkend="hw_1_hconstraints"/> and
-				<xref linkend="hw_1_hconstraints"/>, sixteen constrained
+				<xref linkend="hw_1_lagrangeconstraints"/>, sixteen constrained
 				critical states of <xref linkend="hw_1_fmag"></xref> are found.
 				These states correspond to mirrors and rotations of two basic
 				minimum and maximum area configurations. One basic layout forms
