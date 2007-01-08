@@ -1,7 +1,8 @@
 (* ::Package:: *)
 
 BeginPackage["EngineeringOptimization`Documentation`PR4`",
-	{"Graphics`FilledPlot`","XML`DocBook`","EngineeringOptimization`"}]
+	{"Graphics`Arrow`","Graphics`FilledPlot`","EngineeringOptimization`",
+	"DifferentialEquations`InterpolatingFunctionAnatomy`","XML`DocBook`"}]
 
 
 Begin["`Private`"]
@@ -396,9 +397,9 @@ axial stress and shear in the axial-vertical plane (x-y plane)*)
 
 (*we would like to use the distortion energy theory - so we need to calculate
 the octahedral shear stress (if this level of shear stress exceeds the
-octahedral shear stress achieved at yield in a tension test (where sigma 1
-would be equal to the von Mises stress - so there is your way to convert), then
-the material will yield)*)
+octahedral shear stress achieved at yield in a tension test (where sigma 1 
+equals the yeild stress and sigma 2 and 3 are zero), then the material will
+yield)*)
 
 (*octahedral plane, octahedral normal stress, and octahedral shear stress are
 defined in section 3.3 of Malvern, specifically in review questions 8, 9 and 10,
@@ -408,24 +409,30 @@ that of the first invariant of the general stress tensor, and that the
 octahedral shear stress is the square root of (2*second invariant of the
 deviatoric stress tensor/3)*)
 
-(*von Mises stress is the uniaxial stress that would cause the same maximum
+(*von Mises stress is the uniaxial stress that would cause the same octahedral
 shear stress as the general stress state it represents (section 6.5 part 2 and
 6.6 part 1 of Malvern)(this follows from the assumption that yielding in ductile
 materials is due to shear (instead of the compression or dialation effects of
 normal stress))*)
 
-(*to obtain the maximum shear stress from a general stress state, take the
-square root of the second invariant of the deviatoric stress tensor for that
-state*)
+(*since the octahedral shear stress and the second invariant of the deviatoric
+stress tensor (IIs) are related by a proportionality constant, the von Mises
+stress is also the uniaxial stress that would cause the same IIs as the general
+stress state it represents*)
 
 (*these commented out equations + Solve command summarize the relationships just
 given and also provide a conversion from octahedral shear stress to von Mises
 stress*)
 
-(*Solve[{IIs==vonMisesYieldShearStress^2==Coefficient[Det[#-IdentityMatrix@
-Length@#*Tr[#]/3-IdentityMatrix@Length@#*lam],lam]&[{{vonMisesStress,0,0},
-{0,0,0},{0,0,0}}],octShearStress==Sqrt[2*IIs/3]},(*vonMisesYieldShearStress*)
-octShearStress,{IIs,vonMisesYieldShearStress}]//Last*)
+(*{IIs==(Coefficient[
+            Det[#-IdentityMatrix@Length@#*Tr[#]/3-
+                IdentityMatrix@Length@#*lam],lam]&)[{{0,
+          vonMisesYieldShearStress,0},{vonMisesYieldShearStress,0,0},{0,0,
+          0}}]==(Coefficient[
+            Det[#-IdentityMatrix@Length@#*Tr[#]/3-
+                IdentityMatrix@Length@#*lam],lam]&)[{{vonMisesStress,0,0},{0,
+          0,0},{0,0,0}}],octShearStress==Sqrt[2*IIs/3]}
+Solve[%,octShearStress,{IIs,vonMisesYieldShearStress}]*)
 
 (*rep@12 functions can be used to transform the general stress tensor into the
 von Mises Stress*)
@@ -543,10 +550,11 @@ far left end of a segment, i changes to i of the previous segment (which is bad
 if one wants to test the critical section)*)
 
 
-epsilon=1.*10^-10
+epsilon=1.*10^-13
 
 
-(*the maximum shear stress must be less than the maximum allowable stress*)
+(*the maximum von Mises stress must be less than the given max allowable sigma
+x (in GNVNOTED they were being less general that I am)*)
 constr@1=Apply[And,vonMisesStress[#,y[#]]/maxSigmaX-1<=0&/@
 	FoldList[Plus,0,MapAt[#-eps&,MapAt[#+eps&,segmentLength/@Range@maxI,1],5]]/.
 		eps->epsilon]
@@ -674,8 +682,8 @@ var@bestSolGuessRegion=
 
 
 (*variable segment lengths (best) solution*)
-Off[Attributes::"ssle"](*MMA 5.2 incorrectly generates this message*)
-NMinimize[
+Off[Less::"nord"](*MMA 5.2 incorrectly generates this message*)
+sol@criticalVonMises@general=NMinimize[
 	MapAt[bConsHandler[#,var[baseHeightSegmentLength]]&,
 		nminarg@criticalVonMises@general,
 		{2,12,1}
@@ -683,7 +691,7 @@ NMinimize[
 	var@bestSolGuessRegion,
 	Method->{"DifferentialEvolution"}
 	]
-On[Attributes::"ssle"]
+On[Less::"nord"]
 
 
 (*read in GNVNOTED Table 5-3 through 5-5*)
@@ -710,8 +718,8 @@ methodSequence=Sequence["1","2","3","4","5",myMethodName]
 (*a modification of the iteration history table from GNVNOTED to use my units
 and include my method --- all tables from GNVNOTED do this, actually*)
 GNVNOTEDVolumeTable=
-    importedDataAndStuff[[1]]/.volume_Real/;volume>1000\[RuleDelayed]
-        volume*centi^3;
+    Rationalize@importedDataAndStuff[[1]]/.volume_Integer/;volume>1000:>
+    	N@volume*centi^3;
 GNVNOTEDVolumeTable=
   Prepend[MapThread[
       Join,{Rest@GNVNOTEDVolumeTable,
@@ -747,10 +755,8 @@ constraintViolationVector=
 variable table -- the GNVNOTED table is untrustworthy*)
 constraintData=
   Transpose[
-    constraintViolationVector/.Append[
-        Thread[var@baseHeight\[Rule]#]&/@
-          Rest@Rest[Transpose[Rest[GNVNOTEDDesignVariableTable]]],
-        sol[standard@equalSegmentLength][[2]]]]
+    constraintViolationVector/.Thread[var@baseHeight->#]&/@
+          Rest@Rest[Transpose[Rest[GNVNOTEDDesignVariableTable]]]]
 
 
 (*Instead of labeling the constraints 1-11, it is better to specify them
@@ -776,6 +782,197 @@ GNVNOTEDFinalConstraintValuesTable=
 
 (*here is an example of an actual "rendering" of the table*)
 (*GNVNOTEDFinalConstraintValuesTable/.rep@realNumberForm//TableForm*)
+
+(*the eigenvalues are the solution to the characteristic polynomial of the
+stress tensor:
+sig.vec==lambda*vec
+(sig-lambda*IdentityMatrix@Length@sig).vec==0
+thus (for reasons from linear algebra that I don't want to look up):
+Det[sig-lambda*IdentityMatrix@Length@sig]==0
+gives solutions for lambda
+substituting these solutions for lambda gives different solutions for the
+scalar components of vec (and because the stress tensor is real and symmetric,
+we know that all the solutions for vec are orthogonal to each other and are real
+)
+by the way, some scalar components of an eigenvector may be unknown -
+Mathematica assumes these to be 1 (before the next part, which is)
+all eigenvectors are normalized to unit length in Mathematica's implementation
+*)
+rep@eiSystemMostlySolved=Identity@
+	Thread[{eiVals[x_,y_],eiVecs[x_,y_]}->
+		Identity@Eigensystem[Outer[sig,{x,y},{x,y}]/.rep@tensorSubscriptSort/.
+			rep@tensorOps/.rep@sigToSigma]/.rep@sigmaXXSigmaXY/.rep@areaMoment/.
+				rep[momentShearLoad@loading][[1]]/.rep@i]
+
+
+(*to find trajectories of the (two) principal stress fields, a vector field and
+a given initial point is transformed into a differential equation plus initial
+condition:
+vec{vu[x,y],vv[x,y]} and some initial point, {x0,y0}
+y'[x]==vv[x,y]/vu[x,y]
+y[x0]==y0
+the solution to the system is one streamline
+multiple initial conditions can be used to make multiple streamlines
+vec can be switched out to get the other set of streamlines*)
+eiVecStreamDEqns[x_,y_]=Thread[y'[x]==Divide@@@
+	Map[Reverse,eiVecs[x,y[x]]/.rep@eiSystemMostlySolved]]
+
+
+(*the eigenvalues are useful for coloring the principal stress values (I use red
+for the stress trajectory on the part where its corresponding principal stress
+is the largest in magnitude, and yellow where it isn't
+here I set up expressions for the eigenvalues and the first part of the
+differential equation systems*)
+{reppedEIVals[x_,y_,part_],
+	heldNDSolveEIVecSteamDEqns[x_,y_,part_,initialHeight_]}=
+	{part@eiVals[x,y]/.rep@eiSystemMostlySolved,
+		Hold[NDSolve][
+			{part@eiVecStreamDEqns[x,y],y[0]==initialHeight},y,
+			{x,0,beamLength},
+			Method->{"EventLocator","Event"->Abs@y@x<height[i[x]]/2,
+				"EventAction":>Throw[Null,"StopIntegration"]}
+			]
+		}/.rep@given/.rep@ix/.rep@piecewiseExpandBaseHeight/.
+			segmentLength[_]->1/.expr_Equal:>PiecewiseExpand/@expr/.
+				sol[standard@equalSegmentLength][[2]]
+
+
+(*these are the solutions for the streamlines (interpolating functions for y
+when given x)*)
+sol@eiVecStream=ReleaseHold@Outer[
+	Hold[Flatten]@heldNDSolveEIVecSteamDEqns[x,y,##]&,{First,Last},
+	ReleaseHold[Hold[Table][initialHeight,
+		{initialHeight,-height[1]/2+height[1]/20,height[1]/2-height[1]/20,
+			height[1]/2/20}]/.sol[standard@equalSegmentLength][[2]]
+		]
+	]
+
+
+(*I pull out the stream line primitives after plotting them*)
+gr@principalStressTrajectoryLines=Cases[#,_Line,{0,Infinity}]&/@
+	Block[{$DisplayFunction=Identity},
+		ReleaseHold[Hold[Apply][Plot,{y@x,Hold[Flatten]@
+					{x,InterpolatingFunctionDomain[y]}
+				}]/.sol@eiVecStream
+			]
+		]
+
+
+(*this gives a vector of colors (as described above at reppedEIVals) when given
+an (x,y) ordinate pair*)
+reppedEIValColors[x_,y_]=
+	Map[
+		Function[pos,
+			reppedEIVals[x,y,
+				Function[eiValVec,
+					If[And@@Thread[Abs@Extract[eiValVec,{pos}]>
+							Abs@Delete[eiValVec,{pos}]],
+						Red,
+						Yellow
+						]
+					]
+				]
+			],
+		Range@reppedEIVals[x,y,Length]
+		]/.ifxpr_If:>MapAt[Simplify,ifxpr,{1}]
+
+
+(*this generates a list of Black rectangles at appropriate positions so that
+they look like the beam segments (with appropriate segmentLength and height*)
+beamPrimitives=
+	ListCorrelate[{1,1},
+		FoldList[Plus[#,segmentLength@#2]&,0,Range@maxI],
+		{1,-1},{},Times,
+		With[{yMax=height@i@Mean[{##}]/2},
+			{Black,Rectangle[{#1,-yMax},{#2,yMax}]}
+			]&
+		]
+
+
+(*this is the PlotRange I use for the beam plots*)
+plotRange=PlotRange->{{0,beamLength}+{-1,1}*beamLength/40,{-1,1}.35}/.rep@given
+(*or 1.2 times height 1*)
+
+
+(*here is an example bar with the height and segmentLength labeled --
+the bar is actually the optimum solution to the most general problem where
+vonMises stresses across the entire critical section are considered and where
+the segmentLengths are allowed to vary*)
+gr@exampleBar=
+	Module[{inc=0},Graphics[beamPrimitives/.rep@ix//.
+		sol[criticalVonMises@general][[2]]/.
+		rect_Rectangle:>Sequence@@{rect,White,Text[++inc,Mean[List@@rect]],
+			{Red,#,ReplacePart[#,#,{{1},{2}},{{2},{1}}]}&@Arrow[rect[[1]],
+			{rect[[2,1]],rect[[1,2]]},HeadScaling->Absolute],Text[segmentLength[
+			inc],{Mean[List@@rect[[{1,2},1]]],rect[[1,2]]},{0,-1}],{Red,#,
+			ReplacePart[#,#,{{1},{2}},{{2},{1}}]}&@Arrow[rect[[1]],{rect[[1,1]],
+			rect[[2,2]]},HeadScaling->Absolute],Text[height[inc],{rect[[1,1]],
+			0},{-1,0}]},
+		plotRange,FrameLabel->{x,y},ImageSize->$ExportWidth,Frame->True]]//Show
+
+
+(*here, the principal stress trajectories are superimposed on the bar from
+my optimized equal segmentLength solution*)
+gr@principalStressTrajectories=
+	Graphics[
+		{beamPrimitives,
+			MapIndexed[
+				Function[{prims,pos},prims/.Line[ptList:{_,__}]:>
+					ListCorrelate[{1,1},ptList,{1,-1},{},Times,
+						{Extract[reppedEIValColors@@Mean[{##}],pos],
+							Line[{##}]
+							}&,1
+						]
+					],
+				gr@principalStressTrajectoryLines
+				]
+			},
+		plotRange,FrameLabel->{x,y},ImageSize->$ExportWidth,Frame->True]/.
+			rep@given/.rep@ix/.segmentLength[_]->1/.
+				sol[standard@equalSegmentLength][[2]]//Show
+
+
+(*this color function is purple at von Mises stress == 0 and red at von Mises
+stress == maxSigmaX*)
+myColorFun[1]=Block[{fval,slope,intercept},
+	Function@@{slope fval+intercept/.
+		FindFit[{{maxSigmaX/.rep@given,0},{0,3/4}},slope fval+intercept,
+			{slope,intercept},{fval}]/.fval->#}
+	]
+
+
+(*this is the vonMises stress superimposed on the outline of the bar from my
+optimized equal segmentLength solution -- it is mostly dominated by the axial
+bending stress -- the shear stress contributes very little to the vonMises
+stress except toward the center of the beam (where axial bending stress is zero)
+*)
+gr@vonMisesStress=Show@
+	Graphics[Block[{$DisplayFunction=Identity},
+		beamPrimitives/.rep@ix/.segmentLength[_]->1/.
+			sol[standard@equalSegmentLength][[2]]/.rect_Rectangle:>
+				With[{pRange=Transpose[List@@rect]},
+					Cases[Graphics@ReleaseHold@
+						Hold[DensityPlot][PiecewiseExpand[vonMisesStress[x,y]/.
+							rep@vonMisesStressMostlySolved/.rep@ix/.
+								rep@piecewiseExpandBaseHeight/.
+									segmentLength[_]->1/.rep@given/.
+										sol[standard@equalSegmentLength][[2]],
+							pRange[[1,1]]<=x<=pRange[[1,2]]
+							],
+							Sequence@@MapThread[Prepend,{pRange,{x,y}}],
+							ColorFunction->(Hue[myColorFun[1]@#]&),
+							PlotPoints->333
+							],
+						Raster[array_List,___List,opts__?OptionQ]:>
+							Raster[array,Transpose@pRange,
+								ColorFunctionScaling->False,opts
+								],
+						{0,Infinity}
+						]
+					]
+			],
+		FrameLabel->{x,y},ImageSize->$ExportWidth,Frame->True
+		]
 
 
 Abort[]
