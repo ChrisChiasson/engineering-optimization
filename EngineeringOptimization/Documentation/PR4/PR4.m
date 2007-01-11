@@ -2,30 +2,40 @@
 
 BeginPackage["EngineeringOptimization`Documentation`PR4`",
 	{"Graphics`Arrow`","Graphics`FilledPlot`","EngineeringOptimization`",
-	"DifferentialEquations`InterpolatingFunctionAnatomy`","XML`DocBook`"}]
+	"DifferentialEquations`InterpolatingFunctionAnatomy`","XML`DocBook`",
+	"EngineeringOptimization`Documentation`",
+	"EngineeringOptimization`Documentation`Utility`"}]
 
 
 Begin["`Private`"]
 
+prefix="pr_4";
 
 (*formatting*)
 (MakeBoxes[#,_]=#2)&@@@
 	{{sectionModulus,"I"},{youngsModulus,"E"},{displacement,"v"},{shear,"V"},
 		{moment,"M"},{load,"q"},{segmentLength,"l"},{beamLength,"L"},
 		{endLoad,"P"},{base,"b"},{height,"h"},{overallX,"x"},
-		{staticAreaMoment,"Q"},{sig,"\[Sigma]"},{lam,"\[Lambda]"},
-		{maxSigmaX,OverscriptBox["\[Sigma]","_"],
-		{maxDeflection,OverscriptBox["v","_"]}}
+		{staticAreaMoment,"Q"},{sig,"\[Sigma]"},{lam,"\[Lambda]"},{Meter, "m"},
+		{maxSigmaX,OverscriptBox["\[Sigma]","_"]},{Newton,"N"},{Pascal,"Pa"},
+		{maxDeflection,OverscriptBox["v","_"]},
+		{vonMisesStress,SuperscriptBox["\[Sigma]","\[Prime]"]},
+		{volume,StyleBox["V",FontVariations->{"StrikeThrough"->True}]}
 		}
 
-(Format[#[i_,args__]]:=Subscript[#,i][args])&/@{shear,moment,displacement,
+(Format[#[i_,args__]]:=Subscript[#,i][args])&/@{load,shear,moment,displacement,
 												staticAreaMoment}
 
 (Format[#[args__]]:=Subscript[#,args])&/@
 	{x,sectionModulus,segmentLength,c,height,base,sig}
 
 Format[Derivative[0,dNum_][displacement][i_,x_]]:=
-	D[Subscript[displacement,i][x],{x,dNum}]
+	Module[{axialLocation},
+		D[Subscript[displacement,i][axialLocation],{axialLocation,dNum}]/.
+			axialLocation->x
+		]
+
+Format[y[i,crit]]=Subscript[y,i,crit]
 
 
 (*evaluate an expression as if rules were set*)
@@ -68,9 +78,15 @@ bConsHandler[arg_,vars_List]:=
       symb[args__?NumericQ]:=Block[blockSymbols,vars={args};Normal@optimArg];
       symb@@vars]];
 
+
 (*simplify or otherwise modify a Function*)
 rep[simplify][func_]=HoldPattern[Function[var_,fun_]]:>
 	With[{sfun=func@fun},Identity[Function][var,sfun]]
+
+
+(*some XML chains to use in other DocBook exports*)
+preExport[xpr_]:=preExport[xpr]=
+	DocBookInlineEquation[GenUC[prefix,xpr],xpr,SetIdAttribute->False]
 
 
 (*unit prefix*)
@@ -80,6 +96,44 @@ centi=1/100
 (*given*)
 rep@given={endLoad->-50000,youngsModulus->2.0*10^7/centi^2,beamLength->500*centi,
 		maxSigmaX->14000/centi^2,maxDeflection->2.5*centi}
+
+rep@variableUnit={endLoad->Newton,youngsModulus->Pascal,beamLength->Meter,
+	maxSigmaX->Pascal,maxDeflection->Meter}
+
+export@given=
+	XMLDocument[GenUC[prefix,given]<>".xml",
+		DocBookEquation[GenUC[prefix,given],"Given Variable Values",
+			DocBookEquationSequence@@(Equal[#1,#2*(#1/.rep@variableUnit)]&@@@
+				rep@given),
+			TitleAbbrev->"Variable Values",
+			Caption->XMLChain@
+				XMLElement["para",{},
+					{"These are the values of the given variables. The scalar ",
+						"component of the end load force is ",
+						ToXML@preExport@endLoad,". ",ToXML@preExport@endLoad,
+						" is also used to refer to the (vector) force itself. ",
+						ToXML@preExport@endLoad," is flipped in sign from its ",
+						"appearance in ",
+							XMLElement["olink",{"targetdoc"->"self",
+								"targetptr"->"GNVNOTED"},{}]," because my ",
+						"default direction for it is up instead of down. ",
+						ToXML@preExport@youngsModulus,"is Young's modulus for ",
+						"the material. ",ToXML@preExport@beamLength," is the ",
+						"total beam length, equal to the sum of all the ",
+						ToXML@preExport@segmentLength@i,". ",ToXML@preExport@
+							maxSigmaX,", is the maximum allowable value of ",
+						"stress in the x direction. ",ToXML@preExport@
+							maxDeflection," is the maximum allowable ",
+						"transverse deflection (absolute value) of any point ",
+						"on the beam. Finally, I have properly unprefixed the ",
+						"units from the variables to prevent conversion ",
+						"errors in my calculations (e.g. meters instead of ",
+						"centimeters)."
+						}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 (*section modulus, I, and first or static moment of area, Q, with respect to
@@ -102,6 +156,10 @@ rep@areaMoment={sectionModulus[i_]->
 
 (*our beam has five segments*)
 maxI=5
+
+
+(*for the cases where segmentLength is supposed to be equal everywhere*)
+rep@equalSegmentLength={_segmentLength->beamLength/maxI}
 
 
 (*
@@ -132,15 +190,60 @@ Popov)*)
 (*the second derivative of the moment being the load comes from combining the
 results of the sum of the moments (transverse to the beam) and the sum of the
 forces (axially) (ref section 7-9 Popov)*)
-rep@momentShearLoad@loading=DSolve[{moment''[x]==0,
-		moment'[beamLength]==-endLoad,
-		moment[beamLength]==0,
-		shear[x]==moment'[x],
-		load[x]==shear'[x]},
-	{moment,shear,load},
-	x
-	]/.rep[simplify][Simplify]
+eqn@momentShearLoad@loading={moment''[x]==0,moment'[beamLength]==-endLoad,
+	moment[beamLength]==0,shear[x]==moment'[x],load[x]==shear'[x]}
 
+export@GenUC[eqn,momentShearLoad,loading]=
+	XMLDocument[GenUC[prefix,eqn,momentShearLoad,loading]<>".xml",
+		DocBookEquation[GenUC[prefix,eqn,momentShearLoad,loading],
+			"Differential Equations of Moment, Shear and Loading",
+			DocBookEquationSequence@@eqn@momentShearLoad@loading,
+			TitleAbbrev->"Moment, Shear and Loading",
+			Caption->
+				XMLChain@XMLElement["para",{},{"Internal bending moment,",
+					ToXML@preExport@moment,", internal shear, ",ToXML@preExport@
+						shear,", and loading (per unit axial length), ",ToXML@
+						preExport@load,",follow the last two differential ",
+					"equations under the linearized engineering theory of ",
+					"beam bending. Additionally, I have supplied two boundary ",
+					"conditions at the free end of the beam. My sign ",
+					"convention for moment is that positive moment is ",
+					"counterclockwise on the right hand end of a beam ",
+					"section. My sign convention for shear is that positive ",
+					"shear is downward on the right hand end of a beam ",
+					"section. I have indirectly specified the loading to be ",
+					"zero by saying that the second derivative of the moment ",
+					"is zero."}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+rep@momentShearLoad@loading=
+	DSolve[eqn@momentShearLoad@loading,
+		{moment,shear,load},x
+		]/.rep[simplify][Simplify]
+
+export@GenUC[prefix,eqn,momentShearLoad,loading,solution]=
+	XMLDocument[GenUC[prefix,eqn,momentShearLoad,loading,solution]<>".xml",
+		DocBookEquation[GenUC[prefix,eqn,momentShearLoad,loading,solution],
+			"Moment, Shear and Loading Solution",
+			#[x]==(#[x]/.rep[momentShearLoad@loading][[1]])&/@
+				DocBookEquationSequence[moment,shear,load],
+			Caption->
+				XMLChain@XMLElement["para",{},{"The bending moment ",
+					"varies linearly from ",
+					ToXML@DocBookInlineEquation[prefix<>"momentLhs",
+						moment[0]/.rep[momentShearLoad@loading][[1]]
+						],
+					" at the wall to zero at the right hand side. The ",
+					"internal shear is constant and equal to the negative of ",
+					"the applied load. As stated previously, ",
+					ToXML@preExport@load," is zero."}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 (*rep@momentShearLoad@displacement is the differential equation that is active
 on all segments of our beam because there are no distributed loads*)
@@ -169,21 +272,72 @@ I will assume them to both be zero. Given these values on the left hand end, I
 can use the solution to compute them at the right hand end -- which corresponds
 to the left hand end of the next segment -- so I can propagate the solution
 easily.*)
-rep@displacement[i_,x_]=
-	Collect[
-		DSolve[
-			{0==Derivative[0,4][displacement][i,x],
-				moment[i,0]==Derivative[0,2][displacement][i,0]*youngsModulus*
-					sectionModulus[i],
-				shear[i,0]==Derivative[0,3][displacement][i,0]*youngsModulus*
-					sectionModulus[i]
-				},
-			displacement[i,x],
-			x,
-			GeneratedParameters->(c[i,#]&)
-			],
-		x]
+eqn@displacement=
+	{moment[i,0]==Derivative[0,2][displacement][i,0]*youngsModulus*
+		sectionModulus[i],
+		shear[i,x]==Derivative[0,3][displacement][i,x]*youngsModulus*
+			sectionModulus[i]
+	}
 
+export@GenUC[eqn,displacement]=
+	XMLDocument[GenUC[prefix,eqn,displacement]<>".xml",
+		DocBookEquation[GenUC[prefix,eqn,displacement],
+			"Differential Equations of Displacement on a Section",
+			DocBookEquationSequence@@eqn[displacement],
+			TitleAbbrev->"Section Displacement Differential Equations",
+			Caption->
+				XMLChain@XMLElement["para",{},{"From the same beam theory as ",
+					"the equations above, the transverse displacement in the ",
+					"local coordinate system of each beam segment \[LongDash] ",
+					ToXML@preExport@x@i," is zero at each of their left hand ",
+					"ends \[LongDash] is differentially related to the ",
+					"bending moment and shear functions via these equations. ",
+					"I use ",ToXML@preExport@dispalcement," as the ",
+					"displacement ",
+					" instead of y because y is name of my vertical axis."}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+rep@displacement[i_,x_]=
+	MapAt[Collect[#,x]&,
+		DSolve[
+			Map[
+				Function[eqn,
+					If[!FreeQ[eqn,x],
+						eqn/.rep[momentShearLoad@loading][[1]],
+						eqn
+						]
+					],
+				eqn@displacement
+				],
+			displacement[i,x],x,GeneratedParameters->(c[i,#1]&)
+			],
+		{1,1,2}
+		]
+
+export@GenUC[rep,displacement]=
+	XMLDocument[GenUC[prefix,rep,displacement]<>".xml",
+		DocBookEquation[GenUC[prefix,rep,displacement],
+			"Section Displacement Solution",
+			Equal@@rep[displacement[i,x@i]][[1,1]],
+			Caption->XMLChain@
+				XMLElement["para",{},{"The section displacement solution has ",
+				"two undetermined coefficients, ",ToXML@preExport@c[i,1],
+				" and ",ToXML@preExport@c[i,2]," that happen to also be ",
+				"initial conditions on the left hand end of a section ",
+				"\[LongDash] so ",
+				"they depend on the parameters in the sections before them. ",
+				ToXML@preExport@c[i,1]," and ",ToXML@preExport@c[i,2]," are, ",
+				"respectively, the initial displacement and initial ",
+				"displacement slope. In addition, ",ToXML@preExport@M[i,0],
+				" is the bending moment at the left hand end of the section; ",
+				"it depends on the lengths of all sections that come before ",
+				"it."}]
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 (*
 1. The shear will be constant if the load function is zero. Thus, the shear at
@@ -244,7 +398,6 @@ difference equations in equation set 7 will be used to back out the generalized
 expression for the inital conditions of all sections*)
 initCondIndex=1
 
-
 eqn@c[i_]={c[i+1,1]==displacement[i,segmentLength[i]]/.
 				rep[displacement[i,segmentLength[i]]][[1]],
 			c[i+1,2]==
@@ -253,8 +406,26 @@ eqn@c[i_]={c[i+1,1]==displacement[i,segmentLength[i]]/.
 					]/.x[i]->segmentLength[i]
 			}
 
-
 eqn@cInitialConditions={c[initCondIndex,1]==0,c[initCondIndex,2]==0}
+
+export@GenUC[eqn,c,i]=
+	XMLDocument[GenUC[prefix,eqn,c,i]<>".xml",
+		DocBookEquation[GenUC[prefix,eqn,c,i],
+			"Initial Condition Recurrence Relations",
+			DocBookEquationSequence@@Flatten[eqn/@{c@i,cInitialConditions}],
+			Caption->
+				XMLChain@XMLElement["para",{},{"The implicit recurrence ",
+					"relation between initial conditions of successive ",
+					"segments is given in the first two equations. They ",
+					"reflect continuity of the displacement and its first ",
+					"derivative at the juncture between sections. As stated ",
+					"in the last two equations, I assume zero displacement ",
+					"and zero slope initial conditions are active at the ",
+					"interface of the cantilever beam and the wall."}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 (*these are the initial condition variables at the beginning of each segment*)
@@ -286,7 +457,6 @@ second argument.
 A different problem arises in MMA6, it causes the unknown variable to be zero,
 generating a sequence of garbage terms that will be canceled out by terms in
 the remaining sum.
-
 *)
 endRSolveMadness[initCondIndex_,newIndex_]=
 	{HoldPattern[Sum[xpr_,{index_Symbol,start_Symbol,end_}]]:>
@@ -359,6 +529,36 @@ rep@ix={i[x_]->Piecewise[{#1,x<=#2}&@@@
 	Take[FoldList[#+{1,segmentLength@#2}&,{0,0},Range@maxI],{2,-2}],maxI]}
 
 
+export@GenUC[coordinate,conversion]=
+	XMLDocument[GenUC[prefix,coordinate,conversion]<>".xml",
+		DocBookEquation[GenUC[prefix,coordinate,conversion],
+			"Conversion to Overall x Coordinates",
+			DocBookEquationSequence[x[i]==(x[i]/.rep@xi),
+				moment[i,0]==(moment[i,0]/.rep@momentSheari),
+				i==(i[x]/.rep@ix)
+				],
+			Caption->XMLChain@
+				XMLElement["para",{},{"As stated previously, ",ToXML@preExport@
+						x@i," is a local coordinate within a segment that is ",
+					"zero at the segment's left end. Here, I give the ",
+					"relation between the ",ToXML@preExport@x@i," and the ",
+					"overall x. As also stated previously, ",ToXML@preExport@
+						moment[i,0]," is the moment at the left hand end of a ",
+					"segment. Here, I give the relation between ",ToXML@
+						preExport@moment[i,0]," and the overall ",ToXML@
+						preExport@moment[x],". Finally, I give i as a simple ",
+					"piecewise function of the overall x. Using all the ",
+					"equations given so far, a large but closed-form solution ",
+					"for the transverse displacement acrsoss the entire beam ",
+					"may be written as a function of the segment lengths, the ",
+					"beam cross section properties, and x. Since it is so ",
+					"large, I do not reproduce it here, but I do use it for ",
+					"the displacement constraint in the optimization below."}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
 rep@displacementMostlySolved=displacement[x_]->
 	(displacement[i[x],x[i[x]]]/.
 	rep[displacement[i[x],x[i[x]]]][[1]]//.
@@ -367,12 +567,6 @@ rep@displacementMostlySolved=displacement[x_]->
 	rep@momentSheari/.
 	rep[momentShearLoad@loading][[1]]/.
 	rep@areaMoment)
-
-
-rep@anOldOptimum={b[1]->0.0313362,b[2]->0.0288309,b[3]->0.0257998,
-	b[4]->0.0220456,b[5]->0.0174976,h[1]->0.626724,h[2]->0.576618,
-	h[3]->0.515997,h[4]->0.440911,h[5]->0.349951
-	}/.{b->base,h->height};
 
 
 (*eqn@12 defines the axial stress (due to bending) as a function of axial and
@@ -507,10 +701,42 @@ octMisesCheck@4=
 
 (*if these results are not all the same (or in the case of number 4, True),
 something is wrong; otherwise, I feel I can trust rep@12*)
-If[Not[SameQ@@(octMisesCheck/@{1,2,3})]&&octMisesCheck@4,
+If[Not[SameQ@@(octMisesCheck/@{1,2,3})]&&TrueQ@octMisesCheck@4,
 	Print["The methods for determining the von Mises stress and octahedral "<>
 		"shear stress are incorrect."];Abort[]
 	]
+
+export@vonMisesStress=
+	XMLDocument[GenUC[prefix,vonMisesStress]<>".xml",
+		DocBookEquation[GenUC[prefix,vonMisesStress],
+		"Beam Stresses",
+		DocBookEquationSequence[sig[x,x]==sigmaXX[x,y],sig[x,y]==sigmaXY[x,y],
+			staticAreaMoment[i,y]==(staticAreaMoment[i,y]/.rep@areaMoment),
+			vonMisesStress[x,y]==octMisesCheck@3
+			]/.rep@sigmaXXSigmaXY/.
+				{keep:sig[x,x]|sig[x,y]->keep[x,y],elim:sig[_,_]->0},
+			Caption->XMLChain@
+				XMLElement["para",{},{"For the stresses in the beam ",
+					XMLElement["olink",{"targetdoc"->"self",
+						"targetptr"->"GNVNOTED"},{}]," is only concerned with ",
+					ToXML@preExport@sig[x,x]," at ",
+					ToXML@preExport[y[x[i]]==h[i]],", so one might wonder why ",
+					"I have supplied the expressions for shear and von Mises ",
+					"stress. I know that if the beam becomes short enough in ",
+					"height, shear forces can cause the distortion energy at ",
+					"points below the top surface to exceed the distortion ",
+					"energy at the top surface. Assuming distortion energy is ",
+					"the failure theory I should follow, I have elected to ",
+					"limit the von Mises stress, ",
+					ToXML@preExport@vonMisesStress[x,y],", at all points in ",
+					"the beam to the maximum allowable axial stress. Keep in ",
+					"mind that on the top surface of the beam, the von Mises ",
+					"stress is identical to the axial stress, ",ToXML@preExport@
+						sig[x,x][x,y],", because the shear stress, ",
+					ToXML@preExport@sig[x,y][x,y],", is zero there."}
+				]
+			],
+		PrependDirectory->EODExportDirectory];
 
 
 (*rep@14 takes care of the tranformation from x and y being used to designate
@@ -535,14 +761,32 @@ rep@vonMisesStressMostlySolved=vonMisesStress[x_,y_]->octMisesCheck@3/.
 (*rep@15 creates two different replacements for y - one where it is at
 height@i/2 and one where it is always at the point of maximum von Mises stress,
 which is usually height@i/2 - but not always*)
-rep@y={{y[x_]->height@i/2/.rep@i},
-	{y[x_]->(
-		Piecewise[{{y,Im[y]==0&&y<height@i/2}},height@i/2]/.rep@i/.
-			Last@Solve[D[vonMisesStress[x,y]==maxSigmaX/.
-				rep@vonMisesStressMostlySolved,y],y]
-			)//FullSimplify
+rep@y=With[
+	{why=FullSimplify[y/.Last@Solve[D[vonMisesStress[x,y]==maxSigmaX/.
+		rep@vonMisesStressMostlySolved,y],y]]
+		},
+	{{y[x_]->height@i@x/2},
+		{Rule@@{y[x_],
+			Piecewise[{{why,
+				And@@Cases[why,Power[arg_,1/2]:>Simplify[arg>0],{0,Infinity}]}},
+				height@i@x/2
+				]
+			}}
 		}
-	}
+	]
+
+export@GenUC[y,i,crit]=
+    XMLDocument[GenUC[prefix,y,i,crit]<>".xml",
+      DocBookEquation[GenUC[prefix,y,i,crit],"Critical Height",
+        y[i,crit][x]==y@x/.rep[y][[2]]/.i@x->i],
+      Caption->XMLChain@
+          XMLElement[
+            "para",{},{"The von Mises stress on a section reaches its maximum \
+at the critical height, ",ToXML@preExport@y[i,crit][x],
+              ", where x is the x location of the left hand end of a segment. \
+For short (in axial length) sections near the right end of the beam, the \
+critical height could actually be below the top surface."}],
+      PrependDirectory->EODExportDirectory];
 
 
 (*epsilon is used to ensure that x is really within the segment - because at the
@@ -556,7 +800,7 @@ epsilon=1.*10^-13
 (*the maximum von Mises stress must be less than the given max allowable sigma
 x (in GNVNOTED they were being less general that I am)*)
 constr@1=Apply[And,vonMisesStress[#,y[#]]/maxSigmaX-1<=0&/@
-	FoldList[Plus,0,MapAt[#-eps&,MapAt[#+eps&,segmentLength/@Range@maxI,1],5]]/.
+	FoldList[Plus,0,MapAt[#-eps&,MapAt[#+eps&,segmentLength/@Range@maxI,1],maxI]]/.
 		eps->epsilon]
 
 
@@ -575,8 +819,8 @@ constr@4=And@@Table[And[centi-base[i]<=0,5*centi-height[i]<=0],{i,1,maxI}]
 
 
 (*the segment lengths total to the beam length*)
-constr@5=And[Sum[segmentLength[i],{i,1,maxI}]==beamLength,segmentLength[#]>0&/@
-	And@@Range@maxI]
+constr@5=And[Sum[segmentLength[i],{i,1,maxI}]==beamLength,
+				segmentLength[#]>beamLength/maxI^3&/@And@@Range@maxI]
 
 
 (*the objective to be minimized is the volume of the material used*)
@@ -597,7 +841,7 @@ rep@baseHeight@all={(xpr:base|height)[_]->xpr@all}
 {nminarg@standard@equalSegmentLength,
 	nminarg@criticalVonMises@equalSegmentLength}=
 	{nminarg@standard,nminarg@criticalVonMises}/.
-		rep@ix/.segmentLength[_]->beamLength/maxI/.rep@given;
+		rep@ix/.rep@equalSegmentLength/.rep@given;
 
 nminarg@standard@equalBaseHeightSegmentLength=
 	nminarg@standard@equalSegmentLength/.rep@baseHeight@all;
@@ -617,7 +861,7 @@ nminarg@criticalVonMises@general=
   With[{assumptions=Reduce[constr@4,var@baseHeight]&&constr@5/.rep@given},
     MapAt[Refine[#,assumptions]&,
       nminarg@criticalVonMises@general/.rep@piecewiseExpandBaseHeight,{2,#}&/@
-        Range@12]]
+        Range[2*maxI+2]]];
 
 
 var@baseHeight=Union@
@@ -652,8 +896,9 @@ myEvaluationCount=0;
 				],
 			{"steps","evals"}
 			]
-		]
+		];
 evals@standard@equalSegmentLength=Sequence@@@evals@standard@equalSegmentLength;
+
 
 (*preparation for the variable segment length assignment*)
 sol@standard@equalBaseHeightSegmentLength=
@@ -670,7 +915,8 @@ rep@bestSolGuess@1=
 			}/.sol[standard@equalBaseHeightSegmentLength][[2]]
 
 rep@bestSolGuess@2=
-	Flatten@{sol[standard@equalSegmentLength][[2]],segmentLength[_]->1}
+	Flatten@{sol[standard@equalSegmentLength][[2]],rep@equalSegmentLength}/.
+		rep@given
 
 var@bestSolGuessRegion=
 	Flatten/@Thread@
@@ -682,16 +928,16 @@ var@bestSolGuessRegion=
 
 
 (*variable segment lengths (best) solution*)
-Off[Less::"nord"](*MMA 5.2 incorrectly generates this message*)
+(*Off[Less::"nord"]MMA 5.2 incorrectly generates this message*)
 sol@criticalVonMises@general=NMinimize[
 	MapAt[bConsHandler[#,var[baseHeightSegmentLength]]&,
 		nminarg@criticalVonMises@general,
-		{2,12,1}
+		{2,2*maxI+2,1}
 		],
 	var@bestSolGuessRegion,
 	Method->{"DifferentialEvolution"}
 	]
-On[Less::"nord"]
+(*On[Less::"nord"]*)
 
 
 (*read in GNVNOTED Table 5-3 through 5-5*)
@@ -734,7 +980,7 @@ GNVNOTEDVolumeTable=
 (*the modifications are the same as mentioned in the comment for
 GNVNOTEDVolumeTable, but this one is for the design variables*)
 GNVNOTEDDesignVariableTable=
-    MapIndexed[If[#2[[1]]\[GreaterEqual]2&&NumberQ@#1,#1*centi,#1]&,
+    MapIndexed[If[#2[[1]]>=2&&NumberQ@#1,#1*centi,#1]&,
       importedDataAndStuff[[2]],{2}];
 GNVNOTEDDesignVariableTable=
   Prepend[MapThread[
@@ -748,7 +994,7 @@ violated -- negative is okay*)
 constraintViolationVector=
     EngineeringOptimization`Private`penaltyKernel[#,Method->"Basic"]&/@
         List@@nminarg[standard@equalSegmentLength][[2,
-              Range@11]]/.segmentLength[_]\[Rule]1
+              Range@11]]/.rep@equalSegmentLength
 
 
 (*here, I recalculate the constraints based on the data from the design
@@ -763,11 +1009,11 @@ constraintData=
 explicitly, so that's what I do*)
 constraintLabelVector=
   List@@nminarg[0][[2,DeleteCases[Range[1,12],6]]]/.{vMS_vonMisesStress/;
-          FreeQ[vMS,segmentLength]\[RuleDelayed]sig[max,1],
+          FreeQ[vMS,segmentLength]:>sig[max,1],
       vMS_vonMisesStress:>
         sig[max,Max[
               Cases[vMS,
-                segmentLength[i_Integer]\[RuleDelayed]i,{0,Infinity}]]+1]}
+                segmentLength[i_Integer]:>i,{0,Infinity}]]+1]}
 
 
 (*these are the headers for the method columns in the constraint values table*)
@@ -832,13 +1078,18 @@ differential equation systems*)
 			Method->{"EventLocator","Event"->Abs@y@x<height[i[x]]/2,
 				"EventAction":>Throw[Null,"StopIntegration"]}
 			]
-		}/.rep@given/.rep@ix/.rep@piecewiseExpandBaseHeight/.
-			segmentLength[_]->1/.expr_Equal:>PiecewiseExpand/@expr/.
-				sol[standard@equalSegmentLength][[2]]
+		}/.rep@ix/.rep@piecewiseExpandBaseHeight/.
+			rep@equalSegmentLength/.expr_Equal:>PiecewiseExpand/@expr/.
+				sol[standard@equalSegmentLength][[2]]/.rep@given
 
 
 (*these are the solutions for the streamlines (interpolating functions for y
 when given x)*)
+Off[NDSolve::"ndsz",Power::"infy",NDSolve::"nlnum"]
+(*switch off errors about singularities -- I cut off
+the singularities with my stopping test, but sometimes it doesn't stop "in time"
+-- maybe it would be better if I could figure out how to use a non-Boolean
+stopping test*)
 sol@eiVecStream=ReleaseHold@Outer[
 	Hold[Flatten]@heldNDSolveEIVecSteamDEqns[x,y,##]&,{First,Last},
 	ReleaseHold[Hold[Table][initialHeight,
@@ -846,6 +1097,7 @@ sol@eiVecStream=ReleaseHold@Outer[
 			height[1]/2/20}]/.sol[standard@equalSegmentLength][[2]]
 		]
 	]
+On[NDSolve::"ndsz",Power::"infy",NDSolve::"nlnum"]
 
 
 (*I pull out the stream line primitives after plotting them*)
@@ -928,7 +1180,7 @@ gr@principalStressTrajectories=
 				]
 			},
 		plotRange,FrameLabel->{x,y},ImageSize->$ExportWidth,Frame->True]/.
-			rep@given/.rep@ix/.segmentLength[_]->1/.
+			rep@ix/.rep@equalSegmentLength/.rep@given/.
 				sol[standard@equalSegmentLength][[2]]//Show
 
 
@@ -948,14 +1200,14 @@ stress except toward the center of the beam (where axial bending stress is zero)
 *)
 gr@vonMisesStress=Show@
 	Graphics[Block[{$DisplayFunction=Identity},
-		beamPrimitives/.rep@ix/.segmentLength[_]->1/.
+		beamPrimitives/.rep@ix/.rep@equalSegmentLength/.rep@given/.
 			sol[standard@equalSegmentLength][[2]]/.rect_Rectangle:>
 				With[{pRange=Transpose[List@@rect]},
 					Cases[Graphics@ReleaseHold@
 						Hold[DensityPlot][PiecewiseExpand[vonMisesStress[x,y]/.
 							rep@vonMisesStressMostlySolved/.rep@ix/.
 								rep@piecewiseExpandBaseHeight/.
-									segmentLength[_]->1/.rep@given/.
+									rep@equalSegmentLength/.rep@given/.
 										sol[standard@equalSegmentLength][[2]],
 							pRange[[1,1]]<=x<=pRange[[1,2]]
 							],
@@ -972,7 +1224,7 @@ gr@vonMisesStress=Show@
 					]
 			],
 		FrameLabel->{x,y},ImageSize->$ExportWidth,Frame->True
-		]
+		];
 
 
 Abort[]
