@@ -124,9 +124,15 @@ LabelLines[graph_,textFunction_,fraction_?NumericQ,options___]:=
 StringSequence[args__]:=ToString@SequenceForm[args];
 
 GenUC[{leftUC:(True|False):False,rightUC:(True|False):False},designators__]:=
-  With[{lrReps={True->"_",False->""}},
-    ToString@SequenceForm[leftUC/.lrReps,
-      BoxForm`Intercalate[SequenceForm[designators],"_"],rightUC/.lrReps]];
+	With[{lrReps={True->"_",False->""}},
+		StringReplace[
+			ToString@SequenceForm[leftUC/.lrReps,
+				BoxForm`Intercalate[SequenceForm[designators],"_"],
+				rightUC/.lrReps
+				],
+			Whitespace->""
+			]
+		];
 
 GenUC[designators__]:=GenUC[{},designators];
 
