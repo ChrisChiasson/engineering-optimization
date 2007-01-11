@@ -1162,6 +1162,42 @@ gr@exampleBar=
 			0},{-1,0}]},
 		plotRange,FrameLabel->{x,y},ImageSize->$ExportWidth,Frame->True]]//Show
 
+export@GenUC[gr,exampleBar]=
+	XMLDocument[GenUC[prefix,gr,exampleBar]<>".xml",
+		DocBookFigure[GenUC[prefix,gr,exampleBar],
+			"General Cantilevered Beam",
+			"The profile of a cantilever bream is shown from the side, not "<>
+				"from above. Its five rectangular sections are larger in "<>
+				"both length and height toward the left, as the beam "<>
+				"approaches the wall to which it is attached, which is not "<>
+				"shown. Toward the right hand end, where the load is "<>
+				"applied, which is also not shown, the sections are smaller.",
+			gr@exampleBar,
+			TitleAbbrev->"Cantilevered Beam",
+			Caption->XMLChain@
+				XMLElement["para",{},{"The cantilever beam is affixed to a ",
+					"wall on the left end, while a vertical load, ",ToXML@
+						preExport@endLoad," is applied at the right. Neither ",
+					"of these are shown. The segments, ",ToXML@preExport@i,
+					", their lengths, ",ToXML@preExport@segmentLength@i,
+					", and their heights, ",ToXML@preExport@height@i,", are ",
+					"labeled. The bases, half of which would be their depths ",
+					"into and out of the page, are not shown, but are ",
+					"designated ",ToXML@preExport@base@i,". While a general ",
+					"shape is shown here, the drawing in ",XMLElement["olink",
+						{"targetdoc"->"self","targetptr"->"GNVNOTED"},{}],
+					" shows each segment length to be equal to the others. It ",
+					"isn't explictly mentioned in ",XMLElement["olink",
+						{"targetdoc"->"self","targetptr"->"GNVNOTED"},{}],
+					"'s analysis, but I think it is assumed all the lengths ",
+					"are equal. In order to compare my optimization results ",
+					"to those in the text, I make the same assumption during ",
+					"the optimization step."}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
 
 (*here, the principal stress trajectories are superimposed on the bar from
 my optimized equal segmentLength solution*)
