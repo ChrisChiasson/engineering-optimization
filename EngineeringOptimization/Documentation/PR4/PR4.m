@@ -18,7 +18,7 @@ prefix="pr_4";
 		{endLoad,"P"},{base,"b"},{height,"h"},{overallX,"x"},
 		{staticAreaMoment,"Q"},{sig,"\[Sigma]"},{lam,"\[Lambda]"},{Meter, "m"},
 		{maxSigmaX,OverscriptBox["\[Sigma]","_"]},{Newton,"N"},{Pascal,"Pa"},
-		{maxDeflection,OverscriptBox["v","_"]},
+		{maxDeflection,OverscriptBox["v","_"]},{maxI,"\[ScriptCapitalN]"},
 		{vonMisesStress,SuperscriptBox["\[Sigma]","\[Prime]"]},
 		{volume,StyleBox["V",FontVariations->{"StrikeThrough"->True}]}
 		}
@@ -792,16 +792,17 @@ critical height could actually be below the top surface."}],
 (*epsilon is used to ensure that x is really within the segment - because at the
 far left end of a segment, i changes to i of the previous segment (which is bad
 if one wants to test the critical section)*)
-
-
 epsilon=1.*10^-13
 
 
 (*the maximum von Mises stress must be less than the given max allowable sigma
 x (in GNVNOTED they were being less general that I am)*)
-constr@1=Apply[And,vonMisesStress[#,y[#]]/maxSigmaX-1<=0&/@
-	FoldList[Plus,0,MapAt[#-eps&,MapAt[#+eps&,segmentLength/@Range@maxI,1],maxI]]/.
-		eps->epsilon]
+vmStressPureFun=vonMisesStress[#,y[#]]/maxSigmaX-1<=0&;
+constr@1=Apply[And,vmStressPureFun/@
+	FoldList[Plus,0,
+		MapAt[#-eps&,MapAt[#+eps&,segmentLength/@Range@maxI,1],maxI]]/.
+			eps->epsilon
+		]
 
 
 (*the height of a section may not be more than 20 times its base*)
