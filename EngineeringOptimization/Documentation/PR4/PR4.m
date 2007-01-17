@@ -863,9 +863,29 @@ export@GenUC[constraint,identifiers]=
 			],
 		PrependDirectory->EODExportDirectory
 		];
+(*Perhaps the text explanation for the unlisted constraints should be made
+dynamic so that I can change them from one place. However, I don't feel like
+doing that right now.*)
+
 
 (*the objective to be minimized is the volume of the material used*)
 objective[1]=Sum[Times[base[i],height[i],segmentLength[i]],{i,1,maxI}]
+
+(*objective export*)
+export@GenUC@objective=
+	XMLDocument[GenUC[prefix,objective]<>".xml",
+		DocBookEquation[GenUC[prefix,objective],
+			"Optimization Objective",
+			volume==Sum[base@i*height@i*segmentLength@i,{i,1,HoldForm@maxI}],
+			Caption->
+				XMLElement["para",{},{"The minimization objective is the sum ",
+					"of the volumes of each segment. The minimization ",
+					"constraints are given in ",XMLElement["xref",
+						{"linkend"->GenUC[prefix,constraint,identifiers]},{}]}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 (*this concatenates the objective and constraints into the first argument of
