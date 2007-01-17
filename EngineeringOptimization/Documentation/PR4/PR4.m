@@ -1221,13 +1221,13 @@ the segmentLengths are allowed to vary*)
 gr@exampleBar=
 	Module[{inc=0},Graphics[beamPrimitives/.rep@ix//.
 		sol[criticalVonMises@general][[2]]/.
-		rect_Rectangle:>Sequence@@{rect,White,Text[++inc,Mean[List@@rect]],
-			{Red,#,ReplacePart[#,#,{{1},{2}},{{2},{1}}]}&@Arrow[rect[[1]],
-			{rect[[2,1]],rect[[1,2]]},HeadScaling->Absolute],Text[segmentLength[
-			inc],{Mean[List@@rect[[{1,2},1]]],rect[[1,2]]},{0,-1}],{Red,#,
-			ReplacePart[#,#,{{1},{2}},{{2},{1}}]}&@Arrow[rect[[1]],{rect[[1,1]],
-			rect[[2,2]]},HeadScaling->Absolute],Text[height[inc],{rect[[1,1]],
-			0},{-1,0}]},beamPlotOptions]]//Show
+		rect_Rectangle:>Sequence@@{rect,White,Text[++inc,{Mean[List@@rect[[{1,
+			2},1]]],.5*rect[[2,2]]}],{Red,#,ReplacePart[#,#,{{1},{2}},{{2},{
+			1}}]}&@Arrow[rect[[1]],{rect[[2,1]],rect[[1,2]]},HeadScaling->
+			Absolute],Text[segmentLength[inc],{Mean[List@@rect[[{1,2},1]]],.9*
+			rect[[1,2]]},{0,-1}],{Red,#,ReplacePart[#,#,{{1},{2}},{{2},{1}}]}&@
+			Arrow[rect[[1]],{rect[[1,1]],rect[[2,2]]},HeadScaling->Absolute],
+			Text[height[inc],{rect[[1,1]],0},{-1,0}]},beamPlotOptions]]//Show
 
 export@GenUC[gr,exampleBar]=
 	XMLDocument[GenUC[prefix,gr,exampleBar]<>".xml",
