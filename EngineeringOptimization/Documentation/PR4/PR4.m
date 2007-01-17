@@ -1038,7 +1038,7 @@ methodSequence=Sequence@@
 
 (*a modification of the iteration history table from GNVNOTED to use my units
 and include my method --- all tables from GNVNOTED do this, actually*)
-GNVNOTEDVolumeTable=
+GNVNOTEDVolumeTable=PadRight[#,Length@importedDataAndStuff[[1,1]],""]&/@
     Rationalize@importedDataAndStuff[[1]]/.volume_Integer/;volume>1000:>
     	N@volume*centi^3;
 GNVNOTEDVolumeTable=
