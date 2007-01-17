@@ -1022,7 +1022,8 @@ importedDataAndStuff=
 
 
 (*replacement for displaying numbers with less precision than default*)
-rep@realNumberForm=x_Real?InexactNumberQ:>NumberForm[x,3]
+rep@realNumberForm[acc_]=
+	x_Real?InexactNumberQ:>NumberForm[x,{Infinity,acc},NumberPadding->{"","0"}];
 
 
 (*what I am calling my optimization method in export tables*)
