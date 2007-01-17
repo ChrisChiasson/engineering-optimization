@@ -823,6 +823,46 @@ constr@4=And@@Table[And[centi-base[i]<=0,5*centi-height[i]<=0],{i,1,maxI}]
 constr@5=And[Sum[segmentLength[i],{i,1,maxI}]==beamLength,
 				segmentLength[#]>beamLength/maxI^3&/@And@@Range@maxI]
 
+(*constraints export*)
+export@GenUC[constraint,identifiers]=
+	XMLDocument[GenUC[prefix,constraint,identifiers]<>".xml",
+		DocBookTable[GenUC[prefix,constraint,identifiers],
+			"Constraints",
+			"The left column numbers the constraints used in the "<>
+				"optimization process. The right column gives the constraint "<>
+				"corresponding to that number.",
+			Prepend[
+				MapIndexed[{First@#2,#}&,
+					Flatten@{vmStressPureFun/@Flatten@{0,segmentLength@1,
+						Sum[segmentLength[i],{i,1,HoldForm@#}]&/@
+							Range[2,maxI-1]},
+						List@@constr@2,constr@3
+						}
+					],
+				{"#",	
+					SequenceForm["Constraint Form\n(",
+						g[base@i,height@i,segmentLength@i]<=0,")"
+						]
+					}
+				],
+			Caption->
+				XMLElement["para",{},
+					{"These are the eleven constraints that are used in ",
+						XMLElement["olink",{"targetdoc"->"self",
+							"targetptr"->"GNVNOTED"},{}],
+						"'s optimization process result tables. The unlisted ",
+						"constraints are that no height may be below 5 cm ",
+						"(0.05 m) and that no base may be less than 1 cm ",
+						"(0.01 m). Finally, in a more general problem, such ",
+						"as one with variable segment lengths, all segment ",
+						"lengths would be constrained to be greater than zero ",
+						"and their sums would be equal to the total beam ",
+						"length."
+						}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 (*the objective to be minimized is the volume of the material used*)
 objective[1]=Sum[Times[base[i],height[i],segmentLength[i]],{i,1,maxI}]
