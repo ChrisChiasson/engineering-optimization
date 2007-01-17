@@ -1031,8 +1031,9 @@ myMethodName="My ALM\nMethod"
 
 (*a repeated sequence of table cells that appears in my version of the GNVNOTED
 method comparison tables*)
-methodSequence=Sequence["1","2","3","4","5",myMethodName]
-
+(*methodSequence=Sequence["1","2","3","4","5",myMethodName]*)
+methodSequence=Sequence@@
+	Append[SequenceForm["Method\n",#]&/@Range@5,myMethodName]
 
 (*a modification of the iteration history table from GNVNOTED to use my units
 and include my method --- all tables from GNVNOTED do this, actually*)
@@ -1040,14 +1041,19 @@ GNVNOTEDVolumeTable=
     Rationalize@importedDataAndStuff[[1]]/.volume_Integer/;volume>1000:>
     	N@volume*centi^3;
 GNVNOTEDVolumeTable=
-  Prepend[MapThread[
-      Join,{Rest@GNVNOTEDVolumeTable,
-        List/@{GNVNOTEDVolumeTable[[2,2]],
-            Sequence@@
-              PadRight[evals[standard@equalSegmentLength][[1,All,1]],11,""],
-            Length@evals[standard@equalSegmentLength][[1]],
-            First@sol@standard@equalSegmentLength,
-            myEvaluationCount}}],{"Iteration\nNumber",methodSequence}]
+  Prepend[
+  	MapThread[Join,
+  		{MapAt[
+  			SequenceForm[#," (",Meter^3,")"]&,
+  			Rest@GNVNOTEDVolumeTable,
+  			Thread[{1+Append[Range[0,11],13],1}]
+  			],
+	        List/@{GNVNOTEDVolumeTable[[2,2]],
+	            Sequence@@
+	              PadRight[evals[standard@equalSegmentLength][[1,All,1]],11,""],
+	            Length@evals[standard@equalSegmentLength][[1]],
+	            First@sol@standard@equalSegmentLength,
+	            myEvaluationCount}}],{"Iteration\nNumber",methodSequence}]
 
 
 (*the modifications are the same as mentioned in the comment for
@@ -1057,9 +1063,10 @@ GNVNOTEDDesignVariableTable=
       importedDataAndStuff[[2]],{2}];
 GNVNOTEDDesignVariableTable=
   Prepend[MapThread[
-      Join,{List/@var[baseHeight],Rest/@Rest@GNVNOTEDDesignVariableTable,
+      Join,{{SequenceForm[#," (",Meter,")"]}&/@var[baseHeight],
+      	Rest/@Rest@GNVNOTEDDesignVariableTable,
         List/@var[baseHeight]/.sol[standard@equalSegmentLength][[2]]}],
-    Join[GNVNOTEDDesignVariableTable[[1,{1,2}]],{methodSequence}]]
+    Join[{"Design\nVariable","Initial\nValue"},{methodSequence}]]
 
 
 (*if the constraint violation vector has positive entries, the constraint is
@@ -1081,12 +1088,9 @@ constraintData=
 (*Instead of labeling the constraints 1-11, it is better to specify them
 explicitly, so that's what I do*)
 constraintLabelVector=
-  List@@nminarg[0][[2,DeleteCases[Range[1,12],6]]]/.{vMS_vonMisesStress/;
-          FreeQ[vMS,segmentLength]:>sig[max,1],
-      vMS_vonMisesStress:>
-        sig[max,Max[
-              Cases[vMS,
-                segmentLength[i_Integer]:>i,{0,Infinity}]]+1]}
+  Flatten@{SequenceForm[#," (",Pascal,"/",Pascal,")"]&/@Range@5,
+      SequenceForm[#," (",Meter,")"]&/@Range[6,10],
+      SequenceForm[11," (",Meter,"/",Meter,")"]}
 
 
 (*these are the headers for the method columns in the constraint values table*)
@@ -1095,7 +1099,7 @@ constraintHeaders={"Constraint\n#", methodSequence}
 
 (*assemble all the components of the constraint table*)
 GNVNOTEDFinalConstraintValuesTable=
-  Prepend[MapThread[{#1,Sequence@@#2}&,{Range@Length@constraintLabelVector,
+  Prepend[MapThread[{#1,Sequence@@#2}&,{constraintLabelVector,
         constraintData}],constraintHeaders]
 
 
