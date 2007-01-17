@@ -1206,6 +1206,13 @@ beamPrimitives=
 plotRange=PlotRange->{{0,beamLength}+{-1,1}*beamLength/40,{-1,1}.35}/.rep@given
 (*or 1.2 times height 1*)
 
+(*this is the FrameLabel I use for the beam plots*)
+frameLabel=FrameLabel->(SequenceForm[#," (",Meter,")"]&/@{x,y})
+
+(*these are the options I use for the beam plots*)
+beamPlotOptions=
+	Sequence[plotRange,frameLabel,ImageSize->$ExportWidth,Frame->True];
+
 
 (*here is an example bar with the height and segmentLength labeled --
 the bar is actually the optimum solution to the most general problem where
@@ -1220,8 +1227,7 @@ gr@exampleBar=
 			inc],{Mean[List@@rect[[{1,2},1]]],rect[[1,2]]},{0,-1}],{Red,#,
 			ReplacePart[#,#,{{1},{2}},{{2},{1}}]}&@Arrow[rect[[1]],{rect[[1,1]],
 			rect[[2,2]]},HeadScaling->Absolute],Text[height[inc],{rect[[1,1]],
-			0},{-1,0}]},
-		plotRange,FrameLabel->{x,y},ImageSize->$ExportWidth,Frame->True]]//Show
+			0},{-1,0}]},beamPlotOptions]]//Show
 
 export@GenUC[gr,exampleBar]=
 	XMLDocument[GenUC[prefix,gr,exampleBar]<>".xml",
@@ -1276,9 +1282,8 @@ gr@principalStressTrajectories=
 				gr@principalStressTrajectoryLines
 				]
 			},
-		plotRange,FrameLabel->{x,y},ImageSize->$ExportWidth,Frame->True]/.
-			rep@ix/.rep@equalSegmentLength/.rep@given/.
-				sol[standard@equalSegmentLength][[2]]//Show
+		beamPlotOptions]/.rep@ix/.rep@equalSegmentLength/.rep@given/.
+			sol[standard@equalSegmentLength][[2]]//Show
 
 
 (*this color function is purple at von Mises stress == 0 and red at von Mises
@@ -1320,7 +1325,7 @@ gr@vonMisesStress=Show@
 						]
 					]
 			],
-		FrameLabel->{x,y},ImageSize->$ExportWidth,Frame->True
+		beamPlotOptions
 		];
 
 
