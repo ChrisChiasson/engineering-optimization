@@ -279,6 +279,11 @@ eqn@displacement=
 			sectionModulus[i]
 	}
 
+preExport[sectionModulusEqn]=
+	DocBookInlineEquation[GenUC[prefix,sectionModulusEqn],
+		sectionModulus@i==(sectionModulus@i/.rep@areaMoment)
+		];
+
 export@GenUC[eqn,displacement]=
 	XMLDocument[GenUC[prefix,eqn,displacement]<>".xml",
 		DocBookEquation[GenUC[prefix,eqn,displacement],
@@ -292,9 +297,14 @@ export@GenUC[eqn,displacement]=
 					ToXML@preExport@x@i," is zero at each of their left hand ",
 					"ends \[LongDash] is differentially related to the ",
 					"bending moment and shear functions via these equations. ",
-					"I use ",ToXML@preExport@dispalcement," as the ",
-					"displacement ",
-					" instead of y because y is name of my vertical axis."}
+					"Unlike ",XMLElement["olink",{"targetdoc"->"self",
+						"targetptr"->"GNVNOTED"},{}],", I use ",ToXML@preExport@
+						dispalcement," as the displacement instead of y ",
+					"because y is name of my vertical axis. ",ToXML@preExport@
+						youngsModulus," is the Young's Modulus in Hooke's law ",
+					"for an elastic material. ",ToXML@preExport@
+						sectionModulusEqn," and is the second moment of area ",
+					"with respect to the neutral axis of bending."}
 					]
 			],
 		PrependDirectory->EODExportDirectory
