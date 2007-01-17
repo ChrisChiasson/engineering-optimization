@@ -1090,12 +1090,12 @@ constraintLabelVector=
 
 
 (*these are the headers for the method columns in the constraint values table*)
-constraintHeaders={"Constraint", methodSequence}
+constraintHeaders={"Constraint\n#", methodSequence}
 
 
 (*assemble all the components of the constraint table*)
 GNVNOTEDFinalConstraintValuesTable=
-  Prepend[MapThread[{#1,Sequence@@#2}&,{constraintLabelVector,
+  Prepend[MapThread[{#1,Sequence@@#2}&,{Range@Length@constraintLabelVector,
         constraintData}],constraintHeaders]
 
 
