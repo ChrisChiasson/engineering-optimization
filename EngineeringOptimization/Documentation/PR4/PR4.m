@@ -418,25 +418,6 @@ eqn@c[i_]={c[i+1,1]==displacement[i,segmentLength[i]]/.
 
 eqn@cInitialConditions={c[initCondIndex,1]==0,c[initCondIndex,2]==0}
 
-export@GenUC[eqn,c,i]=
-	XMLDocument[GenUC[prefix,eqn,c,i]<>".xml",
-		DocBookEquation[GenUC[prefix,eqn,c,i],
-			"Initial Condition Recurrence Relations",
-			DocBookEquationSequence@@Flatten[eqn/@{c@i,cInitialConditions}],
-			Caption->
-				XMLChain@XMLElement["para",{},{"The implicit recurrence ",
-					"relation between initial conditions of successive ",
-					"segments is given in the first two equations. They ",
-					"reflect continuity of the displacement and its first ",
-					"derivative at the juncture between sections. As stated ",
-					"in the last two equations, I assume zero displacement ",
-					"and zero slope initial conditions are active at the ",
-					"interface of the cantilever beam and the wall."}
-					]
-			],
-		PrependDirectory->EODExportDirectory
-		];
-
 
 (*these are the initial condition variables at the beginning of each segment*)
 var@cInitialConditions={c[i,1],c[i,2]}
@@ -514,14 +495,35 @@ but are also equations)*)
 (*somewhat simpler expressions for the transverse displacement and its
 derivative may be obtained by assuming the segmentLengths are all equal, as in
 given0 and eqn@11*)
-
-
 eqn@rSolvedC[i_]=Equal@@@Flatten@
 	MapThread[
 		Simplify[RSolve[{#1,#2},#3,i]/.K[1]->Module[{K},K]/.
 			endRSolveMadness[initCondIndex,#4]//.factorOut
 			]&,
 		{eqn[c[i]],eqn[cInitialConditions],var[cInitialConditions],{a,b}}
+		];
+
+export@GenUC[eqn,c,i]=
+	XMLDocument[GenUC[prefix,eqn,c,i]<>".xml",
+		DocBookEquation[GenUC[prefix,eqn,c,i],
+			"Initial Condition Recurrence Relations",
+			DocBookEquationSequence@@Flatten[eqn/@{c@i,cInitialConditions,
+				rSolvedC[i]}],
+			TitleAbbrev->"Initial Conditions",
+			Caption->
+				XMLChain@XMLElement["para",{},{"The implicit recurrence ",
+					"relation between initial conditions of successive ",
+					"segments is given in the first two equations. They ",
+					"reflect continuity of the displacement and its first ",
+					"derivative at the juncture between sections. As stated ",
+					"in the middle two equations, I assume zero displacement ",
+					"and zero slope initial conditions are active at the ",
+					"interface of the cantilever beam and the wall. Finally, ",
+					"the solutions to the recurrence relations are given in ",
+					"the last two equations."}
+					]
+			],
+		PrependDirectory->EODExportDirectory
 		];
 
 rep@rSolvedC=Thread[(eqn[rSolvedC[i]][[All,1]]/.i->i_)->
