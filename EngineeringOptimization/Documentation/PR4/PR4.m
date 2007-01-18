@@ -1041,6 +1041,7 @@ and include my method --- all tables from GNVNOTED do this, actually*)
 GNVNOTEDVolumeTable=PadRight[#,Length@importedDataAndStuff[[1,1]],""]&/@
     Rationalize@importedDataAndStuff[[1]]/.volume_Integer/;volume>1000:>
     	N@volume*centi^3;
+
 GNVNOTEDVolumeTable=
   Prepend[
   	MapThread[Join,
@@ -1055,6 +1056,36 @@ GNVNOTEDVolumeTable=
 	            Length@evals[standard@equalSegmentLength][[1]],
 	            First@sol@standard@equalSegmentLength,
 	            myEvaluationCount}}],{"Iteration\nNumber",methodSequence}]
+
+export@GenUC[volume,table]=
+	XMLDocument[GenUC[prefix,volume,table],
+		DocBookTable[GenUC[prefix,volume,table],
+			"Volume History",
+			"The first column gives iteration numbers (and parenthetical "<>
+				"units) for the values that appear in the other columns. "<>
+				"However, the last three rows of the first column are "<>
+				"different. They're labeled: iterations, optimum (with "<>
+				"parenthetical units), and functions.",
+			GNVNOTEDVolumeTable/.rep@realNumberForm@6,
+			Caption->XMLElement["para",{},{"The method columns indicate data ",
+				"from different optimization methods. The last one is my ",
+				"Augmented Lagrange Multiplier (ALM) method. The rest are ",
+				"from ",XMLElement["olink",{"targetdoc"->"self","targetptr"->
+					"GNVNOTED"},{}],". Method 1 is an exterior penalty ",
+				"function method. Method 2 is a linear extended interior ",
+				"penalty function method. 3 is a quadratic extended interior ",
+				"penalty function method. 4 is a variable penalty function ",
+				"method. 5 is an ALM method like mine. Several rows are ",
+				"labeled by iteration number, showing the total volume at the ",
+				"end of that iteration. The iterations row gives the total ",
+				"number of iterations of the method as it converges. The ",
+				"optimum row gives the converged minimum volume value. The ",
+				"functions row gives the total number of function evaluations ",
+				"occurring in the course of the optimization."}
+				]
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 (*the modifications are the same as mentioned in the comment for
