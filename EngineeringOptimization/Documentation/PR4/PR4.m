@@ -1058,7 +1058,7 @@ GNVNOTEDVolumeTable=
 	            myEvaluationCount}}],{"Iteration\nNumber",methodSequence}]
 
 export@GenUC[volume,table]=
-	XMLDocument[GenUC[prefix,volume,table],
+	XMLDocument[GenUC[prefix,volume,table]<>".xml",
 		DocBookTable[GenUC[prefix,volume,table],
 			"Volume History",
 			"The first column gives iteration numbers (and parenthetical "<>
@@ -1081,7 +1081,9 @@ export@GenUC[volume,table]=
 				"number of iterations of the method as it converges. The ",
 				"optimum row gives the converged minimum volume value. The ",
 				"functions row gives the total number of function evaluations ",
-				"occurring in the course of the optimization."}
+				"occurring in the course of the optimization. Of these, my ",
+				"method obtains the lowest volume at the cost of the highest ",
+				"number of function evaluations."}
 				]
 			],
 		PrependDirectory->EODExportDirectory
@@ -1093,12 +1095,35 @@ GNVNOTEDVolumeTable, but this one is for the design variables*)
 GNVNOTEDDesignVariableTable=
     MapIndexed[If[#2[[1]]>=2&&NumberQ@#1,#1*centi,#1]&,
       importedDataAndStuff[[2]],{2}];
+
 GNVNOTEDDesignVariableTable=
   Prepend[MapThread[
       Join,{{SequenceForm[#," (",Meter,")"]}&/@var[baseHeight],
       	Rest/@Rest@GNVNOTEDDesignVariableTable,
         List/@var[baseHeight]/.sol[standard@equalSegmentLength][[2]]}],
     Join[{"Design\nVariable","Initial\nValue"},{methodSequence}]]
+
+export@GenUC[design,variable,table]=
+	XMLDocument[GenUC[design,variable,table]<>".xml",
+		DocBookTable[GenUC[design,variable,table],
+			"Design Variables",
+			XMLElement["phrase",{},{"The first column lists base and height ",
+				"design variables. The second column gives the initial ",
+				"optimization values of these variables. The third through ",
+				"last columns give the final values of these variables at the ",
+				"end of the optimization processes, which are listed in the ",
+				"heads of the columns, in the same order as ",XMLElement["xref",
+					{"linkend"->GenUC[prefix,volume,table]},{}],"."}],
+			GNVNOTEDDesignVariableTable/.rep@realNumberForm@4,
+			Caption->"This table contains the final design values, in "<>
+				"meters, from each method for the case of equal segment "<>
+				"lengths. The general trend is toward smaller segment volume "<>
+				"closer to the load, or increasing segment volume toward the "<>
+				"wall. Even though they start at the same design vector, all "<>
+				"the methods end up at somewhat different final designs."
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 (*if the constraint violation vector has positive entries, the constraint is
