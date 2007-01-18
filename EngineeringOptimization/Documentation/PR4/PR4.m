@@ -1104,8 +1104,8 @@ GNVNOTEDDesignVariableTable=
     Join[{"Design\nVariable","Initial\nValue"},{methodSequence}]]
 
 export@GenUC[design,variable,table]=
-	XMLDocument[GenUC[design,variable,table]<>".xml",
-		DocBookTable[GenUC[design,variable,table],
+	XMLDocument[GenUC[prefix,design,variable,table]<>".xml",
+		DocBookTable[GenUC[prefix,design,variable,table],
 			"Design Variables",
 			XMLElement["phrase",{},{"The first column lists base and height ",
 				"design variables. The second column gives the initial ",
@@ -1158,6 +1158,38 @@ constraintHeaders={"Constraint\n#", methodSequence}
 GNVNOTEDFinalConstraintValuesTable=
   Prepend[MapThread[{#1,Sequence@@#2}&,{constraintLabelVector,
         constraintData}],constraintHeaders]
+
+export@GenUC[constraint,values,table]=
+	XMLDocument[GenUC[prefix,constraint,values,table]<>".xml",
+		DocBookTable[GenUC[prefix,constraint,values,table],
+			"Constraint Values",
+			XMLElement["phrase",{},{"The first column lists the constraint ",
+				"number and the units of the constraint. The data in rest of ",
+				"the columns correspond to the different methods mentioned in ",
+				XMLElement["xref",{"linkend"->GenUC[prefix,volume,table]},{}],
+				"."}],
+			GNVNOTEDFinalConstraintValuesTable/.x_Real?InexactNumberQ:>
+				NumberForm[x,{Infinity,6},NumberPadding->{"","0"},
+					NumberSigns->{"-"," "},ExponentFunction->(Null&)
+					],
+			Caption->XMLElement["para",{},{"These constraints are calculated ",
+				"using my constraint functions, ",ToXML@preExport@g[base@i,
+					height@i,segmentLength@i],", from ",XMLElement["xref",{
+					"linkend"->GenUC[prefix,constraint,identifiers]},{}],
+				" with values from ",XMLElement["xref",{"linkend"->GenUC[prefix,
+					design,variable,table]},{}],". Positive constraint values ",
+				"correspond to constraint violations. My method has much ",
+				"smaller violations than the others. Note that several of the ",
+				"constraint values from ",XMLElement["olink",{"targetdoc"->
+					"self","targetptr"->"GNVNOTED"},{}],", at least in the ",
+				"3rd edition, are incorrect and have been corrected in this ",
+				"table — try comparing manually calculated constraint 8 & 9 ",
+				"values for methods 1 & 2 to those of the text to see what I ",
+				"mean."}
+				]
+			],
+		PrependDirectory->EODExportDirectory
+		]
 
 
 (*here is an example of an actual "rendering" of the table*)
