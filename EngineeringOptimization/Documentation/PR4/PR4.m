@@ -618,7 +618,7 @@ deviatoric stress tensor/3)*)
 (*von Mises stress is the uniaxial stress that would cause the same octahedral
 shear stress as the general stress state it represents (section 6.5 part 2 and
 6.6 part 1 of Malvern)(this follows from the assumption that yielding in ductile
-materials is due to shear (instead of the compression or dialation effects of
+materials is due to shear (instead of the compression or dilation effects of
 normal stress))*)
 
 (*since the octahedral shear stress and the second invariant of the deviatoric
