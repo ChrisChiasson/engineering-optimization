@@ -1390,6 +1390,33 @@ gr@principalStressTrajectories=
 		beamPlotOptions]/.rep@ix/.rep@equalSegmentLength/.rep@given/.
 			sol[standard@equalSegmentLength][[2]]//Show
 
+(*export the principal stress trajectories graph*)
+export@GenUC[gr,principal,stress,trajectories]=
+	XMLDocument[GenUC[prefix,gr,principal,stress,trajectories]<>".xml",
+		DocBookFigure[GenUC[prefix,gr,principal,stress,trajectories],
+			"Principal Stress Trajectories",
+			"The streamlines of two vector fields are plotted on the black "<>
+				"outline of the optimized equal segment length bar.",
+			gr@principalStressTrajectories,
+			Caption->XMLElement["para",{},{"The streamlines of the (two) ",
+				"stress tensor eigenvector fields are plotted on the the ",
+				"black silouette of my optimized beam. I have colored the ",
+				"streamlines so that they are red at points where they ",
+				"correspond to the largest principal stress, and yellow when ",
+				"they are smaller. Technically, there is also third principal ",
+				"stress of magnitude zero that points out of the plane of the ",
+				"drawing — or at least it would if it weren't of zero ",
+				"magnitude. The streamlines are everywhere perpendicular to ",
+				"each other, though the differing scales of the x and y axes ",
+				"obscure that in this drawing. It is interesting to note that ",
+				"even though the stress magnitudes in different parts of the ",
+				"bar are discontinuous across segments, their principal ",
+				"directions are continuous across segments."}
+				]
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
 
 (*this color function is purple at von Mises stress == 0 and red at von Mises
 stress == maxSigmaX*)
