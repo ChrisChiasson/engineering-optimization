@@ -1433,6 +1433,40 @@ gr@vonMisesStress=Show@
 		beamPlotOptions
 		];
 
+(*export the von Mises stress graph*)
+export@GenUC[gr,von,Mises,stress]=
+	XMLDocument[GenUC[prefix,gr,von,Mises,stress]<>".xml",
+		DocBookFigure[GenUC[prefix,gr,von,Mises,stress],
+			"von Mises Stress",
+			"A picture of a density plot with colors ranging from purple to "<>
+				"red superimposed on the profile of an optimized equal "<>
+				"segment length cantilever beam",
+			gr@vonMisesStress,
+			Caption->XMLElement["para",{},{"This is the von Mises stress in ",
+				"my optimized beam resulting from the axial bending and shear ",
+				"stress (from beam theory). The von Mises stress at a point ",
+				"is the axial stress that would produce the same octahedral ",
+				"shear stress magnitude and distortion energy as the true ",
+				"general stress state at the same point. Octahedral shear ",
+				"stress is the shear stress that is active on an octahedral ",
+				"plane through the point. An octahedral plane is a plane ",
+				"whose normal makes equal angles with the principal stress ",
+				"directions. There are eight such planes. Octahedral shear ",
+				"stress is unaffected by overall pressure level in a ",
+				"material, as is the von Mises stress. Thus, von Mises stress ",
+				"is a measure of the distortion stresses in the material ",
+				"instead of the bulk dilational or contractional stresses. ",
+				"The linear color scale is the same as the drawings in the ",
+				"previous chapter, except that the minimum, purple, ",
+				"corresponds to zero and the maximum, red, to the maximum ",
+				"allowable axial stress magnitude, ",ToXML@preExport[
+					Times@@(maxSigmaX/.{rep@given,rep@variableUnit})],
+				". Notice that, for this design, the maximum von Mises stress ",
+				"on each section occurrs at the top of the left hand end."}
+				]
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 Abort[]
 
