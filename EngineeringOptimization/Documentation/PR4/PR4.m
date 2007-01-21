@@ -964,7 +964,7 @@ myEvaluationCount=0;
 				var@regularSolGuessRegion,
 				StepMonitor:>Sow[evaluationSeed,"steps"],
 				EvaluationMonitor:>
-					(++myEvaluationCount;Sow[evaluationSeed,"evals"]),
+					Sow[Prepend[evaluationSeed,++myEvaluationCount],"evals"],
 				Method->"AugmentedLagrangeMultiplier"
 				],
 			{"steps","evals"}
