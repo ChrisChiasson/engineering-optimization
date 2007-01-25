@@ -1241,8 +1241,9 @@ differential equation systems*)
 		Hold[NDSolve][
 			{part@eiVecStreamDEqns[x,y],y[0]==initialHeight},y,
 			{x,0,beamLength},
-			Method->{"EventLocator","Event"->Abs@y@x<height[i[x]]/2,
-				"EventAction":>Throw[Null,"StopIntegration"]}
+			Method->{"EventLocator","Event"->Abs@y@x-height[i[x]]/2,
+				"EventAction":>Throw[Null,"StopIntegration"],
+				"EventLocationMethod"->"LinearInterpolation"}
 			]
 		}/.rep@ix/.rep@piecewiseExpandBaseHeight/.
 			rep@equalSegmentLength/.expr_Equal:>PiecewiseExpand/@expr/.
@@ -1251,11 +1252,7 @@ differential equation systems*)
 
 (*these are the solutions for the streamlines (interpolating functions for y
 when given x)*)
-Off[NDSolve::"ndsz",Power::"infy",NDSolve::"nlnum"]
-(*switch off errors about singularities -- I cut off
-the singularities with my stopping test, but sometimes it doesn't stop "in time"
--- maybe it would be better if I could figure out how to use a non-Boolean
-stopping test*)
+Off[NDSolve::"ndsz"](*switch off stiff system warning*)
 sol@eiVecStream=ReleaseHold@Outer[
 	Hold[Flatten]@heldNDSolveEIVecSteamDEqns[x,y,##]&,{First,Last},
 	ReleaseHold[Hold[Table][initialHeight,
@@ -1263,7 +1260,7 @@ sol@eiVecStream=ReleaseHold@Outer[
 			height[1]/2/20}]/.sol[standard@equalSegmentLength][[2]]
 		]
 	]
-On[NDSolve::"ndsz",Power::"infy",NDSolve::"nlnum"]
+On[NDSolve::"ndsz"]
 
 
 (*I pull out the stream line primitives after plotting them*)
