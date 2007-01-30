@@ -1183,13 +1183,13 @@ export@GenUC[constraint,values,table]=
 				"constraint values from ",XMLElement["olink",{"targetdoc"->
 					"self","targetptr"->"GNVNOTED"},{}],", at least in the ",
 				"3rd edition, are incorrect and have been corrected in this ",
-				"table — try comparing manually calculated constraint 8 & 9 ",
+				"table \[LongDash] try comparing manually calculated constraint 8 & 9 ",
 				"values for methods 1 & 2 to those of the text to see what I ",
 				"mean."}
 				]
 			],
 		PrependDirectory->EODExportDirectory
-		]
+		];
 
 
 (*here is an example of an actual "rendering" of the table*)
@@ -1226,8 +1226,25 @@ y[x0]==y0
 the solution to the system is one streamline
 multiple initial conditions can be used to make multiple streamlines
 vec can be switched out to get the other set of streamlines*)
-eiVecStreamDEqns[x_,y_]=Thread[y'[x]==Divide@@@
-	Map[Reverse,eiVecs[x,y[x]]/.rep@eiSystemMostlySolved]]
+eiVecStreamDEqns[x_,y_]=And@@Thread[{x'@t,y'@t}==#]&/@(eiVecs[x@t,y@t]/.rep@eiSystemMostlySolved)
+
+
+eiVecStreamStartPositions=
+	List@@Flatten[
+		With[{sects=27},
+			Map[{#,0}&,
+				atag@@(beamLength*Range[1,sects-1]/sects)
+				]
+			],
+		Infinity,
+		atag
+		]
+
+
+regionFunction[x_,y_]=
+	And[-height@i@x/2<=y<=height@i@x/2,
+		0<=x<=beamLength
+		]
 
 
 (*the eigenvalues are useful for coloring the principal stress values (I use red
@@ -1235,61 +1252,58 @@ for the stress trajectory on the part where its corresponding principal stress
 is the largest in magnitude, and yellow where it isn't
 here I set up expressions for the eigenvalues and the first part of the
 differential equation systems*)
-{reppedEIVals[x_,y_,part_],
-	heldNDSolveEIVecSteamDEqns[x_,y_,part_,initialHeight_]}=
-	{part@eiVals[x,y]/.rep@eiSystemMostlySolved,
-		Hold[NDSolve][
-			{part@eiVecStreamDEqns[x,y],y[0]==initialHeight},y,
-			{x,0,beamLength},
-			Method->{"EventLocator","Event"->Abs@y@x-height[i[x]]/2,
-				"EventAction":>Throw[Null,"StopIntegration"],
-				"EventLocationMethod"->"LinearInterpolation"}
-			]
-		}/.rep@ix/.rep@piecewiseExpandBaseHeight/.
-			rep@equalSegmentLength/.expr_Equal:>PiecewiseExpand/@expr/.
-				sol[standard@equalSegmentLength][[2]]/.rep@given
+heldNDSolves=Outer[
+	Hold[NDSolve][
+		And[#1,x@0==#2[[1]],y@0==#2[[2]]],
+		{x,y},
+		{t,0,5},
+		Method->{"EventLocator",
+			"Event"->regionFunction[x@t,y@t],
+			"EventAction":>Throw[Null,"StopIntegration"]}
+		]&,
+	eiVecStreamDEqns[x,y],
+	eiVecStreamStartPositions,
+	1
+	]
 
 
 (*these are the solutions for the streamlines (interpolating functions for y
 when given x)*)
 Off[NDSolve::"ndsz"](*switch off stiff system warning*)
-sol@eiVecStream=ReleaseHold@Outer[
-	Hold[Flatten]@heldNDSolveEIVecSteamDEqns[x,y,##]&,{First,Last},
-	ReleaseHold[Hold[Table][initialHeight,
-		{initialHeight,-height[1]/2+height[1]/20,height[1]/2-height[1]/20,
-			height[1]/2/20}]/.sol[standard@equalSegmentLength][[2]]
-		]
+sol@eiVecStream=ReleaseHold[heldNDSolves/.
+	rep@ix/.rep@piecewiseExpandBaseHeight/.rep@equalSegmentLength/.
+		expr_Equal:>PiecewiseExpand/@expr/.
+			sol[standard@equalSegmentLength][[2]]/.rep@given
 	]
 On[NDSolve::"ndsz"]
 
 
 (*I pull out the stream line primitives after plotting them*)
-gr@principalStressTrajectoryLines=Cases[#,_Line,{0,Infinity}]&/@
-	Block[{$DisplayFunction=Identity},
-		ReleaseHold[Hold[Apply][Plot,{y@x,Hold[Flatten]@
-					{x,InterpolatingFunctionDomain[y]}
-				}]/.sol@eiVecStream
-			]
+gr@principalStressTrajectoryGraphs=
+	ReleaseHold@Map[
+		Hold[ParametricPlot][
+			{x@t,y@t}/.#,
+			Flatten@{t,
+				InterpolatingFunctionDomain[x/.#]
+				}
+			]&,
+		sol@eiVecStream,
+		{3}
 		]
 
 
-(*this gives a vector of colors (as described above at reppedEIVals) when given
-an (x,y) ordinate pair*)
-reppedEIValColors[x_,y_]=
-	Map[
-		Function[pos,
-			reppedEIVals[x,y,
-				Function[eiValVec,
-					If[And@@Thread[Abs@Extract[eiValVec,{pos}]>
-							Abs@Delete[eiValVec,{pos}]],
-						Red,
-						Yellow
-						]
-					]
-				]
-			],
-		Range@reppedEIVals[x,y,Length]
-		]/.ifxpr_If:>MapAt[Simplify,ifxpr,{1}]
+(*I pull out the stream line primitives after plotting them*)
+gr@principalStressTrajectoryLines=Thread[{{Yellow,Red},Cases[
+	#,
+	_Line,
+	{0,Infinity}
+	]&/@gr@principalStressTrajectoryGraphs}]
+gr@principalStressTrajectoryLines=
+	MapThread[Join,{
+		gr@principalStressTrajectoryLines,
+		Reverse[gr@principalStressTrajectoryLines]/.
+			pt:{__?NumberQ}:>{1,-1}*pt}
+		]
 
 
 (*this generates a list of Black rectangles at appropriate positions so that
@@ -1309,21 +1323,24 @@ plotRange=PlotRange->{{0,beamLength}+{-1,1}*beamLength/40,{-1,1}.35}/.rep@given
 (*or 1.2 times height 1*)
 
 (*this is the FrameLabel I use for the beam plots*)
-frameLabel=FrameLabel->(SequenceForm[#," (",Meter,")"]&/@{x,y})
+frameLabel=FrameLabel->(SequenceForm[ToString@#," (",Meter,")"]&/@{x,y})
 
 (*these are the options I use for the beam plots*)
 beamPlotOptions=
-	Sequence[plotRange,frameLabel,ImageSize->$ExportWidth,Frame->True];
+	Sequence[plotRange,frameLabel,ImageSize->$ExportWidth,Frame->True,
+		AspectRatio->1];
 
 
 (*here is an example bar with the height and segmentLength labeled --
 the bar is actually the optimum solution to the most general problem where
 vonMises stresses across the entire critical section are considered and where
 the segmentLengths are allowed to vary*)
+If[$VersionNumber<6,Arrowheads[__]=Sequence[]]
 gr@exampleBar=
 	Module[{inc=0},Graphics[beamPrimitives/.rep@ix//.
 		sol[criticalVonMises@general][[2]]/.
-		rect_Rectangle:>Sequence@@{rect,White,Text[++inc,{Mean[List@@rect[[{1,
+		rect_Rectangle:>Sequence@@{rect,Arrowheads[.04{-1,1}],
+			White,Text[++inc,{Mean[List@@rect[[{1,
 			2},1]]],.5*rect[[2,2]]}],{Red,#,ReplacePart[#,#,{{1},{2}},{{2},{
 			1}}]}&@Arrow[rect[[1]],{rect[[2,1]],rect[[1,2]]},HeadScaling->
 			Absolute],Text[segmentLength[inc],{Mean[List@@rect[[{1,2},1]]],.9*
@@ -1370,7 +1387,7 @@ export@GenUC[gr,exampleBar]=
 
 (*here, the principal stress trajectories are superimposed on the bar from
 my optimized equal segmentLength solution*)
-gr@principalStressTrajectories=
+(*gr@principalStressTrajectories=
 	Graphics[
 		{beamPrimitives,
 			MapIndexed[
@@ -1385,6 +1402,10 @@ gr@principalStressTrajectories=
 				]
 			},
 		beamPlotOptions]/.rep@ix/.rep@equalSegmentLength/.rep@given/.
+			sol[standard@equalSegmentLength][[2]]//Show*)
+gr@principalStressTrajectories=
+	Graphics[{beamPrimitives,gr@principalStressTrajectoryLines},beamPlotOptions]/.
+		rep@ix/.rep@equalSegmentLength/.rep@given/.
 			sol[standard@equalSegmentLength][[2]]//Show
 
 (*export the principal stress trajectories graph*)
@@ -1402,7 +1423,7 @@ export@GenUC[gr,principal,stress,trajectories]=
 				"correspond to the largest principal stress, and yellow when ",
 				"they are smaller. Technically, there is also third principal ",
 				"stress of magnitude zero that points out of the plane of the ",
-				"drawing — or at least it would if it weren't of zero ",
+				"drawing \[LongDash] or at least it would if it weren't of zero ",
 				"magnitude. The streamlines are everywhere perpendicular to ",
 				"each other, though the differing scales of the x and y axes ",
 				"obscure that in this drawing. It is interesting to note that ",
@@ -1456,6 +1477,9 @@ gr@vonMisesStress=Show@
 			],
 		beamPlotOptions
 		];
+
+
+
 
 (*export the von Mises stress graph*)
 export@GenUC[gr,von,Mises,stress]=
