@@ -1087,7 +1087,7 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`VariableMetric,
 		{methodOptions}]:=
 	Module[
-		{gradient,
+		{gradient,maxIterations,
 			options,solutionRules,
 			variables=variableStarts[[All,1]],
 			workingPrecision,
@@ -1098,6 +1098,8 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 			{FindMinimum`VariableMetric,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
+		maxIterations=MaxIterations/.{options};
+		If[maxIterations===Automatic,maxIterations=100];
 		gradient=List/@D[function,{variables,1}];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		monitorRules[variables,solutionRules,StepMonitor,options];
@@ -1129,7 +1131,7 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 					##
 					]&,
 				2,
-				MaxIterations/.{options}
+				maxIterations
 				][[1]];
 		{function/.solutionRules,solutionRules}
 		];
@@ -1173,7 +1175,7 @@ FindMinimum[function_,
 			optionsListValidQ[FindMinimum`SteepestDescent,{methodOptions}]:=
 	Module[
 		{gradient,
-			options,
+			options,maxIterations,
 			solutionRules,
 			variables=variableStarts[[All,1]],
 			workingPrecision,
@@ -1183,6 +1185,8 @@ FindMinimum[function_,
 			{FindMinimum`SteepestDescent,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
+		maxIterations=MaxIterations/.{options};
+		If[maxIterations===Automatic,maxIterations=100];
 		gradient=List/@D[function,{variables,1}];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		monitorRules[variables,solutionRules,StepMonitor,options];
@@ -1195,7 +1199,7 @@ FindMinimum[function_,
 				precisionGoal,
 				##]&,
 			2,
-			MaxIterations/.{options}][[1]];
+			maxIterations][[1]];
 		{function/.solutionRules,solutionRules}
 		];
 
@@ -1243,11 +1247,13 @@ FindMinimum[function_,
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`FletcherReeves,{methodOptions}]:=
 	Module[{gradient,options,solutionRules,variables=variableStarts[[All,1]],
-		workingPrecision,accuracyGoal,precisionGoal},
+		workingPrecision,accuracyGoal,precisionGoal,maxIterations},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`FletcherReeves,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
+		maxIterations=MaxIterations/.{options};
+		If[maxIterations===Automatic,maxIterations=100];
 		gradient=List/@D[function,{variables,1}];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		monitorRules[variables,solutionRules,StepMonitor,options];
@@ -1263,7 +1269,7 @@ FindMinimum[function_,
 				precisionGoal,
 				##]&,
 			2,
-			MaxIterations/.{options}][[1]];
+			maxIterations][[1]];
 		{function/.solutionRules,solutionRules}
 		];
 
@@ -1342,11 +1348,13 @@ FindMinimum[function_,
 		optionsListValidQ[FindMinimum,{opts1,opts2},excludedOptions->Method]&&
 			optionsListValidQ[FindMinimum`Powell,{methodOptions}]:=
 	Module[{options,solutionRules,variables=variableStarts[[All,1]],
-		workingPrecision,accuracyGoal,precisionGoal},
+		workingPrecision,accuracyGoal,precisionGoal,maxIterations},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`Powell,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
+		maxIterations=MaxIterations/.{options};
+		If[maxIterations===Automatic,maxIterations=100];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		monitorRules[variables,solutionRules,StepMonitor,options];
 		solutionRules=NestWhile[Apply[PowKernel[function,variables,##,options]&,
@@ -1362,7 +1370,7 @@ FindMinimum[function_,
 				##
 				]&,
 			2,
-			MaxIterations/.{options}][[1]];
+			maxIterations][[1]];
 		{function/.solutionRules,solutionRules}
 		];
 
@@ -1404,13 +1412,15 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 	opts2___?OptionQ]/;optionsListValidQ[FindMinimum,{opts1,opts2},
 		excludedOptions->Method]&&optionsListValidQ[FindMinimum`IsaacNewton,
 		{methodOptions}]:=
-	Module[{gradient,hessian,options,solutionRules,
+	Module[{gradient,hessian,options,solutionRules,maxIterations,
 		variables=variableStarts[[All,1]],workingPrecision,accuracyGoal,
 		precisionGoal},
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`IsaacNewton,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
+		maxIterations=MaxIterations/.{options};
+		If[maxIterations===Automatic,maxIterations=100];
 		gradient=List/@D[function,{variables,1}];
 		solutionRules=Rule@@@variableStarts/.ruleNumeric[workingPrecision];
 		monitorRules[variables,solutionRules,StepMonitor,options];
@@ -1425,7 +1435,7 @@ FindMinimum[function_,variableStarts:multipleGuessPseudoPatternObject,
 				##
 				]&,
 			2,
-			MaxIterations/.{options}][[1]];
+			maxIterations][[1]];
 		{function/.solutionRules,solutionRules}];
 
 
@@ -1892,6 +1902,7 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 		lagrangeMultiplierRules,
 		lagrangeMultiplierUpdates,
 		lambda,
+		maxIterations,
 		options,
 		penalties,
 		penaltyMultiplier,
@@ -1911,6 +1922,8 @@ NMinimize[{function_,constraints:multipleConstraintPatternObject},
 			{NMinimize`AugmentedLagrangeMultiplier,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,precisionGoal,
 			options];
+		maxIterations=MaxIterations/.{options};
+		If[maxIterations===Automatic,maxIterations=100];
 		penaltyMultiplierGrowthFactor="PenaltyMultiplierGrowthFactor"/.
 			{options};
 		penaltyMultiplierRule=penaltyMultiplier->
@@ -1961,7 +1974,7 @@ code can be more modular, easier to understand, and easier to debug.*)
 				##
 				]&,
 			2,
-			MaxIterations/.{options}
+			maxIterations
 			][[1]];
 		{function/.solutionRules,solutionRules}];
 
@@ -2065,3 +2078,9 @@ Update/@{NMinimize,FindMinimum};
 End[];
 
 EndPackage[];
+
+
+FindMinimum[(x-10)^2+(y-3)^2,{{x,1},{y,20}},Method->"VariableMetric"]
+
+
+
