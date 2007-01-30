@@ -818,7 +818,6 @@ FindMinimum[function_,
 			workingPrecision
 			},
 		First@Sort@Reap[
-		1+999;
 		options=parseOptions[{methodOptions,opts1,opts2},
 			{FindMinimum`Unimodal,FindMinimum}];
 		definePrecisionAndAccuracy[workingPrecision,accuracyGoal,
@@ -1205,7 +1204,6 @@ FindMinimum[function_,
 
 
 (*Fletcher-Reeves*)
-
 fRKernel[function_,variables:multipleExpressionPatternObject,
 	solutionRules:multipleNonComplexNumberRulePatternObject,
 	gradientSymbolic:vectorExpressionPatternObject,
@@ -1228,8 +1226,12 @@ fRKernel[function_,variables:multipleExpressionPatternObject,
 		solutionRulesNew=solutionRulesNew/.displacementRule;
 		monitorRules[variables,solutionRulesNew,StepMonitor,opts];
 		gradientNumericNew=gradientSymbolic/.solutionRulesNew;
-		betaNew=Transpose[gradientNumericNew].gradientNumericNew/
-			Transpose[gradientNumeric].gradientNumeric//singleElementScalar;
+		betaNew=If[Norm[gradientNumeric]===0.,
+					0,
+					Transpose[gradientNumericNew].gradientNumericNew/
+						Transpose[gradientNumeric].gradientNumeric//
+							singleElementScalar
+					];
 		{solutionRulesNew,gradientNumericNew,searchDirection,betaNew}];
 
 defineBadArgs@fRKernel;
@@ -2078,9 +2080,3 @@ Update/@{NMinimize,FindMinimum};
 End[];
 
 EndPackage[];
-
-
-FindMinimum[(x-10)^2+(y-3)^2,{{x,1},{y,20}},Method->"VariableMetric"]
-
-
-
