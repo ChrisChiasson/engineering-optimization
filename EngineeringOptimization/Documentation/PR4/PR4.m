@@ -94,8 +94,8 @@ centi=1/100
 
 
 (*given*)
-rep@given={endLoad->-50000,youngsModulus->2.0*10^7/centi^2,beamLength->500*centi,
-		maxSigmaX->14000/centi^2,maxDeflection->2.5*centi}
+rep@given={endLoad->-50000,youngsModulus->2.0*10^7/centi^2,
+	beamLength->500*centi,maxSigmaX->14000/centi^2,maxDeflection->2.5*centi}
 
 rep@variableUnit={endLoad->Newton,youngsModulus->Pascal,beamLength->Meter,
 	maxSigmaX->Pascal,maxDeflection->Meter}
@@ -1183,9 +1183,9 @@ export@GenUC[constraint,values,table]=
 				"constraint values from ",XMLElement["olink",{"targetdoc"->
 					"self","targetptr"->"GNVNOTED"},{}],", at least in the ",
 				"3rd edition, are incorrect and have been corrected in this ",
-				"table \[LongDash] try comparing manually calculated constraint 8 & 9 ",
-				"values for methods 1 & 2 to those of the text to see what I ",
-				"mean."}
+				"table\[LongDash]try comparing manually calculated constraint ",
+				"8 & 9 values for methods 1 & 2 to those of the text to see ",
+				"what I mean."}
 				]
 			],
 		PrependDirectory->EODExportDirectory
@@ -1226,7 +1226,8 @@ y[x0]==y0
 the solution to the system is one streamline
 multiple initial conditions can be used to make multiple streamlines
 vec can be switched out to get the other set of streamlines*)
-eiVecStreamDEqns[x_,y_]=And@@Thread[{x'@t,y'@t}==#]&/@(eiVecs[x@t,y@t]/.rep@eiSystemMostlySolved)
+eiVecStreamDEqns[x_,y_]=And@@Thread[{x'@t,y'@t}==#]&/@(eiVecs[x@t,y@t]/.
+	rep@eiSystemMostlySolved)
 
 
 eiVecStreamStartPositions=
@@ -1280,7 +1281,7 @@ On[NDSolve::"ndsz"]
 
 (*I pull out the stream line primitives after plotting them*)
 gr@principalStressTrajectoryGraphs=
-	ReleaseHold@Map[
+	Block[{$DisplayFunction=Identity},ReleaseHold@Map[
 		Hold[ParametricPlot][
 			{x@t,y@t}/.#,
 			Flatten@{t,
@@ -1289,7 +1290,7 @@ gr@principalStressTrajectoryGraphs=
 			]&,
 		sol@eiVecStream,
 		{3}
-		]
+		]]
 
 
 (*I pull out the stream line primitives after plotting them*)
@@ -1404,8 +1405,9 @@ my optimized equal segmentLength solution*)
 		beamPlotOptions]/.rep@ix/.rep@equalSegmentLength/.rep@given/.
 			sol[standard@equalSegmentLength][[2]]//Show*)
 gr@principalStressTrajectories=
-	Graphics[{beamPrimitives,gr@principalStressTrajectoryLines},beamPlotOptions]/.
-		rep@ix/.rep@equalSegmentLength/.rep@given/.
+	Graphics[
+		{beamPrimitives,gr@principalStressTrajectoryLines},beamPlotOptions
+		]/.rep@ix/.rep@equalSegmentLength/.rep@given/.
 			sol[standard@equalSegmentLength][[2]]//Show
 
 (*export the principal stress trajectories graph*)
@@ -1423,7 +1425,7 @@ export@GenUC[gr,principal,stress,trajectories]=
 				"correspond to the largest principal stress, and yellow when ",
 				"they are smaller. Technically, there is also third principal ",
 				"stress of magnitude zero that points out of the plane of the ",
-				"drawing \[LongDash] or at least it would if it weren't of zero ",
+				"drawing\[LongDash]or at least it would if it weren't of zero ",
 				"magnitude. The streamlines are everywhere perpendicular to ",
 				"each other, though the differing scales of the x and y axes ",
 				"obscure that in this drawing. It is interesting to note that ",
@@ -1464,22 +1466,26 @@ gr@vonMisesStress=Show@
 							pRange[[1,1]]<=x<=pRange[[1,2]]
 							],
 							Sequence@@MapThread[Prepend,{pRange,{x,y}}],
+							ColorFunctionScaling->False,
 							ColorFunction->(Hue[myColorFun[1]@#]&),
-							PlotPoints->333
+							PlotPoints->If[$VersionNumber<6,333,30]
 							],
-						Raster[array_List,___List,opts__?OptionQ]:>
-							Raster[array,Transpose@pRange,
-								ColorFunctionScaling->False,opts
-								],
+						Raster[array_List,___List,opts__?OptionQ]|
+							gc_GraphicsComplex:>
+								If[Length@{array}>0,
+									Raster[array,
+										Transpose@pRange,
+										ColorFunctionScaling->False,
+										opts
+										],
+									gc
+									],
 						{0,Infinity}
 						]
 					]
 			],
 		beamPlotOptions
-		];
-
-
-
+		]
 
 (*export the von Mises stress graph*)
 export@GenUC[gr,von,Mises,stress]=
@@ -1516,7 +1522,29 @@ export@GenUC[gr,von,Mises,stress]=
 		PrependDirectory->EODExportDirectory
 		];
 
-Abort[]
+
+filesToTransport={"pr_4_screenshot_assignment.png"};
+
+If[EODExport===True,
+	Export@@@#&/@ReleaseHold@DownValues[export][[All,1]];
+		pwd=InputDirectoryName[];
+		CopyFile[
+			ToFileName[
+				pwd,
+				#
+				],
+			ToFileName[
+				EODExportDirectory,
+				#
+				],
+			Overwrite->True
+			]&/@filesToTransport;
+		CopyFile[InputFileName[],
+			ToFileName[EODExportDirectory,InputFileBaseName[]],
+			Overwrite->True
+			]
+	]
+
 
 End[];
 
