@@ -286,8 +286,8 @@ graphicsPrimitives[2][xp1_?NumericQ,yp1_?NumericQ,xp2_?NumericQ,yp2_?NumericQ,
 				pt1+(pt2-pt1+pt4-pt1)/2,{0,0},dir]
 		}];
 
-graphicsOptions=Sequence[PlotRange->All,Axes->True,AxesLabel->{X[P],Y[P]},
-	AspectRatio->Automatic,ImageSize->$ExportWidth];
+graphicsOptions=Sequence[PlotRange->{4.5{-1,1},2.5{-1,1}},Frame->True,
+	FrameLabel->{X[P],Y[P]},AspectRatio->Automatic,ImageSize->$ExportWidth];
 
 graph[1]=Graphics[
 	{graphicsPrimitives[1],
