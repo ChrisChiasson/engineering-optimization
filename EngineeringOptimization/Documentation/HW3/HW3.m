@@ -186,11 +186,17 @@ rangeSpec[4,4]={{X@1,X@1-2/.sol[4,4][[2]],X@1+2/.sol[4,4][[2]]},
 
 regionFunction[4,4][X1_,X2_]=eqns[4,4,#][X1,X2]&/@And@@Range[2,5];
 
+version6=If[$VersionNumber>=6,Identity[Sequence][##],Identity[Sequence][]]&
+
+version5=If[$VersionNumber<6,Identity[Sequence][##],Identity[Sequence][]]&
+
 Block[{$DisplayFunction=Identity},
     gr[4,4,1]=
       ReleaseHold@
         Hold[ContourPlot][eqns[4,4,1][X@1,X@2][[2]],Sequence@@rangeSpec[4,4],
-          ColorFunction->(Hue[.7,1-#,1]&)];
+			ColorFunction->(Hue[.7,1-#,1]&),
+				version6[PlotPoints->30,
+					RegionFunction->(regionFunction[4,4][#1,#2]&)]];
     gr[4,4,2]=
       InequalityPlot[!regionFunction[4,4][X@1,X@2],
           Apply[Sequence,#+{0,-0.02,0.02}&/@rangeSpec[4,4]],
@@ -203,7 +209,7 @@ the project more easily.*)
 
 gr[4,4,3]=
 	Show[gr[4,4,1],
-		gr[4,4,2],
+		version5@gr[4,4,2],
 		With[{solVector={X@1,X@2}/.sol[4,4][[2]]},
 			Graphics[
 				{Thickness[0.01],Dashing[{.05,.025}],Red,
@@ -342,7 +348,9 @@ Block[{$DisplayFunction=Identity},
     gr[4,5,1]=
       ReleaseHold@
         Hold[ContourPlot][eqns[4,5,1][X@1,X@2][[2]],Sequence@@rangeSpec[4,5],
-          ColorFunction->(Hue[.7,1-#,1]&)];
+          ColorFunction->(Hue[.7,1-#,1]&),
+          	version6[PlotPoints->30,
+					RegionFunction->(regionFunction[4,5][#1,#2]&)]];
     gr[4,5,2]=
       InequalityPlot[!regionFunction[4,5][X@1,X@2],
           Apply[Sequence,#+{0,-0.02,0.02}&/@rangeSpec[4,5]],
@@ -352,7 +360,7 @@ gr[4,5,3]=
 	With[{solVector={X@1,X@2}/.sol[4,5][[2]]},
 		Show[
 			gr[4,5,1],
-			gr[4,5,2],
+			version5@gr[4,5,2],
 			Graphics[
 				{Thickness[0.01],Dashing[{.05,.025}],Red,
 					Line[{{0,rangeSpec[4,5][[2,-1]]},{0,2},{1,0},
