@@ -222,7 +222,8 @@ Block[{$DisplayFunction=Identity},
 			xpr[poly],
 			plotRangeSpecs[poly],
 			Mesh->False,
-			PlotPoints->400
+			PlotPoints->If[$VersionNumber<6,400,30],
+			ColorFunction->GrayLevel
 			];
 	contourPlot[poly]=ReleaseHold@
 		Hold[ContourPlot][
