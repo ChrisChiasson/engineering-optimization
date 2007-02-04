@@ -98,8 +98,12 @@ FractionAlongCoordinates[points_List,fraction_?NumericQ]:=
 
 Options@LabelLines={RegionFunction->(True&)};
 
+cGHead=If[$VersionNumber<6,ContourGraphics,Graphics]
+
+norm=If[$VersionNumber<6,Graphics,Normal]
+
 LabelLines[
-	graph_ContourGraphics,
+	graph_cGHead,
 	textFunction_,
 	fractions:{__?NumericQ}?VectorQ/;And@@(0<=#<=1&/@fractions),
 	options___?OptionQ
@@ -107,7 +111,7 @@ LabelLines[
 	With[{opts=Flatten@{options,Options@LabelLines}},
 		With[{regionFunction=RegionFunction/.opts},
 			textFunction@FractionAlongCoordinates[#,fractions]&@@@
-				Cases[Cases[Graphics@graph,_Line,Infinity]/.
+				Cases[Cases[norm@graph,_Line,Infinity]/.
 					{pair__?NumberQ}:>
 						If[regionFunction[pair],
 							{pair},
