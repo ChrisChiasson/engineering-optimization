@@ -155,7 +155,8 @@ velocityIntensity[t_]=Total[Norm/@Partition[D[var[1],t],2]/.sol[4][[1]]];
 (*what is the maximum rate of change over the time interval 0 to
 finalAnimationTime?*)
 
-sol[5]=NMaximize[{velocityIntensity[t],0<t<finalAnimationTime},t];
+(*sol[5]=NMaximize[{velocityIntensity[t],0<t<finalAnimationTime},t];*)
+sol[5]=FindMaximum[velocityIntensity@t,{t,0,0,2}]
 
 (*what is the time rate of change of movement at each time?*)
 
@@ -165,7 +166,8 @@ accelerationIntensity[t_]=
 (*what is the maximum rate of change of momvement over the time interval
 0 to finalAnimationTime?*)
 
-sol[6]=NMaximize[{accelerationIntensity[t],0<t<finalAnimationTime},t];
+(*sol[6]=NMaximize[{accelerationIntensity[t],0<t<finalAnimationTime},t];*)
+sol[6]=FindMaximum[accelerationIntensity@t,{t,2,0,5}]
 
 (*the frame rate is a function of the base frame rate and the present time -
 acceleration and velocity have equal weighting here*)
