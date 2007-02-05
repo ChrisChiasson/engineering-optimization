@@ -66,7 +66,8 @@ eqns[5,4,3][x1_,x2_]=x1>=0;
 
 (*this gives the domain of the function on which we want to optimize*)
 
-regionFunction[5,4][x1_,x2_]=eqns[5,4,#][x1,x2]&/@And[2,3];
+regionFunction[5,4][x1_,x2_]=Block[{LessEqual=Less,GreaterEqual=Greater},
+	eqns[5,4,#][x1,x2]&/@And[2,3]];
 
 (*we're only using penalty terms in problem 5-4, which requests the extended
 quadratic method*)
@@ -104,9 +105,15 @@ export[obj54]=
 
 (*contour plot the objective function with rpPrime==1 and 1/2*)
 
+version6=If[$VersionNumber>=6,Identity[Sequence][##],Identity[Sequence][]]&
+
+version5=If[$VersionNumber<6,Identity[Sequence][##],Identity[Sequence][]]&
+
 gr[5,4,1,rp_]:=gr[5,4,1,rp]=
 	Block[{$DisplayFunction=Identity},
-		ContourPlot@@{objective[5,4][whatever,rp,-2][varSeq],
+		ContourPlot@@{
+			(FunctionInterpolation@@({objective[5,4][whatever,rp,-2][varSeq],
+				rng[varSeq]}/.Thread[varList->{X1,X2}]))[varSeq],
 						rng[varSeq],(*Most@*)HW5ContourPlotOptions
 						}
 		];
@@ -117,7 +124,7 @@ gr[5,4,1,rp_]:=gr[5,4,1,rp]=
 
 nSameQ=EngineeringOptimization`Private`nSameQ;
 
-firstContourLabels[graph_ContourGraphics,func_,contours:{__?NumberQ},
+firstContourLabels[graph_,func_,contours:{__?NumberQ},
 				accuracyGoal_?NumberQ,precisionGoal_?NumberQ,opts___?OptionQ]:=
 	Module[{requiredContours=contours,match},
 		Graphics@LabelLines[graph,
@@ -145,14 +152,16 @@ gr[5,4,2,rp_]:=gr[5,4,2,rp]=firstContourLabels[gr[5,4,1,rp],
 (*label the minimum*)
 
 solutionLabel[solValue_,solVector:{_,_},labelOffset:{_,_}:{0,0}]:=
-	Graphics@{Black,
+	Graphics@{
+		Green,PointSize[0.03],Point[solVector],
+		Black,
 		Text[
 			DisplayForm@Cell[
-				StripBoxes@ToBoxes@N[solValue,2],Background->White
+				StripBoxes@ToBoxes@N[solValue,2],
+					Background->version5@White version6@RGBColor[1,1,1,0.8]
 				],
 			N@solVector,labelOffset
-			],
-		Green,PointSize[0.03],Point[solVector]
+			]
 		};
 
 gr[5,4,3,rp_]:=gr[5,4,3,rp]=
@@ -412,7 +421,7 @@ inequalityBoundaryGraphics[inequalityList_List,{varRange1:{x1_,__?NumberQ},
 				blockVars=Union@Cases[{x1,x2},symb_Symbol/;
 				Context@Unevaluated@symb===Context[],Infinity,Heads->True]
 				},
-			MapIndexed[Cases[Graphics@ImplicitPlot[#/.equalRep,varRange1,
+			MapIndexed[Cases[Graphics@Normal@ImplicitPlot[#/.equalRep,varRange1,
 				varRange2],_Line,Infinity]/.{pnt:{__?NumberQ}:>Block[blockVars,
 				{x1,x2}=pnt;If[And@@Delete[inequalityList,#2],pnt,Identity[
 				Sequence][]]]}&,inequalityList]
@@ -441,7 +450,10 @@ domainConPlot[{xpr_,inequalityList_List},{varRange1:{x1_,__?NumberQ},
 	Show@@Block[{$DisplayFunction=Identity},
 		With[{blockVars=Union@Cases[{x1,x2},symb_Symbol/;
 					Context@Unevaluated@symb===Context[],Infinity,Heads->True],
-				conPlot=ContourPlot[xpr,varRange1,varRange2,contourPlotOptions],
+				conPlot=ContourPlot@@{xpr,varRange1,varRange2,
+					contourPlotOptions,version6[PlotPoints->30,
+						RegionFunction->Map[Function,
+							And@@inequalityList/.{x1->#1,x2->#2},{0}]]},
 				contoursToLabel=ContoursToLabel/.{opts}/.Options@domainConPlot,
 				contourInterval=ContourInterval/.{opts}/.Options@domainConPlot,
 				solutionLabelFunction=SolutionLabelFunction/.{opts}/.
@@ -458,12 +470,13 @@ domainConPlot[{xpr_,inequalityList_List},{varRange1:{x1_,__?NumberQ},
 								textFunction[GetClosest[contoursToLabel,
 									functionVal],{##}],Identity[Sequence][]]]&]
 						},
-					{conPlot,InequalityPlot[!And@@inequalityList,Sequence@@
+					{conPlot,version5@
+						InequalityPlot[!And@@inequalityList,Sequence@@
 							(#+inequalityScale{0,-1,1}&/@{varRange1,varRange2}),
 							inequalityPlotOptions],
 						inequalityBoundaryGraphics[inequalityList,{varRange1,
 							varRange2},inequalityBoundaryDirectives],
-						Graphics@LabelLines[conPlot,labelFunction@@@#&,
+						Graphics@LabelLines[Normal@conPlot,labelFunction@@@#&,
 							fractions,RegionFunction->regionFunction],
 						solutionLabelFunction[minimumVal,minimumRules[[All,2]],
 							minimumOffset]
@@ -496,9 +509,9 @@ Function[{problemSpec,constraintRange,fraction,solutionTextOffset},
 			ContoursToLabel->reqContours,
 			ContourInterval->Interval[{-1,1}+Through[{First,Last}[reqContours]]]
 		]
-	]@@@{{{5,4},Range[2,3],.3,-{1,1}},
+	]@@@{{{5,4},Range[2,3],version5@.3 version6@.5,-{1,1}},
 			{{5,5},{2},.5,{1,-1}},
-			{{5,6},{2},0.9,-{1,1}}
+			{{5,6},{2},version5@.9 version6@.5,-{1,1}}
 		};
 
 (*the results are stored in the DownValues of optGr according to problem number:
