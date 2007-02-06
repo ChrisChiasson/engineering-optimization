@@ -301,7 +301,7 @@ gprim[1]=
 (*Plot the function and the 20000 N load line.*)
 (*make a plot with the same data as the table*)
 
-gr[1]=Plot[{beamLoad[X]/.dropSIUnitsRep,loadLine},
+gr[1]=Plot@@{{beamLoad[X]/.dropSIUnitsRep,loadLine},
 	{X,0,25/100},
 	PlotStyle->{Black,Red},
 	AxesLabel->{
@@ -310,8 +310,9 @@ gr[1]=Plot[{beamLoad[X]/.dropSIUnitsRep,loadLine},
 		},
 	Epilog->{gprim[1]},
 	PlotRange->All,
-	ImageSize->$ExportWidth
-	];
+	ImageSize->$ExportWidth,
+	If[$VersionNumber>=6,PlotRangeClipping->False,Identity[Sequence][]]
+	};
 
 (*export the table*)
 
