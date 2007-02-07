@@ -16,7 +16,11 @@ $ExportWidth=Round[5.*72]; (*printers points*)
 
 $PrintResolution=300; (*dpi*)
 
-$ScreenResolution=86; (*dpi*)
+(*$ScreenResolution=86; *)(*dpi*)
+
+EngineeringOptimization`Documentation`oldContourPlotOptions=Options@ContourPlot
+
+SetOptions[ContourPlot,Contours->10,ColorFunction->GrayLevel]
 
 If[!ValueQ[EODExport],EODExport=True];
 
