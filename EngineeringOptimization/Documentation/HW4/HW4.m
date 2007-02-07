@@ -123,7 +123,9 @@ Block[{$DisplayFunction=Identity},
       ReleaseHold@
         Hold[ContourPlot][eqns[4,1,1][X@3,X@4][[2]],Sequence@@rangeSpec[4,1],
           ColorFunction->(Hue[.7,1-#,1]&),version6[PlotPoints->30,
-					RegionFunction->(regionFunction[4,1][#1,#2]&)]];
+				RegionFunction->(regionFunction[4,1][#1,#2]&),Contours->Sort@
+					{8.86,10.01,11.15,7.72,6.57,5.43,4.28,3.14,1.99,0.85}]
+			];
     gr[4,1,2]=
       InequalityPlot[!regionFunction[4,1][X@3,X@4],
           Apply[Sequence,#+{0,-0.02,0.02}&/@rangeSpec[4,1]],
@@ -157,7 +159,13 @@ gr[4,1,3]=
 									gr[4,1,1],
 									First@#&,
 									0.5,
-									RegionFunction->regionFunction[4,1]
+									version5[
+										RegionFunction->regionFunction[4,1]
+										],
+									version6[
+										RegionFunction->
+											(eqns[4,1,1][##][[2]]>6.5&)
+										]
 									],
 								Mean[{solVector,{6/5,8/5}}]
 								]
@@ -276,7 +284,10 @@ Block[{$DisplayFunction=Identity},
       ReleaseHold@
         Hold[ContourPlot][eqns[4,3,1][X@1,X@2][[2]],Sequence@@rangeSpec[4,3],
           ColorFunction->(Hue[.7,1-#,1]&),version6[PlotPoints->30,
-					RegionFunction->(regionFunction[4,3][#1,#2]&)]];
+				RegionFunction->(regionFunction[4,3][#1,#2]&),Contours->
+					Sort@{-1.44,0.85,3.15,5.44,-3.73,-6.02,-8.31,7.73,10.02,
+						12.31}]
+			];
     gr[4,3,2]=
       InequalityPlot[!regionFunction[4,3][X@1,X@2],
           Apply[Sequence,#+{0,-0.02,0.02}&/@rangeSpec[4,3]],
