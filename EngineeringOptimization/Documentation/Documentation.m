@@ -8,7 +8,8 @@ Optimization Documentaiton.";
 
 Begin["`Private`"];
 
-$TextStyle={FontSize->10,FontFamily->"Times New Roman"};
+$TextStyle={FontSize->10,If[$VersionNumber>=6,Identity[Sequence][],
+	FontFamily->"Times New Roman"]};
 
 $FormatType=TraditionalForm;
 
