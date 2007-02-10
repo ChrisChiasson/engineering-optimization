@@ -15,7 +15,7 @@ prefix="pr_4";
 (MakeBoxes[#,_]=#2)&@@@
 	{{sectionModulus,"I"},{youngsModulus,"E"},{displacement,"v"},{shear,"V"},
 		{moment,"M"},{load,"q"},{segmentLength,"l"},{beamLength,"L"},
-		{endLoad,"P"},{base,"b"},{height,"h"},{overallX,"x"},
+		{endLoad,"P"},{base,"b"},{height,"h"},
 		{staticAreaMoment,"Q"},{sig,"\[Sigma]"},{lam,"\[Lambda]"},{Meter, "m"},
 		{maxSigmaX,OverscriptBox["\[Sigma]","_"]},{Newton,"N"},{Pascal,"Pa"},
 		{maxDeflection,OverscriptBox["v","_"]},{maxI,"\[ScriptCapitalN]"},
@@ -136,9 +136,11 @@ export@given=
 		];
 
 
-(*section modulus, I, and first or static moment of area, Q, with respect to
+(*
+Section modulus, I, and first, or static, moment of area, Q, with respect to
 height above the neutral axis for a rectangular cross section aligned with the
-axes*)
+axes:
+*)
 rep@areaMoment={sectionModulus[i_]->
 	Integrate[
 		Integrate[y^2,{y,-height[i]/2,height[i]/2}],
@@ -173,23 +175,51 @@ shear is positive if it is up on left
 shear is positive if it is down on right
 moment is positive if it is ccw on right
 *)
+(*
+The first part of rep@momentShearLoad@displacement is the differential
+equation controling elastic (Hookean) prismatic beam bending under the
+assumptions that the first derivative of (transverse) deflections are small,
+so 1 over the radius of curvature can be approximated by the second
+derivative of transverse displacement with respect to the axial
+coordinate, and that plane sections of the beam remain plane after bending,
+so that strain=-y/rho where rho is the radius of curvature and
+strain=strain[x] if the material is elastic. Use of Hooke's law,
+stress[x]=E*strain[x], and sum of the moments and forces equals zero to
+show M=E*I/rho is also required.
+References: section 8-2, 14-2 and 14-3 of Engineering Mechanics of Solids 2nd
+ed. by Popov)
+*)
+(*
+rep@momentShearLoad@displacement is the differential equation that is active
+on all segments of our beam because there are no distributed loads
+*)
+(*
+there is one point load, but it is included as a shear boundary condition
+instead of a singularity function (Dirac delta)
+*)
+rep@momentShearLoad@displacement={
+		moment[x_]->displacement''[x]*youngsModulus*sectionModulus,
+		shear[x_]->moment'[x],load[x_]->moment''[x]
+		}
 
-(*the first part of rep@momentShearLoad@displacement is the differential
-equation controling elastic
-(Hookean) prismatic beam bending under the assumptions that the (transverse)
-deflections are small (so 1 over the radius of curvature can be approximated by
-the second derivative of transverse displacement with respect to the axial
-coordinate) and that plane sections of the beam remain plane after bending
-(so that strain=-y/rho (where rho is the radius of curvature and
-strain=strain[x] if the material is elastic))
-(use of Hooke's law (stress[x]=E*strain[x]) and sum of the moments and forces to
-show M=E*I/rho is also required)
-(ref section 8-2, 14-2 and 14-3 of Engineering Mechanics of Solids 2nd ed. by
-Popov)*)
 
-(*the second derivative of the moment being the load comes from combining the
+(*
+The second derivative of the moment being the load comes from combining the
 results of the sum of the moments (transverse to the beam) and the sum of the
-forces (axially) (ref section 7-9 Popov)*)
+forces (axially).
+Reference: section 7-9 of Popov
+*)
+(*
+As is the custom with vectors represented by unknown scalar components, a
+direction for each component is first assumed. Then, all component scalar
+magnitudes are determined. Trying to solve for the scalars without assuming
+a sense for each vector component will lead to errors.
+*)
+(*
+In this case, all vectors can be expressed with only one component, and so
+are assumed to be in line with the positive direction of the coordinate axis
+to which they are parallel.
+*)
 eqn@momentShearLoad@loading={moment''[x]==0,moment'[beamLength]==-endLoad,
 	moment[beamLength]==0,shear[x]==moment'[x],load[x]==shear'[x]}
 
@@ -219,6 +249,8 @@ export@GenUC[eqn,momentShearLoad,loading]=
 		PrependDirectory->EODExportDirectory
 		];
 
+
+(*solutions for the moment, shear, and loading on a beam segment*)
 rep@momentShearLoad@loading=
 	DSolve[eqn@momentShearLoad@loading,
 		{moment,shear,load},x
@@ -245,24 +277,16 @@ export@GenUC[prefix,eqn,momentShearLoad,loading,solution]=
 		PrependDirectory->EODExportDirectory
 		];
 
-(*rep@momentShearLoad@displacement is the differential equation that is active
-on all segments of our beam because there are no distributed loads*)
 
-(*there is one point load, but it is included as a shear boundary condition
-instead of a singularity function (Dirac delta)*)
-rep@momentShearLoad@displacement={
-		moment[x_]->displacement''[x]*youngsModulus*sectionModulus,
-		shear[x_]->moment'[x],load[x_]->moment''[x]
-		}
-
-
-(*in fact, I am going to use the static determinacy of the problem to avoid
-solving simultanous equations for several integration coefficients*)
-
-(*notice I am specifying the boundary conditions on the left hand side -- that
-is because I am using the reactions*)
-
-(*the solution on any segment (where x is a variable that is the location on the
+(*
+I use the static determinacy of the problem to avoid
+solving simultanous equations for boundary conditions (integration coefficients)
+on each beam segment. This allows me to specify four initial conditions on each
+beam segment left end instead of two boundary conditions on each end of each
+segment.
+*)
+(*
+The solution on any segment (where x is a variable that is the location on the
 axis of that segment - not the overall x location) is a function of C[1], which
 is the transverse displacement at x = 0, C[2], which is the slope of the
 transverse displacement at x=0, M[0], which is the moment at x=0, and V[0],
@@ -271,8 +295,18 @@ reactions. C[1] and C[2] are given by the boundary conditions at the wall, where
 I will assume them to both be zero. Given these values on the left hand end, I
 can use the solution to compute them at the right hand end -- which corresponds
 to the left hand end of the next segment -- so I can propagate the solution
-easily.*)
-eqn@displacement=
+easily.
+*)
+(*
+The cantilever beam end load is assumed to act vertically upward, even though
+after substitution of the endLoad variable, we see that this is the wrong
+assumption.
+*)
+(*
+The moment and shear are based on the second and third derivatives of the
+transverse displacement.
+*)
+eqn@displacement[i_,x_]=
 	{moment[i,0]==Derivative[0,2][displacement][i,0]*youngsModulus*
 		sectionModulus[i],
 		shear[i,x]==Derivative[0,3][displacement][i,x]*youngsModulus*
@@ -288,14 +322,14 @@ export@GenUC[eqn,displacement]=
 	XMLDocument[GenUC[prefix,eqn,displacement]<>".xml",
 		DocBookEquation[GenUC[prefix,eqn,displacement],
 			"Differential Equations of Displacement on a Section",
-			DocBookEquationSequence@@eqn[displacement],
+			DocBookEquationSequence@@eqn@displacement[i,x@i],
 			TitleAbbrev->"Section Displacement Differential Equations",
 			Caption->
 				XMLChain@XMLElement["para",{},{"From the same beam theory as ",
 					"the equations above, the transverse displacement in the ",
-					"local coordinate system of each beam segment \[LongDash] ",
+					"local coordinate system of each beam segment\[LongDash]",
 					ToXML@preExport@x@i," is zero at each of their left hand ",
-					"ends \[LongDash] is differentially related to the ",
+					"ends\[LongDash]is differentially related to the ",
 					"bending moment and shear functions via these equations. ",
 					"Unlike ",XMLElement["olink",{"targetdoc"->"self",
 						"targetptr"->"GNVNOTED"},{}],", I use ",ToXML@preExport@
@@ -310,6 +344,11 @@ export@GenUC[eqn,displacement]=
 		PrependDirectory->EODExportDirectory
 		];
 
+
+(*
+the solution, with undetermined coefficients, for the displacement
+within a segment:
+*)
 rep@displacement[i_,x_]=
 	MapAt[Collect[#,x]&,
 		DSolve[
@@ -320,12 +359,27 @@ rep@displacement[i_,x_]=
 						eqn
 						]
 					],
-				eqn@displacement
+				eqn@displacement[i,x]
 				],
 			displacement[i,x],x,GeneratedParameters->(c[i,#1]&)
 			],
 		{1,1,2}
 		]
+
+(*From the differential relations given above:
+1. The shear will be constant if the load function is zero. Thus, the shear at
+the right hand end of any segment is equal to the shear at the left hand end.
+
+2. The moment is a linear function of axial distance if the shear is constant.
+
+3. The slope of the transverse displacement is a quadratic function of x. It
+increases by an ammount proportional to the square of the segment length. Its
+value on the right end of a segment is dependant on all the left end  boundary
+conditions except the displacment.
+
+4. The transverse displacement is a cubic function of x. The right end
+displacement is dependant on all the other boundary conditions on the left end.
+*)
 
 export@GenUC[rep,displacement]=
 	XMLDocument[GenUC[prefix,rep,displacement]<>".xml",
@@ -349,63 +403,21 @@ export@GenUC[rep,displacement]=
 		PrependDirectory->EODExportDirectory
 		];
 
+
 (*
-1. The shear will be constant if the load function is zero. Thus, the shear at
-the right hand end is equal to the shear at the left hand end.
-
-2. The moment is a linear function of x if the shear is constant.
-
-3. The slope of the transverse displacement is a quadratic function of x. It
-increases by an ammount proportional to the square of the segment length. Its
-value on the right end is dependant on all the left end  boundary conditions
-except the displacment.
-
-4. The transverse displacement is a cubic function of x. The right end
-displacement is dependant on all the other boundary conditions on the left end.
+I provide initial conditions at index 1; the recurrence relations or
+difference equations in eqn@c[i_] are used to back out the generalized
+expression for the inital conditions of all sections. The recurrence
+relations are the relationships between the undetermined coefficients
+at the left end of a segment and the undetermined coefficients
+at the left end of a subsequent segment through the general solution
+to the differential equations given above.
 *)
-
-(*a condition update list can be used to express equation sets three and four in
-a discrete form by replacing the segment's local axial position with the
-segment's length -- the conditions on the right side of a segment are equal
-to the conditions on the left side of another segment (due to continuity and
-to moment and shear sign conventions)*)
-
-(*reps 4, 5 & 6 help rewrite the equations so that it is apparent they are only
-applicable within a section - not across the discontinuities (from cross
-section changes)*)
-
-(*eqn 3 is the listing of zero through fourth order derivatives of the
-transverse displacment*)
-
-(*the moment and shear are based on the second and third derivatives of the
-transverse displacement*)
-
-(*equation set 7 is a set of difference equations that are separable - I solve
-them using RSolve after determining the boundary/initial conditions (see comment
-above about using statically determinate reactions to convert the boundary value
-problem into an inital value problem)*)
-
-(*eqn 8 contains the initial conditions, two of which are obtained by using
-the static determinacy of the problem to eliminate boundary conditions*)
-
-(*as is the custom with vectors represented by unknown scalar components, a
-direction is first assumed -- then all component scalars are determined*)
-
-(*in this case, all vectors are assumed to be in line with the positive
-direction of the coordinate axis to which they are parallel*)
-
-(*the cantilever beam end load is assumed to act vertically upward (even though
-after substitution of the endLoad variable, we see that this is the wrong
-assumption)*)
-
-(*the second negative on moment[1,0] is due to the assumed direction for our
-reaction vector being opposite that of our sign convention for internal
-moments*)
-
-
-(*I will provide initial conditions at index 1, the recurrence relations or
-difference equations in equation set 7 will be used to back out the generalized
-expression for the inital conditions of all sections*)
+(*
+The conditions on the right side of a segment are equalto the conditions
+on the left side of another segment due to continuity and to moment and
+shear sign conventions.
+*)
 initCondIndex=1
 
 eqn@c[i_]={c[i+1,1]==displacement[i,segmentLength[i]]/.
@@ -447,7 +459,7 @@ second argument.
 
 A different problem arises in MMA6, it causes the unknown variable to be zero,
 generating a sequence of garbage terms that will be canceled out by terms in
-the remaining sum.
+the remaining sum. endRSolveMadness fixes that different second problem, too.
 *)
 endRSolveMadness[initCondIndex_,newIndex_]=
 	{HoldPattern[Sum[xpr_,{index_Symbol,start_Symbol,end_}]]:>
@@ -458,50 +470,27 @@ endRSolveMadness[initCondIndex_,newIndex_]=
 		}
 
 
-(*eqn 9 and sol 2 contain the aformentioned general expressions for the initial
-conditions on each segment - the expressions are compact and explicit (the
-original differential equation solution after substitution of the segment length
-along with undetermined initial conditions on each segment and the initial
-conditions for the entire beam could be taken as implict expressions
-...)*)
-
-(*in sol@3 these explicit formulas have been substituted into each other to make
-them standalone formulas suitable for use in ReplaceAll*)
-
-(*rep@7 gives an expression for iteratior i as a function of overallX (which is
-essentially x[1]) - remember that i indicates the current segment*)
-
-(*rep@8 gives an expression for x[i] as a fiunction of i and overallX - combined
-with rep@7, it is possible to use rep@8 to translate overallX into a local
-x[i]*)
-
-(*xpr@1 gives an explicit formula for the right hand sides of equation six
-in terms of overallX (aka x[1] or just x) (and the optimization variables,
-segmentLengths, and the given replacements)*)
-
-(*xpr@2 takes just the moment and shear overall expressions and factors
-constants out of the two (otherwise identical) sums - which are left with just
-this form Sum[segmentLength[iter_],{iter_,1,i}], one plus and one minus - these
-forms can be canceled out*)
-
-(*the only way MMA is going to recognize the sums are the same is if the
-iterators are the same symbol - rep@9 collects the iterators and gives a rule to
-make them the same*)
-
-(*eqn@10 has some expanded equations that are much like xpr@1, execept that the
-moment and shear expressions are simplified (and these aren't just expressions,
-but are also equations)*)
-
-(*somewhat simpler expressions for the transverse displacement and its
-derivative may be obtained by assuming the segmentLengths are all equal, as in
-given0 and eqn@11*)
+(*
+So, now I unravel the recurrence relations in eqn@c[i_] to obtain
+explicit expressions for the initial conditions on each segment.
+*)
+(*
+Equation set eqn@c[i_] is a set of difference equations that are separable. I
+solve them using RSolve after determining the boundary/initial conditions. See
+the comment above about using statically determinate reactions to convert the
+boundary value problem into an initial value problem.
+*)
 eqn@rSolvedC[i_]=Equal@@@Flatten@
 	MapThread[
 		Simplify[RSolve[{#1,#2},#3,i]/.K[1]->Module[{K},K]/.
 			endRSolveMadness[initCondIndex,#4]//.factorOut
 			]&,
 		{eqn[c[i]],eqn[cInitialConditions],var[cInitialConditions],{a,b}}
-		];
+		]
+
+rep@rSolvedC=Thread[(eqn[rSolvedC[i]][[All,1]]/.i->i_)->
+						eqn[rSolvedC[i]][[All,2]]
+					]
 
 export@GenUC[eqn,c,i]=
 	XMLDocument[GenUC[prefix,eqn,c,i]<>".xml",
@@ -526,20 +515,42 @@ export@GenUC[eqn,c,i]=
 		PrependDirectory->EODExportDirectory
 		];
 
-rep@rSolvedC=Thread[(eqn[rSolvedC[i]][[All,1]]/.i->i_)->
-						eqn[rSolvedC[i]][[All,2]]
-					]
 
-
+(*
+rep@xi gives an expression for x[i] as a fiunction of i and x
+Combined with rep@ix, it is possible x into a local x[i] and vice versa.
+*)
 rep@xi=x[i_]->x-Sum[segmentLength[c],{c,1,i-1}]
 
 
+(*
+rep@momentSheari gives a transformation from the initial moment on any segment
+to the overall moment expression at the beginning of that segment in the x
+coordinate, instead of the x@i coordinate.
+*)
 rep@momentSheari=(xpr:moment|shear)[i_,0]->xpr[Sum[segmentLength[d],{d,1,i-1}]]
 
 
+(*
+rep@ix gives an expression for iteratior i as a function of x, which is
+essentially x[1]. Remember that i indicates the current segment.
+*)
 rep@ix={i[x_]->Piecewise[{#1,x<=#2}&@@@
 	Take[FoldList[#+{1,segmentLength@#2}&,{0,0},Range@maxI],{2,-2}],maxI]}
 
+
+(*
+An overall expression for the transverse displacement may be derived
+by exploiting all the solutions obtained so far.
+*)
+rep@displacementMostlySolved=displacement[x_]->
+	(displacement[i[x],x[i[x]]]/.
+	rep[displacement[i[x],x[i[x]]]][[1]]//.
+	rep@rSolvedC/.
+	rep@xi/.
+	rep@momentSheari/.
+	rep[momentShearLoad@loading][[1]]/.
+	rep@areaMoment)
 
 export@GenUC[coordinate,conversion]=
 	XMLDocument[GenUC[prefix,coordinate,conversion]<>".xml",
@@ -571,66 +582,68 @@ export@GenUC[coordinate,conversion]=
 		PrependDirectory->EODExportDirectory
 		];
 
-rep@displacementMostlySolved=displacement[x_]->
-	(displacement[i[x],x[i[x]]]/.
-	rep[displacement[i[x],x[i[x]]]][[1]]//.
-	rep@rSolvedC/.
-	rep@xi/.
-	rep@momentSheari/.
-	rep[momentShearLoad@loading][[1]]/.
-	rep@areaMoment)
 
-
-(*eqn@12 defines the axial stress (due to bending) as a function of axial and
-transverse position*)
-
-(*derivation of shear stress expression is given in section 10-4 of Popov
-(basically, find the shear stress necessary to stop the bending moment stress
-from carrying the section away) -- note the negative sign in the sigmaXY
-expression - that is because the default direction for the shear, V, is opposite
-that of the default direction for the shear stress, sigmaXY*)
+(*
+rep@sigmaXXSigmaXY defines the axial stress (due to bending) as a function
+of axial and transverse position. 
+*)
+(*
+rep@sigmaXXSigmaXY uses the moment and shear solutions along
+with the definition of staticAreaMoment, Q, and sectionModulus, I to
+obtain an expression for the axial stress and shear in the axial-vertical
+plane (x-y plane).
+*)
+(*
+A derivation of the shear stress expression is given in section 10-4 of Popov.
+Basically, find the shear stress necessary to stop the bending moment stress
+from carrying the section away. Note the negative sign in the sigmaXY
+expression; that is because the default direction for the shear, V, is opposite
+that of the default direction for the shear stress, sigmaXY
+*)
 rep@sigmaXXSigmaXY={sigmaXX[x_,y_]->-moment[x]*y/sectionModulus[i],
 	sigmaXY[x_,y_]->-shear[x]*staticAreaMoment[i,y]/sectionModulus[i]/base@i
 	}
 
 
-(*sol@4 uses the moment and shear solutions along with the definition of
-staticAreaMoment, Q, and sectionModulus, I to obtain an expression for the
-axial stress and shear in the axial-vertical plane (x-y plane)*)
-
-
-(*now it is time to try different failure criteria*)
-
-(*we would like to use the distortion energy theory - so we need to calculate
-the octahedral shear stress (if this level of shear stress exceeds the
-octahedral shear stress achieved at yield in a tension test (where sigma 1 
-equals the yeild stress and sigma 2 and 3 are zero), then the material will
-yield)*)
-
-(*octahedral plane, octahedral normal stress, and octahedral shear stress are
-defined in section 3.3 of Malvern, specifically in review questions 8, 9 and 10,
-which state that the octahedral plane is a plane whose normal makes equal angles
-with all three principal stress directions, that octahedral normal stress is 1/3
-that of the first invariant of the general stress tensor, and that the
-octahedral shear stress is the square root of (2*second invariant of the
-deviatoric stress tensor/3)*)
-
-(*von Mises stress is the uniaxial stress that would cause the same octahedral
-shear stress as the general stress state it represents (section 6.5 part 2 and
-6.6 part 1 of Malvern)(this follows from the assumption that yielding in ductile
-materials is due to shear (instead of the compression or dilation effects of
-normal stress))*)
-
-(*since the octahedral shear stress and the second invariant of the deviatoric
-stress tensor (IIs) are related by a proportionality constant, the von Mises
-stress is also the uniaxial stress that would cause the same IIs as the general
-stress state it represents*)
-
-(*these commented out equations + Solve command summarize the relationships just
-given and also provide a conversion from octahedral shear stress to von Mises
-stress*)
-
-(*{IIs==(Coefficient[
+(*
+Now it is time to try out a failure criterion. GNVNOTED just concerns
+itself with maximum axial stresses, but I wonder if a more robust analysis
+will result in a different design.
+*)
+(*
+I would like to use the distortion energy theory, so I need to calculate
+the octahedral shear stress. The theory states that if the level of octahedral
+shear stress in a general stress state exceeds the octahedral shear stress
+achieved at yield in a tension test, then the material will yield. In a
+tension test, sigma 1 equals the yeild stress and sigma 2 and 3 are zero.
+*)
+(*
+Octahedral plane, octahedral normal stress, and octahedral shear stresses are
+defined in section 3.3 of Malvern's book on Continuum Mechanics. Specifically,
+review questions 8, 9 and 10, state that the octahedral plane is a plane whose
+normal makes equal angles with all three principal stress directions, that
+octahedral normal stress is 1/3 that of the first invariant of the general
+stress tensor, and that the octahedral shear stress is 
+Sqrt[(2*(second invariant of the deviatoric stress tensor)/3)]
+*)
+(*
+von Mises stress is the uniaxial stress that would cause the same octahedral
+shear stress as the general stress state it represents. This follows from the
+assumption that yielding in ductile materials is due to shear instead of the
+compression or dilation effects of normal stress.
+References: section 6.5 part 2 and 6.6 part 1 of Malvern
+*)
+(*
+The octahedral shear stress, the second invariant of the deviatoric
+stress tensor (IIs), and the vonMises stress are all proportional to each other.
+*)
+(*
+These commented out equations & this Solve command summarize the relationships
+just given and also provide a conversion from octahedral shear stress to
+von Mises stress.
+*)
+(*
+{IIs==(Coefficient[
             Det[#-IdentityMatrix@Length@#*Tr[#]/3-
                 IdentityMatrix@Length@#*lam],lam]&)[{{0,
           vonMisesYieldShearStress,0},{vonMisesYieldShearStress,0,0},{0,0,
@@ -638,10 +651,12 @@ stress*)
             Det[#-IdentityMatrix@Length@#*Tr[#]/3-
                 IdentityMatrix@Length@#*lam],lam]&)[{{vonMisesStress,0,0},{0,
           0,0},{0,0,0}}],octShearStress==Sqrt[2*IIs/3]}
-Solve[%,octShearStress,{IIs,vonMisesYieldShearStress}]*)
-
-(*rep@12 functions can be used to transform the general stress tensor into the
-von Mises Stress*)
+Solve[%,octShearStress,{IIs,vonMisesYieldShearStress}]
+*)
+(*
+rep@tensorOps can be used to transform the general stress tensor into the
+von Mises Stress
+*)
 rep@tensorOps={CharPoly[sig_]->Function[Det[#-sig IdentityMatrix[Length[#]]]],
 	Deviate->Function[#-IdentityMatrix[Length[#]] Tr[#]/Length[#]],
 	OctahedralShearStress[SecondInvariant]->Function[Sqrt[2#/3]],
@@ -652,18 +667,22 @@ rep@tensorOps={CharPoly[sig_]->Function[Det[#-sig IdentityMatrix[Length[#]]]],
 	}
 
 
-(*rep@13 is based on the symmetry of the stress tensor*)
-rep@tensorSubscriptSort=sig[blah__]:>sig@@Sort[{blah}]
+(*rep@tensorSubscriptSort is based on the symmetry of the stress tensor*)
+rep@tensorSubscriptSort=symmetricTensor_sig:>Sort@symmetricTensor
 
 
-(*octMisesCheck gives the von Mises stress expressed as a function of arbitrary
-cartesian stress tensor components, as derived from the general stress tensor
-and the Mises Yield Condition of Levy-Mises perfect plasticity (defined in sec
-6.5 part 2 of Malvern)*)
-
-(*the first check is the definition of the von Mises stress (equating the shear
-(via stress transformation) of a uniaxial stress state to the shear of a
-general stress state) -- see comments before rep@12*)
+(*
+octMisesCheck gives the von Mises stress expressed as a function of arbitrary
+cartesian stress tensor components, as derived from that general stress
+tensor and the Mises Yield Condition of Levy-Mises perfect plasticity
+Reference: section 6.5 part 2 of Malvern
+*)
+(*
+The first check is the definition of the von Mises stress as given above.
+Equate, via the second invariant of the deviatoric stress tensor, a uniaxial
+stress state to a general stress state. See the comments before
+rep@tensorOps.
+*)
 octMisesCheck@1=Y/.Last@
 	Solve[SecondInvariant[lam][
 		CharPoly[lam][Deviate[{{Y,0,0},{0,0,0},{0,0,0}}]]
@@ -673,9 +692,11 @@ octMisesCheck@1=Y/.Last@
 		Y]//FullSimplify
 
 
-(*the second check is the transformation of the second invariant of the
+(*
+The second check is the transformation of the second invariant of a general
 deviatoric stress tensor to octahedral shear stress and then to the von Mises
-stress*)
+stress.
+*)
 octMisesCheck@2=
 	vonMisesStress[OctahedralShearStress][
 		OctahedralShearStress[SecondInvariant][
@@ -686,10 +707,12 @@ octMisesCheck@2=
 		]/.rep@tensorSubscriptSort/.rep@tensorOps//FullSimplify
 
 
-(*the third check uses the difference between the principal stresses as derived
-from the Mises yield condition to determine the von Mises stress (as can be
+(*
+The third check uses the difference between the principal stresses as derived
+from the Mises yield condition to determine the von Mises stress, as can be
 inferred from Malvern's section 6.6 part 1 eqn 6.6.11a or taken from Shigley and
-Mischke section 6-5 eqn h)*)
+Mischke section 6-5 eqn h.
+*)
 octMisesCheck@3=
 	Sqrt[Total[Power[Subtract[##],2]&@@@
 			Subsets[
@@ -703,16 +726,20 @@ octMisesCheck@3=
 		]/.rep@tensorSubscriptSort/.rep@tensorOps//FullSimplify
 
 
-(*there should be a 1:1 correspondence between a given von Mises stress and an
-octahedral shear stress, which forms the fourth check*)
+(*
+There should be a 1:1 correspondence between a given von Mises stress and an
+octahedral shear stress, which forms my fourth check.
+*)
 octMisesCheck@4=
 	vonMisesStress[OctahedralShearStress][
 		OctahedralShearStress[vonMisesStress][a]
 		]==a/.rep@tensorOps
 
 
-(*if these results are not all the same (or in the case of number 4, True),
-something is wrong; otherwise, I feel I can trust rep@12*)
+(*
+If these results are not all the same, or in the case of number 4, True,
+something is wrong; otherwise, I feel I can trust rep@tensorOps.
+*)
 If[Not[SameQ@@(octMisesCheck/@{1,2,3})]&&TrueQ@octMisesCheck@4,
 	Print["The methods for determining the von Mises stress and octahedral "<>
 		"shear stress are incorrect."];Abort[]
@@ -751,28 +778,36 @@ export@vonMisesStress=
 		PrependDirectory->EODExportDirectory];
 
 
-(*rep@14 takes care of the tranformation from x and y being used to designate
-faces and directions with respect to a differential cube of material to being
-material coordinates -- it also zeroes out all those stress components that
-aren't at play in this problem*)
+(*
+rep@sigToSigma takes care of the tranformation from the symbols x and y being
+used to designate faces and directions with respect to a differential cube of
+material to being material coordinates. It also zeroes out all those stress
+components that aren't at play in this problem.
+*)
 rep@sigToSigma={sig[x,x]->sigmaXX[x,y],sig[x,y]->sigmaXY[x,y],sig[__]->0}
 
 
 (*coordinates where the maximum von Mises stress occurrs below the top surface*)
-(*{x->4.5,base@i->5,height@i->3}*)
+(*{x->4.5,base@_->5,height@_->3}*)
 
 
+(*i is a function of x. This replacement states that.*)
 rep@i=i->i[x]
 
 
+(*
+After all of those stress definitions, here is the von Mises stress
+*)
 rep@vonMisesStressMostlySolved=vonMisesStress[x_,y_]->octMisesCheck@3/.
 	rep@sigToSigma/.rep@sigmaXXSigmaXY/.rep@areaMoment/.
 	rep[momentShearLoad@loading][[1]]/.rep@i
 
 
-(*rep@15 creates two different replacements for y - one where it is at
-height@i/2 and one where it is always at the point of maximum von Mises stress,
-which is usually height@i/2 - but not always*)
+(*
+rep@y creates two different replacements for y: The first, where it is at
+height@i/2 and another, where it is always at the point of maximum von Mises stress,
+which is usually height@i/2, but not always.
+*)
 rep@y=With[
 	{why=FullSimplify[y/.Last@Solve[D[vonMisesStress[x,y]==maxSigmaX/.
 		rep@vonMisesStressMostlySolved,y],y]]
@@ -801,14 +836,19 @@ critical height could actually be below the top surface."}],
       PrependDirectory->EODExportDirectory];
 
 
-(*epsilon is used to ensure that x is really within the segment - because at the
-far left end of a segment, i changes to i of the previous segment (which is bad
-if one wants to test the critical section)*)
+(*
+epsilon is used to ensure that x is really within the segment. At the far
+left end of a segment, i changes to i of the previous segment, which is bad
+if one wants to test the critical section.
+*)
 epsilon=1.*10^-13
 
 
-(*the maximum von Mises stress must be less than the given max allowable sigma
-x (in GNVNOTED they were being less general that I am)*)
+(*
+The maximum von Mises stress must be less than the given max allowable sigma
+x. In GNVNOTED they were being less general that I am. The von Mises stress
+is always equal to or greater than the maximum axial stress.
+*)
 vmStressPureFun=vonMisesStress[#,y[#]]/maxSigmaX-1<=0&;
 constr@1=Apply[And,vmStressPureFun/@
 	FoldList[Plus,0,
@@ -817,17 +857,18 @@ constr@1=Apply[And,vmStressPureFun/@
 		]
 
 
-(*the height of a section may not be more than 20 times its base*)
+(*The height of a section may not be more than 20 times its base.*)
 constr@2=And@@Table[height[i]-20base[i]<=0,{i,maxI}]
 
 
-(*the beam is only allowed to deflect to maxDeflection (the displacement is
-always negative, since the load is negative -- also, maxDeflection is positive)
+(*
+The beam is only allowed to deflect to maxDeflection the displacement is
+always negative, since the load is negative. Also, maxDeflection is positive.
 *)
 constr@3=-displacement@beamLength/maxDeflection-1<=0
 
 
-(*all bases must be at least 1 cm;all heights must be at least 5 cm*)
+(*All bases must be at least 1 cm; all heights must be at least 5 cm.*)
 constr@4=And@@Table[And[centi-base[i]<=0,5*centi-height[i]<=0],{i,1,maxI}]
 
 
@@ -835,7 +876,13 @@ constr@4=And@@Table[And[centi-base[i]<=0,5*centi-height[i]<=0],{i,1,maxI}]
 constr@5=And[Sum[segmentLength[i],{i,1,maxI}]==beamLength,
 				segmentLength[#]>beamLength/maxI^3&/@And@@Range@maxI]
 
+
 (*constraints export*)
+(*
+Perhaps the text explanation for the unlisted constraints should be made
+dynamic so that I can change them from one place. However, I don't feel like
+doing that right now.
+*)
 export@GenUC[constraint,identifiers]=
 	XMLDocument[GenUC[prefix,constraint,identifiers]<>".xml",
 		DocBookTable[GenUC[prefix,constraint,identifiers],
@@ -875,13 +922,11 @@ export@GenUC[constraint,identifiers]=
 			],
 		PrependDirectory->EODExportDirectory
 		];
-(*Perhaps the text explanation for the unlisted constraints should be made
-dynamic so that I can change them from one place. However, I don't feel like
-doing that right now.*)
 
 
 (*the objective to be minimized is the volume of the material used*)
 objective[1]=Sum[Times[base[i],height[i],segmentLength[i]],{i,1,maxI}]
+
 
 (*objective export*)
 export@GenUC@objective=
@@ -900,14 +945,31 @@ export@GenUC@objective=
 		];
 
 
-(*this concatenates the objective and constraints into the first argument of
-NMinimize*)
+(*
+This concatenates the objective and constraints into a first argument of
+NMinimize.
+*)
 nminarg@0={objective[1],constr/@And[1,2,3,4,5]}
 
 
+(*
+rep@baseHeight@all transforms all base and height variables to be
+one particular base and one particular height to be used in the
+case of a uniform bar.
+*)
 rep@baseHeight@all={(xpr:base|height)[_]->xpr@all}
 
 
+(*
+The objective and constraint expressions are greatly complicated after
+substituting for the transverse displacement and y
+*)
+(*
+Somewhat simpler expressions for the transverse displacement and its
+derivative may be obtained by assuming the segmentLengths are all equal, as in
+nminarg@standard@equalSegmentLength and
+nminarg@standard@equalBaseHeightSegmentLength
+*)
 {nminarg@standard,nminarg@criticalVonMises}=nminarg@0/.
 	rep@vonMisesStressMostlySolved/.rep@displacementMostlySolved/.rep@y;
 
@@ -923,13 +985,17 @@ nminarg@standard@equalBaseHeightSegmentLength=
 	{nminarg@standard,nminarg@criticalVonMises}/.rep@ix/.rep@given;
 
 
-(*PiecewiseExpand (base|height)[_Piecewise] expressions so NMinimize will see
-the optimization variables*)
+(*
+PiecewiseExpand (base|height)[_Piecewise] expressions so NMinimize will see
+the optimization variables.
+*)
 rep@piecewiseExpandBaseHeight={(xpr:_base|_height):>PiecewiseExpand[xpr]}
 
 
-(*in addition to the piecewise expand, we refine some of the general
-optimization expression based on the constraints*)
+(*
+In addition to the Piecewise expansion, I refine some of the general
+optimization expression by using the constraints.
+*)
 nminarg@criticalVonMises@general=
   With[{assumptions=Reduce[constr@4,var@baseHeight]&&constr@5/.rep@given},
     MapAt[Refine[#,assumptions]&,
@@ -937,17 +1003,34 @@ nminarg@criticalVonMises@general=
         Range[2*maxI+2]]];
 
 
+(*
+These are the base and height variables in the equal segment length
+optimization expression.
+*)
 var@baseHeight=Union@
 	Cases[nminarg@standard@equalSegmentLength,(base|height)[_],{0,Infinity}]
 
 
+(*
+This set of optimization variables includes the segmentLength variables because
+they can change in the more general case.
+*)
 var@baseHeightSegmentLength=Union@Flatten@
 	{var@baseHeight/.base->segmentLength,var@baseHeight}
 
 
+(*
+There are only two design variables in the case of the bar with the
+uniform cross section.
+*)
 var@baseHeight@all=Union[var@baseHeight/.rep@baseHeight@all]
 
 
+(*
+Here, I give an inital range for the variables argument to NMinimize
+that will cause my optimization to start from the center of these ranges,
+as the assignment intends.
+*)
 var@regularSolGuessRegion=
 	Flatten/@Thread@{var@baseHeight,Sort[{1-1*10^-10,1+1*10^-10}*#]&/@
 		(var@baseHeight/.{base[_]->5*centi,height[_]->40*centi})}
@@ -973,7 +1056,10 @@ myEvaluationCount=0;
 evals@standard@equalSegmentLength=Sequence@@@evals@standard@equalSegmentLength;
 
 
-(*preparation for the variable segment length assignment*)
+(*
+Here is my preparation of the guess region for the variable segment length
+optimization.
+*)
 sol@standard@equalBaseHeightSegmentLength=
 	NMinimize[nminarg@standard@equalBaseHeightSegmentLength,var@baseHeight@all]
 
@@ -1001,7 +1087,6 @@ var@bestSolGuessRegion=
 
 
 (*variable segment lengths (best) solution*)
-(*Off[Less::"nord"]MMA 5.2 incorrectly generates this message*)
 sol@criticalVonMises@general=NMinimize[
 	MapAt[bConsHandler[#,var[baseHeightSegmentLength]]&,
 		nminarg@criticalVonMises@general,
@@ -1010,7 +1095,6 @@ sol@criticalVonMises@general=NMinimize[
 	var@bestSolGuessRegion,
 	Method->{"DifferentialEvolution"}
 	]
-(*On[Less::"nord"]*)
 
 
 (*read in GNVNOTED Table 5-3 through 5-5*)
@@ -1036,13 +1120,14 @@ method comparison tables*)
 methodSequence=Sequence@@
 	Append[SequenceForm["Method\n",#]&/@Range@5,myMethodName]
 
+
 (*a modification of the iteration history table from GNVNOTED to use my units
 and include my method --- all tables from GNVNOTED do this, actually*)
 GNVNOTEDVolumeTable=PadRight[#,Length@importedDataAndStuff[[1,1]],""]&/@
     Rationalize@importedDataAndStuff[[1]]/.volume_Integer/;volume>1000:>
     	N@volume*centi^3;
 
-GNVNOTEDVolumeTable=
+TableForm[GNVNOTEDVolumeTable=
   Prepend[
   	MapThread[Join,
   		{MapAt[
@@ -1056,6 +1141,7 @@ GNVNOTEDVolumeTable=
 	            Length@evals[standard@equalSegmentLength][[1]],
 	            First@sol@standard@equalSegmentLength,
 	            myEvaluationCount}}],{"Iteration\nNumber",methodSequence}]
+	]
 
 export@GenUC[volume,table]=
 	XMLDocument[GenUC[prefix,volume,table]<>".xml",
@@ -1096,12 +1182,13 @@ GNVNOTEDDesignVariableTable=
     MapIndexed[If[#2[[1]]>=2&&NumberQ@#1,#1*centi,#1]&,
       importedDataAndStuff[[2]],{2}];
 
-GNVNOTEDDesignVariableTable=
+TableForm[GNVNOTEDDesignVariableTable=
   Prepend[MapThread[
       Join,{{SequenceForm[#," (",Meter,")"]}&/@var[baseHeight],
       	Rest/@Rest@GNVNOTEDDesignVariableTable,
         List/@var[baseHeight]/.sol[standard@equalSegmentLength][[2]]}],
     Join[{"Design\nVariable","Initial\nValue"},{methodSequence}]]
+	]
 
 export@GenUC[design,variable,table]=
 	XMLDocument[GenUC[prefix,design,variable,table]<>".xml",
@@ -1126,24 +1213,27 @@ export@GenUC[design,variable,table]=
 		];
 
 
-(*if the constraint violation vector has positive entries, the constraint is
-violated -- negative is okay*)
+(*
+If the constraint violation vector has positive entries, the constraint is
+violated; negative is okay.
+*)
 constraintViolationVector=
     EngineeringOptimization`Private`penaltyKernel[#,Method->"Basic"]&/@
         List@@nminarg[standard@equalSegmentLength][[2,
-              Range@11]]/.rep@equalSegmentLength
+              Range@11]]/.rep@equalSegmentLength;
 
 
-(*here, I recalculate the constraints based on the data from the design
-variable table -- the GNVNOTED table is untrustworthy*)
+(*
+Here, I recalculate the constraints based on the data from the design
+variable table; the GNVNOTED table is untrustworthy.
+*)
 constraintData=
   Transpose[
     constraintViolationVector/.Thread[var@baseHeight->#]&/@
           Rest@Rest[Transpose[Rest[GNVNOTEDDesignVariableTable]]]]
 
 
-(*Instead of labeling the constraints 1-11, it is better to specify them
-explicitly, so that's what I do*)
+(*I label the constraints 1-11 to be consistent with GNVNOTED.*)
 constraintLabelVector=
   Flatten@{SequenceForm[#," (",Pascal,"/",Pascal,")"]&/@Range@5,
       SequenceForm[#," (",Meter,")"]&/@Range[6,10],
@@ -1155,9 +1245,10 @@ constraintHeaders={"Constraint\n#", methodSequence}
 
 
 (*assemble all the components of the constraint table*)
-GNVNOTEDFinalConstraintValuesTable=
+TableForm[GNVNOTEDFinalConstraintValuesTable=
   Prepend[MapThread[{#1,Sequence@@#2}&,{constraintLabelVector,
         constraintData}],constraintHeaders]
+	]
 
 export@GenUC[constraint,values,table]=
 	XMLDocument[GenUC[prefix,constraint,values,table]<>".xml",
@@ -1192,23 +1283,19 @@ export@GenUC[constraint,values,table]=
 		];
 
 
-(*here is an example of an actual "rendering" of the table*)
-(*GNVNOTEDFinalConstraintValuesTable/.rep@realNumberForm//TableForm*)
-
-(*the eigenvalues are the solution to the characteristic polynomial of the
+(*
+Eigenvalues are the solution to the characteristic polynomial of the
 stress tensor:
 sig.vec==lambda*vec
 (sig-lambda*IdentityMatrix@Length@sig).vec==0
-thus (for reasons from linear algebra that I don't want to look up):
+thus, for reasons from linear algebra that I don't want to look up,
 Det[sig-lambda*IdentityMatrix@Length@sig]==0
-gives solutions for lambda
-substituting these solutions for lambda gives different solutions for the
-scalar components of vec (and because the stress tensor is real and symmetric,
-we know that all the solutions for vec are orthogonal to each other and are real
-)
-by the way, some scalar components of an eigenvector may be unknown -
-Mathematica assumes these to be 1 (before the next part, which is)
-all eigenvectors are normalized to unit length in Mathematica's implementation
+gives solutions for lambda. Substituting these solutions for lambda gives
+different solutions for the scalar components of vec. Because the stress
+tensor is real and symmetric, we know that all the solutions for vec are
+orthogonal to each other and are real. By the way, some scalar components
+of an eigenvector may be unknown. However, by normalizing the magnitude of
+the eigenvectos to be 1, Mathematica achieves a unique solution.
 *)
 rep@eiSystemMostlySolved=Identity@
 	Thread[{eiVals[x_,y_],eiVecs[x_,y_]}->
@@ -1217,19 +1304,25 @@ rep@eiSystemMostlySolved=Identity@
 				rep[momentShearLoad@loading][[1]]/.rep@i]
 
 
-(*to find trajectories of the (two) principal stress fields, a vector field and
-a given initial point is transformed into a differential equation plus initial
-condition:
-vec{vu[x,y],vv[x,y]} and some initial point, {x0,y0}
-y'[x]==vv[x,y]/vu[x,y]
-y[x0]==y0
-the solution to the system is one streamline
-multiple initial conditions can be used to make multiple streamlines
-vec can be switched out to get the other set of streamlines*)
+(*
+To find trajectories of the two principal stress vector fields,
+each field and initial point are transformed into a differential
+equations plus an initial condition:
+vec=={vu[x,y],vv[x,y]} and some initial point, p0=={x0,y0}
+The solution to the system, as a function of t, is one streamline.
+Multiple initial conditions can be used to make multiple streamlines
+vec can be switched out to get another set of streamlines.
+*)
+(*
+MMA 6 seems insistent on having a vectorized solution, even though
+MMA 5 let me get away with having dy/dx==vv/vu and making streamlines
+a function of x instead of t. The solutions appear identical to me.
+*)
 eiVecStreamDEqns[x_,y_]=And@@Thread[{x'@t,y'@t}==#]&/@(eiVecs[x@t,y@t]/.
 	rep@eiSystemMostlySolved)
 
 
+(*Here I pick starting locations for the vector streams.*)
 eiVecStreamStartPositions=
 	List@@Flatten[
 		With[{sects=27},
@@ -1242,25 +1335,26 @@ eiVecStreamStartPositions=
 		]
 
 
+(*the region on which I want solutions*)
 regionFunction[x_,y_]=
 	And[-height@i@x/2<=y<=height@i@x/2,
 		0<=x<=beamLength
 		]
 
 
-(*the eigenvalues are useful for coloring the principal stress values (I use red
-for the stress trajectory on the part where its corresponding principal stress
-is the largest in magnitude, and yellow where it isn't
-here I set up expressions for the eigenvalues and the first part of the
-differential equation systems*)
+(*
+Here I set up the NDSolve command to determine the principal
+stress trajectories.
+*)
 heldNDSolves=Outer[
 	Hold[NDSolve][
 		And[#1,x@0==#2[[1]],y@0==#2[[2]]],
 		{x,y},
-		{t,0,5},
+		{t,0,Infinity},
 		Method->{"EventLocator",
 			"Event"->regionFunction[x@t,y@t],
-			"EventAction":>Throw[Null,"StopIntegration"]}
+			"EventAction":>Throw[Null,"StopIntegration"],
+			Method->"StiffnessSwitching"}
 		]&,
 	eiVecStreamDEqns[x,y],
 	eiVecStreamStartPositions,
@@ -1268,18 +1362,18 @@ heldNDSolves=Outer[
 	]
 
 
-(*these are the solutions for the streamlines (interpolating functions for y
-when given x)*)
-Off[NDSolve::"ndsz"](*switch off stiff system warning*)
+(*
+These are the solutions for the streamlines, which are
+interpolating functions for x and y when given t.
+*)
 sol@eiVecStream=ReleaseHold[heldNDSolves/.
 	rep@ix/.rep@piecewiseExpandBaseHeight/.rep@equalSegmentLength/.
 		expr_Equal:>PiecewiseExpand/@expr/.
 			sol[standard@equalSegmentLength][[2]]/.rep@given
 	]
-On[NDSolve::"ndsz"]
 
 
-(*I pull out the stream line primitives after plotting them*)
+(*I plot the stream lines.*)
 gr@principalStressTrajectoryGraphs=
 	Block[{$DisplayFunction=Identity},ReleaseHold@Map[
 		Hold[ParametricPlot][
@@ -1293,12 +1387,24 @@ gr@principalStressTrajectoryGraphs=
 		]]
 
 
-(*I pull out the stream line primitives after plotting them*)
+(*
+I pull out the stream line primitives after plotting them.
+The eigenvalues are useful for coloring the principal stress
+trajectories. I use red for the stress trajectory on the part
+where its corresponding principal stress is the largest in
+magnitude, and yellow where it isn't.
+*)
 gr@principalStressTrajectoryLines=Thread[{{Yellow,Red},Cases[
 	#,
 	_Line,
 	{0,Infinity}
 	]&/@gr@principalStressTrajectoryGraphs}]
+
+
+(*
+The bottom half of the principal stress trajectories graph
+is a mirror of the top half, so I construct it accordingly.
+*)
 gr@principalStressTrajectoryLines=
 	MapThread[Join,{
 		gr@principalStressTrajectoryLines,
@@ -1307,8 +1413,10 @@ gr@principalStressTrajectoryLines=
 		]
 
 
-(*this generates a list of Black rectangles at appropriate positions so that
-they look like the beam segments (with appropriate segmentLength and height*)
+(*
+Here I generate a list of Black rectangles at appropriate positions so that
+they look like the beam segments with appropriate segmentLength and height.
+*)
 beamPrimitives=
 	ListCorrelate[{1,1},
 		FoldList[Plus[#,segmentLength@#2]&,0,Range@maxI],
@@ -1323,8 +1431,10 @@ beamPrimitives=
 plotRange=PlotRange->{{0,beamLength}+{-1,1}*beamLength/40,{-1,1}.35}/.rep@given
 (*or 1.2 times height 1*)
 
+
 (*this is the FrameLabel I use for the beam plots*)
 frameLabel=FrameLabel->(SequenceForm[ToString@#," (",Meter,")"]&/@{x,y})
+
 
 (*these are the options I use for the beam plots*)
 beamPlotOptions=
@@ -1332,10 +1442,12 @@ beamPlotOptions=
 		AspectRatio->1];
 
 
-(*here is an example bar with the height and segmentLength labeled --
-the bar is actually the optimum solution to the most general problem where
-vonMises stresses across the entire critical section are considered and where
-the segmentLengths are allowed to vary*)
+(*
+Here is an example bar with the height and segmentLength labeled. The bar is
+actually the optimum solution to the most general problem where vonMises
+stresses across the entire critical section are considered and where
+the segmentLengths are allowed to vary.
+*)
 If[$VersionNumber<6,Arrowheads[__]=Sequence[]]
 gr@exampleBar=
 	Module[{inc=0},Graphics[beamPrimitives/.rep@ix//.
@@ -1386,9 +1498,17 @@ export@GenUC[gr,exampleBar]=
 		];
 
 
-(*here, the principal stress trajectories are superimposed on the bar from
-my optimized equal segmentLength solution*)
-(*gr@principalStressTrajectories=
+(*
+Here, the principal stress trajectories are superimposed on the bar from
+my optimized equal segmentLength solution.
+*)
+(*
+This is old code that actually
+did the coloring based on the eigenvalues. The new version is faster and
+simpler, while producing the same result.
+*)
+(*
+gr@principalStressTrajectories=
 	Graphics[
 		{beamPrimitives,
 			MapIndexed[
@@ -1403,12 +1523,14 @@ my optimized equal segmentLength solution*)
 				]
 			},
 		beamPlotOptions]/.rep@ix/.rep@equalSegmentLength/.rep@given/.
-			sol[standard@equalSegmentLength][[2]]//Show*)
+			sol[standard@equalSegmentLength][[2]]//Show
+*)
 gr@principalStressTrajectories=
 	Graphics[
 		{beamPrimitives,gr@principalStressTrajectoryLines},beamPlotOptions
 		]/.rep@ix/.rep@equalSegmentLength/.rep@given/.
 			sol[standard@equalSegmentLength][[2]]//Show
+
 
 (*export the principal stress trajectories graph*)
 export@GenUC[gr,principal,stress,trajectories]=
@@ -1438,8 +1560,10 @@ export@GenUC[gr,principal,stress,trajectories]=
 		];
 
 
-(*this color function is purple at von Mises stress == 0 and red at von Mises
-stress == maxSigmaX*)
+(*
+This color function is purple at von Mises stress == 0 and red at von Mises
+stress == maxSigmaX.
+*)
 myColorFun[1]=Block[{fval,slope,intercept},
 	Function@@{slope fval+intercept/.
 		FindFit[{{maxSigmaX/.rep@given,0},{0,3/4}},slope fval+intercept,
@@ -1447,10 +1571,12 @@ myColorFun[1]=Block[{fval,slope,intercept},
 	]
 
 
-(*this is the vonMises stress superimposed on the outline of the bar from my
-optimized equal segmentLength solution -- it is mostly dominated by the axial
-bending stress -- the shear stress contributes very little to the vonMises
-stress except toward the center of the beam (where axial bending stress is zero)
+(*
+This is the vonMises stress superimposed on the outline of the bar from my
+optimized equal segmentLength solution. It is mostly dominated by the axial
+bending stress. The shear stress contributes very little to the vonMises
+stress except toward the center of the beam, where axial bending stress is
+zero.
 *)
 gr@vonMisesStress=Show@
 	Graphics[Block[{$DisplayFunction=Identity},
@@ -1486,6 +1612,7 @@ gr@vonMisesStress=Show@
 			],
 		beamPlotOptions
 		]
+
 
 (*export the von Mises stress graph*)
 export@GenUC[gr,von,Mises,stress]=
