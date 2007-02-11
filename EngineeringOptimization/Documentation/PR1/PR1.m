@@ -97,7 +97,7 @@ by Garret Vanderplaats*)
 		};
 
 (*these are for handling units symbolically during equation manipulation*)
-
+old$Assumptions=$Assumptions;
 $Assumptions=#>0&/@{Newton,X,Meter,YoungsModulus,SectionModulus};
 
 (*a list of units of each variable in the problem*)
@@ -392,6 +392,8 @@ If[EODExport===True,
 			Overwrite->True
 			]
 	];
+
+$Assumptions=old$Assumptions;
 
 End[];
 
