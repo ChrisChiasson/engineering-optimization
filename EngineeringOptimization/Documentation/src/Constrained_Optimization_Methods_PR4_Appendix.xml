@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix xml:id="Constrained_Optimization_Methods_PR4_Appendix"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	version="5">
+	<title>Constrained Optimization Methods — Project 4</title>
+	<example xml:id="PR4">
+		<?dbfo keep-together="auto"?>
+		<title>Project 4 Iteration History</title>
+		<para>This is the iteration history of my constrained numerical
+			optimization code for the equal segment length solution.</para>
+		<!--programlisting><xi:include href="mout/PR4.m" parse="text"/></programlisting-->
+	</example>
+</appendix>

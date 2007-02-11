@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="Constrained_Optimization_Methods_PR4"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xl="http://www.w3.org/1999/xlink"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace" version="5">
+	<title>Constrained Optimization Methods — Project 4</title>
+	<para>As Dr. Mohamed El-Sayed shows in <xref
+		linkend="pr_4_screenshot_assignment"/>, the assignment is to use the
+		constrained optimization program developed in
+		<olink targetdoc="self" targetptr="Constrained_Optimization_Methods_PR3"/> 
+		to solve example 5-1 of <olink targetdoc="self" targetptr="GNVNOTED"/>.
+		We are also to compare our results with those in the book's tables 5-3
+		through 5-5 and provide the iteration history printout of our solution.</para>
+	<para>In addition to solving example 5-1, I have solved a more general
+		problem: that of allowing distortion energy theory to control the design
+		of the beam rather than just a maximum axial stress theory. Let's begin.</para>
+	<figure xml:id="pr_4_screenshot_assignment">
+		<title>Project 4 Assignment</title>
+		<screenshot>
+			<mediaobject>
+				<imageobject role="html">
+					<imagedata fileref="mout/pr_4_screenshot_assignment.png"/>
+				</imageobject>
+				<imageobject role="fo">
+					<imagedata contentwidth="5in"
+						fileref="mout/pr_4_screenshot_assignment.png"/>
+				</imageobject>
+				<textobject>
+					<phrase>Project 4: Use the program developed in project (3)
+						to solve example 5-1 of the text. Compare results with
+						tables 5-3, 5-4, 5-5. Provide iteration history print
+						out of your optimum soln. (25 pts) Due 12th week
+						(Monday)</phrase>
+				</textobject>
+			</mediaobject>
+		</screenshot>
+		<caption>
+			<para>This is a screenshot from part A of the fifth lecture at
+			9:57.</para>
+		</caption>
+	</figure>
+	<xi:include href="mout/pr_4_constraint_identifiers.xml"/>
+	<xi:include href="mout/pr_4_constraint_values_table.xml"/>
+	<xi:include href="mout/pr_4_coordinate_conversion.xml"/>
+	<xi:include href="mout/pr_4_design_variable_table.xml"/>
+	<xi:include href="mout/pr_4_eqn_c_i.xml"/>
+	<xi:include href="mout/pr_4_eqn_displacement.xml"/>
+	<xi:include href="mout/pr_4_eqn_momentShearLoad_loading.xml"/>
+	<xi:include href="mout/pr_4_eqn_momentShearLoad_loading_solution.xml"/>
+	<xi:include href="mout/pr_4_given.xml"/>
+	<xi:include href="mout/pr_4_gr_exampleBar.xml"/>
+	<xi:include href="mout/pr_4_gr_principal_stress_trajectories.xml"/>
+	<xi:include href="mout/pr_4_gr_von_Mises_stress.xml"/>
+	<xi:include href="mout/pr_4_objective.xml"/>
+	<xi:include href="mout/pr_4_rep_displacement.xml"/>
+	<xi:include href="mout/pr_4_volume_table.xml"/>
+	<xi:include href="mout/pr_4_vonMisesStress.xml"/>
+	<xi:include href="mout/pr_4_y_i_crit.xml"/>
+</chapter>
