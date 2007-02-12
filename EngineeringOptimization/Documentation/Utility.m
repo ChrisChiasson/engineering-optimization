@@ -39,7 +39,25 @@ TitleStyle::usage="TitleStyle[xpr] blocks the value of $TextStyle to be in \
 line with the default formatting of a DocBook title for a figure, equation, \
 or example."
 
+RasterizeDensityPlot::usage="RasterizeDensityPlot rasterizes density plots in a\
+way that allows Export to export the frame and labels of a density plot as \
+vector graphics."
+
 Begin["`Private`"];
+
+If[$VersionNumber<6,
+	RasterizeDensityPlot=Identity,
+	RasterizeDensityPlot[gr_Graphics]:=
+		With[{clippedRasterGraphics=
+				Rasterize[Show[gr,PlotRangePadding->None,Frame->False],
+					ImageResolution->300],
+			plotRange=PlotRange/.AbsoluteOptions[gr,PlotRange]},
+			Show[clippedRasterGraphics/.rast_Raster:>
+				ReplacePart[rast,2->Transpose[plotRange]],Flatten@{Options@gr,
+					AbsoluteOptions[gr,ImageSize]}
+				]
+			]	
+	]
 
 (*duplicatePositionsToDelete is based off of the PositionOfRuns function in the
 Help Browser entry for Position*)
