@@ -117,9 +117,9 @@ export@given=
 							XMLElement["olink",{"targetdoc"->"self",
 								"targetptr"->"GNVNOTED"},{}]," because my ",
 						"default direction for it is up instead of down. ",
-						ToXML@preExport@youngsModulus,"is Young's modulus for ",
-						"the material. ",ToXML@preExport@beamLength," is the ",
-						"total beam length, equal to the sum of all the ",
+						ToXML@preExport@youngsModulus," is Young's modulus ",
+						"for the material. ",ToXML@preExport@beamLength," is ",
+						"the total beam length, equal to the sum of all the ",
 						ToXML@preExport@segmentLength@i,". ",ToXML@preExport@
 							maxSigmaX,", is the maximum allowable value of ",
 						"stress in the x direction. ",ToXML@preExport@
@@ -233,7 +233,7 @@ export@GenUC[eqn,momentShearLoad,loading]=
 				XMLChain@XMLElement["para",{},{"Internal bending moment,",
 					ToXML@preExport@moment,", internal shear, ",ToXML@preExport@
 						shear,", and loading (per unit axial length), ",ToXML@
-						preExport@load,",follow the last two differential ",
+						preExport@load,", follow the last two differential ",
 					"equations under the linearized engineering theory of ",
 					"beam bending. Additionally, I have supplied two boundary ",
 					"conditions at the free end of the beam. My sign ",
@@ -1164,7 +1164,7 @@ export@GenUC[volume,table]=
 				"method. 5 is an ALM method like mine. Several rows are ",
 				"labeled by iteration number, showing the total volume at the ",
 				"end of that iteration. The iterations row gives the total ",
-				"number of iterations of the method as it converges. The ",
+				"number of method iterations until convergence. The ",
 				"optimum row gives the converged minimum volume value. The ",
 				"functions row gives the total number of function evaluations ",
 				"occurring in the course of the optimization. Of these, my ",
@@ -1542,18 +1542,18 @@ export@GenUC[gr,principal,stress,trajectories]=
 			gr@principalStressTrajectories,
 			Caption->XMLElement["para",{},{"The streamlines of the (two) ",
 				"stress tensor eigenvector fields are plotted on the the ",
-				"black silouette of my optimized beam. I have colored the ",
+				"black silhouette of my optimized beam. I have colored the ",
 				"streamlines so that they are red at points where they ",
 				"correspond to the largest principal stress, and yellow when ",
 				"they are smaller. Technically, there is also third principal ",
-				"stress of magnitude zero that points out of the plane of the ",
-				"drawing\[LongDash]or at least it would if it weren't of zero ",
-				"magnitude. The streamlines are everywhere perpendicular to ",
+				"stress of magnitude zero whose eigenvector points out of the ",
+				"plane of the drawing magnitude. The streamlines are ",
+				"everywhere perpendicular to ",
 				"each other, though the differing scales of the x and y axes ",
 				"obscure that in this drawing. It is interesting to note that ",
-				"even though the stress magnitudes in different parts of the ",
-				"bar are discontinuous across segments, their principal ",
-				"directions are continuous across segments."}
+				"the stress tensor field is discontinuous across segments. ",
+				"This phenomenon is easily visible at the kinks in the ",
+				"streamlines."}
 				]
 			],
 		PrependDirectory->EODExportDirectory
