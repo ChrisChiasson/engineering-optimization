@@ -334,9 +334,9 @@ export@GenUC[eqn,displacement]=
 					"Unlike ",XMLElement["olink",{"targetdoc"->"self",
 						"targetptr"->"GNVNOTED"},{}],", I use ",ToXML@preExport@
 						displacement," as the displacement instead of y ",
-					"because y is the name of my vertical axis. ",ToXML@preExport@
-						youngsModulus," is the Young's Modulus in Hooke's law ",
-					"for an elastic material. ",ToXML@preExport@
+					"because y is the name of my vertical axis. ",ToXML@
+						preExport@youngsModulus," is the Young's Modulus in ",
+					"Hooke's law for an elastic material. ",ToXML@preExport@
 						sectionModulusEqn," and is the second moment of area ",
 					"with respect to the neutral axis of bending."}
 					]
