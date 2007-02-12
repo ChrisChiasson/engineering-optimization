@@ -1,5 +1,6 @@
 BeginPackage["EngineeringOptimization`Documentation`HW2`",
 	{"EngineeringOptimization`Documentation`",
+		"EngineeringOptimization`Documentation`Utility`",
 		"EngineeringOptimization`",
 		"Graphics`Colors`",
 		"Graphics`MultipleListPlot`",
@@ -217,7 +218,7 @@ plotAnnotations[poly]=
 		};
 
 Block[{$DisplayFunction=Identity},
-	densityPlot[poly]=ReleaseHold@
+	densityPlot[poly]=RasterizeDensityPlot@ReleaseHold@
 		Hold[DensityPlot][
 			xpr[poly],
 			plotRangeSpecs[poly],
@@ -243,21 +244,6 @@ Block[{$DisplayFunction=Identity},
 			ColorFunction->Function[White]
 			]			
 	];
-
-rasterizeDensityPlot[gr_Graphics]:=
-	With[{clippedRasterGraphics=
-			Rasterize[Show[gr,PlotRangePadding->None,Frame->False],
-				ImageResolution->300],
-		plotRange=PlotRange/.AbsoluteOptions[gr,PlotRange]},
-		Show[clippedRasterGraphics/.rast_Raster:>
-			ReplacePart[rast,2->Transpose[plotRange]],Flatten@{Options@gr,
-				AbsoluteOptions[gr,ImageSize]}
-			]
-		]
-
-If[$VersionNumber>=6,
-	densityPlot[poly]=rasterizeDensityPlot@densityPlot[poly]
-	]
 
 minimizationPaths="minimization_paths";
 
