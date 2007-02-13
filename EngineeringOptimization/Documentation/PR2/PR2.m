@@ -13,18 +13,8 @@ Begin["`Private`"];
 
 (Format[Derivative[1][#[i_]][t]]=Derivative[1][#[i]])&/@{X,Y};
 
-Format[Meter]="m";
-
-Unprotect@Second;
-Update@Second;
-Format[Second]="s";
-Protect@Second;
-Update@Second;
-
-(MakeBoxes[#1,_]=#2)&@@@
-	{{dL,"\[CapitalDelta]L"},
-		{num,"N"},
-		{naught,"0"}};
+(MakeBoxes[#1,_]=#2)&@@@{{dL,"\[CapitalDelta]L"},{num,"N"},{naught,"0"},
+	{Meter,"m"},{Second,"s"}};
 
 prefix="pr_2_";
 
@@ -484,6 +474,9 @@ If[EODExport===True,
 			Overwrite->True
 			]
 	];
+
+Through[{Unprotect,Update,ClearAll,Protect,Update}[K,Derivative,Second]]
+MakeBoxes[Second,_]=.
 
 End[];
 
