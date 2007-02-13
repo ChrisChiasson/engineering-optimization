@@ -877,6 +877,7 @@ constr@5=And[Sum[segmentLength[i],{i,1,maxI}]==beamLength,
 				segmentLength[#]>beamLength/maxI^3&/@And@@Range@maxI]
 
 
+(*it crashes near here when the packages are loaded in a certain order in MMA5*)
 (*constraints export*)
 (*
 Perhaps the text explanation for the unlisted constraints should be made
@@ -922,6 +923,7 @@ export@GenUC[constraint,identifiers]=
 			],
 		PrependDirectory->EODExportDirectory
 		];
+
 
 
 (*the objective to be minimized is the volume of the material used*)
