@@ -1262,7 +1262,7 @@ export@GenUC[constraint,values,table]=
 				XMLElement["xref",{"linkend"->GenUC[prefix,volume,table]},{}],
 				"."}],
 			GNVNOTEDFinalConstraintValuesTable/.x_Real?InexactNumberQ:>
-				NumberForm[x,{Infinity,6},NumberPadding->{"","0"},
+				NumberForm[x,{7,6},NumberPadding->{"","0"},
 					NumberSigns->{"-"," "},ExponentFunction->(Null&)
 					],
 			Caption->XMLElement["para",{},{"These constraints are calculated ",
