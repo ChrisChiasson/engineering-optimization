@@ -1,9 +1,8 @@
 (* ::Package:: *)
-
 BeginPackage["EngineeringOptimization`Documentation`PR4`",
 	{"Graphics`Arrow`","Graphics`FilledPlot`","EngineeringOptimization`",
 	"DifferentialEquations`InterpolatingFunctionAnatomy`","XML`DocBook`",
-	"EngineeringOptimization`Documentation`",
+	"EngineeringOptimization`Documentation`","Utilities`FileHandling`",
 	"EngineeringOptimization`Documentation`Utility`"}]
 
 
