@@ -5,7 +5,7 @@ BeginPackage["EngineeringOptimization`Documentation`HW4`",
 		"Graphics`InequalityGraphics`",
 		"Graphics`FilledPlot`",
 		"Utilities`FilterOptions`",
-		"XML`DocBook`"}];
+		"XML`DocBook`","Utilities`FileHandling`"}];
 
 Begin["`Private`"];
 
