@@ -1,7 +1,7 @@
 BeginPackage["EngineeringOptimization`Documentation`PR1`",
 	{"EngineeringOptimization`",
 		"EngineeringOptimization`Documentation`",
-		"XML`DocBook`"}
+		"XML`DocBook`","Utilities`FileHandling`"}
 	];
 
 Begin["`Private`"];
