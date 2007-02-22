@@ -2,7 +2,7 @@ BeginPackage["EngineeringOptimization`Documentation`PR2`",
 	{"EngineeringOptimization`Documentation`",
 		"EngineeringOptimization`",
 		"Graphics`Animation`",
-		"XML`DocBook`"}];
+		"XML`DocBook`","Utilities`FileHandling`"}];
 
 Begin["`Private`"];
 
