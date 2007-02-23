@@ -97,7 +97,7 @@ by Garret Vanderplaats*)
 		};
 
 (*these are for handling units symbolically during equation manipulation*)
-old$Assumptions=$Assumptions;
+
 $Assumptions=#>0&/@{Newton,X,Meter,YoungsModulus,SectionModulus};
 
 (*a list of units of each variable in the problem*)
@@ -361,6 +361,9 @@ export[ex21plot]=XMLDocument[
 	PrependDirectory->EODExportDirectory
 	];
 
+$Assumptions=True;
+
+
 filesToTransport={"pr_1_screenshot_assignment.png",
 	"pr_1_screenshot_flow_chart.png",
 	"pr_1_frameMinimum_flow_chart.pdf",
@@ -374,7 +377,7 @@ filesToTransport={"pr_1_screenshot_assignment.png",
 	};
 
 If[EODExport===True,
-	Export@@@#&/@ReleaseHold@DownValues[export][[All,1]];
+	Apply[Export,DownValues[export][[All,2]],{2}];
 		pwd=InputDirectoryName[];
 		CopyFile[
 			ToFileName[
@@ -393,8 +396,8 @@ If[EODExport===True,
 			]
 	];
 
-$Assumptions=old$Assumptions;
 
-End[];
+End[]
 
-EndPackage[];
+
+EndPackage[]
