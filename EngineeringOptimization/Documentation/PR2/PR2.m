@@ -475,7 +475,7 @@ If[EODExport===True,
 			]
 	];
 
-Through[{Unprotect,Update,ClearAll,Protect,Update}[K,Derivative,Second]]
+Through[{Unprotect,Update,ClearAll}[K,Derivative,Second]]
 MakeBoxes[Second,_]=.
 
 End[];
