@@ -475,8 +475,9 @@ If[EODExport===True,
 			]
 	];
 
-Through[{Unprotect,Update,ClearAll}[K,Derivative,Second]]
+Through[{Unprotect,Update,ClearAll}[K,Second]]
 MakeBoxes[Second,_]=.
+(Format[Derivative[1][#[i_]][t]]=.)&/@{X,Y};
 
 End[];
 
