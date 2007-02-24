@@ -120,7 +120,7 @@ export@given=
 						"for the material. ",ToXML@preExport@beamLength," is ",
 						"the total beam length, equal to the sum of all the ",
 						ToXML@preExport@segmentLength@i,". ",ToXML@preExport@
-							maxSigmaX,", is the maximum allowable value of ",
+							maxSigmaX," is the maximum allowable value of ",
 						"stress in the x direction. ",ToXML@preExport@
 							maxDeflection," is the maximum allowable ",
 						"transverse deflection (absolute value) of any point ",
