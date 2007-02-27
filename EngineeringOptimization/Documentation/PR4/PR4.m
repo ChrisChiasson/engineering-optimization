@@ -1278,7 +1278,9 @@ export@GenUC[constraint,values,table]=
 				"table\[LongDash]try comparing manually calculated constraint ",
 				"8 & 9 values for methods 1 & 2 to those of the text to see ",
 				"what I mean."}
-				]
+				],
+			EntryAttributes->(If[MatchQ[#,{i_,j_}/;i>1&&j>1],
+				{"align"->"right"},{}]&)
 			],
 		PrependDirectory->EODExportDirectory
 		];
