@@ -19,7 +19,7 @@ prefix="pr_4";
 		{maxSigmaX,OverscriptBox["\[Sigma]","_"]},{Newton,"N"},{Pascal,"Pa"},
 		{maxDeflection,OverscriptBox["v","_"]},{maxI,"\[ScriptCapitalN]"},
 		{vonMisesStress,SuperscriptBox["\[Sigma]","\[Prime]"]},
-		{volume,StyleBox["V",FontVariations->{"StrikeThrough"->True}]}
+		{volume,"Vol"(*StyleBox["V",FontVariations->{"StrikeThrough"->True}]*)}
 		}
 
 (Format[#[i_,args__]]:=Subscript[#,i][args])&/@{load,shear,moment,displacement,
