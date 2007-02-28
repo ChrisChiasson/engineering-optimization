@@ -1,34 +1,37 @@
+(* ::Package:: *)
+
 BeginPackage["EngineeringOptimization`Documentation`PR1`",
 	{"EngineeringOptimization`",
 		"EngineeringOptimization`Documentation`",
 		"XML`DocBook`","Utilities`FileHandling`"}
-	];
+	]
 
-Begin["`Private`"];
+
+Begin["`Private`"]
+
 
 {Attributes[#]={NHoldAll},Format[#[subs__]]=Subscript[#,subs]}&/@
-	{F,P,X};
+	{F,P,X}
 
-prefix="pr_1_";
+MakeBoxes[anAbscissa,_]="#"
+
+
+prefix="pr_1_"
+
 
 (*ptol example tolerance for line search appendix*)
+pTolLab="pTolLab"
 
-MakeBoxes[anAbscissa,_]="#";
+eqn[pTolLab]=ptol==10^-accuracyGoal+Abs[anAbscissa]*10^-precisionGoal
 
-pTolLab="pTolLab";
-
-eqn[pTolLab]=ptol==10^-accuracyGoal+Abs[anAbscissa]*10^-precisionGoal;
 
 (*line search first toy problem*)
-
-xMinusTenSquared="xMinusTenSquared";
+xMinusTenSquared="xMinusTenSquared"
 
 (*write out the equation*)
-
-eqn[xMinusTenSquared]=f[x]==(x-10)^2;
+eqn[xMinusTenSquared]=f[x]==(x-10)^2
 
 (*export the equation*)
-
 (export[#1]=XMLDocument[prefix<>#1<>".xml",
 	DocBookInlineEquation[prefix<>#1,eqn[#1],SetIdAttribute->#2],
 	PrependDirectory->EODExportDirectory
@@ -37,20 +40,19 @@ eqn[xMinusTenSquared]=f[x]==(x-10)^2;
 			{xMinusTenSquared,False}
 			};
 
-optimize="optimize_";
+
+optimize="optimize_"
 
 (*find the optimum (note the delayed assignment)*)
-
 request[optimize<>xMinusTenSquared]:=
 	FindMinimum[
 		eqn[xMinusTenSquared][[2]],
 		{x,0,1},
 		Method->"Unimodal"
-		];
+		]
 
 (*export the commands that would be needed to tell mathematica to find the
 minimum*)
-
 export[optimize<>xMinusTenSquared]=
 	{ExportDelayed[
 		ToFileName[
@@ -67,10 +69,10 @@ export[optimize<>xMinusTenSquared]=
 		"Text"
 		]};
 
+
 result="_result";
 
 (*export the result of finding the minimum*)
-
 export[optimize<>xMinusTenSquared<>result]=
 	{ExportDelayed[
 		ToFileName[
@@ -81,80 +83,87 @@ export[optimize<>xMinusTenSquared<>result]=
 		"Text"
 		]};
 
+
 (*Book Example Problem 2-1
 Numerical Optimization Techniques for
 Engineering Design
 by Garret Vanderplaats*)
 
 (*set up formatting for some more variables*)
-
 (MakeBoxes[#1,_]=#2)&@@@
 	{{SectionModulus,"I"},
 		{YoungsModulus,"E"},
 		{Meter,"m"},
 		{Newton,"N"},
 		{Pascal,"Pa"}
-		};
+		}
+
 
 (*these are for handling units symbolically during equation manipulation*)
+$Assumptions=#>0&/@{Newton,X,Meter,YoungsModulus,SectionModulus}
 
-$Assumptions=#>0&/@{Newton,X,Meter,YoungsModulus,SectionModulus};
 
 (*a list of units of each variable in the problem*)
+$UnitList={{X,Meter},{F,Newton},{P,Newton}}
 
-$UnitList={{X,Meter},{F,Newton},{P,Newton}};
 
 (*make the variables "squirt out" their units*)
+deUnitizeVariablesRep=#->Times[##]&@@@$UnitList
 
-deUnitizeVariablesRep=#->Times[##]&@@@$UnitList;
 
 (*make the variables "absorb" their units*)
+unitizeVariablesRep=#->Divide[##]&@@@$UnitList
 
-unitizeVariablesRep=#->Divide[##]&@@@$UnitList;
 
-dropSIUnitsRep={Meter->1,Newton->1}; (*delete units*)
+dropSIUnitsRep={Meter->1,Newton->1} (*delete units*)
 
-cm=Centi*Meter; (*centimeter*)
 
-GPa=Giga*Pascal; (*giga pascal*)
+cm=Centi*Meter (*centimeter*)
+
+
+GPa=Giga*Pascal (*giga pascal*)
+
 
 (*given values and equations*)
+rep[1]={H->25 cm, L->250 cm, A->25 cm^2, SectionModulus->750 cm^4,
+	YoungsModulus->70 GPa}
 
-rep[1]:={H->25 cm, L->250 cm, A->25 cm^2, SectionModulus->750 cm^4,
-	YoungsModulus->70 GPa};
 
-rep[2]={Centi->1/100,Giga->10^9,Pascal->Newton/Meter^2};
+rep[2]={Centi->1/100,Giga->10^9,Pascal->Newton/Meter^2}
 
-eqn[1]=F[1]==A*YoungsModulus*(1-Sqrt[1+(X^2-2 H X)/L^2]);
 
-eqn[2]=F[cr]==Pi^2*YoungsModulus*SectionModulus/L^2;
+eqn[1]=F[1]==A*YoungsModulus*(1-Sqrt[1+(X^2-2 H X)/L^2])
 
-eqn[3]=F==Min[eqn[1][[2]],eqn[2][[2]]];
 
-eqn[4]=P==(H-X)*F/Sqrt[L^2+X^2-2*H*X];
+eqn[2]=F[cr]==Pi^2*YoungsModulus*SectionModulus/L^2
+
+
+eqn[3]=F==Min[eqn[1][[2]],eqn[2][[2]]]
+
+
+eqn[4]=P==(H-X)*F/Sqrt[L^2+X^2-2*H*X]
+
 
 (*export given equations*)
-
-ex21given="ex21given";
+ex21given="ex21given"
 
 eqn[ex21given]=
 	DocBookEquationSequence@@
 		Flatten@
-			{
-				Part[
-					Cases[
-						DownValues[rep],
-						HoldPattern[Verbatim[HoldPattern[rep[1]]]:>_]
-						]/.HoldPattern[Rule[args__]]:>HoldForm[Equal[args]],
-					1,
-					2
-					],
+			{Part[
+				Cases[
+					DownValues[rep],
+					HoldPattern[Verbatim[HoldPattern[rep[1]]]:>_]
+					]/.HoldPattern[Rule[args__]]:>HoldForm[Equal[args]],
+				1,
+				2
+				],
 				{eqn[1],
 					eqn[2],
 					ReplacePart[eqn[3],eqn/@{1,2},{{2,1},{2,2}},{{1,1},{2,1}}],
 					eqn[4]
 					}
-				};
+				}
 
 export[ex21given]=XMLDocument[
 	prefix<>ex21given<>".xml",
@@ -180,30 +189,33 @@ export[ex21given]=XMLDocument[
 	PrependDirectory->EODExportDirectory
 	];
 
+
 (*Define the function to maximize.*)
+beamLoad[X_]=eqn[4][[2]]/.Rule@@eqn[3]/.rep[1]/.rep[2]//PiecewiseExpand
 
-beamLoad[X_]=eqn[4][[2]]/.Rule@@eqn[3]/.rep[1]/.rep[2]//PiecewiseExpand;
 
-loadLine=20000;
+loadLine=20000
+
 
 (*Solve the problem in the standard Mathematica way for comparison with mine.*)
 
 (*This is the maximum load.*)
+N[xpr[1]=Maximize[{beamLoad[X],0<X<=H/.rep[1]/.rep[2]}/.dropSIUnitsRep,{X}]]
 
-xpr[1]=Maximize[{beamLoad[X],0<X<=H/.rep[1]/.rep[2]}/.dropSIUnitsRep,{X}];
 
 (*These are the x locations where the load is 20000 Newtons.*)
-
-xprList[1]=
+N[xprList[1]=
 	{loadLine,#}&/@
 		{ToRules@
 			Refine@
 				Reduce[
 					loadLine*Newton==eqn[4][[2]]&&0<X<=H/.
 						Rule@@eqn[3]/.rep[1]/.rep[2]/.deUnitizeVariablesRep,X]
-		};
+		}]
 
-xprList[2]=N[Prepend[xprList[1],xpr[1]],10];
+
+xprList[2]=N[Prepend[xprList[1],xpr[1]],10]
+
 
 (*Solve the same problem again using our methods.*)
 
@@ -211,12 +223,12 @@ xprList[2]=N[Prepend[xprList[1],xpr[1]],10];
 
 (*Outside the range of X from 0 to H, the load function is unbound
 and unphysical, so we limit our search to that range*)
-
 xpr[2]=FindMinimum[
 	Evaluate[-beamLoad[X]/.dropSIUnitsRep],
 	Evaluate[{X,0,0.01,0,H}/.rep[1]/.rep[2]/.dropSIUnitsRep],
 	Method->"Unimodal"
-	];
+	]
+
 
 (*I use the results of finding the maximum load to split my
 search domains for the 20000 N (loadLine) intersections.*)
@@ -228,7 +240,8 @@ xpr[3]=FindMinimum[
 	Evaluate[Abs[beamLoad[X]-loadLine/.dropSIUnitsRep]],
 	Evaluate@Prepend[{0,X/2,0,X}/.xpr[2][[2]],X],
 	Method->"Unimodal"
-	];
+	]
+
 
 (*This time, restrict the range to the last part of the domain.*)
 
@@ -239,9 +252,11 @@ xpr[4]=FindMinimum[
 			{X,(H+X)/2,X,H}/.rep[1]/.rep[2]/.dropSIUnitsRep/.xpr[2][[2]],
 			X],
 	Method->"Unimodal"
-	];
+	]
 
-xprList[3]=xpr/@{2,3,4};
+
+xprList[3]=xpr/@{2,3,4}
+
 
 (*we had to minimize the negative to get the maximum - and we had to minimize
 the absolute value of the difference to find the intersections -- to get the
@@ -251,19 +266,10 @@ evaluated again at those x solutions*)
 xprList[4]=
 	MapThread[{#1,#2[[2]]}&,
 		{beamLoad[X]/.dropSIUnitsRep/.xprList[3][[All,2]],xprList[3]}
-		];
+		]
 
-ex21FigandTabTitle=
-	XMLElement["phrase",{},
-		{XMLElement["olink",
-			{"targetdoc"->"self","targetptr"->"GNVNOTED"},
-			{}
-			],
-		" Example 2-1 Solution"}
-		];
 
 (*make a table showing the solution*)
-
 tab[1]={
 	{SequenceForm["Maximum ",P[X,max]],
 		SequenceForm[loadLine Newton," ",X[1]],
@@ -272,9 +278,11 @@ tab[1]={
 	Apply[Sequence,
 		Flatten@{xprList[#][[1,1]],X/.xprList[#][[Range[2,3],2]]}&/@{2,4}
 		]
-	};
+	}
 
-tab[2]=Prepend[Transpose@tab[1],{"","Reference",Method->"\"Unimodal\""}];
+
+TableForm[tab[2]=Prepend[Transpose@tab[1],{"","Reference",Method->"\"Unimodal\""}]]
+
 
 gprim[1]=
 	MapThread[
@@ -296,11 +304,11 @@ gprim[1]=
 							]
 				}
 			]
-		];
+		]
+
 
 (*Plot the function and the 20000 N load line.*)
 (*make a plot with the same data as the table*)
-
 gr[1]=Plot@@{{beamLoad[X]/.dropSIUnitsRep,loadLine},
 	{X,0,25/100},
 	PlotStyle->{Black,Red},
@@ -312,11 +320,20 @@ gr[1]=Plot@@{{beamLoad[X]/.dropSIUnitsRep,loadLine},
 	PlotRange->All,
 	ImageSize->$ExportWidth,
 	If[$VersionNumber>=6,PlotRangeClipping->False,Identity[Sequence][]]
-	};
+	}
+
 
 (*export the table*)
+ex21FigandTabTitle=
+	XMLElement["phrase",{},
+		{XMLElement["olink",
+			{"targetdoc"->"self","targetptr"->"GNVNOTED"},
+			{}
+			],
+		" Example 2-1 Solution"}
+		];
 
-ex21table="ex21table";
+ex21table="ex21table"
 
 export[ex21table]=XMLDocument[
 	prefix<>ex21table<>".xml",
@@ -338,8 +355,8 @@ export[ex21table]=XMLDocument[
 	PrependDirectory->EODExportDirectory
 	];
 
-(*export the plot*)
 
+(*export the plot*)
 ex21plot="ex21plot"
 
 export[ex21plot]=XMLDocument[
@@ -361,7 +378,9 @@ export[ex21plot]=XMLDocument[
 	PrependDirectory->EODExportDirectory
 	];
 
-$Assumptions=True;
+
+(*reset $Assumptions to the default*)
+$Assumptions=True
 
 
 filesToTransport={"pr_1_screenshot_assignment.png",
