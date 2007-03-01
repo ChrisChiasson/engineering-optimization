@@ -1436,7 +1436,13 @@ plotRange=PlotRange->{{0,beamLength}+{-1,1}*beamLength/40,{-1,1}.35}/.rep@given
 
 
 (*this is the FrameLabel I use for the beam plots*)
-frameLabel=FrameLabel->(SequenceForm[ToString@#," (",Meter,")"]&/@{x,y})
+displayForm=If[$VersionNumber>=6,
+	DisplayForm@ToBoxes@#/.InterpretationBox[args__]:>First@{args}&,
+	Identity
+	]
+
+frameLabel=FrameLabel->(displayForm@
+	SequenceForm[ToString@#," (",Meter,")"]&/@{x,y})
 
 
 (*these are the options I use for the beam plots*)

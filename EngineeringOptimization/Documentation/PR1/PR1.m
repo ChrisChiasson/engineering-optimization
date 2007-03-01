@@ -309,10 +309,15 @@ gprim[1]=
 
 (*Plot the function and the 20000 N load line.*)
 (*make a plot with the same data as the table*)
+displayForm=If[$VersionNumber>=6,
+	DisplayForm@ToBoxes@#/.InterpretationBox[args__]:>First@{args}&,
+	Identity
+	]
+
 gr[1]=Plot@@{{beamLoad[X]/.dropSIUnitsRep,loadLine},
 	{X,0,25/100},
 	PlotStyle->{Black,Red},
-	AxesLabel->{
+	AxesLabel->displayForm/@{
 		SequenceForm[X," ","(",Meter,")"],
 		SequenceForm[P[X]," ","(",Newton,")"]
 		},
