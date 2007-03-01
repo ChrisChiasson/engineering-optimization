@@ -135,7 +135,7 @@ Block[{$DisplayFunction=Identity},
 gr[4,1,3]=
 	With[{solVector={X@3,X@4}/.sol[4,1][[2]]},
 		Show[
-			gr[4,1,1],
+			RasterizePlot@gr[4,1,1],
 			version5@gr[4,1,2],
 			Graphics[
 				{Thickness[0.01],Dashing[{.05,.025}],Red,
@@ -143,17 +143,10 @@ gr[4,1,3]=
 					Dashing[{1}],Green,PointSize[0.03],Point[solVector],
 					Line[{solVector,{6/5,8/5}}],Black,
 					Text[
-						DisplayForm@
-							Cell[
-								StripBoxes@
-									ToBoxes@
-										NumberForm[
-											eqns[4,1,1][Sequence@@#][[2]],
-											2
-											],
-								Background->White
-								],
-						#]&/@
+						DisplayCell[
+							NumberForm[eqns[4,1,1][Sequence@@#][[2]],2],
+							Background->White],
+						#,version6[Background->White]]&/@
 							Append[
 								LabelLines[
 									gr[4,1,1],
@@ -297,21 +290,19 @@ Block[{$DisplayFunction=Identity},
 gr[4,3,3]=
 	With[{solVector={X@1,X@2}/.sol[4,3][[2]]},
 		Show[
-			gr[4,3,1],
+			RasterizePlot@gr[4,3,1],
 			version5@gr[4,3,2],
 			Graphics[
 				{Thickness[0.01],Dashing[{.05,.025}],Red,
 					Line[{{0,rangeSpec[4,3][[2,-1]]},{0,2},{1,0},
 						{rangeSpec[4,3][[1,-1]],0}}],Thickness[0.01],
 					Dashing[{1}],Green,PointSize[0.03],Point[solVector],Black,
-					Text[DisplayForm@
-						Cell[StripBoxes@ToBoxes@NumberForm[
-								eqns[4,3,1][Sequence@@#][[2]],
-								2
-								],
-							Background->White
-							],
-						#]&/@LabelLines[gr[4,3,1],First@#&,0.5,
+					Text[
+						DisplayCell[
+							NumberForm[eqns[4,3,1][Sequence@@#][[2]],2],
+							Background->White],
+						#,version6[Background->White]]&/@
+								LabelLines[gr[4,3,1],First@#&,0.5,
 									RegionFunction->regionFunction[4,3]
 									],
 					Text[NumberForm[eqns[4,3,1][Sequence@@solVector][[2]],2],
