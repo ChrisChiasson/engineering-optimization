@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 BeginPackage["EngineeringOptimization`Documentation`HW5`",
 	{"EngineeringOptimization`Documentation`",
 		"EngineeringOptimization`Documentation`Utility`",
@@ -5,48 +7,51 @@ BeginPackage["EngineeringOptimization`Documentation`HW5`",
 		"Graphics`ImplicitPlot`",
 		"Graphics`InequalityGraphics`",
 		"Graphics`FilledPlot`",
-		"XML`DocBook`","Utilities`FileHandling`"}];
+		"XML`DocBook`","Utilities`FileHandling`"}]
 
-Begin["`Private`"];
 
-prefix="hw_5_";
+Begin["`Private`"]
+
+
+prefix="hw_5_"
+
 
 (*formatting rules*)
-
-{Attributes[#]={NHoldAll},Format[#[i_]]=Subscript[#,i]}&/@{X};
+{Attributes[#]={NHoldAll},Format[#[i_]]=Subscript[#,i]}&/@{X}
 
 MakeBoxes[rp,form_]:=Block[{r,p},MakeBoxes[Subscript[r,p],form]]
 
 MakeBoxes[rpPrime,form_]:=MakeBoxes[Derivative[1][rp],form]
 
-(MakeBoxes[#1,_]=#2)&@@@{{plus,"+"},{minus,"-"}};
+(MakeBoxes[#1,_]=#2)&@@@{{plus,"+"},{minus,"-"}}
 
-Through[{Unprotect,Update}[Piecewise]];
+Through[{Unprotect,Update}[Piecewise]]
 
 Format[Piecewise[{{val_,condition_}},otherval:Except[0]]]:=
   Piecewise[{{val,condition},{otherval,!condition}}]
 
-Through[{Protect,Update}[Piecewise]];
+Through[{Protect,Update}[Piecewise]]
+
 
 (*all the plot ranges in this homework go from -5 to 5 in both independant
 variables*)
+rng[x_]={x,-5,5}
 
-rng[x_]={x,-5,5};
+rng[vars__]:=MapAt[ReleaseHold,rng/@Hold[Sequence][vars],{0}]
 
-rng[vars__]:=MapAt[ReleaseHold,rng/@Hold[Sequence][vars],{0}];
+varList=X/@Range@2
 
-varList=X/@Range@2;
+varSeq=Sequence@@varList
 
-varSeq=Sequence@@varList;
 
 (*contour lines at function values of 5, 10, and 15 were requested in the
 homework assignment*)
+reqContours={5,10,15}
 
-reqContours={5,10,15};
 
 (*here are more evenly separated levels to complete the contour list*)
+allContours=Table[i*5,{i,1,15}]
 
-allContours=Table[i*5,{i,1,15}];
 
 HW5ContourPlotOptions={ColorFunction->(Hue[.7,1-#,1]&),(*PlotPoints->200,*)
 	FrameLabel->varList,Contours->allContours,ImageSize->$ExportWidth};
@@ -54,43 +59,47 @@ HW5ContourPlotOptions={ColorFunction->(Hue[.7,1-#,1]&),(*PlotPoints->200,*)
 HW5InequalityPlotOptions={Fills->{White},PlotStyle->{White},
 	ImageSize->$ExportWidth}
 
-eqns[5,_,1][x1_,x2_]=F==(x1-1)^2+(x2-1)^2;
+
+eqns[5,_,1][x1_,x2_]=F==(x1-1)^2+(x2-1)^2
+
 
 (*exact solution from Mathematica for the unconstrained problem*)
-sol[5,4,1]=Minimize[eqns[5,4,1][varSeq][[2]],varList];
+sol[5,4,1]=Minimize[eqns[5,4,1][varSeq][[2]],varList]
+
 
 (*constraints for problem 5-4*)
-eqns[5,4,2][x1_,x2_]=x1+x2-1<=0;
+eqns[5,4,2][x1_,x2_]=x1+x2-1<=0
 
-eqns[5,4,3][x1_,x2_]=x1>=0;
+eqns[5,4,3][x1_,x2_]=x1>=0
+
 
 (*this gives the domain of the function on which we want to optimize*)
-
 regionFunction[5,4][x1_,x2_]=Block[{LessEqual=Less,GreaterEqual=Greater},
-	eqns[5,4,#][x1,x2]&/@And[2,3]];
+	eqns[5,4,#][x1,x2]&/@And[2,3]]
+
 
 (*we're only using penalty terms in problem 5-4, which requests the extended
 quadratic method*)
-
 penaltyTerms[5,4][extPenaltyMult_,intPenaltyMult_,transition_][x1_,x2_]=
 	EngineeringOptimization`Private`penalty[
 		eqns[5,4,#][x1,x2]&/@Range[2,3],
 		extPenaltyMult,intPenaltyMult,transition,
 		Method->"ExtendedQuadratic"
-		];
+		]
+
 
 (*the objective is the sum of the original function and the penalty*)
-
 objective[5,4][extPenaltyMult_,intPenaltyMult_,transition_][x1_,x2_]=
 	eqns[5,4,1][x1,x2][[2]]+
-		penaltyTerms[5,4][extPenaltyMult,intPenaltyMult,transition][x1,x2];
+		penaltyTerms[5,4][extPenaltyMult,intPenaltyMult,transition][x1,x2]
+
 
 sol[5,4,1,rp_]:=sol[5,4,1,rp]=
-	Minimize[objective[5,4][whatever,rp,-2][varSeq],varList];
+	Minimize[objective[5,4][whatever,rp,-2][varSeq],varList]
+
 
 (*export the objective function*)
-
-obj54="objective_5_4";
+obj54="objective_5_4"
 
 export[obj54]=
 	XMLDocument[prefix<>obj54<>".xml",
@@ -103,8 +112,8 @@ export[obj54]=
 		PrependDirectory->EODExportDirectory
 		];
 
-(*contour plot the objective function with rpPrime==1 and 1/2*)
 
+(*contour plot the objective function with rpPrime==1 and 1/2*)
 version6=If[$VersionNumber>=6,Identity[Sequence][##],Identity[Sequence][]]&
 
 version5=If[$VersionNumber<6,Identity[Sequence][##],Identity[Sequence][]]&
@@ -116,12 +125,10 @@ gr[5,4,1,rp_]:=gr[5,4,1,rp]=
 				rng[varSeq]}/.Thread[varList->{X1,X2}]))[varSeq],
 						rng[varSeq],(*Most@*)HW5ContourPlotOptions
 						}
-		];
+		]
+
 
 (*firstContourLabels contains a lot of operators... sorry*)
-
-(*label the desired contours*)
-
 nSameQ=EngineeringOptimization`Private`nSameQ;
 
 firstContourLabels[graph_,func_,contours:{__?NumberQ},
@@ -133,44 +140,43 @@ firstContourLabels[graph_,func_,contours:{__?NumberQ},
 					(If[nSameQ[funcVal,#,2,2],match=#;True,False]&/@
 							requiredContours)===True,
 						requiredContours=DeleteCases[requiredContours,match];
-							Text[
-								DisplayForm@Cell[
-									StripBoxes@ToBoxes@match,
-									Background->White],
-								First@#
+							Text[DisplayCell[match,Background->White],
+								First@#,
+								version6[Background->White]
 								],
 							Identity[Sequence][]
 					]
 				]&,
 			.5,opts
 			]
-		];
+		]
 
+
+(*label the desired contours*)
 gr[5,4,2,rp_]:=gr[5,4,2,rp]=firstContourLabels[gr[5,4,1,rp],
-	objective[5,4][whatever,rp,-2],reqContours,2,2];
+	objective[5,4][whatever,rp,-2],reqContours,2,2]
+
 
 (*label the minimum*)
-
 solutionLabel[solValue_,solVector:{_,_},labelOffset:{_,_}:{0,0}]:=
 	Graphics@{
 		Green,PointSize[0.03],Point[solVector],
 		Black,
-		Text[
-			DisplayForm@Cell[
-				StripBoxes@ToBoxes@N[solValue,2],
-					Background->version5@White version6@RGBColor[1,1,1,0.8]
-				],
-			N@solVector,labelOffset
+		Text[DisplayCell[N[solValue,2],Background->White],
+			N@solVector,labelOffset,
+			version6[{1,0},Background->RGBColor[1,1,1,0.8]]
 			]
-		};
+		}
 
 gr[5,4,3,rp_]:=gr[5,4,3,rp]=
-	solutionLabel[sol[5,4,1,rp][[1]],sol[5,4,1,rp][[2,All,2]],{-1,1}];
+	solutionLabel[sol[5,4,1,rp][[1]],sol[5,4,1,rp][[2,All,2]],{-1,1}]
 
-gr[5,4,4,rp_]:=gr[5,4,4,rp]=Show@@(gr[5,4,#,rp]&)/@Range@3;
 
-(*prepare some penalty parameter and other expressions*)
+(*compose the final plot from the sub plots*)
+gr[5,4,4,rp_]:=gr[5,4,4,rp]=Show@@(gr[5,4,#,rp]&)/@Range@3
 
+
+(*prepare some penalty parameter and other expressions for export*)
 (rpPrimeXMLChain[#1]=
 		DocBookInlineEquation[prefix<>#2,rpPrime==#1,SetIdAttribute->False])&@@@
 			{{1,rp1="rpPrime_Equal_1"},{1/2,rpHalf="rpPrime_Equal_Half"}};
@@ -199,9 +205,9 @@ gr[5,4,4,rp_]:=gr[5,4,4,rp]=Show@@(gr[5,4,#,rp]&)/@Range@3;
 				{"X_2",X@1,SetIdAttribute->False}
 				};
 
-gr54="graph_5_4_";
 
 (*export the two problem 5-4 pseudo objective function contour plots*)
+gr54="graph_5_4_"
 
 unboundContourPlotAltText="A contour plot is shown. A large green point \
 indicates the minimum of the function on the domain."
@@ -213,7 +219,9 @@ indicates the minimum of the function on the domain."
 				{"Problem 5-4 Pseudo Objective Function, \[CapitalPhi], ",
 					"Contour Plot with ",ToXML@rpPrimeTitleStyleXMLChain@#2
 					}],
-			unboundContourPlotAltText,gr[5,4,4,#2],Caption->#3,
+			unboundContourPlotAltText,
+			DeleteCases[gr[5,4,4,#2],_Opacity,Infinity],
+			Caption->#3,
 			TitleAbbrev->XMLChain@XMLElement["phrase",{},{"P 5-4 ",
 				"\[CapitalPhi] Contour Plot with ",ToXML@rpPrimeXMLChain[#2]}]
 			],
@@ -228,9 +236,9 @@ indicates the minimum of the function on the domain."
 		"makes this plot more like the objective function, F, which has ",
 		"concentric circular contours."}]}};
 
+
 (*export the analytical solutions to the minimization problems (these correspond
 to the graphs)*)
-
 sol54="solution_5_4_"
 
 With[{solEqn=Reduce[D[F==objective[5,4][whatever,#2,-2][varSeq],{varList,1}],
@@ -258,16 +266,15 @@ With[{solEqn=Reduce[D[F==objective[5,4][whatever,#2,-2][varSeq],{varList,1}],
 			]
 	]&@@@{{rp1,1},{rpHalf,1/2}};
 
+
 (*moving on to problem 5-5 & 5-6*)
-
 (*the constraint equations*)
+eqns[5,5,2][x1_,x2_]=x1-x2-2==0
 
-eqns[5,5,2][x1_,x2_]=x1-x2-2==0;
+eqns[5,6,2][x1_,x2_]=x1+x2-1/2<=0
 
-eqns[5,6,2][x1_,x2_]=x1+x2-1/2<=0;
 
 (*inline exports of all given equations in this homework*)
-
 (export[prefix<>GenUC[eqns,#1,#2,#3]]=
 	XMLDocument[prefix<>GenUC[eqns,#1,#2,#3]<>".xml",
 		DocBookInlineEquation[prefix<>GenUC[eqns,#1,#2,#3],
@@ -276,9 +283,9 @@ eqns[5,6,2][x1_,x2_]=x1+x2-1/2<=0;
 		])&@@@{{5,All,1,SetIdAttribute->False},{5,4,3},
 				Sequence@@({5,#,2}&/@Range[4,6])};
 
-(*the augmented lagrangian equations with rp = 1*)
 
-augLag="augmented_lagrangian";
+(*the augmented lagrangian equations with rp = 1*)
+augLag="augmented_lagrangian"
 
 (export[GenUC[augLag,#1,#2]]=
 	XMLDocument[prefix<>GenUC[augLag,#1,#2]<>".xml",
@@ -300,11 +307,10 @@ augLag="augmented_lagrangian";
 						"due to the corresponding presence of an inequality "<>
 						"in its constraint."}};
 
+
 (*the requested tables*)
-
 (*trackALM pulls the data out of the trace by looking at the convergence tests*)
-
-Attributes@trackALM={HoldFirst};
+Attributes@trackALM={HoldFirst}
 
 trackALM[call_,firstPart:All|{__Integer}:All]:=
 	Flatten[Trace[call,
@@ -319,17 +325,17 @@ trackALM[call_,firstPart:All|{__Integer}:All]:=
 										],
 				{0,Infinity}
 				]=!={}
-		]][[firstPart,1,4]]/.xpr_Rule:>xpr[[2]]/.{num_?NumberQ}:>num;
+		]][[firstPart,1,4]]/.xpr_Rule:>xpr[[2]]/.{num_?NumberQ}:>num
+
 
 (*labelRows is a function for labeling rows of trace data*)
-
 labelRows[mat:{{__}..}]:=
-	MapIndexed[Prepend[#1,If[#2[[1]]===1,"Init",#2[[1]]-1]]&,mat];
+	MapIndexed[Prepend[#1,If[#2[[1]]===1,"Init",#2[[1]]-1]]&,mat]
+
 
 (*almTable pretty prints the trace data in a nice table that could be shown with
 TableForm*)
-
-Attributes@almTable={HoldFirst};
+Attributes@almTable={HoldFirst}
 
 almTable[command_,lagrangeMultipliers:{__?NumberQ}]:=
 	Prepend[
@@ -351,13 +357,13 @@ almTable[command_,lagrangeMultipliers:{__?NumberQ}]:=
 			SequenceForm["Penalty Scale\nFactor, ",rp],
 			"Lagrange\nMultiplier, \[Lambda]"
 			}
-		];
+		]
+
 
 (*generate and store the tables*)
+tab55="table_5_5"
 
-tab55="table_5_5";
-
-tab[tab55]=
+TableForm[tab[tab55]=
 	almTable[
 		NMinimize[{eqns[5,5,1][varSeq][[2]],eqns[5,5,2][varSeq]},
 			{{X@1,-13,-11},{X@2,19,21}},
@@ -365,11 +371,13 @@ tab[tab55]=
 				"InitialLagrangeMultipliers"->#
 				}],
 		{0,1,-4}
-		];
+		]
+	]
 
-tab56="table_5_6";
 
-tab[tab56]=
+tab56="table_5_6"
+
+TableForm[tab[tab56]=
 	almTable[
 		NMinimize[{eqns[5,6,1][varSeq][[2]],eqns[5,6,2][varSeq]},
 			{{X@1,-13,-11},{X@2,19,21}},
@@ -377,13 +385,14 @@ tab[tab56]=
 				"InitialLagrangeMultipliers"->#
 				}],
 		{0,2,-1}
-		];
+		]
+	]
 
-optgraph="optimum_graph";
 
 (*export the tables*)
+optgraph="optimum_graph"
 
-aLMParameterTable="ALM_parameter_table";
+aLMParameterTable="ALM_parameter_table"
 
 (export@GenUC[aLMParameterTable,#1,#2]=
 	XMLDocument[prefix<>GenUC[aLMParameterTable,#1,#2]<>".xml",
@@ -406,13 +415,12 @@ aLMParameterTable="ALM_parameter_table";
 		PrependDirectory->EODExportDirectory
 	])&@@@{{5,5},{5,6}};
 
+
 (*now that the work is done, it's time to shine 'em on with some cool plots of
 the optima*)
-
 (*inequalityBoundaryGraphics uses ImplicitPlot to draw each constraint border
 (by transforming a constraint to an equality) and trims the borders using the
 other constraints*)
-
 inequalityBoundaryGraphics[inequalityList_List,{varRange1:{x1_,__?NumberQ},
 	varRange2:{x2_,__?NumberQ}},directives_List
 	]:=
@@ -428,18 +436,17 @@ inequalityBoundaryGraphics[inequalityList_List,{varRange1:{x1_,__?NumberQ},
 			]
 		}
 
+
 (*domainConPlot is a rather ridiculous function used to mash up the results
 of a contour plot, some inequality borders, some contour labels, and a solution
 label -- it requires a lot of inputs*)
-
 (*on a good day domainConPlot's output is a nicely formatted contour plot - 
 it is easily affected by where ContourPlot decides to begin and end its lines
 and how that affects the homegrown RegionFunction I have implemented
 (in MMA 5.2)*)
-
 Options@domainConPlot={ContoursToLabel->All,
 	ContourInterval->Interval[{-Infinity,Infinity}],
-	SolutionLabelFunction->solutionLabel};
+	SolutionLabelFunction->solutionLabel}
 
 domainConPlot[{xpr_,inequalityList_List},{varRange1:{x1_,__?NumberQ},
 	varRange2:{x2_,__?NumberQ}},
@@ -472,7 +479,7 @@ domainConPlot[{xpr_,inequalityList_List},{varRange1:{x1_,__?NumberQ},
 						},
 					{conPlot,version5@
 						InequalityPlot[!And@@inequalityList,Sequence@@
-							(#+inequalityScale{0,-1,1}&/@{varRange1,varRange2}),
+							(#+inequalityScale {0,-1,1}&/@{varRange1,varRange2}),
 							inequalityPlotOptions],
 						inequalityBoundaryGraphics[inequalityList,{varRange1,
 							varRange2},inequalityBoundaryDirectives],
@@ -484,11 +491,13 @@ domainConPlot[{xpr_,inequalityList_List},{varRange1:{x1_,__?NumberQ},
 					]
 				]
 			]
-		];
+		]
+
 
 (*so, here is where I use Apply, Function, and one huge domainConPlot to create
 three different plots of the fully constrained optima*)
-
+(*the results are stored in the DownValues of optGr according to problem number:
+(5,4), (5,5), (5,6)*)
 Function[{problemSpec,constraintRange,fraction,solutionTextOffset},
 	optGr[Sequence@@problemSpec]=
 		domainConPlot[
@@ -503,19 +512,16 @@ Function[{problemSpec,constraintRange,fraction,solutionTextOffset},
 					],
 			solutionTextOffset,HW5ContourPlotOptions,HW5InequalityPlotOptions,
 			{Red,Thickness[0.01],Dashing[{.05,.025}]},0.02,fraction,
-			Text[DisplayForm[Cell[StripBoxes[ToBoxes[NumberForm[#1,2]]],
-				Background->White]],#2
-				]&,
+			Text[DisplayCell[NumberForm[#1,2],Background->White],#2,
+				version6[Background->White]]&,
 			ContoursToLabel->reqContours,
 			ContourInterval->Interval[{-1,1}+Through[{First,Last}[reqContours]]]
 		]
 	]@@@{{{5,4},Range[2,3],version5@.3 version6@.5,-{1,1}},
 			{{5,5},{2},.5,{1,-1}},
 			{{5,6},{2},version5@.9 version6@.5,-{1,1}}
-		};
+		}
 
-(*the results are stored in the DownValues of optGr according to problem number:
-(5,4), (5,5), (5,6)*)
 
 boundContourPlotAltText="A contour plot is shown on a non-rectangular domain. \
 A large green point indicates the minimum of the function on the domain. \
@@ -526,11 +532,11 @@ optGr[Sequence@@problemSpec]
 (export[GenUC[optgraph,##]]=
 	XMLDocument[prefix<>GenUC[optgraph,##]<>".xml",
 		DocBookFigure[prefix<>GenUC[optgraph,##],
-			StringSequence["Problem ",#1,"-",#2" Constrained Contour Plot of ",
+			StringSequence["Problem ",#1,"-",#2 " Constrained Contour Plot of ",
 				"F with Minimum"],
 			boundContourPlotAltText,
-			optGr[##],
-			TitleAbbrev->StringSequence["P ",#1,"-",#2" Contour Plot of F"],
+			DeleteCases[optGr[##],_Opacity,Infinity],
+			TitleAbbrev->StringSequence["P ",#1,"-",#2 " Contour Plot of F"],
 			Caption->XMLChain@XMLElement["para",{},{"The minimum is ",
 					ToXML@DocBookInlineEquation[prefix<>GenUC[optgraph,eqn,##],
 							eqns[##,1][varSeq][[1]]==optSol[##][[1]]
@@ -543,6 +549,7 @@ optGr[Sequence@@problemSpec]
 		PrependDirectory->EODExportDirectory
 		]
 	)&@@@Thread[{5,Range[4,6]}];
+
 
 filesToTransport={prefix<>"screenshot_assignment.png"};
 
@@ -566,6 +573,8 @@ If[EODExport===True,
 			]
 	];
 
-End[];
 
-EndPackage[];
+End[]
+
+
+EndPackage[]

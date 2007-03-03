@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 BeginPackage["EngineeringOptimization`Documentation`HW4`",
 	{"EngineeringOptimization`Documentation`",
 		"EngineeringOptimization`Documentation`Utility`",
@@ -63,13 +65,13 @@ tableau[4,1,b]=LinearMinimizeTableau[tableau[4,1,a],{{1,1},{2,2}}];
 
 eqns[4,1,1][X3_,X4_]=F==-2*X3-X4+10;
 
-eqns[4,1,2][X3_,X4_]=2*X3+X4\[LessEqual]4;
+eqns[4,1,2][X3_,X4_]=2*X3+X4<=4;
 
-eqns[4,1,3][X3_,X4_]=X3+3 X4\[LessEqual]6;
+eqns[4,1,3][X3_,X4_]=X3+3 X4<=6;
 
-eqns[4,1,4][X3_,X4_]=X3\[GreaterEqual]0;
+eqns[4,1,4][X3_,X4_]=X3>=0;
 
-eqns[4,1,5][X3_,X4_]=X4\[GreaterEqual]0;
+eqns[4,1,5][X3_,X4_]=X4>=0;
 
 eq1="eqns_4_1";
 
@@ -135,7 +137,7 @@ Block[{$DisplayFunction=Identity},
 gr[4,1,3]=
 	With[{solVector={X@3,X@4}/.sol[4,1][[2]]},
 		Show[
-			RasterizePlot@gr[4,1,1],
+			gr[4,1,1],
 			version5@gr[4,1,2],
 			Graphics[
 				{Thickness[0.01],Dashing[{.05,.025}],Red,
@@ -179,7 +181,7 @@ export[gr41]=
 function occur on a solid green line marking the edge of the domain. A large \
 green point at one end of the green line indicates the point the simplex \
 algorithm found. Dotted red lines show the other edges of the domain.",
-      gr[4,1,3],
+      DeleteCases[gr[4,1,3],_Opacity,Infinity],
       TitleAbbrev->"P 4-1 & 4-2 Function Space",
       Caption->"The red lines indicate constraints. The green point	"<>
       	"indicates the optimimum achieved by the simplex method. The green "<>
@@ -194,11 +196,11 @@ algorithm found. Dotted red lines show the other edges of the domain.",
 
 eqns[4,3,1][X1_,X2_]=F==2*X1+4*X2;
 
-eqns[4,3,2][X1_,X2_]=2 X1+X2\[GreaterEqual]2;
+eqns[4,3,2][X1_,X2_]=2 X1+X2>=2;
 
-eqns[4,3,3][X1_,X2_]=X1\[GreaterEqual]0;
+eqns[4,3,3][X1_,X2_]=X1>=0;
 
-eqns[4,3,4][X1_,X2_]=X2\[GreaterEqual]0;
+eqns[4,3,4][X1_,X2_]=X2>=0;
 
 (*initial*)
 
@@ -290,7 +292,7 @@ Block[{$DisplayFunction=Identity},
 gr[4,3,3]=
 	With[{solVector={X@1,X@2}/.sol[4,3][[2]]},
 		Show[
-			RasterizePlot@gr[4,3,1],
+			gr[4,3,1],
 			version5@gr[4,3,2],
 			Graphics[
 				{Thickness[0.01],Dashing[{.05,.025}],Red,
@@ -329,7 +331,7 @@ export[gr43]=
 					"large green point indicates the point that the simplex "<>
 					"algorithm found to be the minimum on the given domain. "<>
 					"Dotted red lines show the other edges of the domain.",
-				gr[4,3,3],
+				DeleteCases[gr[4,3,3],_Opacity,Infinity],
 				TitleAbbrev->"P 4-3 Function Space",
 				Caption->
 					"There is no optimum edge because neither of the two "<>
@@ -372,3 +374,6 @@ If[EODExport===True,
 End[];
 
 EndPackage[];
+
+
+

@@ -231,7 +231,7 @@ the "non plotted" white area, because it can leave small seams in the white
 area. However, cutting the dependancy on DrawGraphics means I can redistribute
 the project more easily.*)
 gr[4,4,3]=
-	Show[RasterizePlot@gr[4,4,1],
+	Show[gr[4,4,1],
 		version5@gr[4,4,2],
 		With[{solVector={X@1,X@2}/.sol[4,4][[2]]},
 			Graphics[
@@ -271,7 +271,7 @@ export[gr44]=
 function occur on a solid green line marking the edge of the domain. A large \
 green point at one end of the green line indicates the point the simplex \
 algorithm found. Dotted red lines show the other edges of the domain.",
-      gr[4,4,3],
+      DeleteCases[gr[4,4,3],_Opacity,Infinity],
       TitleAbbrev->"P 4-4 Function Space",
       Caption->"The red lines indicate constraints. The green point	"<>
       	"indicates the optimimum achieved by the simplex method. The green "<>
@@ -398,7 +398,7 @@ Block[{$DisplayFunction=Identity},
 gr[4,5,3]=
 	With[{solVector={X@1,X@2}/.sol[4,5][[2]]},
 		Show[
-			RasterizePlot@gr[4,5,1],
+			gr[4,5,1],
 			version5@gr[4,5,2],
 			Graphics[
 				{Thickness[0.01],Dashing[{.05,.025}],Red,
@@ -431,10 +431,10 @@ gr45="gr_4_5"
 export[gr45]=
   XMLDocument[prefix<>gr45<>".xml",
     DocBookFigure[prefix<>gr45,"P 4-5 Two Variable Function Space",
-      "A contour plot is shown on a non-rectangular domain. A large green point \
-indicates the point that the simplex algorithm found to be the minimum on the \
-given domain. Dotted red lines show the other edges of the domain.",
-      gr[4,5,3],
+      "A contour plot is shown on a non-rectangular domain. A large green \
+point indicates the point that the simplex algorithm found to be the minimum \
+on the given domain. Dotted red lines show the other edges of the domain.",
+      DeleteCases[gr[4,5,3],_Opacity,Infinity],
       TitleAbbrev->"P 4-5 Function Space",
       Caption->"There is no optimum	edge because neither of the two edges "<>
       	"that touch the minimum are parallel with the objective	contours."
