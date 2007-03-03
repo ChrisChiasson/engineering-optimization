@@ -218,7 +218,7 @@ plotAnnotations[poly]=
 		};
 
 Block[{$DisplayFunction=Identity},
-	densityPlot[poly]=RasterizeDensityPlot@ReleaseHold@
+	densityPlot[poly]=RasterizePlot@ReleaseHold@
 		Hold[DensityPlot][
 			xpr[poly],
 			plotRangeSpecs[poly],
