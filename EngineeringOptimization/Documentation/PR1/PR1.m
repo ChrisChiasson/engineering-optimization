@@ -281,7 +281,8 @@ tab[1]={
 	}
 
 
-TableForm[tab[2]=Prepend[Transpose@tab[1],{"","Reference",Method->"\"Unimodal\""}]]
+TableForm[tab[2]=
+	Prepend[Transpose@tab[1],{"","Reference",Method->"\"Unimodal\""}]]
 
 
 gprim[1]=
