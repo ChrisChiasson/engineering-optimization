@@ -1631,7 +1631,7 @@ export@GenUC[gr,von,Mises,stress]=
 			"A picture of a density plot with colors ranging from purple to "<>
 				"red superimposed on the profile of an optimized equal "<>
 				"segment length cantilever beam",
-			RasterizeDensityPlot@gr@vonMisesStress,
+			RasterizePlot@gr@vonMisesStress,
 			Caption->XMLElement["para",{},{"This is the von Mises stress in ",
 				"my optimized beam resulting from the axial bending and shear ",
 				"stress (from beam theory). The von Mises stress at a point ",
