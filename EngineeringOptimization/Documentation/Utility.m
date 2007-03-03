@@ -1,3 +1,5 @@
+(* ::Package:: *)
+
 BeginPackage["EngineeringOptimization`Documentation`Utility`"];
 
 FractionAlongCoordinates::usage=
@@ -39,25 +41,42 @@ TitleStyle::usage="TitleStyle[xpr] blocks the value of $TextStyle to be in \
 line with the default formatting of a DocBook title for a figure, equation, \
 or example."
 
-RasterizeDensityPlot::usage="RasterizeDensityPlot rasterizes density plots in a\
-way that allows Export to export the frame and labels of a density plot as \
+RasterizePlot::usage="RasterizePlot[gr] rasterizes density plots in a\
+way that allows Export to export the frame and labels of a plot as \
 vector graphics."
+
+DisplayCell::"usage"="DisplayCell[expr,cellOpts] gives the DisplayForm of the \
+BoxForm (StandardForm boxes) of expr as displayed inside a Cell with cellOpts. \
+Under version 6, this function does nothing (for compatibility with the new \
+Text function, which doesn't display DisplayForm Cells correctly)."
 
 Begin["`Private`"];
 
+
 If[$VersionNumber<6,
-	RasterizeDensityPlot=Identity,
-	RasterizeDensityPlot[gr_Graphics]:=
+	RasterizePlot=Identity,
+	RasterizePlot[gr_Graphics]:=
 		With[{clippedRasterGraphics=
-				Rasterize[Show[gr,PlotRangePadding->None,Frame->False],
-					ImageResolution->300],
-			plotRange=PlotRange/.AbsoluteOptions[gr,PlotRange]},
+				Rasterize[Show[DeleteCases[gr,_Line,Infinity],
+							PlotRangePadding->None,Frame->False],
+					ImageResolution->$ScreenResolution],
+			plotRange=PlotRange/.AbsoluteOptions[gr,PlotRange],
+			lines=Graphics@Prepend[Cases[Normal@gr,_Line,Infinity],Black],
+			text=Graphics@Cases[Normal@gr,_Text,Infinity]
+			},
 			Show[clippedRasterGraphics/.rast_Raster:>
-				ReplacePart[rast,2->Transpose[plotRange]],Flatten@{Options@gr,
-					AbsoluteOptions[gr,ImageSize]}
+					ReplacePart[rast,2->Transpose[plotRange]],lines,text,
+				Flatten@{Options@gr,AbsoluteOptions[gr,ImageSize]}
 				]
 			]	
 	]
+
+
+If[$VersionNumber<6,
+	DisplayCell[expr_,opts___]=DisplayForm@Cell[StripBoxes@ToBoxes@expr,opts],
+	DisplayCell[expr_,___]=expr
+	]
+
 
 (*duplicatePositionsToDelete is based off of the PositionOfRuns function in the
 Help Browser entry for Position*)
