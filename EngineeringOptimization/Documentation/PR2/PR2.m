@@ -245,11 +245,17 @@ labels[t_?NumericQ]:=
 
 (*generating the primitives at all polotted times gives the animation*)
 
+displayForm=If[$VersionNumber>=6,
+	DisplayForm@ToBoxes@#/.InterpretationBox[args__]:>First@{args}&,
+	Identity
+	];
+
 animationGraphics[t_]:=
 	Graphics[Through[{labels,animationPrimitives}[t]],
         PlotRange->plotRange,AspectRatio->Automatic,
         Frame->True,
-        FrameLabel->{SequenceForm[X," (m)"],SequenceForm[Y," (m)"]},
+        FrameLabel->displayForm/@
+        	{SequenceForm[X," (m)"],SequenceForm[Y," (m)"]},
         ImageSize->$ExportWidth];
 
 animation=animationGraphics/@frameTimes;
