@@ -1556,13 +1556,12 @@ export@GenUC[gr,principal,stress,trajectories]=
 				"correspond to the largest principal stress, and yellow when ",
 				"they are smaller. Technically, there is also third principal ",
 				"stress of magnitude zero whose eigenvector points out of the ",
-				"plane of the drawing magnitude. The streamlines are ",
+				"plane of the drawing. The streamlines are ",
 				"everywhere perpendicular to ",
 				"each other, though the differing scales of the x and y axes ",
 				"obscure that in this drawing. It is interesting to note that ",
 				"the stress tensor field is discontinuous across segments. ",
-				"This phenomenon is easily visible at the kinks in the ",
-				"streamlines."}
+				"This phenomenon is visible as the kinks in the streamlines."}
 				]
 			],
 		PrependDirectory->EODExportDirectory
