@@ -73,7 +73,7 @@ If[$VersionNumber<6,
 
 
 If[$VersionNumber<6,
-	DisplayCell[expr_,opts___]=DisplayForm@Cell[StripBoxes@ToBoxes@expr,opts],
+	DisplayCell[expr_,opts___]:=DisplayForm@Cell[StripBoxes@ToBoxes@expr,opts],
 	DisplayCell[expr_,___]=expr
 	]
 
