@@ -125,7 +125,8 @@ GPa=Giga*Pascal (*giga pascal*)
 
 
 (*given values and equations*)
-rep[1]={H->25 cm, L->250 cm, A->25 cm^2, SectionModulus->750 cm^4,
+(*the delayed evaluation is needed to preserve formatting in the given export*)
+rep[1]:={H->25 cm, L->250 cm, A->25 cm^2, SectionModulus->750 cm^4,
 	YoungsModulus->70 GPa}
 
 
@@ -149,15 +150,11 @@ ex21given="ex21given"
 
 eqn[ex21given]=
 	DocBookEquationSequence@@
-		Flatten@
-			{Part[
-				Cases[
+		Flatten@{Cases[
 					DownValues[rep],
-					HoldPattern[Verbatim[HoldPattern[rep[1]]]:>_]
-					]/.HoldPattern[Rule[args__]]:>HoldForm[Equal[args]],
-				1,
-				2
-				],
+					HoldPattern[Verbatim[HoldPattern[rep[1]]]:>rhs_]:>
+						(Thread@HoldForm@rhs/.Rule->Equal)
+					],
 				{eqn[1],
 					eqn[2],
 					ReplacePart[eqn[3],eqn/@{1,2},{{2,1},{2,2}},{{1,1},{2,1}}],
