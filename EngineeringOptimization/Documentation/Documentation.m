@@ -9,6 +9,12 @@ Optimization Documentaiton.";
 
 Begin["`Private`"];
 
+DisplayForm@Module[{K},Piecewise[{{1,K>0},{2,K<0}},K]]
+
+Through@{Unprotect,Update}@Piecewise
+FormatValues@Piecewise=FormatValues@Piecewise/."True"->"otherwise"
+Through@{Update,Protect,Update}@Piecewise
+
 $TextStyle={FontSize->10,If[$VersionNumber>=6,Identity[Sequence][],
 	FontFamily->"Times New Roman"]};
 
