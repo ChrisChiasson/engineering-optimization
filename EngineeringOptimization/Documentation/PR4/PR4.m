@@ -1,4 +1,5 @@
 (* ::Package:: *)
+
 BeginPackage["EngineeringOptimization`Documentation`PR4`",
 	{"Graphics`Arrow`","Graphics`FilledPlot`","EngineeringOptimization`",
 	"DifferentialEquations`InterpolatingFunctionAnatomy`","XML`DocBook`",
@@ -155,8 +156,16 @@ rep@areaMoment={sectionModulus[i_]->
 	}
 
 
-(*our beam has five segments*)
+(*our beam has maxI segments*)
 maxI=5
+
+export@GenUC[prefix,"maxI"]=
+	XMLDocument[GenUC[prefix,"maxI"]<>".xml",
+		DocBookInlineEquation[GenUC[prefix,"maxI"],
+			maxI
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 (*for the cases where segmentLength is supposed to be equal everywhere*)
@@ -337,7 +346,9 @@ export@GenUC[eqn,displacement]=
 						preExport@youngsModulus," is the Young's Modulus in ",
 					"Hooke's law for an elastic material. ",ToXML@preExport@
 						sectionModulusEqn," and is the second moment of area ",
-					"with respect to the neutral axis of bending."}
+					"with respect to the neutral axis of bending. In case it ",
+					"isn't obvious, the subscript i designates a variable ",
+					"local to a segment."}
 					]
 			],
 		PrependDirectory->EODExportDirectory
@@ -373,7 +384,7 @@ the right hand end of any segment is equal to the shear at the left hand end.
 
 3. The slope of the transverse displacement is a quadratic function of x. It
 increases by an ammount proportional to the square of the segment length. Its
-value on the right end of a segment is dependant on all the left end  boundary
+value on the right end of a segment is dependent on all the left end  boundary
 conditions except the displacment.
 
 4. The transverse displacement is a cubic function of x. The right end
@@ -413,7 +424,7 @@ at the left end of a subsequent segment through the general solution
 to the differential equations given above.
 *)
 (*
-The conditions on the right side of a segment are equalto the conditions
+The conditions on the right side of a segment are equal to the conditions
 on the left side of another segment due to continuity and to moment and
 shear sign conventions.
 *)
@@ -760,7 +771,7 @@ export@vonMisesStress=
 					ToXML@preExport@sig[x,x]," at ",
 					ToXML@preExport[y[x[i]]==h[i]],", so one might wonder why ",
 					"I have supplied the expressions for shear and von Mises ",
-					"stress. I know that if the beam becomes short enough in ",
+					"stress. I know that if the beam becomes tall enough in ",
 					"height, shear forces can cause the distortion energy at ",
 					"points below the top surface to exceed the distortion ",
 					"energy at the top surface. Assuming distortion energy is ",
@@ -804,8 +815,8 @@ rep@vonMisesStressMostlySolved=vonMisesStress[x_,y_]->octMisesCheck@3/.
 
 (*
 rep@y creates two different replacements for y: The first, where it is at
-height@i/2 and another, where it is always at the point of maximum von Mises stress,
-which is usually height@i/2, but not always.
+height@i/2 and another, where it is always at the point of maximum von Mises
+stress, which is usually height@i/2, but not always.
 *)
 rep@y=With[
 	{why=FullSimplify[y/.Last@Solve[D[vonMisesStress[x,y]==maxSigmaX/.
@@ -876,7 +887,6 @@ constr@5=And[Sum[segmentLength[i],{i,1,maxI}]==beamLength,
 				segmentLength[#]>beamLength/maxI^3&/@And@@Range@maxI]
 
 
-(*it crashes near here when the packages are loaded in a certain order in MMA5*)
 (*constraints export*)
 (*
 Perhaps the text explanation for the unlisted constraints should be made
@@ -1170,7 +1180,11 @@ export@GenUC[volume,table]=
 				"functions row gives the total number of function evaluations ",
 				"occurring in the course of the optimization. Of these, my ",
 				"method obtains the lowest volume at the cost of the highest ",
-				"number of function evaluations."}
+				"number of function evaluations. One way to decrease my ",
+				"number of evaluations would be to lower the convergence ",
+				"precision in earlier iterations, since they don't need to ",
+				"converge as precisely while the constraints are still badly ",
+				"violated."}
 				]
 			],
 		PrependDirectory->EODExportDirectory
@@ -1474,7 +1488,7 @@ export@GenUC[gr,exampleBar]=
 	XMLDocument[GenUC[prefix,gr,exampleBar]<>".xml",
 		DocBookFigure[GenUC[prefix,gr,exampleBar],
 			"General Cantilevered Beam",
-			"The profile of a cantilever bream is shown from the side, not "<>
+			"The profile of a cantilever beam is shown from the side, not "<>
 				"from above. Its five rectangular sections are larger in "<>
 				"both length and height toward the left, as the beam "<>
 				"approaches the wall to which it is attached, which is not "<>
@@ -1501,6 +1515,70 @@ export@GenUC[gr,exampleBar]=
 					"are equal. In order to compare my optimization results ",
 					"to those in the text, I make the same assumption during ",
 					"the optimization step."}
+					]
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+
+If[$VersionNumber<6,
+	{version5,version6}:={Identity[Sequence][##]&,Identity[Sequence][]&},
+	{version6,version5}:={Identity[Sequence][##]&,Identity[Sequence][]&}
+	]
+
+
+gr@exampleCrossSection=
+	Graphics[{
+		Black,
+		Rectangle[-{base[1],height[1]}/2,
+			{base[1],height[1]}/2
+			],
+		{Red,
+			Arrowheads[.04{-1,1}],
+			#,
+			version5@
+				version5[ReplacePart][
+					#,#,{{1},{2}},{{2},{1}}
+					]
+			}&/@{
+				Arrow[(version6@List version5@Sequence)[
+						-{base[1],height[1]}/2,
+						{base[1],-height[1]}/2
+						],
+					version5[HeadScaling->Absolute]
+					],
+				Arrow[(version6@List version5@Sequence)[
+						-{base[1],height[1]}/2,
+						{-base[1],height[1]}/2
+						],
+					version5[HeadScaling->Absolute]
+					]
+				},
+		White,
+		Text[height[i],{-0.9*base[1]/2,0},{-1,0}],
+		Text[base[i],{0,-0.9*height[1]/2},{0,-1}]
+		}/.sol[criticalVonMises@general][[2]],
+		PlotRange->{-1,1}.35,
+		PlotRangePadding->Automatic,AspectRatio->1,
+		Frame->True,FrameLabel->(displayForm@
+			SequenceForm[ToString@#," (",Meter,")"]&/@{z,y})
+		]
+
+export@GenUC[gr,exampleCrossSection]=
+	XMLDocument[GenUC[prefix,gr,exampleCrossSection]<>".xml",
+		DocBookFigure[GenUC[prefix,gr,exampleCrossSection],
+			"General Cantilevered Beam Cross Section",
+			"The profile of a cantilever beam cross section is shown "<>
+				"from the front.",
+			gr@exampleCrossSection,
+			TitleAbbrev->"Beam Cross Section",
+			Caption->XMLChain@
+				XMLElement["para",{},{"The profile of a cantilever beam ",
+					"cross section is shown from the front. The base, ",
+					ToXML@preExport@base@i,", is parallel with the ",
+					"horizontal direction, while the height, ",ToXML@
+						preExport@height@i,", is parallel with the ",
+					"vertical."}
 					]
 			],
 		PrependDirectory->EODExportDirectory
@@ -1681,6 +1759,7 @@ If[EODExport===True,
 	]
 
 
-End[];
+End[]
 
-EndPackage[];
+
+EndPackage[]
