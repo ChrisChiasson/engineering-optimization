@@ -40,21 +40,132 @@
 			57:28.</para>
 		</caption>
 	</figure>
-	<xi:include href="mout/pr_4_constraint_identifiers.xml"/>
-	<xi:include href="mout/pr_4_constraint_values_table.xml"/>
-	<xi:include href="mout/pr_4_coordinate_conversion.xml"/>
-	<xi:include href="mout/pr_4_design_variable_table.xml"/>
-	<xi:include href="mout/pr_4_eqn_c_i.xml"/>
-	<xi:include href="mout/pr_4_eqn_displacement.xml"/>
-	<xi:include href="mout/pr_4_eqn_momentShearLoad_loading.xml"/>
-	<xi:include href="mout/pr_4_eqn_momentShearLoad_loading_solution.xml"/>
+	<para>In example 5-1, <olink targetdoc="self" targetptr="GNVNOTED"/>
+		requests that a <xi:include href="mout/pr_4_maxI.xml"/> segment
+		cantilever beam be designed for minimum	material volume, as shown in
+		<xref linkend="pr_4_gr_exampleBar"/> with the properties given
+		in <xref linkend="pr_4_given"/>. The beam is also to have a rectangular
+		cross section, as shown in
+		<xref linkend="pr_4_gr_exampleCrossSection"/>.</para>
 	<xi:include href="mout/pr_4_given.xml"/>
 	<xi:include href="mout/pr_4_gr_exampleBar.xml"/>
+	<xi:include href="mout/pr_4_gr_exampleCrossSection.xml"/>
+	<para>Obviously, the minimum volume would be zero, but that would not
+		support the load within the given displacement and loading constraints.
+		In order to identify all the constraints mathematically, I define
+		several	expressions using linearized beam theory. As stated above, the
+		equations I develop are slightly more general than those given without
+		derivation in <olink targetdoc="self" targetptr="GNVNOTED"/>.</para>
+	<para>I start with the results of a conservation of the moments (transverse
+		to the beam) on a differentially small beam section and a conservation
+		of the forces (axial to the beam) on the same section, which yield
+		<xref linkend="pr_4_eqn_momentShearLoad_loading"/>. The solution to
+		these equations is given in
+		<xref linkend="pr_4_eqn_momentShearLoad_loading_solution"/>.</para>
+	<xi:include href="mout/pr_4_eqn_momentShearLoad_loading.xml"/>
+	<xi:include href="mout/pr_4_eqn_momentShearLoad_loading_solution.xml"/>
+	<para>With expressions for moment and shear force throughout the beam
+		determined, it is possible to determine the deflection on a beam
+		segment. Differential equations that relate moment and shear force to
+		deflection come through the kinematic assumptions that the neutral axis
+		of the beam bends into a curve of constant radius (an arc) and that
+		strain varies linearly from the neutral axis. The material is assumed to
+		be linearly elastic (by obeying Hooke's law for stress and strain),
+		though Poisson effects are neglected. Conservation of force and moment
+		are also required again. Combining these relations for a differential
+		element in one of the beam sections gives
+		<xref linkend="pr_4_eqn_displacement"/>.</para>
+	<xi:include href="mout/pr_4_eqn_displacement.xml"/>
+	<para>From the differential relations given above:</para>
+		<itemizedlist>
+			<listitem>
+				<para>The shear is constant if the load function is zero. Thus,
+					the shear at the right hand end of any segment is equal to
+					the shear at the left hand end.</para>
+			</listitem>
+			<listitem>
+				<para>The moment is a linear function of axial distance if the
+					shear is constant.</para>
+			</listitem>
+			<listitem>
+				<para>The slope of the transverse displacement is a quadratic
+					function of x. Across a segment, it increases by an ammount
+					proportional to	the square of the segment length. Its value
+					on the right end of a segment is dependent on all the left
+					end boundary condtions except the displacement.</para>
+			</listitem>
+			<listitem>
+				<para>The transverse displacement is a cubic function of x. The
+					right end displacement is dependent on all the other
+					boundary conditions on the left end.</para>
+			</listitem>
+		</itemizedlist>
+	<para>The solution to <xref linkend="pr_4_eqn_displacement"/> is
+		<xref linkend="pr_4_rep_displacement"/>. The undetermined coefficients
+		are dealt with in <xref linkend="pr_4_eqn_c_i"/>.
+		<xref linkend="pr_4_coordinate_conversion"/> shows the expressions
+		required to transform the displacement solution back into global
+		coordinates. With the given material properties and end load, the
+		displacement is	now only a function of the segment dimensions.</para>
+	<xi:include href="mout/pr_4_rep_displacement.xml"/>
+	<xi:include href="mout/pr_4_eqn_c_i.xml"/>
+	<xi:include href="mout/pr_4_coordinate_conversion.xml"/>
+	<para>The stresses in the beam are a functions of local bending moment,
+		shear force, and beam dimensions. Under the maximum principal stress
+		theory used in <olink targetdoc="self" targetptr="GNVNOTED"/>, only the
+		axial stress is important, since it creates the maximum principal stress
+		(in an entire segment) at the top left end of a segment, where the
+		shear stress is zero. However, for ductile materials—the given
+		properties seem to indicate that the bar is made of steel, which is a
+		ductile material—maximum distortion energy is considered to be a more
+		accurate theory for predicting failure, as stated in section 6-5 of
+		<olink targetdoc="self" targetptr="JSCMMED"/>.</para>
+	<para>When using distortion energy theory to predict strength failures, one
+		of the most important quantities is	the von	Mises stress, which depends
+		on the shear and axial stress in a beam	segment. The von Mises stress
+		is related to the von Mises yield condition and is defined so that its
+		magnitude is the axial tension stress that would be required to create
+		the same octahedral shear stress as that of the general stress state it
+		represents. As with the maximum principal stress method, the critical
+		section still occurrs at the left end of a segment, but it is possible
+		that if the shear is great enough, the critical height could be inside
+		the segment instead of being on its top or bottom surface. The
+		mathematical definition is given in
+		<xref linkend="pr_4_vonMisesStress"/>.</para>
+	<xi:include href="mout/pr_4_vonMisesStress.xml"/>
+	<para>From the discussion above, it is clear that an expression for the
+		critical height is needed, which I provide in
+		<xref linkend="pr_4_y_i_crit"/>.</para>
+	<xi:include href="mout/pr_4_y_i_crit.xml"/>
+	<para>All of the mathematical definitions are in place so that I may give
+		you <xref linkend="pr_4_constraint_identifiers"/>, along with
+		<xref linkend="pr_4_objective"/>.</para>
+	<xi:include href="mout/pr_4_constraint_identifiers.xml"/>
+	<xi:include href="mout/pr_4_objective.xml"/>
+	<para>As stated in the introduction,
+		<olink targetdoc="self" targetptr="GNVNOTED"/> uses an equal segment
+		length for all segments. I do the same in my optimization. With that
+		assumption, the results turn out to be as follows in
+		<xref linkend="pr_4_volume_table"/>,
+		<xref linkend="pr_4_design_variable_table"/>, and
+		<xref linkend="pr_4_constraint_values_table"/>.</para>
+	<xi:include href="mout/pr_4_volume_table.xml"/>
+	<xi:include href="mout/pr_4_design_variable_table.xml"/>
+	<xi:include href="mout/pr_4_constraint_values_table.xml"/>
+	<para>In finishing this problem, I would like you to see two plots that
+		really illustrate the stress field from my optimized solution. These are
+		<xref linkend="pr_4_gr_principal_stress_trajectories"/> and
+		<xref linkend="pr_4_gr_von_Mises_stress"/>.</para>
 	<xi:include href="mout/pr_4_gr_principal_stress_trajectories.xml"/>
 	<xi:include href="mout/pr_4_gr_von_Mises_stress.xml"/>
-	<xi:include href="mout/pr_4_objective.xml"/>
-	<xi:include href="mout/pr_4_rep_displacement.xml"/>
-	<xi:include href="mout/pr_4_volume_table.xml"/>
-	<xi:include href="mout/pr_4_vonMisesStress.xml"/>
-	<xi:include href="mout/pr_4_y_i_crit.xml"/>
+	<para>I also should say that <xref linkend="pr_4_gr_exampleBar"/> is the
+		result of removing the equal segment length restriction and using the
+		more advanced Mathematica global optimization routines, rather than my
+		local optimization routine.	The same can be said of
+		<xref linkend="pr_4_gr_exampleCrossSection"/>, which actually shows the
+		first cross section of <xref linkend="pr_4_gr_exampleBar"/>.</para>
+	<para>Finally, the code behind the analysis in this chapter may be
+		found in <olink targetdoc="self" targetptr="PR4_code"/>, while the
+		complete iteration history of my ALM method	may be found in
+		<olink targetdoc="self" targetptr="PR4_ALM_Iteration_History"/>.</para>
 </chapter>
