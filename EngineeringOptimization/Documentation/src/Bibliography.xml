@@ -49,6 +49,32 @@
 				<city>Pacific Grove</city>, <state>California</state>, <postcode>93950</postcode></address>
 		</publisher>
 	</biblioentry>
+	<biblioentry xml:id="JSCMMED">
+		<authorgroup>
+			<author>
+				<personname>
+					<firstname>Joseph</firstname>
+					<surname>Shigley</surname>
+				</personname>
+			</author>
+			<author>
+				<personname>
+					<firstname>Charles</firstname>
+					<surname>Mischke</surname>
+				</personname>
+			</author>
+		</authorgroup>
+		<title>Mechanical Engineering Design</title>
+		<biblioid class="isbn">0-07-365939-8</biblioid>
+		<copyright>
+			<year>2001</year>
+		</copyright>
+		<publisher>
+			<publishername>McGraw-Hill</publishername>
+			<address><street>1221 Avenue of the Americas</street>
+				<city>New York</city>, <state>New York</state>, <postcode>10020</postcode></address>
+		</publisher>
+	</biblioentry>
 	<biblioentry xml:id="MHEM">
 		<editor>
 			<personname>
