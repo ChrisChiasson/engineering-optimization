@@ -4,11 +4,18 @@
 	xmlns:xi="http://www.w3.org/2001/XInclude"
 	version="5">
 	<title>Constrained Optimization Methods — Project 4</title>
-	<example xml:id="PR4">
+	<example xml:id="PR4_code">
 		<?dbfo keep-together="auto"?>
-		<title>Project 4 Iteration History</title>
+		<title>Project 4 Code</title>
+		<para>This is the code for the project 4 calculations.</para>
+		<programlisting><xi:include href="mout/PR4.m"
+			parse="text"/></programlisting>
+	</example>
+	<example xml:id="PR4_ALM_Iteration_History">
+		<?dbfo keep-together="auto"?>
+		<title>Project 4 ALM Iteration History</title>
 		<para>This is the iteration history of my constrained numerical
 			optimization code for the equal segment length solution.</para>
-		<!--programlisting><xi:include href="mout/PR4.m" parse="text"/></programlisting-->
+		<!--xi:include href="mout/PR4.m" parse="text"/-->
 	</example>
 </appendix>
