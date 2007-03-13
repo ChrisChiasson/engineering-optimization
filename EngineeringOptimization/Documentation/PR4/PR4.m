@@ -185,7 +185,7 @@ moment is positive if it is ccw on right
 *)
 (*
 The first part of rep@momentShearLoad@displacement is the differential
-equation controling elastic (Hookean) prismatic beam bending under the
+equation controlling elastic (Hookean) prismatic beam bending under the
 assumptions that the first derivative of (transverse) deflections are small,
 so 1 over the radius of curvature can be approximated by the second
 derivative of transverse displacement with respect to the axial
@@ -1186,6 +1186,45 @@ export@GenUC[volume,table]=
 				"converge as precisely while the constraints are still badly ",
 				"violated."}
 				]
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+
+evaluationsTableHeaders=
+	Prepend[
+		Thread[
+			SequenceForm[
+				Prepend[var@baseHeight,volume],
+				" (",
+				Flatten@{Meter^3,Table[Meter,{Length@var@baseHeight}]},
+				")"
+				]
+			],
+		"#"
+		]
+
+evaluationsTable=
+	Prepend[
+		Map[ToString,evals[standard@equalSegmentLength][[2]],{2}],
+		evaluationsTableHeaders
+		]
+
+export@GenUC[evaluations,table]=
+	XMLDocument[GenUC[prefix,evaluations,table]<>".xml",
+		DocBookTable[GenUC[prefix,evaluations,table],
+			"Evaluations",
+			"The first column lists evaluation number. The second column \
+gives volume. The rest of the columns give the design variables.",
+			evaluationsTable,
+			Attributes->{"tabstyle"->"tightfofit"},
+			Caption->"These are the iterations of my ALM method to obtain \
+the equal segment length solution. Some entries are repeated when \
+entering a sub-method, such as an unconstrained optimization initiated \
+from the controlling ALM search, or a line search initiated from an \
+unconstrained optimization. Other entries may appear to be duplicates \
+due to a lack of printing precision.",
+			PageBreakWithin->True
 			],
 		PrependDirectory->EODExportDirectory
 		];
