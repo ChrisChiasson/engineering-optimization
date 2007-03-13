@@ -12,10 +12,10 @@
 			parse="text"/></programlisting>
 	</example>
 	<example xml:id="PR4_ALM_Iteration_History">
-		<?dbfo keep-together="auto"?>
 		<title>Project 4 ALM Iteration History</title>
-		<para>This is the iteration history of my constrained numerical
-			optimization code for the equal segment length solution.</para>
-		<!--xi:include href="mout/PR4.m" parse="text"/-->
+		<para>This is the iteration or evaluation history of my constrained
+			numerical optimization code for the equal segment length
+			solution.</para>
+		<xi:include href="mout/pr_4_evaluations_table.xml"/>
 	</example>
 </appendix>
