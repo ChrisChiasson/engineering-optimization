@@ -515,6 +515,112 @@ sphericallycappedhyperboloidsurfacearea[t_,
 Attributes[sphericallycappedhyperboloidsurfacearea]={NHoldRest}
 
 
+sphericallycappedhyperboloidpoints[spacing_]=
+	Sum[1,Evaluate[pointellipsoidparamcoordrng[1]]]+
+		Sum[1,Evaluate[pointhyperboloidparamcoordrng]]+
+		Sum[1,Evaluate[pointellipsoidparamcoordrng[1]]]
+
+
+sphericallycappedhyperboloidspacing[t_?NumberQ/;0<t<=1,
+	origptsurfrat_,
+	ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
+	hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]],
+	lowlim_,hilim_]:=
+	Extract[spacinglist,
+		Position[#,Min[#],1]&@
+			Abs[sphericallycappedhyperboloidpoints[#]&/@spacinglist-
+				N[origptsurfrat*
+					sphericallycappedhyperboloidsurfacearea[t,
+						ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
+						hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]]
+					]
+				]
+		][[1]]
+
+
+(*sphericallycappedhyperboloidspacing[t_,origptsurfrat_,
+	ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]],
+	lowlim_,hilim_]:=spacing/.
+		NMinimize[{Abs[sphericallycappedhyperboloidpoints[spacing]/
+			sphericallycappedhyperboloidsurfacearea[t,
+				ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
+				hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]]-
+					origptsurfrat],
+			lowlim<=spacing<hilim},
+			{spacing}][[2]]
+Attributes[sphericallycappedhyperboloidspacing]={NHoldRest}*)
+
+
+N[origptsurfrat[sphericallycappedhyperboloid]=
+	Divide[sphericallycappedhyperboloidpoints[10],
+		sphericallycappedhyperboloidsurfacearea[1,
+			ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
+			hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]
+			]
+		]]
+
+
+plt[2,1]=plt[3,1]
+
+
+reps[2,1]={Point[{loc:__?NumberQ}]/;eqns[2,2][loc]:>
+		Sequence[Hue[mycolorfunction[4][N@eqns[2,1][loc][[2]]]],Point@N@{loc}],
+	Point[{loc:__?NumberQ}]:>(Print[{loc}];Sequence[])
+	}
+
+
+(*plt[2,2,supplemental]=Show[Graphics3D[{EdgeForm[],First@#},
+	Sequence@@Rest@#]]&@
+	DontShow[InequalityPlot3D[eqns[2,2][vars[3,X]],
+		coordrng,PlotPoints->20,
+		ImageSize->6.25*72,PlotRange->All,ViewPoint->{1,0,0}]]*)
+
+
+plt[2,2]=Show@Last@Rest@
+	FoldList[
+		Function[{oldgraph,t},
+			Graphics3D[
+				{oldgraph[[1]],
+					Block[{spacing=sphericallycappedhyperboloidspacing[t,
+							origptsurfrat[sphericallycappedhyperboloid],
+							ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
+							hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]],1,30]},
+					N[Table@@@{
+						{Point@ellipsoid[t Sqrt[10],t Sqrt[10],t Sqrt[10]][u,ve],
+							pointellipsoidparamcoordrng[1]},
+						{Point@hyperboloid[t Sqrt[2],t Sqrt[2],t Sqrt[2]][u,vh],
+							pointhyperboloidparamcoordrng},
+						{Point@ellipsoid[t Sqrt[10],t Sqrt[10],t Sqrt[10]][u,ve],
+							pointellipsoidparamcoordrng[2]}
+						}]/.reps[2,1]]
+					},
+				Sequence@@Rest[oldgraph]
+				]
+			],
+		Graphics3D[{},
+			PlotRange->All,ViewPoint->{-1,-1,0},Axes->True,
+			AxesLabel->TraditionalForm/@{vars[3,X]},
+			version5[SphericalRegion->True,Lighting->False],
+			AspectRatio->Automatic],
+		Table[t,{t,1,1/20,-1/20}]
+		]
+
+
+plt[2,3]=
+	ParametricPlot3D@@{
+		Append[sphericallycappedhyperboloid[u,ve,
+			ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]],
+			{EdgeForm[],SurfaceColor@Hue[mycolorfunction[4][xpr[2,1,1][u,ve]]]}],
+		sphericallycappedhyperboloidcoordrange,PlotPoints->version5@300*version6@120,
+		AspectRatio->Automatic,ViewPoint->{-1,-1,0},
+		AxesLabel->TraditionalForm/@{X[1],X[2],X[3]}
+		version5[SphericalRegion->True,
+			AmbientLight->GrayLevel[0],
+			LightSources->{{{0,-1,3},GrayLevel[1]},{{0,1,3},GrayLevel[1]}}
+			]};
+(*SpinShow[%,SpinOrigin->{0,0,0},SpinDistance->4]*)
+
+
 Interrupt[]
 
 
