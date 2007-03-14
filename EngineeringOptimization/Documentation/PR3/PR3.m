@@ -2,6 +2,7 @@
 
 BeginPackage["EngineeringOptimization`Documentation`PR3`",
 	{"Graphics`Animation`","Graphics`ContourPlot3D`",
+		"EngineeringOptimization`Documentation`Utility`",
 		"Graphics`ParametricPlot3D`","Graphics`Shapes`",
 		"Graphics`InequalityGraphics`","Graphics`Graphics`"
 		}
@@ -264,6 +265,120 @@ plt[3,2]=Show@Last@Rest@
 			],
 		Table[t,{t,1,1/20,-1/20}]
 		]
+
+
+plt[3,3]=
+	ParametricPlot3D@@{
+		Append[ellipsoid[1,2,3,pltcenter[3,X,KeaneMin,KeaneMax]][u,v],
+			{EdgeForm[],SurfaceColor@Hue[mycolorfunction[3][KeaneBump3tuv[1,u,v]]]}],
+		{u,0,2\[Pi]},{v,-\[Pi]/2,\[Pi]/2},PlotPoints->version5@200*version6@120,
+		AspectRatio->Automatic,version5[SphericalRegion->True,
+		AmbientLight->GrayLevel[0],LightSources->{{{0,0,1},GrayLevel[1]}}],
+		ViewPoint->{-1,-1,0},AxesLabel->TraditionalForm/@{X[1],X[2],X[3]}
+		};
+(*SpinShow[%,SpinOrigin->{0,0,0},SpinDistance->4]*)
+
+
+DeleteCases[plt[3,3],VertexNormals->_,Infinity];
+
+
+plt[3,4]=DensityPlot@@{
+	KeaneBump3tuv[1,u,v],{u,0,2\[Pi]},{v,-\[Pi]/2,\[Pi]/2},
+	PlotPoints->version5@800*version6@100,AspectRatio->Automatic,
+	ColorFunctionScaling->False,Mesh->False,
+	ColorFunction->Function[Hue[mycolorfunction[3][##]]],
+	FrameLabel->TraditionalForm/@{u[vars[2,X]],v[vars[3,X]]},
+	FrameTicks->{PiScale,PiScale,None,None}
+	}
+
+
+RasterizePlot@plt[3,4];
+
+
+(*Other Example*)
+
+
+(*http://en.wikipedia.org/wiki/Nonlinear_programming*)
+
+
+coordrng=Sequence[{X[1],-5,5},{X[2],-5,5},{X[3],-5,5}]
+
+
+(*http://mathworld.wolfram.com/Hyperboloid.html*)
+hyperboloid[a_,b_,c_][u_,v_]={a Cosh[v]Cos[u],b Cosh[v]Sin[u],c Sinh[v]}
+
+
+vmag=Divide[#,Sqrt[#.#]]&
+
+
+vheqns[1]=Simplify[
+	Map[Last,
+		vmag[hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]][0,vh[ve]]]==
+		ellipsoid[1,1,1][0,ve]
+		]
+	]
+
+
+vhsolns[1]=FindInstance[vheqns[1],{vh[ve],ve},1][[1]]
+
+
+vheqns[2]=Equal[vh[ve/.vhsolns[1]],ve/.vhsolns[1]]
+
+
+vheqns[3]=D[vheqns[1],ve]//Simplify
+
+
+vhsolns[2]=NDSolve[vheqns/@And[2,3],vh,{ve,-\[Pi]/4,\[Pi]/4},WorkingPrecision->32]
+
+
+eqns[2,1][x1_,x2_,x3_]=F==x1*x3+x3*x2
+
+
+eqns[2,2][x1_,x2_,x3_]=And[x1^2+x2^2-x3^2<=2,x1^2+x2^2+x3^2<=10]
+
+
+solns[2,1]=Solve[eqns[2,2][vars[3,X]]/.LessEqual->Equal,X[3],{X[1],X[2]}]
+
+
+(*find the intersection of the hyperboloid and ellipsoid
+	in the hyperboloid's v coordinate*)
+solns[2,2]=Union@
+	Reap[
+		Reduce[
+			And[eqns[2,2][vars[3,X]]/.LessEqual->Equal/.
+					Thread[{vars[3,X]}->hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]][u,vh]],
+				0<=u<2\[Pi]
+				],
+			{vh,u}
+			]/.C[1]->0/.
+		Equal[vh,blah_/;blah\[Element]Reals]:>Sow[{vh->blah}]
+		][[2,1]];
+N@solns[2,2]
+
+
+(*do the same in the ellipsoid's v coordinate (different from
+	hyperboloid's)*)
+solns[2,3]=Union@
+	Reap[
+		Reduce[
+			And[eqns[2,2][vars[3,X]]/.LessEqual->Equal/.
+					Thread[{vars[3,X]}->
+						ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]][u,ve]
+						],
+				0<=u<2\[Pi],-\[Pi]/2<=ve<=\[Pi]/2
+				],
+			{u,ve}
+			]/.Equal[ve,blah_/;blah\[Element]Reals]:>Sow[{ve->blah}]
+		][[2,1]];
+N@solns[2,3]
+
+
+(*define a function that will give the surface of the hour glass
+	shape if fed two angles*)
+
+
+
+Interrupt[]
 
 
 End[]
