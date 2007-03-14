@@ -375,7 +375,144 @@ N@solns[2,3]
 
 (*define a function that will give the surface of the hour glass
 	shape if fed two angles*)
+sphericallycappedhyperboloidcoordrange=
+	Sequence[{u,0,2\[Pi]},{ve,-\[Pi]/2,\[Pi]/2}]
 
+optsphericallycappedhyperboloidcoordrange=
+	And@@Apply[LessEqual[#2,#1,#3]&,{sphericallycappedhyperboloidcoordrange},{1}]
+
+hyperboloidparamcoordrng=
+	Sequence[{u,0,2\[Pi]},{vh,solns[2,2][[1,1,2]],solns[2,2][[2,1,2]]}]
+
+opthyperboloidparamcoordrng=
+	And@@Apply[LessEqual[#2,#1,#3]&,{hyperboloidparamcoordrng},{1}]
+
+pointhyperboloidparamcoordrng=
+	Sequence@@MapThread[Append,{{hyperboloidparamcoordrng},spacing \[Pi]/180{1,1}}]
+
+ellipsoidparamcoordrng[1]=
+	Sequence[{u,0,2\[Pi]},{ve,-\[Pi]/2,solns[2,3][[1,1,2]]}]
+
+ellipsoidparamcoordrng[2]=
+	Sequence[{u,0,2\[Pi]},{ve,solns[2,3][[2,1,2]],\[Pi]/2}]
+
+optellipsoidparamcoordrng[1]=
+	And@@Apply[LessEqual[#2,#1,#3]&,{ellipsoidparamcoordrng[1]},{1}]
+
+optellipsoidparamcoordrng[2]=
+	And@@Apply[LessEqual[#2,#1,#3]&,{ellipsoidparamcoordrng[2]},{1}]
+
+pointellipsoidparamcoordrng[1]=
+	Sequence@@MapThread[Append,{{ellipsoidparamcoordrng[1]},spacing \[Pi]/180{1,1}}]
+
+pointellipsoidparamcoordrng[2]=
+	Sequence@@MapThread[Append,{{ellipsoidparamcoordrng[2]},spacing \[Pi]/180{1,1}}]
+
+
+N[sphericallycappedhyperboloid[u_,ve_,
+	ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
+	hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]]=
+	MapThread[
+		Piecewise[
+			{{#1,optellipsoidparamcoordrng[#][[2]]&/@Or[1,2]/.(-\[Pi]/2|\[Pi]/2)->Sequence[]}},
+			#2
+			]&,
+		{ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]][u,ve],
+			hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]][u,vh[ve]/.vhsolns[2][[1]]]
+			}
+		]]
+Attributes[sphericallycappedhyperboloid]={NHoldAll}
+
+
+xpr[2,1][x1_,x2_,x3_]=eqns[2,1][x1,x2,x3][[2]]
+
+
+xpr[2,1,surfacehead_][u_,v_]:=xpr[2,1]@@surfacehead[u,v]
+
+
+solns[2,4]=
+	NMinimize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},X/@Range[3]]
+
+
+solns[2,5]=
+	NMaximize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},X/@Range[3]]
+
+
+mycolorfunction[4]=
+	Block[{fval,slope,intercept},
+		Function@@{slope*fval+intercept/.
+			FindFit[{{solns[2,5][[1]],0},{solns[2,4][[1]],3/4}},
+				slope*fval+intercept,
+				{slope,intercept},
+				{fval}
+				]/.fval->#}
+		]
+
+
+(*the following function is only for t=1*)
+
+
+xpr[2,1,1][u_,ve_]=
+	xpr[2,1][vars[3,X]]/.
+		Thread[{vars[3,X]}->
+			sphericallycappedhyperboloid[u,ve,
+				ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
+				hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]
+				]
+			]//Simplify
+
+
+solns[2,6]=
+	NMinimize[{xpr[2,1,1][u,ve],optsphericallycappedhyperboloidcoordrange},{u,ve}]
+
+sphericallycappedhyperboloid[u,ve,
+	ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
+	hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]
+	]/.solns[2,6][[2]]
+
+
+(*The above output shows the surface domain based minimization
+	returns the same coordinates as the volume domain based minimization
+	(thus the minimum is on the surface and will be seen is xpr is plotted
+	as a function of the surface parameters u and ve).The same goes for the
+	maximum, below.These solutions correspond to
+	{{u->\[Pi]+\[Pi]/4,ve->\[Pi]/4},{u->\[Pi]/4,ve->\[Pi]/4}} (min,max).*)
+
+
+solns[2,7]=
+	NMaximize[{xpr[2,1,1][u,ve],optsphericallycappedhyperboloidcoordrange},{u,ve}]
+
+sphericallycappedhyperboloid[u,ve,
+	ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
+	hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]
+	]/.solns[2,7][[2]]
+
+
+sphericallycappedhyperboloidsurfacearea[t_,
+	ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
+	hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]
+	]=Assuming[{0<t<=1},
+	Assuming[{optellipsoidparamcoordrng[1]},
+		Block[{integrand=Simplify@Norm[Cross@@
+					Map[D[ellipsoid[t Sqrt[10],t Sqrt[10],t Sqrt[10]][u,ve],#]&,
+						{u,ve}]]},
+			Integrate[integrand,ellipsoidparamcoordrng[1]]
+			]]+
+		Assuming[{opthyperboloidparamcoordrng},
+			Block[{integrand=Simplify@Norm[Cross@@
+						Map[D[hyperboloid[t Sqrt[2],t Sqrt[2],t Sqrt[2]][u,vh],#]&,
+							{u,vh}]]},
+				Integrate[integrand,hyperboloidparamcoordrng]
+				]]+
+		Assuming[{optellipsoidparamcoordrng[2]},
+			Block[{integrand=Simplify@Norm[Cross@@
+						Map[D[ellipsoid[t Sqrt[10],t Sqrt[10],t Sqrt[10]][u,ve],#]&,
+							{u,ve}]]},
+				Integrate[integrand,ellipsoidparamcoordrng[2]]
+				]]
+	]
+
+Attributes[sphericallycappedhyperboloidsurfacearea]={NHoldRest}
 
 
 Interrupt[]
