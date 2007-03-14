@@ -324,7 +324,8 @@ export[minimizationPathsNegativeGradient]=
 					"magnitude toward the minimum."
 					}
 				],
-			gr[minimizationPathsNegativeGradient],
+			DeleteCases[gr[minimizationPathsNegativeGradient],_Opacity,
+				Infinity],
 			Caption->"The steepest descent method follows the negative "<>
 				"gradient field.",
 			TitleAbbrev->"Paths with Negative Gradient"
@@ -371,7 +372,8 @@ export[minimizationPathsNegInvHDotGrad]=
 					"overlay. The vectors become smaller toward the minimum."
 					}
 				],
-			gr[minimizationPathsNegInvHDotGrad],
+			DeleteCases[gr[minimizationPathsNegInvHDotGrad],_Opacity,
+				Infinity],
 			Caption->"Because F is a quadratic polynomial, the ideal "<>
 				"search direction is given by the negative of the hessian of "<>
 				"F dotted with the gradient of F. That happens to be the "<>
