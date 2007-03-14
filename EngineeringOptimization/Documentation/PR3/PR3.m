@@ -217,6 +217,55 @@ plt[3,1]=Block[{n=1/4*\[Pi]/180},
 		]
 
 
+If[$VersionNumber<6,
+	version5[args___]=args;
+	version6[args___]=Sequence[],
+	version5[args___]=Sequence[];
+	version6[args___]=args
+	]
+
+
+plt[3,2]=Show@Last@Rest@
+	FoldList[
+		Function[{oldgraph,t},
+			Graphics3D[
+				{oldgraph[[1]],
+					Table[
+						Evaluate[
+							N@{Hue[mycolorfunction[3][KeaneBump3tuv[t,u,v]]],
+								Point@
+									ellipsoid[1t,2t,3t,
+										pltcenter[3,X,KeaneMin,KeaneMax]
+										][u,v]
+								}
+							],
+						Evaluate[With[{
+								spacing=ellipsoidspacing[
+									ellipsoidpoints[10,10]/ellipsoidsurfacearea[1,2,3],
+									1,2,3,10,30,t
+									]
+								},
+								Unevaluated[
+									{v,-\[Pi]/2,\[Pi]/2,spacing \[Pi]/180},
+									{u,0,2\[Pi],spacing \[Pi]/180}
+									]
+							]]
+						]
+					},
+				Sequence@@Rest[oldgraph]
+				]
+			],
+		Graphics3D[{},
+			PlotRange->Rest/@nmininitranges[1,2,3,X,KeaneMin,KeaneMax],
+			ViewPoint->{-1,-1,0},Axes->True,
+			AxesLabel->TraditionalForm/@{vars[3,X]},
+			version5[SphericalRegion->True],
+			AspectRatio->Automatic,Lighting->False
+			],
+		Table[t,{t,1,1/20,-1/20}]
+		]
+
+
 End[]
 
 
