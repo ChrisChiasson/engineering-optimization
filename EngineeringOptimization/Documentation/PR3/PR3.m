@@ -621,7 +621,14 @@ plt[2,3]=
 (*SpinShow[%,SpinOrigin->{0,0,0},SpinDistance->4]*)
 
 
-Interrupt[]
+plt[2,4]=DensityPlot@@{
+	xpr[2,1,1][u,ve],sphericallycappedhyperboloidcoordrange,
+	PlotPoints->version5@800*version6@100,AspectRatio->Automatic,
+	ColorFunctionScaling->False,Mesh->False,
+	ColorFunction->Function[Hue[mycolorfunction[4][##]]],
+	FrameLabel->TraditionalForm/@{u[vars[2,X]],v[vars[3,X]]},
+	FrameTicks->{PiScale,PiScale,None,None}
+	}
 
 
 End[]
