@@ -2,6 +2,8 @@
 
 BeginPackage["EngineeringOptimization`Documentation`PR3`",
 	{"Graphics`Animation`","Graphics`ContourPlot3D`",
+		"XML`DocBook`",
+		"EngineeringOptimization`Documentation`",
 		"EngineeringOptimization`Documentation`Utility`",
 		"Graphics`ParametricPlot3D`","Graphics`Shapes`",
 		"Graphics`InequalityGraphics`","Graphics`Graphics`"
@@ -26,6 +28,13 @@ MakeBoxes[X[args___],form_]:=
 		]
 
 Attributes[X]={NHoldAll}
+
+
+MakeBoxes[KeaneBumpXpr,_]="KB"
+
+MakeBoxes[(head:KeaneBumpXpr)[var_,maxIndex_],form_]:=
+	SubsuperscriptBox[MakeBoxes[head,form],
+		MakeBoxes[var,form],MakeBoxes[maxIndex,form]]
 
 
 (*Keane's Bump Example*)
@@ -81,9 +90,10 @@ spacinglist=Block[{$MaxPiecewiseCases=360},
 	]
 
 
-(*find the closest even 360 degree spacing that will
+(*find the even 360 degree spacing that will
 	closely match the original point to surface ratio
 	as the "radius" scaling factor, t, varies*)
+(*high lim and low lim don't do anything here*)
 ellipsoidspacing[origptsurfrat_,
 	a_,b_,c_,
 	lowlim_,hilim_,
@@ -112,6 +122,11 @@ optcoordranges[n_,X_,min_,max_]:=
 	Apply[And,LessEqual[#2,#1,#3]&@@@{coordranges[n,X,min,max]}]
 
 
+(*these are the points between which the optimization
+objects rest on each axis*)
+(*for a 3D object, the center of the optimization
+domain is at {x,y,z} or {X1,X2,X3} =
+{(KeanMax+KeanMin)/2,(KeanMax+KeanMin)/2,(KeanMax+KeanMin)/2}*)
 KeaneMin=10^-6
 
 KeaneMax=10
@@ -131,21 +146,55 @@ KeaneBumpXpr[X_,n_]=
 
 
 KeaneBumpGeneral[args__]:=
-	Module[{n=Length[{args}],X},
+	Block[{n=Length[{args}],X},
 		KeaneBumpXpr[X,n]/.Thread[X/@Range[n]->{args}]
 		]
 
 
 KeaneBump2[x1_,x2_]=KeaneBumpGeneral[x1,x2]
 
-
+(*
 KeaneBump2[x1_,x2_,allowed_]=If[allowed[x1,x2],KeaneBump2[x1,x2],10^6]
+*)
 
 
 KeaneBump3[x1_,x2_,x3_]=KeaneBumpGeneral[x1,x2,x3]
 
-
+(*
 KeaneBump3[x1_,x2_,x3_,allowed_]=If[allowed[x1,x2,x3],KeaneBump3[x1,x2,x3],10^6]
+*)
+
+
+Interrupt[]
+(*Begin@"EngineeringOptimization`Documentation`PR3`Private`"*)
+
+
+(preExport@#1=
+	DocBookInlineEquation[GenUC[prefix,keane,bump,inline],
+		#2,SetIdAttribute->False])&@@@
+	{{GenUC[prefix,keane,bump,inline],HoldForm@KeaneBumpXpr[X,n]},
+		{GenUC[prefix,X],X},{GenUC[prefix,X,1],X@1},
+		{GenUC[prefix,X,n],X@n},{GenUC[prefix,n],n}
+		}
+
+
+export@GenUC[keane,bump,multidimensional]=
+	XMLDocument[GenUC[prefix,keane,bump,multidimensional],
+		DocBookEquation[GenUC[prefix,keane,bump,multidimensional],
+			"title",
+			HoldForm@KeaneBumpXpr[X,#]==KeaneBumpXpr[X,#]&/@
+				DocBookEquationSequence[n,2,3],
+			Caption->XMLChain@XMLElement["para",{},{ToXML@preExport@
+				GenUC[prefix,keane,bump,inline]," represents ",
+				XMLElement["olink",{"targetdoc"->"self",
+					"targetptr"->"AKBHP"},{}],"'s objective ",
+				"function with ",ToXML@preExport@GenUC[prefix,n],
+				" independent variables called ",ToXML@preExport@
+				GenUC[prefix,X,1]," through ",ToXML@preExport@
+				GenUC[prefix,X,n],"."}]
+			],
+		PrependDirectory->EODExportDirectory
+		]
 
 
 KeaneBump3tuv[t_,u_,v_]=
