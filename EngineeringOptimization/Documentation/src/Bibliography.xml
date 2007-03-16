@@ -4,6 +4,23 @@
 	xmlns:xl="http://www.w3.org/1999/xlink" 
 	xmlns:xml="http://www.w3.org/XML/1998/namespace"
 	version="5">
+	<biblioentry xml:id="AKBHP">
+		<author>
+			<personname 
+				xl:href="http://www2.isye.gatech.edu/~spyros/index.html">
+				<firstname>Andy</firstname>
+				<surname>Keane</surname>
+			</personname>
+			<email>ajk@soton.ac.uk</email>
+		</author>
+		<title xl:href="http://www.soton.ac.uk/~ajk/bump.html">
+		Bump</title>
+		<subtitle>A Hard Problem</subtitle>
+		<copyright>
+			<year>June 1994</year>
+		</copyright>
+		<address><otheraddr>Website: <link xl:href="http://www.soton.ac.uk/~ajk/bump.html"/></otheraddr></address>
+	</biblioentry>
 	<biblioentry xml:id="GNVNOTED">
 		<author>
 			<personname>
