@@ -308,7 +308,7 @@ keane2DSampleContourPlot=ContourPlot@@{KeaneBump2[vars[2,X]],
 export@GenUC[keane,sample]=
 	XMLDocument[GenUC[prefix,keane,sample],
 		DocBookFigure[GenUC[prefix,keane,sample],
-			"Sample 2-D Keane Bump Function",
+			"Sample Keane Bump Function on 2-D Domain",
 			"A contour plot depecting several \
 smooth depressions in what would otherwise be a flat \
 plane.",
@@ -366,6 +366,23 @@ plt[3,2]=Show@Last@Rest@
 			],
 		Table[t,{t,1,1/20,-1/20}]
 		]
+
+
+export@GenUC[keane,three,D]=
+	XMLDocument[GenUC[prefix,keane,three,D],
+		DocBookFigure[GenUC[prefix,keane,three,D],
+			"3-D Keane Bump Function within 3-D Ellipsoidal Domain",
+			"A scalar field is shown within the domain of an \
+ellipsoid and having function values indicated by color.",
+			plt[3,2],
+			Caption->XMLElement["para",{},{"This plot has the same",
+				"structure as ",XMLElement["xref",{"linkend"->
+					GenUC[prefix,keane,sample]},{}],", but in one ",
+				"extra dimension."}],
+			TitleAbbrev->"3-D Keane Bump Function"
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 plt[3,3]=
