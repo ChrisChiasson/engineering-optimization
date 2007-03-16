@@ -165,23 +165,19 @@ KeaneBump3[x1_,x2_,x3_,allowed_]=If[allowed[x1,x2,x3],KeaneBump3[x1,x2,x3],10^6]
 *)
 
 
-Interrupt[]
-(*Begin@"EngineeringOptimization`Documentation`PR3`Private`"*)
-
-
 (preExport@#1=
 	DocBookInlineEquation[GenUC[prefix,keane,bump,inline],
 		#2,SetIdAttribute->False])&@@@
 	{{GenUC[prefix,keane,bump,inline],HoldForm@KeaneBumpXpr[X,n]},
 		{GenUC[prefix,X],X},{GenUC[prefix,X,1],X@1},
 		{GenUC[prefix,X,n],X@n},{GenUC[prefix,n],n}
-		}
+		};
 
 
 export@GenUC[keane,bump,multidimensional]=
 	XMLDocument[GenUC[prefix,keane,bump,multidimensional],
 		DocBookEquation[GenUC[prefix,keane,bump,multidimensional],
-			"title",
+			"Keane's Bump Objective",
 			HoldForm@KeaneBumpXpr[X,#]==KeaneBumpXpr[X,#]&/@
 				DocBookEquationSequence[n,2,3],
 			Caption->XMLChain@XMLElement["para",{},{ToXML@preExport@
@@ -194,7 +190,7 @@ export@GenUC[keane,bump,multidimensional]=
 				GenUC[prefix,X,n],"."}]
 			],
 		PrependDirectory->EODExportDirectory
-		]
+		];
 
 
 KeaneBump3tuv[t_,u_,v_]=
@@ -245,6 +241,12 @@ mycolorfunction[1][scaledval_]=Hue[.7,1-scaledval,1]
 mycolorfunction[2][unscaledval_,divisor_]=Hue[.7,1-unscaledval/divisor,1]
 
 
+(*the output of mycolorfunction[3][fval] is meant for Hue*)
+(*this fitting process matches zero (the maximum of the
+KeaneBump3 function) to Hue[0], which is red, and
+the minimum solution to Hue[3/4] which is purple.
+Other function values map to hues between zero and 3/4.
+Note that I am not using hues greater than 3/4.*)
 mycolorfunction[3]=
 	Block[{fval,slope,intercept},
 		Function@@{slope*fval+intercept/.
@@ -256,17 +258,37 @@ mycolorfunction[3]=
 		]
 
 
-plt[3,1]=Block[{n=1/4*Pi/180},
+plt[3,1]=With[{n=1/4*Pi/180},
 		Show[
 			Graphics[{
 				({Hue[#1/(2 Pi-n)],Disk[{0,0},1,{#1,#1+n}]}&)/@
 					Range[0,6 Pi/4-n,n],
 					Text["Min",{0,-1},{-1,-1}],
-					Text["Max",{1,0},{1,1}]
+					Text["Max",{1,0},{1,1}],
+					Text[Mean[{Min,Max}],.9{-1,1},{-1,1}]
 				}],
 			AspectRatio->Automatic
 			]
 		]
+
+
+export@GenUC[plot,scale]=
+	XMLDocument[GenUC[prefix,plot,scale],
+		DocBookFigure[GenUC[prefix,plot,scale],
+			"Plot Scale",
+			"Three quarters of a color wheel are shown.",
+			plt[3,1],
+			Caption->XMLElement["para",{},{"These ",
+				"colors indicate, on a linear scale, ",
+				"the minimum through maximum function ",
+				"values in the other plots from this ",
+				"chapter and also ",XMLElement["olink",
+					{"targetdoc"->"self","targetptr"->
+						"pr_4_gr_von_Mises_stress"},{}]
+				"."}]
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 If[$VersionNumber<6,
@@ -275,6 +297,33 @@ If[$VersionNumber<6,
 	version5[args___]=Sequence[];
 	version6[args___]=args
 	]
+
+
+keane2DSampleContourPlot=ContourPlot@@{KeaneBump2[vars[2,X]],
+	Sequence@@nmininitranges[1,2,X,KeaneMin,KeaneMax],
+	ColorFunction->(Hue[#1*m+b]&/.Solve[{3/4==m*0+b,0==m*1+b},{m,b}][[1]]),
+	PlotPoints->30,FrameLabel->X/@Range@2}
+
+
+export@GenUC[keane,sample]=
+	XMLDocument[GenUC[prefix,keane,sample],
+		DocBookFigure[GenUC[prefix,keane,sample],
+			"Sample 2-D Keane Bump Function",
+			"A contour plot depecting several \
+smooth depressions in what would otherwise be a flat \
+plane.",
+			DeleteCases[keane2DSampleContourPlot,
+				_Opacity,Infinity],
+			Caption->XMLElement["para",{},{"This plot ",
+				"well illustrates the ",
+				XMLElement["quote",{},{"lumpiness"}],
+				" of ",XMLElement["xref",{"linkend"->
+				GenUC[prefix,keane,bump,multidimensional]},
+				{}]," in two dimensions."}],
+			TitleAbbrev->"Sample Function"
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 plt[3,2]=Show@Last@Rest@
