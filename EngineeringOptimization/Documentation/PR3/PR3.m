@@ -127,7 +127,7 @@ objects rest on each axis*)
 (*for a 3D object, the center of the optimization
 domain is at {x,y,z} or {X1,X2,X3} =
 {(KeanMax+KeanMin)/2,(KeanMax+KeanMin)/2,(KeanMax+KeanMin)/2}*)
-KeaneMin=10^-6
+KeaneMin=(*10^-6*)0
 
 KeaneMax=10
 
@@ -165,21 +165,38 @@ KeaneBump3[x1_,x2_,x3_,allowed_]=If[allowed[x1,x2,x3],KeaneBump3[x1,x2,x3],10^6]
 *)
 
 
+(*a symbolic xml error is generated here because
+Mathematica's MathML rendering code is not designed to
+filter two font size attributes*)
 (preExport@#1=
-	DocBookInlineEquation[GenUC[prefix,keane,bump,inline],
+	DocBookInlineEquation[#1,
 		#2,SetIdAttribute->False])&@@@
 	{{GenUC[prefix,keane,bump,inline],HoldForm@KeaneBumpXpr[X,n]},
 		{GenUC[prefix,X],X},{GenUC[prefix,X,1],X@1},
-		{GenUC[prefix,X,n],X@n},{GenUC[prefix,n],n}
+		{GenUC[prefix,X,n],X@n},{GenUC[prefix,n],n},
+		{GenUC[prefix,keane,bump,xpr,X,2],
+			HoldForm@KeaneBumpXpr[X,2]},
+		{GenUC[prefix,keane,bump,xpr,X,3],
+			HoldForm@KeaneBumpXpr[X,3]},
+		{GenUC[prefix,keane,bump,xpr,X,2,title],
+			HoldForm@StyleForm[KeaneBumpXpr[X,2],
+				FontSize->14]},
+		{GenUC[prefix,keane,bump,xpr,X,3,title],
+			HoldForm@StyleForm[KeaneBumpXpr[X,3],
+				FontSize->14]}
 		};
 
 
 export@GenUC[keane,bump,multidimensional]=
 	XMLDocument[GenUC[prefix,keane,bump,multidimensional],
 		DocBookEquation[GenUC[prefix,keane,bump,multidimensional],
-			"Keane's Bump Objective",
-			HoldForm@KeaneBumpXpr[X,#]==KeaneBumpXpr[X,#]&/@
-				DocBookEquationSequence[n,2,3],
+			"Keane's Bump Function",
+			Append[
+				HoldForm@KeaneBumpXpr[X,#]==KeaneBumpXpr[X,#]&/@
+					DocBookEquationSequence[n,2,3],
+				optellipsoid[1,2,3,
+					pltcenter[3,X,KeaneMin,KeaneMax]][vars[3,X]]
+				],
 			Caption->XMLChain@XMLElement["para",{},{ToXML@preExport@
 				GenUC[prefix,keane,bump,inline]," represents ",
 				XMLElement["olink",{"targetdoc"->"self",
@@ -187,7 +204,9 @@ export@GenUC[keane,bump,multidimensional]=
 				"function with ",ToXML@preExport@GenUC[prefix,n],
 				" independent variables called ",ToXML@preExport@
 				GenUC[prefix,X,1]," through ",ToXML@preExport@
-				GenUC[prefix,X,n],"."}]
+				GenUC[prefix,X,n],". The inequaltiy gives my ",
+				"optimization domain for ",ToXML@preExport@
+					GenUC[prefix,keane,bump,xpr,X,3]}]
 			],
 		PrependDirectory->EODExportDirectory
 		];
@@ -308,7 +327,10 @@ keane2DSampleContourPlot=ContourPlot@@{KeaneBump2[vars[2,X]],
 export@GenUC[keane,sample]=
 	XMLDocument[GenUC[prefix,keane,sample],
 		DocBookFigure[GenUC[prefix,keane,sample],
-			"Sample Keane Bump Function on 2-D Domain",
+			XMLChain@XMLElement["phrase",{},{
+				ToXML@preExport@
+				GenUC[prefix,keane,bump,xpr,X,2,title],
+				" Plot"}],
 			"A contour plot depecting several \
 smooth depressions in what would otherwise be a flat \
 plane.",
@@ -368,18 +390,27 @@ plt[3,2]=Show@Last@Rest@
 		]
 
 
-export@GenUC[keane,three,D]=
-	XMLDocument[GenUC[prefix,keane,three,D],
-		DocBookFigure[GenUC[prefix,keane,three,D],
-			"3-D Keane Bump Function within 3-D Ellipsoidal Domain",
+export@GenUC[keane,three,D,field]=
+	XMLDocument[GenUC[prefix,keane,three,D,field],
+		DocBookFigure[GenUC[prefix,keane,three,D,field],
+			XMLChain@XMLElement["phrase",{},{
+				ToXML@preExport@
+				GenUC[prefix,keane,bump,xpr,X,3,title],
+				" Plot within 3-D Ellipsoidal Domain"}],
 			"A scalar field is shown within the domain of an \
 ellipsoid and having function values indicated by color.",
 			plt[3,2],
 			Caption->XMLElement["para",{},{"This plot has the same",
 				"structure as ",XMLElement["xref",{"linkend"->
 					GenUC[prefix,keane,sample]},{}],", but in one ",
-				"extra dimension."}],
-			TitleAbbrev->"3-D Keane Bump Function"
+				"extra dimension. It shows the function and domain ",
+				"on which I intend to optimize. One can easily ",
+				"see that the global optimum solution is somewhere ",
+				"near (5,3.5,3), since that is the only purple ",
+				"location on the plot. However, the lumpy structure ",
+				"makes this optimum difficult to locate numerically."
+				}],
+			TitleAbbrev->"3-D Keane Bump Field"
 			],
 		PrependDirectory->EODExportDirectory
 		];
@@ -398,7 +429,24 @@ plt[3,3]=
 (*SpinShow[%,SpinOrigin->{0,0,0},SpinDistance->4]*)
 
 
-DeleteCases[plt[3,3],VertexNormals->_,Infinity];
+export@GenUC[keane,three,D,surface]=
+	XMLDocument[GenUC[prefix,keane,three,D,surface],
+		DocBookFigure[GenUC[prefix,keane,three,D,surface],
+			XMLChain@XMLElement["phrase",{},{
+				ToXML@preExport@
+				GenUC[prefix,keane,bump,xpr,X,3,title],
+				" Plot on Boundary of 3-D Ellipsoidal Domain"}],
+			"The values of the function are colored onto the \
+ellipsoidal shell of the domain.",
+			DeleteCases[plt[3,3],VertexNormals->_,Infinity],
+			Caption->XMLElement["para",{},{"Since the optimum turns out ",
+				"to be located on the border of the domain, I have ",
+				"provided this plot to more clearly indicate its ",
+				"location."}],
+			TitleAbbrev->"3-D Keane Bump Shell"
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 plt[3,4]=DensityPlot@@{
@@ -411,7 +459,27 @@ plt[3,4]=DensityPlot@@{
 	}
 
 
-RasterizePlot@plt[3,4];
+export@GenUC[keane,unrolled,surface]=
+	XMLDocument[GenUC[prefix,keane,unrolled,surface],
+		DocBookFigure[GenUC[prefix,keane,unrolled,surface],
+			XMLChain@XMLElement["phrase",{},{
+				ToXML@preExport@
+				GenUC[prefix,keane,bump,xpr,X,3,title],
+				" Plot on Unrolled Boundary of 3-D ",
+				"Ellipsoidal Domain"}],
+			"The values of the function on the edge of the \
+ellipsoidal domain are shown on a flat projection.",
+			RasterizePlot@plt[3,4],
+			Caption->"The boundary of the ellipsoidal domain \
+is a parametric surface. If the parameters for the surface \
+are used as independant axes, this is the unrolled plot or \
+projection\[LongDash]like a world map\[LongDash]that results. It is easier to \
+see the single minimum location on this graph than it is \
+on the others; again, it's the only purple spot.",
+			TitleAbbrev->"3-D Keane Bump Shell Unrolled"
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 (*Other Example*)
