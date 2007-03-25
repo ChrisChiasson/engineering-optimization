@@ -171,4 +171,18 @@
 		</copyright>
 		<address><otheraddr>Website: <link xl:href="http://www2.isye.gatech.edu/~spyros/LP/LP.html"/></otheraddr></address>
 	</biblioentry>
+	<biblioentry xml:id="WWNP">
+		<author>
+			<orgname>Wikipedia</orgname>
+		</author>
+		<title xl:href="http://www.wikipedia.org/">Wikipedia</title>
+		<subjectset>
+			<subject>
+				<subjectterm>Nonlinear Programming</subjectterm>
+			</subject>
+		</subjectset>
+		<copyright><year>2007</year></copyright>
+		<address><otheraddr>Page: <link
+		xl:href="http://en.wikipedia.org/w/index.php?title=Nonlinear_programming&amp;oldid=113181373"/></otheraddr></address>
+	</biblioentry>
 </bibliography>
