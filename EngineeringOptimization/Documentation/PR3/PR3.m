@@ -486,6 +486,7 @@ on the others; again, it's the only purple spot.",
 
 
 (*http://en.wikipedia.org/wiki/Nonlinear_programming*)
+(*3-dimensional example*)
 
 
 coordrng=Sequence[{X[1],-5,5},{X[2],-5,5},{X[3],-5,5}]
@@ -498,6 +499,9 @@ hyperboloid[a_,b_,c_][u_,v_]={a Cosh[v]Cos[u],b Cosh[v]Sin[u],c Sinh[v]}
 vmag=Divide[#,Sqrt[#.#]]&
 
 
+(*what is the relationship between the height parameters
+of a unit vector created from a hyperboloid and one from
+a unit sphere?*)
 vheqns[1]=Simplify[
 	Map[Last,
 		vmag[hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]][0,vh[ve]]]==
@@ -505,25 +509,51 @@ vheqns[1]=Simplify[
 		]
 	]
 
-
 vhsolns[1]=FindInstance[vheqns[1],{vh[ve],ve},1][[1]]
-
 
 vheqns[2]=Equal[vh[ve/.vhsolns[1]],ve/.vhsolns[1]]
 
-
 vheqns[3]=D[vheqns[1],ve]//Simplify
-
 
 vhsolns[2]=NDSolve[vheqns/@And[2,3],vh,{ve,-Pi/4,Pi/4},WorkingPrecision->32]
 
 
+(*let's call the function F*)
+(*it is apparent that changing the sign of all arguments to
+this objective function yields the same value*)
 eqns[2,1][x1_,x2_,x3_]=F==x1*x3+x3*x2
 
-
+(*it is apparent that changing the sign of all variables in
+the domain constraint equation does not change the validity
+of the inequality (True or False))*)
 eqns[2,2][x1_,x2_,x3_]=And[x1^2+x2^2-x3^2<=2,x1^2+x2^2+x3^2<=10]
 
 
+export@GenUC[f,multidimensional]=
+	XMLDocument[GenUC[prefix,f,multidimensional],
+		DocBookEquation[GenUC[prefix,f,multidimensional],
+			"F",
+			eqns[2,#]@vars[3,X]&/@
+				DocBookEquationSequence@@Range@2/.
+					And->Sequence,
+			Caption->XMLChain@XMLElement["para",{},{
+				"F represents ",XMLElement["olink",
+				{"targetdoc"->"self","targetptr"->"WWNP"},{}],
+				"'s 3-D objective function with 3 independent ",
+				"variables called ",ToXML@preExport@
+				GenUC[prefix,X,1]," through ",ToXML@preExport@
+				GenUC[prefix,X,3],". The inequaltiy gives my ",
+				"optimization domain for F. By inspection, one ",
+				"may see that changing the sign of all ",
+				"independent variable yields no change in the ",
+				"value of F or the validities of the ",
+				"inequalities."}]
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+
+(*at what heights do the hyperboloid and sphere intersect?*)
 solns[2,1]=Solve[eqns[2,2][vars[3,X]]/.LessEqual->Equal,X[3],{X[1],X[2]}]
 
 
@@ -600,6 +630,8 @@ pointellipsoidparamcoordrng[2]=
 		ellipsoidparamcoordrng[2]},spacing Pi/180{1,1}}]
 
 
+(*make this single "spherically capped hyperboloid"
+surface a function of the sphere's parameters*)
 N[sphericallycappedhyperboloid[u_,ve_,
 	ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
 	hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]]=
@@ -622,14 +654,28 @@ xpr[2,1][x1_,x2_,x3_]=eqns[2,1][x1,x2,x3][[2]]
 xpr[2,1,surfacehead_][u_,v_]:=xpr[2,1]@@surfacehead[u,v]
 
 
+(*a minimum*)
 solns[2,4]=
 	NMinimize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},X/@Range[3]]
+(*
+there is also one near:
+{1.5,1.5,-2}
+*)
 
 
+NMaximize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},X/@Range[3],Method->{"RandomSearch","InitialPoints"->{{-1,-1,-2}}}]
+
+
+(*a maximum*)
 solns[2,5]=
 	NMaximize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},X/@Range[3]]
+(*
+there is also one near:
+{-1.5,-1.5,-2}
+*)
 
 
+(*coloring function for spherically capped hyperboloid*)
 mycolorfunction[4]=
 	Block[{fval,slope,intercept},
 		Function@@{slope*fval+intercept/.
@@ -641,9 +687,11 @@ mycolorfunction[4]=
 		]
 
 
-(*the following function is only for t=1*)
-
-
+(*this gives an expression for the objective
+function in our (non-standard) spherical
+coordinate system*)
+(*the following function is only for t=1
+where t is a radial scaling factor*)
 xpr[2,1,1][u_,ve_]=
 	xpr[2,1][vars[3,X]]/.
 		Thread[{vars[3,X]}->
@@ -652,6 +700,9 @@ xpr[2,1,1][u_,ve_]=
 				hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]
 				]
 			]//Simplify
+
+
+(*left off around here*)
 
 
 solns[2,6]=
@@ -759,6 +810,7 @@ N[origptsurfrat[sphericallycappedhyperboloid]=
 plt[2,1]=plt[3,1]
 
 
+(*color a point based on the value of the objective at the point*)
 reps[2,1]={Point[{loc:__?NumberQ}]/;eqns[2,2][loc]:>
 		Sequence[Hue[mycolorfunction[4][N@eqns[2,1][loc][[2]]]],Point@N@{loc}],
 	Point[{loc:__?NumberQ}]:>(Print[{loc}];Sequence[])
@@ -805,6 +857,28 @@ plt[2,2]=Show@Last@Rest@
 		]
 
 
+export@GenUC[f,three,D,field]=
+	XMLDocument[GenUC[prefix,f,three,D,field],
+		DocBookFigure[GenUC[prefix,f,three,D,field],
+			"F Plot within 3-D Domain",
+			"A scalar field is shown within a 3-D domain, which \
+looks somewhat like an hour glass, and has function values \
+indicated by color.",
+			plt[2,2],
+			Caption->XMLElement["para",{},{"This plot shows F",
+				"within its spherically capped hyperboloid domain. ",
+				"From the purple coloring, one can easily see that ",
+				"a global minimum solution is somewhere near ",
+				"(-1.5,-1.5,2). From the symmetry of the objective ",
+				"function, we know that there is also a global ",
+				"minimum at (1.5,1.5,-2), which can also be seen ",
+				"in the plot."}],
+			TitleAbbrev->"3-D Keane Bump Field"
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+
 plt[2,3]=
 	ParametricPlot3D@@{
 		Append[sphericallycappedhyperboloid[u,ve,
@@ -823,6 +897,24 @@ plt[2,3]=
 (*SpinShow[%,SpinOrigin->{0,0,0},SpinDistance->4]*)
 
 
+export@GenUC[f,three,D,surface]=
+	XMLDocument[GenUC[prefix,f,three,D,surface],
+		DocBookFigure[GenUC[prefix,f,three,D,surface],
+			"F Plot on Boundary of 3-D Domain",
+			"The values of the function are colored onto the \
+shell of the domain.",
+			DeleteCases[plt[2,3],VertexNormals->_,Infinity],
+			Caption->XMLElement["para",{},{
+				"Since the optimum again turns out "
+				"to be located on the border of the domain, I have ",
+				"provided this plot to more clearly indicate its ",
+				"location."}],
+			TitleAbbrev->"3-D F Shell"
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+
 plt[2,4]=DensityPlot@@{
 	xpr[2,1,1][u,ve],sphericallycappedhyperboloidcoordrange,
 	PlotPoints->version5@800*version6@100,AspectRatio->Automatic,
@@ -831,6 +923,28 @@ plt[2,4]=DensityPlot@@{
 	FrameLabel->TraditionalForm/@{u[vars[2,X]],v[vars[3,X]]},
 	FrameTicks->{PiScale,PiScale,None,None}
 	}
+
+
+(*left off here*)
+
+
+export@GenUC[f,unrolled,surface]=
+	XMLDocument[GenUC[prefix,f,unrolled,surface],
+		DocBookFigure[GenUC[prefix,f,unrolled,surface],
+			"F Plot on Unrolled Boundary of 3-D Domain",
+			"The values of the function on the border of the \
+3-D domain are shown on a flat projection.",
+			RasterizePlot@plt[2,4],
+			Caption->"The boundary of the spherically \
+capped hyperboloidal domain is a parametric surface. If the \
+parameters for the surface are used as independant axes, \
+this is the unrolled plot or projection\[LongDash]like a world map\[LongDash]that \
+results. It is easier to see the minimum locations on this \
+graph than it is on the others.",
+			TitleAbbrev->"3-D F Shell Unrolled"
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 End[]
