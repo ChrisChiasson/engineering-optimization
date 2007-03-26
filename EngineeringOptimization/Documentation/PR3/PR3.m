@@ -173,6 +173,7 @@ filter two font size attributes*)
 		#2,SetIdAttribute->False])&@@@
 	{{GenUC[prefix,keane,bump,inline],HoldForm@KeaneBumpXpr[X,n]},
 		{GenUC[prefix,X],X},{GenUC[prefix,X,1],X@1},
+		{GenUC[prefix,X,3],X@3},
 		{GenUC[prefix,X,n],X@n},{GenUC[prefix,n],n},
 		{GenUC[prefix,keane,bump,xpr,X,2],
 			HoldForm@KeaneBumpXpr[X,2]},
@@ -303,7 +304,7 @@ export@GenUC[plot,scale]=
 				"values in the other plots from this ",
 				"chapter and also ",XMLElement["olink",
 					{"targetdoc"->"self","targetptr"->
-						"pr_4_gr_von_Mises_stress"},{}]
+						"pr_4_gr_von_Mises_stress"},{}],
 				"."}]
 			],
 		PrependDirectory->EODExportDirectory
@@ -702,9 +703,6 @@ xpr[2,1,1][u_,ve_]=
 			]//Simplify
 
 
-(*left off around here*)
-
-
 solns[2,6]=
 	NMinimize[{xpr[2,1,1][u,ve],
 		optsphericallycappedhyperboloidcoordrange},{u,ve}]
@@ -905,7 +903,7 @@ export@GenUC[f,three,D,surface]=
 shell of the domain.",
 			DeleteCases[plt[2,3],VertexNormals->_,Infinity],
 			Caption->XMLElement["para",{},{
-				"Since the optimum again turns out "
+				"Since the optimum again turns out ",
 				"to be located on the border of the domain, I have ",
 				"provided this plot to more clearly indicate its ",
 				"location."}],
@@ -923,9 +921,6 @@ plt[2,4]=DensityPlot@@{
 	FrameLabel->TraditionalForm/@{u[vars[2,X]],v[vars[3,X]]},
 	FrameTicks->{PiScale,PiScale,None,None}
 	}
-
-
-(*left off here*)
 
 
 export@GenUC[f,unrolled,surface]=
