@@ -2,7 +2,7 @@
 
 BeginPackage["EngineeringOptimization`Documentation`PR3`",
 	{"Graphics`Animation`","Graphics`ContourPlot3D`",
-		"XML`DocBook`",
+		"XML`DocBook`","EngineeringOptimization`",
 		"EngineeringOptimization`Documentation`",
 		"EngineeringOptimization`Documentation`Utility`",
 		"Graphics`ParametricPlot3D`","Graphics`Shapes`",
@@ -234,23 +234,30 @@ nmininitranges[radii__?NumericQ,X_Symbol,KeaneMin_,KeaneMax_]:=
 
 (*it's rather hard to find the minimum - even for global
 	optimization routines*)
+Block[{myEvaluationCount},
+	evaluationSeed={myEvaluationCount,KeaneBump3[vars[3,X]],vars[3,X]}
+	]
+
 MapIndexed[
-	Function[
-		solns[3,#2[[1]]]=
-			NMinimize[
+	Function[myEvaluationCount=0;
+		{solns[3,#2[[1]]],evals[3,#2[[1]]]}=
+			Reap@NMinimize[
 				{KeaneBump3[vars[3,X]],
 					optellipsoid[1,2,3,
 						pltcenter[3,X,KeaneMin,KeaneMax]
 						][vars[3,X]]
 					},
 				nmininitranges[1,2,3,X,KeaneMin,KeaneMax],
-				Method->#1
-				]
+				Method->#1,
+				EvaluationMonitor:>(++myEvaluationCount;Sow[evaluationSeed,"evals"])
+				];
+		evals[3,#2[[1]]]=Sequence@@@evals[3,#2[[1]]]
 		],
 	{{"DifferentialEvolution","SearchPoints"->10^2},
 		{"RandomSearch","SearchPoints"->10^2},
 		{"SimulatedAnnealing","SearchPoints"->10^2},
-		"NelderMead"
+		"NelderMead",
+		"AugmentedLagrangeMultiplier"
 		}
 	]
 
@@ -656,15 +663,29 @@ xpr[2,1,surfacehead_][u_,v_]:=xpr[2,1]@@surfacehead[u,v]
 
 
 (*a minimum*)
-solns[2,4]=
-	NMinimize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},X/@Range[3]]
+Block[{myEvaluationCount},
+	evaluationSeed={myEvaluationCount,xpr[2,1][vars[3,X]],vars[3,X]}
+	]
+myEvaluationCount=0
+{solns[2,4],evals[2,4]}=Reap@
+	NMinimize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},
+		({#,-1,0}&)/@{vars[3,X]},
+		Method->"AugmentedLagrangeMultiplier",
+		EvaluationMonitor:>(++myEvaluationCount;Sow[evaluationSeed,"evals"])]
+evals[2,4]=Sequence@@@evals[2,4]
 (*
 there is also one near:
 {1.5,1.5,-2}
 *)
 
 
-NMaximize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},X/@Range[3],Method->{"RandomSearch","InitialPoints"->{{-1,-1,-2}}}]
+(*a minimum*)
+solns[2,4]=
+	NMinimize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},X/@Range[3]]
+(*
+there is also one near:
+{1.5,1.5,-2}
+*)
 
 
 (*a maximum*)
@@ -887,7 +908,7 @@ plt[2,3]=
 		sphericallycappedhyperboloidcoordrange,
 		PlotPoints->version5@300*version6@120,
 		AspectRatio->Automatic,ViewPoint->{-1,-1,0},
-		AxesLabel->TraditionalForm/@{X[1],X[2],X[3]}
+		AxesLabel->TraditionalForm/@{X[1],X[2],X[3]},
 		version5[SphericalRegion->True,
 			AmbientLight->GrayLevel[0],
 			LightSources->{{{0,-1,3},GrayLevel[1]},{{0,1,3},GrayLevel[1]}}
