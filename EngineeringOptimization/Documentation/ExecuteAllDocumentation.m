@@ -14,7 +14,7 @@ With[{eod="EngineeringOptimization`Documentation`"},
 	Update[];
 	Share[]
 	]&/@(*pr2 is the culprit*)
-	{"HW1","PR1","HW2","HW3","PR2","HW4","HW5","PR4"};
+	{"HW1","PR1","HW2","HW3","PR2","HW4","HW5","PR3","PR4"};
 
 If[EODExport===True,
 	eoSources=
