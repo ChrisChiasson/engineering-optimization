@@ -6,7 +6,8 @@ BeginPackage["EngineeringOptimization`Documentation`PR3`",
 		"EngineeringOptimization`Documentation`",
 		"EngineeringOptimization`Documentation`Utility`",
 		"Graphics`ParametricPlot3D`","Graphics`Shapes`",
-		"Graphics`InequalityGraphics`","Graphics`Graphics`"
+		"Graphics`InequalityGraphics`","Graphics`Graphics`",
+		"Utilities`FileHandling`"
 		}
 	]
 
@@ -523,7 +524,8 @@ vheqns[2]=Equal[vh[ve/.vhsolns[1]],ve/.vhsolns[1]]
 
 vheqns[3]=D[vheqns[1],ve]//Simplify
 
-vhsolns[2]=NDSolve[vheqns/@And[2,3],vh,{ve,-Pi/4,Pi/4},WorkingPrecision->32]
+vhsolns[2]=NDSolve[vheqns/@And[2,3],vh,{ve,-Pi/4,Pi/4},
+	version6[Method->"StiffnessSwitching"],WorkingPrecision->32]
 
 
 (*let's call the function F*)
@@ -601,41 +603,47 @@ N@solns[2,3]
 
 (*define a function that will give the surface of the hour glass
 	shape if fed two angles*)
-sphericallycappedhyperboloidcoordrange=
-	Sequence[{u,0,2Pi},{ve,-Pi/2,Pi/2}]
+N@{sphericallycappedhyperboloidcoordrange=
+	Sequence[{u,0,2Pi},{ve,-Pi/2,Pi/2}]}
 
-optsphericallycappedhyperboloidcoordrange=
+N[optsphericallycappedhyperboloidcoordrange=
 	And@@Apply[LessEqual[#2,#1,#3]&,{
-		sphericallycappedhyperboloidcoordrange},{1}]
+		sphericallycappedhyperboloidcoordrange},{1}]]
 
-hyperboloidparamcoordrng=
-	Sequence[{u,0,2Pi},{vh,solns[2,2][[1,1,2]],solns[2,2][[2,1,2]]}]
 
-opthyperboloidparamcoordrng=
-	And@@Apply[LessEqual[#2,#1,#3]&,{hyperboloidparamcoordrng},{1}]
+N@{hyperboloidparamcoordrng=
+	Sequence[{u,0,2Pi},{vh,solns[2,2][[1,1,2]],solns[2,2][[2,1,2]]}]}
 
-pointhyperboloidparamcoordrng=
-	Sequence@@MapThread[Append,{{hyperboloidparamcoordrng},spacing Pi/180{1,1}}]
+N[opthyperboloidparamcoordrng=
+	And@@Apply[LessEqual[#2,#1,#3]&,{hyperboloidparamcoordrng},{1}]]
 
-ellipsoidparamcoordrng[1]=
-	Sequence[{u,0,2Pi},{ve,-Pi/2,solns[2,3][[1,1,2]]}]
 
-ellipsoidparamcoordrng[2]=
-	Sequence[{u,0,2Pi},{ve,solns[2,3][[2,1,2]],Pi/2}]
+N@{pointhyperboloidparamcoordrng=
+	Sequence@@MapThread[Append,{{hyperboloidparamcoordrng},spacing Pi/180{1,1}}]}
 
-optellipsoidparamcoordrng[1]=
-	And@@Apply[LessEqual[#2,#1,#3]&,{ellipsoidparamcoordrng[1]},{1}]
 
-optellipsoidparamcoordrng[2]=
-	And@@Apply[LessEqual[#2,#1,#3]&,{ellipsoidparamcoordrng[2]},{1}]
+N@{ellipsoidparamcoordrng[1]=
+	Sequence[{u,0,2Pi},{ve,-Pi/2,solns[2,3][[1,1,2]]}]}
 
-pointellipsoidparamcoordrng[1]=
+N[optellipsoidparamcoordrng[1]=
+	And@@Apply[LessEqual[#2,#1,#3]&,{ellipsoidparamcoordrng[1]},{1}]]
+
+
+N@{ellipsoidparamcoordrng[2]=
+	Sequence[{u,0,2Pi},{ve,solns[2,3][[2,1,2]],Pi/2}]}
+
+N[optellipsoidparamcoordrng[2]=
+	And@@Apply[LessEqual[#2,#1,#3]&,{ellipsoidparamcoordrng[2]},{1}]]
+
+
+N@{pointellipsoidparamcoordrng[1]=
 	Sequence@@MapThread[Append,{{
-		ellipsoidparamcoordrng[1]},spacing Pi/180{1,1}}]
+		ellipsoidparamcoordrng[1]},spacing Pi/180{1,1}}]}
 
-pointellipsoidparamcoordrng[2]=
+
+N@{pointellipsoidparamcoordrng[2]=
 	Sequence@@MapThread[Append,{{
-		ellipsoidparamcoordrng[2]},spacing Pi/180{1,1}}]
+		ellipsoidparamcoordrng[2]},spacing Pi/180{1,1}}]}
 
 
 (*make this single "spherically capped hyperboloid"
@@ -734,11 +742,11 @@ sphericallycappedhyperboloid[u,ve,
 	]/.solns[2,6][[2]]
 
 
-(*The above output shows the surface domain based minimization
+(*The above output shows that the surface domain based minimization
 	returns the same coordinates as the volume domain based minimization
-	(thus the minimum is on the surface and will be seen is xpr is plotted
+	(thus the minimum is on the surface and will be seen as xpr is plotted
 	as a function of the surface parameters u and ve).The same goes for the
-	maximum, below.These solutions correspond to
+	maximum, below. These solutions correspond to
 	{{u->Pi+Pi/4,ve->Pi/4},{u->Pi/4,ve->Pi/4}} (min,max).*)
 
 
@@ -898,21 +906,42 @@ indicated by color.",
 		];
 
 
-plt[2,3]=
+{plt[2,3]}=ReleaseHold@{version5@Hold[
 	ParametricPlot3D@@{
 		Append[sphericallycappedhyperboloid[u,ve,
 			ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
 				hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]],
 			{EdgeForm[],SurfaceColor@Hue[mycolorfunction[4][xpr[2,1,1][u,ve]]]}
 			],
-		sphericallycappedhyperboloidcoordrange,
-		PlotPoints->version5@300*version6@120,
+		Sequence@@(Append[#,3*Pi/180]&)/@{
+			sphericallycappedhyperboloidcoordrange},
+		(*PlotPoints->version5@300*version6@120,*)
 		AspectRatio->Automatic,ViewPoint->{-1,-1,0},
 		AxesLabel->TraditionalForm/@{X[1],X[2],X[3]},
 		version5[SphericalRegion->True,
 			AmbientLight->GrayLevel[0],
 			LightSources->{{{0,-1,3},GrayLevel[1]},{{0,1,3},GrayLevel[1]}}
-			]};
+			]}],
+	version6@Hold@
+	Show[
+		Block[
+			{spacing=1,
+				optz=Sequence[Mesh->False,
+					ColorFunction->(Hue@mycolorfunction[4]@xpr[2,1][#1,#2,#3]&),
+					ColorFunctionScaling->False]
+				},
+		ParametricPlot3D@@@{
+			{ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]][u,ve],
+				pointellipsoidparamcoordrng[1],optz},
+			{hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]][u,vh],
+				pointhyperboloidparamcoordrng,optz},
+			{ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]][u,ve],
+				pointellipsoidparamcoordrng[2],optz}
+			}
+		],AspectRatio->Automatic,ViewPoint->{-1,-1,0},
+		AxesLabel->TraditionalForm/@{X[1],X[2],X[3]},PlotRange->All
+		]
+	};
 (*SpinShow[%,SpinOrigin->{0,0,0},SpinDistance->4]*)
 
 
@@ -961,6 +990,29 @@ graph than it is on the others.",
 			],
 		PrependDirectory->EODExportDirectory
 		];
+
+
+filesToTransport={"pr_3_screenshot_assignment.png"};
+
+If[EODExport===True,
+	Export@@@#&/@ReleaseHold@DownValues[export][[All,1]];
+		pwd=InputDirectoryName[];
+		CopyFile[
+			ToFileName[
+				pwd,
+				#
+				],
+			ToFileName[
+				EODExportDirectory,
+				#
+				],
+			Overwrite->True
+			]&/@filesToTransport;
+		CopyFile[InputFileName[],
+			ToFileName[EODExportDirectory,InputFileBaseName[]],
+			Overwrite->True
+			]
+	]
 
 
 End[]
