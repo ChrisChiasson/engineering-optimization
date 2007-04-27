@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<chapter xml:id="Constrained_Optimization_Methods_PR3"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	xmlns:xl="http://www.w3.org/1999/xlink"
+	xmlns:xml="http://www.w3.org/XML/1998/namespace" version="5">
+	<title>Constrained Optimization Methods — Project 3</title>
+	<para>As Dr. Mohamed El-Sayed shows in <xref
+			linkend="pr_3_screenshot_assignment"/>, the assignment is to develop
+		and use a constrained optimization program to solve two arbitrary
+		constrained optimization problems. We are also to provide a flow chart
+		for the program, as well as its iteration history on the two problems.</para>
+	<figure xml:id="pr_3_screenshot_assignment">
+		<title>Project 3 Assignment</title>
+		<screenshot>
+			<mediaobject>
+				<imageobject role="html">
+					<imagedata fileref="mout/pr_3_screenshot_assignment.png"/>
+				</imageobject>
+				<imageobject role="fo">
+					<imagedata contentwidth="5in" fileref="mout/pr_3_screenshot_assignment.png"/>
+				</imageobject>
+				<textobject>
+					<phrase>Project (3): Use one of the SUMT methods of chapter
+						5 or the feasible direction method of chapter 6 to
+						develop a constrained optimization solution technique
+						(program), for N variables
+						use your own test cases but	provide the following:
+						1) project summary, and flow chart
+						2) printout and digital copy of the code
+						3) the iteration history of 2 test cases of your choice</phrase>
+				</textobject>
+			</mediaobject>
+		</screenshot>
+		<caption>
+			<para>This is a screenshot from part B of the seventh lecture at
+				53:14.</para>
+		</caption>
+	</figure>
+	<para>This is the project summary. FIXME</para>
+	<section>
+		<title>Description of Constrained Optimization Solution Technique</title>
+		<section xml:id="Calling_the_ALM_Search">
+			<title>Calling the Constrained ALM Search</title>
+			<para>The ALM minimization method is called as follows from within
+				Mathematica: <command>NMinimize[{f,constr}, {{x[1], xMinInit[1],
+					xMaxInit[1]},{x[1], xMinInit[1], xMaxInit[1]}, ..., {x[n],
+					xMinInit[n], xMaxInit[n]}}, Method ->
+					"AugmentedLagrangeMultiplier"]</command><footnote>
+					<para>As with my line search and unconstrained
+						multidimensional minimization commands, this one uses a
+						syntax similar to an existing command within Mathematica
+						and requires a method statement. In this case, the
+						command is NMinimize and my method is
+						"AugmentedLagrangeMultiplier".</para>
+				</footnote>
+				<footnote>
+					<para>NMinimize and NMaximize are the only numerical
+						optimization commands in the current version of
+						Mathematica (5.2) that accept constraints. However, they
+						are global optimization routines instead of
+						derivative/local routines. Accordingly, they only take
+						an interval for the initial "values" of the independent
+						variables instead of taking a point. My routine accepts
+						the same syntax, but the initial interval of a variable
+						is first converted to its midpoint.</para>
+				</footnote>. The call variable list follows.</para>
+			<variablelist>
+				<varlistentry>
+					<term>f</term>
+					<listitem>
+						<para>f is a function of the independant variables, x[1]
+							to x[n] in this case.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>x[i]</term>
+					<listitem>
+						<para>The x[i], where i takes a value from 1 to n just
+							indicate independent variables. They may be written
+							in any standard way, not just as x[i]. For instance,
+							it would be acceptable for x[1] to be called
+						Bob.</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>xMinInit[i]</term>
+					<term>xMaxInit[i]</term>
+					<listitem>
+						<para>xMinInit[i] and xMaxInit[i] must be numbers such
+							that <inlineequation>
+								<mathphrase>xMinInit[i] &lt;
+								xMaxInit[i]</mathphrase>
+							</inlineequation>. They are averaged to obtain the
+							initial starting point for x[i].</para>
+					</listitem>
+				</varlistentry>
+				<varlistentry>
+					<term>Method</term>
+					<listitem>
+						<para>Method is an option that can be changed with a
+							rule such as Method &#8594;
+							"AugmentedLagrangeMultiplier". Using that rule
+							causes Mathematica to execute my ALM search.</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+			<section>
+				<title>Calling the Unconstrained Search</title>
+				<para>It wasn't shown in the body of homework two, but the
+					calling method for the unconstrained search is: FIXME</para>
+			</section>
+		</section>
+	</section>
+	<qandaset>
+		<title>ALM Search Problems</title>
+		<para>This section contains the problems I made up for my algorithm and
+			their solutions.</para>
+		<qandaentry>
+			<question>
+				<para/>
+			</question>
+		</qandaentry>
+	</qandaset>
+</chapter>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<appendix xml:id="Constrained_Optimization_Methods_PR3_Appendix"
+	xmlns="http://docbook.org/ns/docbook"
+	xmlns:xi="http://www.w3.org/2001/XInclude"
+	version="5">
+	<title>Constrained Optimization Methods — Project 3</title>
+	<example xml:id="PR3_code">
+		<?dbfo keep-together="auto"?>
+		<title>Project 3 Code</title>
+		<para>This is the code for the project 3 calculations.</para>
+		<programlisting><xi:include href="mout/PR3.m"
+			parse="text"/></programlisting>
+	</example>
+	<!--example xml:id="PR3_ALM_Iteration_History_FIXME">
+		<title>Project 3 ALM Iteration History FIXME</title>
+		<para>This is the iteration or evaluation history of my constrained
+			numerical optimization code for the FIXME.</para>
+		<xi:include href="mout/pr_3_FIXME_evaluations_table.xml"/>
+	</example-->
+</appendix>
