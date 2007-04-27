@@ -190,7 +190,7 @@ filter two font size attributes*)
 
 
 export@GenUC[keane,bump,multidimensional]=
-	XMLDocument[GenUC[prefix,keane,bump,multidimensional],
+	XMLDocument[GenUC[prefix,keane,bump,multidimensional]<>".xml",
 		DocBookEquation[GenUC[prefix,keane,bump,multidimensional],
 			"Keane's Bump Function",
 			Append[
@@ -301,7 +301,7 @@ plt[3,1]=With[{n=1/4*Pi/180},
 
 
 export@GenUC[plot,scale]=
-	XMLDocument[GenUC[prefix,plot,scale],
+	XMLDocument[GenUC[prefix,plot,scale]<>".xml",
 		DocBookFigure[GenUC[prefix,plot,scale],
 			"Plot Scale",
 			"Three quarters of a color wheel are shown.",
@@ -334,7 +334,7 @@ keane2DSampleContourPlot=ContourPlot@@{KeaneBump2[vars[2,X]],
 
 
 export@GenUC[keane,sample]=
-	XMLDocument[GenUC[prefix,keane,sample],
+	XMLDocument[GenUC[prefix,keane,sample]<>".xml",
 		DocBookFigure[GenUC[prefix,keane,sample],
 			XMLChain@XMLElement["phrase",{},{
 				ToXML@preExport@
@@ -400,7 +400,7 @@ plt[3,2]=Show@Last@Rest@
 
 
 export@GenUC[keane,three,D,field]=
-	XMLDocument[GenUC[prefix,keane,three,D,field],
+	XMLDocument[GenUC[prefix,keane,three,D,field]<>".xml",
 		DocBookFigure[GenUC[prefix,keane,three,D,field],
 			XMLChain@XMLElement["phrase",{},{
 				ToXML@preExport@
@@ -439,7 +439,7 @@ plt[3,3]=
 
 
 export@GenUC[keane,three,D,surface]=
-	XMLDocument[GenUC[prefix,keane,three,D,surface],
+	XMLDocument[GenUC[prefix,keane,three,D,surface]<>".xml",
 		DocBookFigure[GenUC[prefix,keane,three,D,surface],
 			XMLChain@XMLElement["phrase",{},{
 				ToXML@preExport@
@@ -469,7 +469,7 @@ plt[3,4]=DensityPlot@@{
 
 
 export@GenUC[keane,unrolled,surface]=
-	XMLDocument[GenUC[prefix,keane,unrolled,surface],
+	XMLDocument[GenUC[prefix,keane,unrolled,surface]<>".xml",
 		DocBookFigure[GenUC[prefix,keane,unrolled,surface],
 			XMLChain@XMLElement["phrase",{},{
 				ToXML@preExport@
@@ -540,7 +540,7 @@ eqns[2,2][x1_,x2_,x3_]=And[x1^2+x2^2-x3^2<=2,x1^2+x2^2+x3^2<=10]
 
 
 export@GenUC[f,multidimensional]=
-	XMLDocument[GenUC[prefix,f,multidimensional],
+	XMLDocument[GenUC[prefix,f,multidimensional]<>".xml",
 		DocBookEquation[GenUC[prefix,f,multidimensional],
 			"F",
 			eqns[2,#]@vars[3,X]&/@
@@ -885,7 +885,7 @@ plt[2,2]=Show@Last@Rest@
 
 
 export@GenUC[f,three,D,field]=
-	XMLDocument[GenUC[prefix,f,three,D,field],
+	XMLDocument[GenUC[prefix,f,three,D,field]<>".xml",
 		DocBookFigure[GenUC[prefix,f,three,D,field],
 			"F Plot within 3-D Domain",
 			"A scalar field is shown within a 3-D domain, which \
@@ -915,7 +915,7 @@ indicated by color.",
 			],
 		Sequence@@(Append[#,3*Pi/180]&)/@{
 			sphericallycappedhyperboloidcoordrange},
-		(*PlotPoints->version5@300*version6@120,*)
+		PlotPoints->version5@300(**version6@120*),
 		AspectRatio->Automatic,ViewPoint->{-1,-1,0},
 		AxesLabel->TraditionalForm/@{X[1],X[2],X[3]},
 		version5[SphericalRegion->True,
@@ -926,16 +926,23 @@ indicated by color.",
 	Show[
 		Block[
 			{spacing=1,
-				optz=Sequence[Mesh->False,
-					ColorFunction->(Hue@mycolorfunction[4]@xpr[2,1][#1,#2,#3]&),
-					ColorFunctionScaling->False]
+				colorFunction,
+				optz=Sequence[(*Mesh->False,*)]
 				},
+		colorFunction[{args__}]:=
+			{args,colorFunction@args};
+		colorFunction[args__]:=
+			{EdgeForm[],
+				Hue@mycolorfunction[4]@xpr[2,1][args]};
 		ParametricPlot3D@@@{
-			{ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]][u,ve],
+			{colorFunction@
+				ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]][u,ve],
 				pointellipsoidparamcoordrng[1],optz},
-			{hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]][u,vh],
+			{colorFunction@
+				hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]][u,vh],
 				pointhyperboloidparamcoordrng,optz},
-			{ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]][u,ve],
+			{colorFunction@
+				ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]][u,ve],
 				pointellipsoidparamcoordrng[2],optz}
 			}
 		],AspectRatio->Automatic,ViewPoint->{-1,-1,0},
@@ -946,12 +953,14 @@ indicated by color.",
 
 
 export@GenUC[f,three,D,surface]=
-	XMLDocument[GenUC[prefix,f,three,D,surface],
+	XMLDocument[GenUC[prefix,f,three,D,surface]<>".xml",
 		DocBookFigure[GenUC[prefix,f,three,D,surface],
 			"F Plot on Boundary of 3-D Domain",
 			"The values of the function are colored onto the \
 shell of the domain.",
-			DeleteCases[plt[2,3],VertexNormals->_,Infinity],
+			DeleteCases[plt[2,3],
+				(VertexNormals|VertexColors->_)|_Opacity,
+				Infinity],
 			Caption->XMLElement["para",{},{
 				"Since the optimum again turns out ",
 				"to be located on the border of the domain, I have ",
@@ -974,7 +983,7 @@ plt[2,4]=DensityPlot@@{
 
 
 export@GenUC[f,unrolled,surface]=
-	XMLDocument[GenUC[prefix,f,unrolled,surface],
+	XMLDocument[GenUC[prefix,f,unrolled,surface]<>".xml",
 		DocBookFigure[GenUC[prefix,f,unrolled,surface],
 			"F Plot on Unrolled Boundary of 3-D Domain",
 			"The values of the function on the border of the \
