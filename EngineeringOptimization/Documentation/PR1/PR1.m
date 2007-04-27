@@ -66,7 +66,7 @@ export[optimize<>xMinusTenSquared]=
 				InputForm
 				]
 			],
-		"Text"
+		"Text"(*this needs a fix for version 6.0 behavior*)
 		]};
 
 
