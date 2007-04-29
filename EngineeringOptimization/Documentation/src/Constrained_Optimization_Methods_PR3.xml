@@ -88,10 +88,8 @@
 					<term>xMaxInit[i]</term>
 					<listitem>
 						<para>xMinInit[i] and xMaxInit[i] must be numbers such
-							that <inlineequation>
-								<mathphrase>xMinInit[i] &lt;
-								xMaxInit[i]</mathphrase>
-							</inlineequation>. They are averaged to obtain the
+							that <inlineequation><mathphrase>xMinInit[i] &lt; xMaxInit[i]</mathphrase></inlineequation>.
+							They are averaged to obtain the
 							initial starting point for x[i].</para>
 					</listitem>
 				</varlistentry>
@@ -112,14 +110,92 @@
 			</section>
 		</section>
 	</section>
-	<qandaset>
+	<section>
 		<title>ALM Search Problems</title>
 		<para>This section contains the problems I made up for my algorithm and
 			their solutions.</para>
-		<qandaentry>
-			<question>
-				<para/>
-			</question>
-		</qandaentry>
-	</qandaset>
+		<qandaset>
+			<qandaentry>
+				<question>
+					<para>Minimize the Keane bump problem objective in three
+						dimensions subjsect to an ellipsoidal boundary condiion
+						as shown in
+						<xref linkend="pr_3_keane_bump_multidimensional"/>.</para>
+					<xi:include href="mout/pr_3_keane_bump_multidimensional.xml"/>
+				</question>
+				<answer>
+					<para>This is an almost-impossible problem for a local
+						solver, such as my ALM + Variable Metric Method, because
+						the objective function posesses many local minima. To
+						give an idea of the topology,
+						<xref linkend="pr_3_keane_sample"/> is a plot of Keane's
+						bump problem in two dimensions. The color scale or
+						legend for this plot and all other density and contour
+						plots in this chapter and the following one is given by
+						<xref linkend="pr_3_plot_scale"/>.</para>
+					<xi:include href="mout/pr_3_keane_sample.xml"/>
+					<xi:include href="mout/pr_3_plot_scale.xml"/>
+					<para>So, in one extra dimension, Keane's bump objective is
+						a three dimensional scalar field with lots of minima as
+						shown in <xref linkend="pr_3_keane_three_D_field"/>.</para>
+					<xi:include href="mout/pr_3_keane_three_D_field.xml"/>
+					<para>By design, the minimum is on the boundary, so it is
+						useful to see the function values only on the boundary,
+						as in
+						<xref linkend="pr_3_keane_three_D_surface"></xref>.</para>
+					<xi:include href="mout/pr_3_keane_three_D_surface.xml"/>
+					<para>Also, because the domain is convex, it is possible to
+						parametize its boundary in a spherical coordinate system
+						with an origin at the centroid of the domain and display
+						the result as a projection, such as
+						<xref linkend="pr_3_keane_unrolled_surface"/>.</para>
+					<xi:include href="mout/pr_3_keane_unrolled_surface.xml"/>
+					<para>In FIXME(method comparison table), I give a comparison between my local ALM method
+						and	each global method provided by Mathematica. FIXME(Keane iteration history)
+						in FIXME(PR3 appendix) provides the iteration history for my method.</para>
+					<para>This optimization problem highlights one of the
+						shortcomings of a local optimization technique: it is
+						easily trapped by local minima. In the future, I would
+						like to learn about methods that are not easily trapped.
+						However, even methods that are resistant to being
+						trapped in local minima have a hard time with this
+						problem, as evidenced by the results of the method
+						comparison.</para>
+				</answer>
+			</qandaentry>
+			<qandaentry>
+				<question>
+					<para>Minimize the objective in the non-convex domain
+						shown in <xref linkend="pr_3_f_multidimensional"/>.</para>
+					<xi:include href="mout/pr_3_f_multidimensional.xml"/>
+				</question>
+				<answer>
+					<para>This is a fairly easy problem for a local	solver, such
+						as my ALM + Variable Metric Method, because	the
+						objective function only has two minimia on the given
+						domain, and they are both equal in objective
+						value. In other words, as long as the method converges
+						to something, it should be a global minimum. The
+						objective and domain are shown in
+						<xref linkend="pr_3_f_three_D_field"/>.</para>
+					<xi:include href="mout/pr_3_f_three_D_field.xml"/>
+					<para>By design, the minimum is on the boundary, so it is
+						useful to see the function values only on the boundary,
+						as in
+						<xref linkend="pr_3_f_three_D_surface"></xref>.</para>
+					<xi:include href="mout/pr_3_f_three_D_surface.xml"/>
+					<para>Even though the domain is non-convex it is still
+						possible to parametize its boundary in a spherical
+						coordinate system with an origin at the centroid of the
+						domain and display the result as a projection, such as
+						<xref linkend="pr_3_f_unrolled_surface"/>.</para>
+					<xi:include href="mout/pr_3_f_unrolled_surface.xml"/>
+					<para>My ALM method is easily able to converge to one of the
+						two	global minima. FIXME(Keane iteration history)
+						in FIXME(PR3 appendix) provides the iteration history
+						for my method.</para>
+				</answer>
+			</qandaentry>
+		</qandaset>
+	</section>
 </chapter>
