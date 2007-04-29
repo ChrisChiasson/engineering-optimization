@@ -409,7 +409,7 @@ export@GenUC[keane,three,D,field]=
 			"A scalar field is shown within the domain of an \
 ellipsoid and having function values indicated by color.",
 			plt[3,2],
-			Caption->XMLElement["para",{},{"This plot has the same",
+			Caption->XMLElement["para",{},{"This plot has the same ",
 				"structure as ",XMLElement["xref",{"linkend"->
 					GenUC[prefix,keane,sample]},{}],", but in one ",
 				"extra dimension. It shows the function and domain ",
@@ -892,7 +892,7 @@ export@GenUC[f,three,D,field]=
 looks somewhat like an hour glass, and has function values \
 indicated by color.",
 			plt[2,2],
-			Caption->XMLElement["para",{},{"This plot shows F",
+			Caption->XMLElement["para",{},{"This plot shows F ",
 				"within its spherically capped hyperboloid domain. ",
 				"From the purple coloring, one can easily see that ",
 				"a global minimum solution is somewhere near ",
