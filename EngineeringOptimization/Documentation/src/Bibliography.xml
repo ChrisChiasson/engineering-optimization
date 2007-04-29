@@ -7,7 +7,7 @@
 	<biblioentry xml:id="AKBHP">
 		<author>
 			<personname 
-				xl:href="http://www2.isye.gatech.edu/~spyros/index.html">
+				xl:href="http://www.soton.ac.uk/~ajk/">
 				<firstname>Andy</firstname>
 				<surname>Keane</surname>
 			</personname>
@@ -184,5 +184,14 @@
 		<copyright><year>2007</year></copyright>
 		<address><otheraddr>Page: <link
 		xl:href="http://en.wikipedia.org/w/index.php?title=Nonlinear_programming&amp;oldid=113181373"/></otheraddr></address>
+	</biblioentry>
+	<biblioentry xml:id="WRIMD">
+		<author>
+			<orgname>Wolfram Research, Inc.</orgname>
+		</author>
+		<title xl:href="http://www.wikipedia.org/">Mathematica 5 Documentation</title>
+		<copyright><year>2003</year></copyright>
+		<address><otheraddr>Main Page: <link
+		xl:href="http://documents.wolfram.com/v5/"/></otheraddr></address>
 	</biblioentry>
 </bibliography>
