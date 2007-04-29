@@ -20,6 +20,7 @@
 	<xi:include href="Variable_Metric_Unconstrained_Optimization_Methods.xml"/>
 	<xi:include href="Linear_Programming_HW4.xml"/>
 	<xi:include href="Sequential_Unconstrained_Minimization.xml"/>
+	<xi:include href="Constrained_Optimization_Methods_PR3.xml"/>
 	<xi:include href="Constrained_Optimization_Methods_PR4.xml"/>
 	<xi:include href="Bibliography.xml"/>
 	<xi:include href="Glossary.xml"/>
@@ -30,6 +31,7 @@
 	<xi:include href="Variable_Metric_Unconstrained_Optimization_Methods_Appendix.xml"/>
 	<xi:include href="Linear_Programming_HW4_Appendix.xml"/>
 	<xi:include href="Sequential_Unconstrained_Minimization_Appendix.xml"/>
+	<xi:include href="Constrained_Optimization_Methods_PR3_Appendix.xml"/>
 	<xi:include href="Constrained_Optimization_Methods_PR4_Appendix.xml"/>
 	<xi:include href="Common_Source_Appendix.xml"/>
 </book>
