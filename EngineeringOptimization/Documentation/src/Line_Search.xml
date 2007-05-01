@@ -87,7 +87,8 @@
 			to find the	final abscissa. That method would at least guarantee a
 			certain	factor of reduction of the initial bracketing interval
 			width, but there is very little assurance that the algorithm would
-			converge. To make matters worse, some of the routines for
+			converge to a given tolerance within the fixed number of iterations.
+			To make matters worse, some of the routines for
 			multidimensional optimization that eventually depend on the line
 			search routine need a nearly exact search to behave properly.</para>
 		<para>One way to obtain convergence would be to exclusively use the
