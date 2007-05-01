@@ -150,9 +150,16 @@
 						the result as a projection, such as
 						<xref linkend="pr_3_keane_unrolled_surface"/>.</para>
 					<xi:include href="mout/pr_3_keane_unrolled_surface.xml"/>
-					<para>In FIXME(method comparison table), I give a comparison between my local ALM method
-						and	each global method provided by Mathematica. FIXME(Keane iteration history)
-						in FIXME(PR3 appendix) provides the iteration history for my method.</para>
+					<para>In <xref linkend="pr_3_keane_init_ranges"/> and 
+						<xref linkend="pr_3_keane_method_comparison_table"/>, I
+						give a comparison between my local ALM method and each
+						global method provided by Mathematica.
+						<olink targetdoc="self" targetptr="pr_3_keane_evaluations_table"/>
+						in
+						<olink targetdoc="self" targetptr="Constrained_Optimization_Methods_PR3_Appendix"/>
+						provides the iteration history for my method.</para>
+					<xi:include href="mout/pr_3_keane_init_ranges.xml"/>
+					<xi:include href="mout/pr_3_keane_method_comparison_table.xml"/>
 					<para>This optimization problem highlights one of the
 						shortcomings of a local optimization technique: it is
 						easily trapped by local minima. In the future, I would
@@ -191,9 +198,11 @@
 						<xref linkend="pr_3_f_unrolled_surface"/>.</para>
 					<xi:include href="mout/pr_3_f_unrolled_surface.xml"/>
 					<para>My ALM method is easily able to converge to one of the
-						two	global minima. FIXME(Keane iteration history)
-						in FIXME(PR3 appendix) provides the iteration history
-						for my method.</para>
+						two	global minima. Again,
+						<olink targetdoc="self" targetptr="pr_3_f_evaluations_table"/>
+						in
+						<olink targetdoc="self" targetptr="Constrained_Optimization_Methods_PR3_Appendix"/>
+						provides the iteration history for my method.</para>
 				</answer>
 			</qandaentry>
 		</qandaset>
