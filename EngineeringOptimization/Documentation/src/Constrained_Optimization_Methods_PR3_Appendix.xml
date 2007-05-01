@@ -11,10 +11,12 @@
 		<programlisting><xi:include href="mout/PR3.m"
 			parse="text"/></programlisting>
 	</example>
-	<!--example xml:id="PR3_ALM_Iteration_History_FIXME">
-		<title>Project 3 ALM Iteration History FIXME</title>
-		<para>This is the iteration or evaluation history of my constrained
-			numerical optimization code for the FIXME.</para>
-		<xi:include href="mout/pr_3_FIXME_evaluations_table.xml"/>
-	</example-->
+	<example>
+		<title>Project 3 ALM Iteration History</title>
+		<para>The following two tables give the iteration or evaluation history
+			of my constrained numerical optimization code for the Keane bump and
+			F objectives (plus penalty functions).</para>
+		<xi:include href="mout/pr_3_keane_evaluations_table.xml"/>
+		<xi:include href="mout/pr_3_f_evaluations_table.xml"/>
+	</example>
 </appendix>
