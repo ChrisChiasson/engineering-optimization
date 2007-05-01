@@ -315,7 +315,7 @@ export@GenUC[keane,method,comparison,table]=
 	XMLDocument[
 		GenUC[prefix,keane,method,comparison,table]<>".xml",
 		DocBookTable[GenUC[prefix,keane,method,comparison,table],
-			"Evaluations",
+			"Keane Method Comparison",
 			"The rows show data associated with each global \
 method, except the last row, which shows my local method. The \
 columns list, in order: method name, value of the SearchPoints \
@@ -331,14 +331,14 @@ start points, RandomSearch isn't able to find the minimum. \
 Given the struggle of these global methods, which are less \
 easily trapped by the numerous local minima in this objective, \
 it is not surprising that my method is also caught on a local \
-minimum."
+minimum. My ALM method is shown on the last row."
 			],
 		PrependDirectory->EODExportDirectory
 		];
 
 
 evaluationsTable[3]=
-	Prepend[Map[ToString,evals[3,4],{2}],
+	Prepend[Map[ToString,evals[3,5],{2}],
 		{"#",HoldForm@KeaneBumpXpr[X,3],vars[3,X]}
 		]
 
