@@ -254,13 +254,115 @@ MapIndexed[
 				];
 		evals[3,#2[[1]]]=Sequence@@@evals[3,#2[[1]]]
 		],
-	{{"DifferentialEvolution","SearchPoints"->10^2},
-		{"RandomSearch","SearchPoints"->10^2},
-		{"SimulatedAnnealing","SearchPoints"->10^2},
-		"NelderMead",
-		"AugmentedLagrangeMultiplier"
+	methodComparisonSettings[3]=
+		{{"DifferentialEvolution","SearchPoints"->10^2},
+			{"RandomSearch","SearchPoints"->10^2},
+			{"SimulatedAnnealing","SearchPoints"->10^2},
+			"NelderMead",
+			"AugmentedLagrangeMultiplier"
+			}
+	]
+
+
+With[{headers=Flatten@Outer[X[#1,init,#2]&,{1,2,3},{min,max}]},
+	(methodComparisonInitRangesTable[#1]={headers,Flatten@#2})&@@@
+	{{3,Flatten@nmininitranges[1,2,3,X,KeaneMin,KeaneMax][[All,{2,3}]]}(*,
+		{2,Table[startRangeSequence[2],{3}]}*)
 		}
 	]
+
+
+export@GenUC[keane,init,ranges]=
+	XMLDocument[GenUC[prefix,keane,init,ranges]<>".xml",
+		DocBookTable[GenUC[prefix,keane,init,ranges],
+			"Keane Optimization Start Ranges",
+			"The columns give the min and max start values for each \
+independent variable.",
+			methodComparisonInitRangesTable[3],
+			Caption->"These are the initial independent variable \
+ranges that the global optimization methods built into Mathematica \
+were given by me for this problem. My method simply takes the \
+midpoint each given interval as the starting value. In other \
+problems, where I do not compare my method to the global methods, \
+I don't publish the initial ranges, since that information is \
+superfluous."
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+
+methodOpts[method:Except@_List]:={method,""}
+methodOpts[method_List]:={method[[1]],"SearchPoints"/.Rest@method}
+
+
+methodComparisonTable[3]=
+	Prepend[
+		Flatten/@
+			Thread@{
+				methodOpts/@methodComparisonSettings[3],
+				{Length@evals[3,#],{#1,{vars[3,X]}/.#2}&@@
+					solns[3,#]}&/@Range@5},
+		{"Method",
+			"SearchPoints\nOption",
+			"Total #\nEvaluations",
+			HoldForm@KeaneBumpXpr[X,3],
+			vars[3,X]
+			}
+		]
+
+
+export@GenUC[keane,method,comparison,table]=
+	XMLDocument[
+		GenUC[prefix,keane,method,comparison,table]<>".xml",
+		DocBookTable[GenUC[prefix,keane,method,comparison,table],
+			"Evaluations",
+			"The rows show data associated with each global \
+method, except the last row, which shows my local method. The \
+columns list, in order: method name, value of the SearchPoints \
+option, total number of evaluations, final objective value, 
+final independent variable values.",
+			methodComparisonTable[3],
+			Caption->"Some of the global methods required an \
+increase in the number of points from which they start to be \
+able to find the minimum. I think the default maximum number \
+of start points is the lesser of 50 or 3 times the number of \
+independent variables. Even with the increased number of \
+start points, RandomSearch isn't able to find the minimum. \
+Given the struggle of these global methods, which are less \
+easily trapped by the numerous local minima in this objective, \
+it is not surprising that my method is also caught on a local \
+minimum."
+			],
+		PrependDirectory->EODExportDirectory
+		];
+
+
+evaluationsTable[3]=
+	Prepend[Map[ToString,evals[3,4],{2}],
+		{"#",HoldForm@KeaneBumpXpr[X,3],vars[3,X]}
+		]
+
+
+export@GenUC[keane,evaluations,table]=
+	XMLDocument[GenUC[prefix,keane,evaluations,table]<>".xml",
+		DocBookTable[GenUC[prefix,keane,evaluations,table],
+			"Keane Evaluations",
+			"The first column lists evaluation number. The second column \
+gives the objective. The rest of the columns give the independent (or \
+design) variables.",
+			evaluationsTable[3],
+			Caption->"These are all the evaluations of the Keane bump \
+objective (and penalty terms) by my ALM method in the course of \
+obtaining a minimum solution (but not the global minimum). Some \
+entries are repeated when entering a sub-method, such as an \
+unconstrained optimization initiated from the controlling ALM \
+search, or a line search initiated from an unconstrained \
+optimization. Other entries may appear to be duplicates due to a lack \
+of printing precision.",
+			PageBreakWithin->True
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 mycolorfunction[1][scaledval_]=Hue[.7,1-scaledval,1]
@@ -330,7 +432,7 @@ If[$VersionNumber<6,
 keane2DSampleContourPlot=ContourPlot@@{KeaneBump2[vars[2,X]],
 	Sequence@@nmininitranges[1,2,X,KeaneMin,KeaneMax],
 	ColorFunction->(Hue[#1*m+b]&/.Solve[{3/4==m*0+b,0==m*1+b},{m,b}][[1]]),
-	PlotPoints->30,FrameLabel->X/@Range@2}
+	version6[PlotPoints->40],FrameLabel->X/@Range@2}
 
 
 export@GenUC[keane,sample]=
@@ -670,6 +772,7 @@ xpr[2,1][x1_,x2_,x3_]=eqns[2,1][x1,x2,x3][[2]]
 xpr[2,1,surfacehead_][u_,v_]:=xpr[2,1]@@surfacehead[u,v]
 
 
+startRangeSequence[2]=Sequence[-1,0]
 (*a minimum*)
 Block[{myEvaluationCount},
 	evaluationSeed={myEvaluationCount,xpr[2,1][vars[3,X]],vars[3,X]}
@@ -677,7 +780,7 @@ Block[{myEvaluationCount},
 myEvaluationCount=0
 {solns[2,4],evals[2,4]}=Reap@
 	NMinimize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},
-		({#,-1,0}&)/@{vars[3,X]},
+		({#,startRangeSequence[2]}&)/@{vars[3,X]},
 		Method->"AugmentedLagrangeMultiplier",
 		EvaluationMonitor:>(++myEvaluationCount;Sow[evaluationSeed,"evals"])]
 evals[2,4]=Sequence@@@evals[2,4]
@@ -687,9 +790,9 @@ there is also one near:
 *)
 
 
-(*a minimum*)
-solns[2,4]=
-	NMinimize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},X/@Range[3]]
+(*a minimum (commented out because we are using my code, above, instead)*)
+(*solns[2,4]=
+	NMinimize[{xpr[2,1][vars[3,X]],eqns[2,2][vars[3,X]]},X/@Range[3]]*)
 (*
 there is also one near:
 {1.5,1.5,-2}
@@ -758,6 +861,33 @@ sphericallycappedhyperboloid[u,ve,
 	ellipsoid[Sqrt[10],Sqrt[10],Sqrt[10]],
 	hyperboloid[Sqrt[2],Sqrt[2],Sqrt[2]]
 	]/.solns[2,7][[2]]
+
+
+evaluationsTable[2]=
+	Prepend[Map[ToString,evals[2,4],{2}],
+		{"#",eqns[2,1][vars[3,X]][[1]],vars[3,X]}
+		]
+
+
+export@GenUC[f,evaluations,table]=
+	XMLDocument[GenUC[prefix,f,evaluations,table]<>".xml",
+		DocBookTable[GenUC[prefix,f,evaluations,table],
+			"F Evaluations",
+			"The first column lists evaluation number. The second column \
+gives the objective. The rest of the columns give the independent (or \
+design) variables.",
+			evaluationsTable@2,
+			Caption->"These are all the evaluations of the F \
+objective (and penalty terms) by my ALM method in the course of \
+obtaining a global minimum solution. Some entries are repeated \
+when entering a sub-method, such as an unconstrained optimization \
+initiated from the controlling ALM search, or a line search \
+initiated from an unconstrained optimization. Other entries may \
+appear to be duplicates due to a lack of printing precision.",
+			PageBreakWithin->True
+			],
+		PrependDirectory->EODExportDirectory
+		];
 
 
 sphericallycappedhyperboloidsurfacearea[t_,
