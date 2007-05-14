@@ -103,10 +103,127 @@
 					</listitem>
 				</varlistentry>
 			</variablelist>
-			<section>
+			<para>Here are the program flow charts for the ALM method and its
+				internal core or kernel.</para>
+			<figure xml:id="pr_3_ALM_flow_chart">
+				<title>Augmented Lagrange Multiplier Method Flow Chart</title>
+				<titleabbrev>ALM Flow Chart</titleabbrev>
+				<mediaobject>
+					<imageobject role="html">
+						<imagedata
+							fileref="mout/Augmented%20Lagrange%20Multiplier.png"
+							/>
+					</imageobject>
+					<imageobject role="fo">
+						<imagedata
+							fileref="mout/Augmented%20Lagrange%20Multiplier.svg"
+							/>
+					</imageobject>
+					<textobject>
+						<xi:include href="Flow_Chart_Phrase.xml"/>							
+					</textobject>
+				</mediaobject>
+				<caption>
+					<para>The algorithm follows the sequential unconstrained 
+						minimization technique with constraints incorporated by
+						penalties augmented with Lagrange multipliers as given
+						in &#167; 5-9 of
+						<olink targetdoc="self" targetptr="GNVNOTED"/>. The
+						Lagrange multipliers have the same physical significance
+						in this algorithm that they do in
+						<olink targetdoc="self" targetptr="hw_1_lagrangeconstraints"/>.
+						Any inequalities, which can be eliminated through the
+						use of slack variables as in
+						<olink targetdoc="self" targetptr="Linear_Programming_HW3"/>,
+						have instead been eliminated through the use of an
+						equivalent Lagrange multiplier update forumla instead.</para>
+				</caption>
+			</figure>
+			<figure xml:id="pr_3_ALM_Kernel_flow_chart">
+				<title>Augmented Lagrange Multiplier Method Kernel Flow Chart</title>
+				<titleabbrev>ALM Kernel Flow Chart</titleabbrev>
+				<mediaobject>
+					<imageobject role="html">
+						<imagedata
+							fileref="mout/ALM%20Kernel.png"
+							/>
+					</imageobject>
+					<imageobject role="fo">
+						<imagedata
+							fileref="mout/ALM%20Kernel.svg"
+							/>
+					</imageobject>
+					<textobject>
+						<xi:include href="Flow_Chart_Phrase.xml"/>							
+					</textobject>
+				</mediaobject>
+				<caption>
+					<para>This is the core of the loop in
+						<olink targetdoc="self" targetptr="pr_3_ALM_flow_chart"/>.
+						The variable metric method mentioned in this chart is 
+						covered in <xref linkend="pr_3_calling_the_unconstrained_search"/>.</para>
+				</caption>
+			</figure>
+			<section xml:id="pr_3_calling_the_unconstrained_search">
 				<title>Calling the Unconstrained Search</title>
 				<para>It wasn't shown in the body of homework two, but the
-					calling method for the unconstrained search is: FIXME</para>
+					calling method/command for the unconstrained search is:
+					<command>FindMinimum[f, {{x[1], xInit[1]}, ..., {x[n],
+					xInit[n]}}, Method -> "VariableMetric"]</command>. The
+					call variable list is the same as for the Augmented
+					Lagrange Multiplier method, above, except that each
+					independent variable only has one starting point instead of
+					a min and max starting point.
+					<xref linkend="pr_3_VMM_flow_chart"/> and
+					<xref linkend="pr_3_VMM_Kernel_flow_chart"/> show the
+					routine logic.</para>
+			<figure xml:id="pr_3_VMM_flow_chart">
+				<title>Variable Metric Method Flow Chart</title>
+				<titleabbrev>VMM Flow Chart</titleabbrev>
+				<mediaobject>
+					<imageobject role="html">
+						<imagedata
+							fileref="mout/Variable%20Metric%20Method.png"
+							/>
+					</imageobject>
+					<imageobject role="fo">
+						<imagedata
+							fileref="mout/Variable%20Metric%20Method.svg"
+							/>
+					</imageobject>
+					<textobject>
+						<xi:include href="Flow_Chart_Phrase.xml"/>							
+					</textobject>
+				</mediaobject>
+				<caption>
+					<para>This diagram shows the program logic for the Variable
+						Metric Method as discussed in
+						<olink targetdoc="self" targetptr="Unconstrained_Nonlinear_Optimization"/>.</para>
+				</caption>
+			</figure>
+			<figure xml:id="pr_3_VMM_Kernel_flow_chart">
+				<title>Augmented Lagrange Multiplier Method Kernel Flow Chart</title>
+				<titleabbrev>ALM Kernel Flow Chart</titleabbrev>
+				<mediaobject>
+					<imageobject role="html">
+						<imagedata
+							fileref="mout/ALM%20Kernel.png"
+							/>
+					</imageobject>
+					<imageobject role="fo">
+						<imagedata
+							fileref="mout/ALM%20Kernel.svg"
+							/>
+					</imageobject>
+					<textobject>
+						<xi:include href="Flow_Chart_Phrase.xml"/>							
+					</textobject>
+				</mediaobject>
+				<caption>
+					<para>This is the core of the loop in
+						<olink targetdoc="self" targetptr="pr_3_VMM_flow_chart"/>.</para>
+				</caption>
+			</figure>
 			</section>
 		</section>
 	</section>
