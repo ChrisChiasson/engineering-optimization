@@ -4,19 +4,197 @@
 	xmlns:xi="http://www.w3.org/2001/XInclude"
 	version="5">
 	<title>Constrained Optimization Methods — Project 3</title>
-	<example xml:id="PR3_code">
-		<?dbfo keep-together="auto"?>
-		<title>Project 3 Code</title>
-		<para>This is the code for the project 3 calculations.</para>
-		<programlisting><xi:include href="mout/PR3.m"
-			parse="text"/></programlisting>
+	<example xml:id="pr_3_multidimensional_optimization_major_variables">
+		<title>Multidimensional Optimization Major Variables</title>
+		<para>Here is a list of all the major variables found within the
+			Augmented Lagrange Multiplier and Variable Metric Method flow
+			charts from
+			<olink targetdoc="self" targetptr="Calling_the_ALM_Search"/>.</para>
+		<variablelist>
+			<varlistentry>
+				<term>*New</term>
+				<listitem>I have used a variable naming schere where any
+					variable name that ends with New is the new value of that
+					variable. This naming convention allows me to continue to
+					use both the new and original values of the variable until
+					I am ready to dispose of of the original.</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>*Rule</term><term>*Rules</term>
+				<listitem>
+					<para>I have used a variable naming scheme where any
+						variable name that ends with Rule is a rule for
+						that variable. For instance displacementRule is a rule
+						for displacement. In the Mathematica language and within
+						my flowcharts, rules may be used for selective
+						evaluation with the ReplaceAll operator,
+						<quote>/.</quote>, shown here in quotation marks. For
+						instance, <command>1 + d /. d -> 9</command>, where
+						<quote>-></quote> is the operator that indicates a rule
+						would give the result of 10. Note that my flowcharts do
+						not use exact Mathematica syntax because it is fairly
+						involved and would require much more explanation. Also
+						in my scheme, a variable name ending in Rules is a list
+						of rules.
+					</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>accuracyGoal</term><term>precisionGoal</term>
+				<listitem>
+					<para>These two variables have the same meaning that they
+						have in
+						<olink targetdoc="self" targetptr="Line_Search_Major_Variables"/>.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>f</term>
+				<listitem>
+					<para>The expression to be optimized. In the case of the
+						ALM method, it is just the function to be optimized. In
+						the case of the variable metric method, it could also
+						include penalty terms. In the source code, this variable
+						is called <quote>function</quote>.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>constraints</term>
+				<listitem>
+					<para>This is required to be a logical And expression that
+						joins constraints such as equalities or inequalities. It
+						can't contain any logical disjunctions, (Or). If the
+						expression is instead a list, the list is interpreted as
+						an And.	Inequalities of the form x &lt; y &lt; z are
+						changed to x &lt; y &amp;&amp; y &lt; z, where
+						<quote>&amp;&amp;</quote> stands for a logical And. In
+						the source code, after this process of flattening and
+						splitting are called constraintsList, but the flow
+						charts only use the name constraints.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>variableStartRanges</term>
+				<listitem>
+					<para>This contains an array of variables and their inital
+						minimum and maximum start interval endpoints for the
+						ALM method.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>maxIterations</term>
+				<listitem>
+					<para>The maximum number of iterations of the inner core of
+						the method.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>penaltyMultiplierGrowthFactor</term>
+				<listitem>
+					<para>This stores the multipler for the penalty multiplier.
+						It defaults to the golden ratio, &#934;, from
+						mathematics;
+						<inlineequation><mathphrase>&#934; = growthFactor &#8773; 1.618</mathphrase></inlineequation>.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>initialLagrangeMultiplier</term>
+				<listitem>
+					<para>This is the user-supplied initial value for all
+						Lagrange multipliers. If it isn't specificed, the
+						default is 0.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>lagrangeMultiplierUpdates</term>
+				<term>lagrangeMultiplierUpdate</term>
+				<listitem>
+					<para>lagrangeMultiplierUpdates is a list of terms to add
+						component-wise to the
+						list of Lagrange multipliers when it is time to update
+						them between iterations. The update formulas are given
+						in &#167; 5-9.3 of
+						<olink targetdoc="self" targetptr="GNVNOTED"/>. The
+						exact formula for each update is dependent on the type
+						of constraint (equaltiy, less than, or greater than). In
+						order to show that part of the logic, I would have to
+						introduce much Mathematica syntax into the flow chart;
+						so I don't.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>penalties</term><term>penalty</term>
+				<listitem>
+					<para>penalties is a sum of penalty terms generated by the
+						ALM method to add to f before handing off to the
+						Variable Metric method for an unconstrained
+						optimization. The formula for the penalty depends
+						on the type of constraint (equality, less than, greater
+						than) and is given in &#167; 5-9.3 of
+						<olink targetdoc="self" targetptr="GNVNOTED"/>. In order
+						to show that part of the logic, I would
+						have to introduce much Mathematica syntax into the flow
+						chart; so I don't.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>variables</term>
+				<listitem>
+					<para>These are the independent variables specified
+						by the user. They don't have to be symbols; they could
+						by represented by non-existent DownValues, such as 
+						var[b], var[a], var[c], etc.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>solutionRules</term>
+				<listitem>
+					<para>For most other variables, I just define the stem of
+						the variable name and let the *Rule definition, above,
+						define the rest. However, this variable is used often
+						enough to warrant its own description. Also, it has no
+						non-Rule counterpart. solutionRules gives the present
+						value of variables as the right hand sides of its rules.
+						It is used to substitute the variable values into
+						another expression via the ReplaceAll operator, which
+						is also defined in the *Rule definition.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>iterations</term>
+				<listitem>
+					<para>This variable doesn't actually exist in the source
+						code due to the functional style of the code. However,
+						it is included in the flow-chart because the chart
+						requires a procedural method to indicate loop flow
+						control.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>nSameQ</term>
+				<listitem>
+					<para>nSameQ is a function that tests the equality of
+						numbers based on the accuracyGoal and precisionGoal,
+						performing the same comparison mentioned in the ptol
+						entry of
+						<olink targetdoc="self" targetptr="Line_Search_Major_Variables"/>.
+					</para>
+				</listitem>
+			</varlistentry>
+		</variablelist>
 	</example>
-	<example>
+	<example xml:id="pr_3_appendix_Project_3_ALM_Iteration_History">
 		<title>Project 3 ALM Iteration History</title>
 		<para>The following two tables give the iteration or evaluation history
 			of my constrained numerical optimization code for the Keane bump and
 			F objectives (plus penalty functions).</para>
 		<xi:include href="mout/pr_3_keane_evaluations_table.xml"/>
 		<xi:include href="mout/pr_3_f_evaluations_table.xml"/>
+	</example>
+	<example xml:id="PR3_code">
+		<?dbfo keep-together="auto"?>
+		<title>Project 3 Code</title>
+		<para>This is the code for the project 3 calculations.</para>
+		<programlisting><xi:include href="mout/PR3.m"
+			parse="text"/></programlisting>
 	</example>
 </appendix>
