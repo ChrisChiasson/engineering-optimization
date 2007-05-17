@@ -20,7 +20,7 @@
 		<g id="lend4">
 			<path d="M 2 1 L -0 0 L 2 -1 L 2 1 " style="stroke:none"/>
 		</g>
-		<marker overflow="visible" id="mrkr4-43" class="st5" v:arrowType="4" v:arrowSize="2" v:setback="23.0021" refX="-23.002100210021" orient="auto"
+		<marker id="mrkr4-43" class="st5" v:arrowType="4" v:arrowSize="2" v:setback="23.0021" refX="-23.002100210021" orient="auto"
 				markerUnits="strokeWidth">
 			<use xlink:href="#lend4" transform="scale(-11.501050105011,-11.501050105011) "/>
 		</marker>
@@ -107,9 +107,9 @@
 			<v:textRect cx="60.75" cy="396.761" width="121.5" height="91.125"/>
 			<rect x="0" y="351.199" width="121.5" height="91.125" class="st1"/>
 			<text x="7.5" y="375.16" class="st2" v:langID="1033"><v:paragraph v:horizAlign="1"/><v:tabList/>lagrangeMultiplierRulesNew = <tspan
-						x="3.39" dy="1.2em" class="st3">lagrangeMultiplierRules</tspan>(All,1) → <tspan x="5.17" dy="1.2em"
-						class="st3">lagrangeMultiplierRules</tspan>(All,2) /. <tspan x="20.29" dy="1.2em" class="st3">penaltyMultiplierRule </tspan>/. <tspan
-						x="15.62" dy="1.2em" class="st3">lagrangeMultiplierRules </tspan>/. <tspan x="28.73" dy="1.2em" class="st3">solutionRulesNew</tspan></text>		</g>
+						x="3.39" dy="1.2em" class="st3">lagrangeMultiplierRules</tspan>(All,1) → <tspan x="3.84" dy="1.2em"
+						class="st3">(</tspan>lagrangeMultiplierRules(All,2) /. <tspan x="20.29" dy="1.2em" class="st3">penaltyMultiplierRule </tspan>/. <tspan
+						x="15.62" dy="1.2em" class="st3">lagrangeMultiplierRules </tspan>/. <tspan x="27.4" dy="1.2em" class="st3">solutionRulesNew</tspan>)</text>		</g>
 		<g id="shape5-33" v:mID="5" v:groupContext="shape" v:layerMember="0" transform="translate(0.24,-0.24)">
 			<title>Process.5</title>
 			<desc>return {solutionRulesNew, penaltyMultiplierNewRule, and lagra...</desc>
