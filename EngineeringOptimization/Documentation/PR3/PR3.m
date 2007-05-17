@@ -250,7 +250,8 @@ MapIndexed[
 					},
 				nmininitranges[1,2,3,X,KeaneMin,KeaneMax],
 				Method->#1,
-				EvaluationMonitor:>(++myEvaluationCount;Sow[evaluationSeed,"evals"])
+				EvaluationMonitor:>
+					(++myEvaluationCount;Sow[evaluationSeed,"evals"])
 				];
 		evals[3,#2[[1]]]=Sequence@@@evals[3,#2[[1]]]
 		],
@@ -721,7 +722,8 @@ N[opthyperboloidparamcoordrng=
 
 
 N@{pointhyperboloidparamcoordrng=
-	Sequence@@MapThread[Append,{{hyperboloidparamcoordrng},spacing Pi/180{1,1}}]}
+	Sequence@@
+		MapThread[Append,{{hyperboloidparamcoordrng},spacing Pi/180{1,1}}]}
 
 
 N@{ellipsoidparamcoordrng[1]=
@@ -1122,7 +1124,8 @@ export@GenUC[f,unrolled,surface]=
 			Caption->"The boundary of the spherically \
 capped hyperboloidal domain is a parametric surface. If the \
 parameters for the surface are used as independant axes, \
-this is the unrolled plot or projection\[LongDash]like a world map\[LongDash]that \
+this is the unrolled plot or projection\
+\[LongDash]like a world map\[LongDash]that \
 results. It is easier to see the minimum locations on this \
 graph than it is on the others.",
 			TitleAbbrev->"3-D F Shell Unrolled"
@@ -1133,13 +1136,9 @@ graph than it is on the others.",
 
 filesToTransport={"pr_3_screenshot_assignment.png",
 					"ALM Kernel.png",
-					"ALM Kernel.vdx",
 					"Augmented Lagrange Multiplier.png",
-					"Augmented Lagrange Multiplier.vdx",
 					"Variable Metric Method.png",
-					"Variable Metric Method.vdx",
-					"VMM Kernel.png",
-					"VMM Kernel.vdx"
+					"VMM Kernel.png"
 					};
 
 sVGfilesToTransform={"ALM Kernel.svg",
