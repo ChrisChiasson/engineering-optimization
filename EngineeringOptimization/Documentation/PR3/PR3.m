@@ -1131,7 +1131,23 @@ graph than it is on the others.",
 		];
 
 
-filesToTransport={"pr_3_screenshot_assignment.png"};
+filesToTransport={"pr_3_screenshot_assignment.png",
+					"ALM Kernel.png",
+					"ALM Kernel.vdx",
+					"Augmented Lagrange Multiplier.png",
+					"Augmented Lagrange Multiplier.vdx",
+					"Variable Metric Method.png",
+					"Variable Metric Method.vdx",
+					"VMM Kernel.png",
+					"VMM Kernel.vdx"
+					};
+
+sVGfilesToTransform={"ALM Kernel.svg",
+					"Augmented Lagrange Multiplier.svg",
+					"Variable Metric Method.svg",
+					"VMM Kernel.svg"
+					};
+
 
 If[EODExport===True,
 	Export@@@#&/@ReleaseHold@DownValues[export][[All,1]];
@@ -1147,6 +1163,12 @@ If[EODExport===True,
 				],
 			Overwrite->True
 			]&/@filesToTransport;
+		Export[ToFileName[EODExportDirectory,#],
+			StringReplace[Import[ToFileName[pwd,#],"String"],
+				"<marker"->"<marker overflow='visible'"],
+			"String",
+			CharacterEncoding->"UTF8"
+			]&/@sVGfilesToTransform;
 		CopyFile[InputFileName[],
 			ToFileName[EODExportDirectory,InputFileBaseName[]],
 			Overwrite->True
