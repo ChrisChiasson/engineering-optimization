@@ -65,6 +65,13 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
+				<term>displacement</term>
+				<listitem>
+					<para>displacement is the distance along searchDirection
+						that the line search moves to find a new minimum.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
 				<term>f</term>
 				<listitem>
 					<para>The expression to be optimized. In the case of the
@@ -84,9 +91,14 @@
 				</listitem>
 			</varlistentry>
 			<varlistentry>
-				<term>inverseHessianApprox</term>
+				<term>inverseHessianApprox</term><term>gradient change</term>
+				<term>displacement vector</term><term>sigma</term>
+				<term>tau</term><term>gamma</term>
 				<listitem>
-					<para>This is an approximation to the inverse Hessian of f.
+					<para>inverseHessianApprox is an approximation to the
+						inverse Hessian of f. The other terms listed in this
+						entry just store intermediate values on the way to
+						calculating a new approximation.
 						That is found in the Variable Metric Method inner loop.
 						The Hessian of f is the matrix of second partial
 						derivatives with respect to its independent variables.
@@ -137,7 +149,9 @@
 				<term>maxIterations</term>
 				<listitem>
 					<para>The maximum number of iterations of the inner core of
-						the method.</para>
+						the method. It defaults to 100. This means there could
+						be 10000 line searches (100 ALM iterations times 100
+						VMM iterations per ALM iteration).</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -182,6 +196,13 @@
 						It defaults to the golden ratio, &#934;, from
 						mathematics;
 						<inlineequation><mathphrase>&#934; = growthFactor &#8773; 1.618</mathphrase></inlineequation>.</para>
+				</listitem>
+			</varlistentry>
+			<varlistentry>
+				<term>searchDirection</term>
+				<listitem>
+					<para>This is the direction in which the unimodal line
+						search is cast inside the kernel of the VMM search.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
