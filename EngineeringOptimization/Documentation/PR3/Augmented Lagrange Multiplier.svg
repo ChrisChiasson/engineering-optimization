@@ -22,7 +22,7 @@
 		<g id="lend4">
 			<path d="M 2 1 L -0 0 L 2 -1 L 2 1 " style="stroke:none"/>
 		</g>
-		<marker id="mrkr4-49" class="st6" v:arrowType="4" v:arrowSize="2" v:setback="23.0021" refX="-23.002100210021" orient="auto"
+		<marker overflow="visible" id="mrkr4-49" class="st6" v:arrowType="4" v:arrowSize="2" v:setback="23.0021" refX="-23.002100210021" orient="auto"
 				markerUnits="strokeWidth">
 			<use xlink:href="#lend4" transform="scale(-11.501050105011,-11.501050105011) "/>
 		</marker>
