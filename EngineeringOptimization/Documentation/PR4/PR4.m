@@ -1597,8 +1597,8 @@ gr@exampleCrossSection=
 		Text[height[i],{-0.9*base[1]/2,0},{-1,0}],
 		Text[base[i],{0,-0.9*height[1]/2},{0,-1}]
 		}/.sol[criticalVonMises@general][[2]],
-		PlotRange->{-1,1}.35,
-		PlotRangePadding->Automatic,AspectRatio->1,
+		PlotRange->{-1,1}.35,version6[
+		PlotRangePadding->Automatic],AspectRatio->1,
 		Frame->True,FrameLabel->(displayForm@
 			SequenceForm[ToString@#," (",Meter,")"]&/@{z,y})
 		]
