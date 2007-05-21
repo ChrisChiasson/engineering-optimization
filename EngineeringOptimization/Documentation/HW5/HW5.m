@@ -401,7 +401,7 @@ aLMParameterTable="ALM_parameter_table"
 			"The columns of this table give different Augmented Lagrange "<>
 				"Multiplier Sequential Unconstrained Minimization "<>
 				"parameters. The first column gives the present iteration, "<>
-				"while the other paramters on that row correspond to that "<>
+				"while the other parameters on that row correspond to that "<>
 				"iteration.",
 			tab@GenUC[table,#1,#2],
 			TitleAbbrev->
