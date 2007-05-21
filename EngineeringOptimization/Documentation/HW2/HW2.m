@@ -113,7 +113,7 @@ If[ValueQ[oldFMCTDV],
 	oldFMCTDV=.
 	];
 
-(*pull out critical paramters from convergence test tracking -- note that
+(*pull out critical parameters from convergence test tracking -- note that
 the inverse hessian is computed right before each newton's method line search,
 so it can't be pulled from the convergence test arguments*)
 
@@ -138,7 +138,7 @@ methodTracking[in]=
 		{Length@methodTracking[in]}
 		];
 
-(*format the tracked critical paramters*)
+(*format the tracked critical parameters*)
 
 (formattedMethodTracking[#]=
 	If[MatrixQ[methodTracking[#][[1]]],
@@ -385,7 +385,7 @@ export[minimizationPathsNegInvHDotGrad]=
 		PrependDirectory->EODExportDirectory
 		];
 
-(*create two tables of the ungraphed critical paramters*)
+(*create two tables of the ungraphed critical parameters*)
 
 crits="ungraphed_critical_parameters";
 
@@ -453,7 +453,7 @@ export[crits<>nonIHess]=
 				"critical optimization parameters used in the minimization "<>
 				"of F.",
 			tab[crits<>nonIHess],
-			TitleAbbrev->"Other Critical Paramters",
+			TitleAbbrev->"Other Critical Parameters",
 			Caption->"Powell's method lists the (column) matrix of search "<>
 				"vectors from every step, which corresponds to N + 1 line "<>
 				"searches in this method - as opposed to the others. "<>
