@@ -61,7 +61,9 @@
 			<para>This video screen capture contains the flowchart that goes
 				with the first capture in this session. It references
 				two figures in <olink targetdoc="self" targetptr="GNVNOTED"/>.
-				Figure 2-11 contains a method for bounding a minimum. Figure 2-8
+				<olink targetdoc="self" targetptr="GNVNOTED"/> Figure 2-11
+				contains a method for bounding a minimum.
+				<olink targetdoc="self" targetptr="GNVNOTED"/> Figure 2-8
 				details a four point golden section method. The chart directs
 				us to bound the minimum, perform the golden section method,
 				and then to curve fit the point for the last evaluation, while
@@ -71,13 +73,13 @@
 	<para>As <xref linkend="pr_1_screenshot_assignment"/> shows, I am to create
 		a procedure for solving single-variable unconstrained minimization
 		problems. This is also referred to as a line search, since there is
-		only one independant variable.</para>
+		only one independent variable.</para>
 	<para><xref linkend="Description_of_Line_Search"/> outlines my
 		routine. I use the routine to solve the requested problems in
 		<xref linkend="Line_Search_Problems"/>.</para>
 	<section xml:id="Description_of_Line_Search">
 		<title>Description of Line Search</title>
-		<para>In order to satisfy constraints in later assignments, I
+		<para>In order for it to be useful in later assignments, I
 			eventually implemented a slightly different routine than that
 			recommended in <xref linkend="pr_1_screenshot_flow_chart"/>.
 			The reason for this is that the routine from the class notes does
@@ -118,7 +120,8 @@
 			<olink targetdoc="self" targetptr="Engineering_Optimization_Main_Code"/>.</para>
 		<section xml:id="Calling_the_Line_Search">
 			<title>Calling the Line Search</title>
-			<para>The line search is called as follows from within Mathematica:
+			<para>The line search is called as follows from within Mathematica,
+					the computer algebra system to which I have added my code:
 				<command>FindMinimum[f, {x, xleft, xright}, Method -> "Unimodal"]</command><footnote>
 				<para>I have written this function three times. It was
 					originally called FindUnimodalMinimum. Problems with the
@@ -140,14 +143,14 @@
 					<varlistentry>
 						<term>f</term>
 						<listitem>
-							<para>f is a function of the independant variable,
+							<para>f is a function of the independent variable,
 								x in this case.</para>
 						</listitem>
 					</varlistentry>
 					<varlistentry>
 						<term>x</term>
 						<listitem>
-							<para>x is the independant variable in f.</para>
+							<para>x is the independent variable in f.</para>
 						</listitem>
 					</varlistentry>
 					<varlistentry>
@@ -302,13 +305,13 @@
 					<para>Test the program using <xi:include href="mout/pr_1_xMinusTenSquared.xml"/>.</para>
 				</question>
 				<answer>
-					<para>The proper Mathematica command to invoke my unimodal
+					<para>A proper Mathematica command to invoke my unimodal
 						line search is
 						<command><xi:include href="mout/pr_1_optimize_xMinusTenSquared.m" parse="text"/></command>.
 						The result is in the form
 						<computeroutput>{fmin, {x -> xmin}}</computeroutput>,
 						where fmin is the lowest function value found, x is the
-						given independant variable, and xmin is the abscissa
+						given independent variable, and xmin is the abscissa
 						corresponding to the lowest function value. In this
 						case, the output is
 						<computeroutput><xi:include href="mout/pr_1_optimize_xMinusTenSquared_result.m" parse="text"/></computeroutput>,
@@ -321,7 +324,7 @@
 						<olink targetdoc="self" targetptr="GNVNOTED"/>
 						talks about an idealized beam leaning up
 						against a smooth wall with a pin support at the floor.
-						The beam is supports a vertical load P at the wall. The
+						The beam supports a vertical load P at the wall. The
 						beam is of length L, cross sectional area A, Young's
 						modulus E, and second area moment of inertia I about its
 						neutral axis. The beam touches the wall at an inital
