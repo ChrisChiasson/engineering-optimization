@@ -77,12 +77,12 @@
 	<xi:include href="mout/hw_2_ungraphed_critical_parameters_iHess.xml"/>
 	<xi:include href="mout/hw_2_ungraphed_critical_parameters_nonIHess.xml"/>
 	<para>Since this problem has a quadratic objective function, each method's
-		ability to determine a search directions parallel to the negative of
+		ability to determine a search direction parallel to the negative of
 		<xi:include	href="mout/hw_2_ideal_direction.xml"/>, the ideal
 		direction for this problem, determines how well it will do relative to
-		the others. The ideal direction is otherwise known as the negative
-		inverse of the Hessian dotted with the gradient. Physically, it is a
-		vector that points from any location,
+		the others. The ideal direction is otherwise known as the inner or dot
+		product of the negative inverse of the Hessian matrix with the gradient
+		vector.	Physically, it is a vector that points from any location,
 		<xi:include href="mout/hw_2_domain.xml"/>, directly to the
 		minimum	at
 		<xi:include href="mout/hw_2_minimum.xml"/>.

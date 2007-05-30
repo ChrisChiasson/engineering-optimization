@@ -455,8 +455,8 @@ export[crits<>nonIHess]=
 			tab[crits<>nonIHess],
 			TitleAbbrev->"Other Critical Parameters",
 			Caption->"Powell's method lists the (column) matrix of search "<>
-				"vectors from every step, which corresponds to N + 1 line "<>
-				"searches in this method - as opposed to the others. "<>
+				"vectors from every step, each of which corresponds to N + 1 "<>
+				"line searches in this method - as opposed to the others. "<>
 				"The Fletcher-Reeves method uses the least storage of all "<>
 				"methods except the steepest descent - but manages to "<>
 				"take the same steps as the variable metric methods for this "<>
