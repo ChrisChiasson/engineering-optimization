@@ -77,8 +77,9 @@
 		<listitem>
 			<para>The question requires that the problem be restated in the
 				language of numerical optimization as given in the book. Using
-				that language, maximization of the rectangle area is interpreted
-				as the minimization of F, the negative of the area. Also, all
+				that language, we typically speak of maximization of the
+				rectangle area as the minimization of an objective function, F,
+				the negative of the	area. Also, all
 				optimization variables are considered to be part of one solution
 				vector, separate from any physical variable naming scheme that
 				may be present in the problem at hand. To differentiate between
@@ -129,10 +130,10 @@
 			</para>
 			<xi:include href="mout/hw_1_fmag.xml"/>
 			<para>For the ellipse to circumscribe the rectangle, the equation
-				of the ellipse serves an as en equality constraint between the
+				of the ellipse must serve as an equality constraint between the
 				<xi:include href="mout/hw_1_XP.xml"/> and
 				<xi:include href="mout/hw_1_YP.xml"/> components of each point.
-				This restriction yield the first four constraints on the
+				This restriction yields the first four constraints on the
 				optimization variables in <xref linkend="hw_1_hconstraints"/>.
 				These constraints give rise to the parallelogram pictured in
 				<xref linkend="hw_1_partially_constrained_f"/>.				
@@ -142,14 +143,14 @@
 				required. By intuition, the orthogonality of the two vectors
 				used to express the area must be guaranteed. This is
 				accomplished by setting the dot product of the two vectors to
-				zero in the fifth constraint. The last two constraints were
+				zero in the fifth constraint. The last two constraints are
 				implicit in the definition of the rectangle area as the cross
 				product of two adjacent	legs of a parallelogram. The restriction
 				is that both <xi:include href="mout/hw_1_XP.xml"/> and
 				<xi:include href="mout/hw_1_YP.xml"/> components of
-				<xi:include href="mout/hw_1_P3.xml"/> must be formed by the
-				vector addition of the two displacements in the cross product.
-				All seven constraints are shown in
+				<xi:include href="mout/hw_1_P3.xml"/> must be related to the
+				components of the other three points. All seven constraints are
+				shown in
 				<xref linkend="hw_1_hconstraints"/>.
 			</para>
 			<xi:include href="mout/hw_1_hconstraints.xml"/>
@@ -161,13 +162,11 @@
 		<listitem>
 			<para>This seven-constraint single-objective optimization problem
 				may be solved by the method of Lagrange multipliers from 
-				calculus as shown, for example, in <olink targetdoc="self" targetptr="JSCET"/>,
-				p 805. <xref linkend="hw_1_lagrangemultipliers"/> shows the
-				method as it applies to this problem. The solution is a linear
-				combination of the gradients of the constraints. In my
-				understanding, the solution vector lies	on the hyperplane formed
-				by the constraint gradients. Expanding all eight components of
-				the	solution and constraint gradients gives
+				calculus as shown, for example, in
+				<olink targetdoc="self" targetptr="JSCET"/>, p 805.
+				<xref linkend="hw_1_lagrangemultipliers"/> shows the
+				method as it applies to this problem. Expanding all eight
+				components of the solution and constraint gradients gives
 				<xref linkend="hw_1_lagrangeconstraints"/>.
 			</para>
 			<xi:include href="mout/hw_1_lagrangemultipliers.xml"/>
@@ -176,7 +175,7 @@
 				<xref linkend="hw_1_hconstraints"/> and
 				<xref linkend="hw_1_lagrangeconstraints"/>, sixteen constrained
 				critical states of <xref linkend="hw_1_fmag"></xref> are found.
-				These states correspond to mirrors and rotations of two basic
+				These states correspond to mirrorings and rotations of two basic
 				minimum and maximum area configurations. One basic layout forms
 				a rectangle with zero area, of which there are eight possible
 				configurations. The other basic layout is that of maximum area

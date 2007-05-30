@@ -200,7 +200,7 @@ export[5]=XMLDocument[
 			lagrangemultipliers,
 			TitleAbbrev->"Lagrange Multipliers",
 			Caption->"The gradients of the objective and of the equality "<>
-				"constraints are parallel."],
+				"constraints are parallel at the optima."],
 	PrependDirectory->EODExportDirectory
 	];
 
@@ -343,8 +343,7 @@ export[9]=XMLDocument[
 			"affixing all four corner points to the ellipse. The figure shows ",
 			"an intermediate magnitude of F. With only these constraints, I ",
 			"think the minimum would be attained by a non-square rhombus with ",
-			"corner points on the positive and negative ",ToXML@xpinline,
-			" and ",ToXML@ypinline," axes."}]
+			"corner points on the major and minor ellipse axes."}]
 		],
 	PrependDirectory->EODExportDirectory];
 
