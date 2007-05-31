@@ -12,7 +12,7 @@
     	to complete <olink targetdoc="self" targetptr="GNVNOTED"/> problems 5-4
     	through 5-6. My homework calculations are available in
     	<olink targetdoc="self" targetptr="HW5_code"/>. My code for the
-    	Augmented Lagrange Multiplier method (<acronym>ALM</acronym>), which is
+    	Augmented Lagrange Multiplier (<acronym>ALM</acronym>) method, which is
     	used to create <xref linkend="hw_5_ALM_parameter_table_5_5"/> and
     	<xref linkend="hw_5_ALM_parameter_table_5_6"/>, is in
     	<olink targetdoc="self" targetptr="Engineering_Optimization_Main_Code"/>.</para>  
@@ -119,7 +119,7 @@
 					follows:</para>
 				<xi:include href="mout/hw_5_augmented_lagrangian_5_5.xml"/>
 				<xi:include href="mout/hw_5_augmented_lagrangian_5_6.xml"/>
-				<para>The Augmented Lagrangian Method (ALM) iterations requested
+				<para>The ALM method iterations requested
 					in parts b-d of 5-5 and 5-6 are shown in the tables that
 					follow. From iteration to iteration, the (default) penalty
 					scale factor multiplier is the
