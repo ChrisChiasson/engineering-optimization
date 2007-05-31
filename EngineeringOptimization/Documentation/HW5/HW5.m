@@ -33,7 +33,7 @@ Format[Piecewise[{{val_,condition_}},otherval:Except[0]]]:=
 Through[{Protect,Update}[Piecewise]]
 
 
-(*all the plot ranges in this homework go from -5 to 5 in both independant
+(*all the plot ranges in this homework go from -5 to 5 in both independent
 variables*)
 rng[x_]={x,-5,5}
 

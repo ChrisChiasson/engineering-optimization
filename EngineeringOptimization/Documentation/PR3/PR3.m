@@ -584,7 +584,7 @@ ellipsoidal domain are shown on a flat projection.",
 			RasterizePlot@plt[3,4],
 			Caption->"The boundary of the ellipsoidal domain \
 is a parametric surface. If the parameters for the surface \
-are used as independant axes, this is the unrolled plot or \
+are used as independent axes, this is the unrolled plot or \
 projection\[LongDash]like a world map\[LongDash]that results. It is easier to \
 see the single minimum location on this graph than it is \
 on the others; again, it's the only purple spot.",
@@ -1123,7 +1123,7 @@ export@GenUC[f,unrolled,surface]=
 			RasterizePlot@plt[2,4],
 			Caption->"The boundary of the spherically \
 capped hyperboloidal domain is a parametric surface. If the \
-parameters for the surface are used as independant axes, \
+parameters for the surface are used as independent axes, \
 this is the unrolled plot or projection\
 \[LongDash]like a world map\[LongDash]that \
 results. It is easier to see the minimum locations on this \

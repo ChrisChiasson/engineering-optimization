@@ -278,7 +278,7 @@ export[minimizationPaths]=
 			Caption->"The BFGS, DFP, and Fletcher Reeves methods took the "<>
 				"same path. Newton's method goes to the minimum in one "<>
 				"step. Powell's	method takes N (N+1) line searches (but only "<>
-				"N steps), if N is the number of independant variables in F.",
+				"N steps), if N is the number of independent variables in F.",
 			TitleAbbrev->"Minimization Paths"
 			],
 		PrependDirectory->EODExportDirectory

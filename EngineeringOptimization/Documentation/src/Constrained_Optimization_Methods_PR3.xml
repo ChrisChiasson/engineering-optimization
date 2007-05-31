@@ -73,7 +73,7 @@
 				<varlistentry>
 					<term>f</term>
 					<listitem>
-						<para>f is a function of the independant variables, x[1]
+						<para>f is a function of the independent variables, x[1]
 							to x[n] in this case.</para>
 					</listitem>
 				</varlistentry>

@@ -48,7 +48,7 @@
 			<varlistentry>
 				<term>f</term>
 				<listitem>
-					<para>f is a function of the independant variable. In
+					<para>f is a function of the independent variable. In
 						the actual source code, f is named function.</para>
 				</listitem>
 			</varlistentry>

@@ -74,7 +74,7 @@
 		weight 2 is	at point 3, and so on.</para>
 	<xi:include href="mout/pr_2_constants_by_index.xml"/>
 	<para>Initial<phrase condition="no-animation"> optimization</phrase> values
-		for the objective function and independant variables are given in
+		for the objective function and independent variables are given in
 		<xref linkend="pr_2_initialValues"/>. The initial configuration
 		corresponds to all points being at the same zero height datum and spaced
 		<xi:include href="mout/pr_2_l_naught.xml"/> from their nearest

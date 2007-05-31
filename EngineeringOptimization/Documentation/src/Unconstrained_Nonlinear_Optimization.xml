@@ -164,7 +164,7 @@
 				actual step vector.</para>
 			<para>The forumlation given in <olink targetdoc="self"
 				targetptr="GNVNOTED"/>'s &#167; 3-2.2 only provides for an
-				initial search in each of the N independant directions. I am
+				initial search in each of the N independent directions. I am
 				not sure why the book mentions six starting directions in the
 				assignement.</para>
 		</section>
@@ -174,7 +174,7 @@
 				where the negative of the Hessian inverse dotted with the
 				gradient at any point in the domain leads directly to the
 				minimum, the definition of the objective is simple, and the
-				number of independant variables is low. Because the search
+				number of independent variables is low. Because the search
 				direction points exactly to the minimum, the method moves to the
 				minimum in one step.</para>
 		</section>
