@@ -140,7 +140,7 @@ TableForm[tableau[4,4,c]=
 exportTableau["P 4-4 Augmented Tableau in Canonical Form",
   table[4,4,c],
   "P 4-4 Canonical Augmented Tableau","Row reduction options are used to \
-bring the artifical variables into the basis."];
+bring the artificial variables into the basis."];
 
 
 TableForm[
