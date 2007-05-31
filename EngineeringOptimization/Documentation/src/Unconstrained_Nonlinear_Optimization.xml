@@ -162,7 +162,7 @@
 				steps. Also, after each step, the search direction matrix column
 				corresponding to the present step number is replaced with the
 				actual step vector.</para>
-			<para>The forumlation given in <olink targetdoc="self"
+			<para>The formulation given in <olink targetdoc="self"
 				targetptr="GNVNOTED"/>'s &#167; 3-2.2 only provides for an
 				initial search in each of the N independent directions. I am
 				not sure why the book mentions six starting directions in the
