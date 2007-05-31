@@ -78,7 +78,7 @@
 					basis variables. Two constraint equations with excess
 					variables could be multiplied by negative one to form
 					a basis set, but then the constraints would be negative,
-					leaving the problem in non-canonical form agian. The way to
+					leaving the problem in non-canonical form again. The way to
 					resolve this situation is to augment the constraint
 					equations with two positive numbers whose sum is another
 					objective function and then subtract the constraints from
