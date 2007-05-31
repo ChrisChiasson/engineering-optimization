@@ -184,7 +184,7 @@ algorithm found. Dotted red lines show the other edges of the domain.",
       DeleteCases[gr[4,1,3],_Opacity,Infinity],
       TitleAbbrev->"P 4-1 & 4-2 Function Space",
       Caption->"The red lines indicate constraints. The green point	"<>
-      	"indicates the optimimum achieved by the simplex method. The green "<>
+      	"indicates the optimum achieved by the simplex method. The green "<>
       	"line indicates an	entire edge of the domain that results in a "<>
       	"minimum with the same value as the simplex	method optimum. This "<>
       	"optimum edge arises as a consequence of the edge and the function "<>
