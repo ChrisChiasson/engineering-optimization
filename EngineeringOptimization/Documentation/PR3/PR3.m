@@ -283,7 +283,7 @@ independent variable.",
 			Caption->"These are the initial independent variable \
 ranges that the global optimization methods built into Mathematica \
 were given by me for this problem. My method simply takes the \
-midpoint each given interval as the starting value. In other \
+midpoint of each given interval as the starting value. In other \
 problems, where I do not compare my method to the global methods, \
 I don't publish the initial ranges, since that information is \
 superfluous."
