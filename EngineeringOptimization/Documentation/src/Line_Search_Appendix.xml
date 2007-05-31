@@ -66,7 +66,9 @@
 						method. v, w, and x are the abscissas that correspond to
 						the lowest thre ordinates found in Brent's method.
 						newAbscissa is the point at which the present iteration
-						will evaluate f.</para>
+						will evaluate f. xleft and xright from the command
+						description in the main text give the initial values of
+						a and c.</para>
 					<para>Sometimes, newAbscissa is a list with one or zero
 						elements, depending on wether Brent's method needs to
 						fall back on regular golden section steps instead of
@@ -158,7 +160,7 @@
 			<varlistentry>
 				<term>iteration</term>
 				<listitem>
-					<para>In integer indicating the present iteration.
+					<para>An integer indicating the present iteration.
 						Iteration is incremented for each function
 						evaluation. It is reset to zero between the bracketing
 						and narrowing routines.</para>
@@ -179,7 +181,7 @@
 				<term>limitLeft</term><term>limitRight</term>
 				<listitem>
 					<para>These are numbers that limit the minimum and
-						maximum values of a and c. The default to the minimum
+						maximum values of a and c. They default to the minimum
 						and maximum machine number that can be represented
 						in Mathematica, though the user can change them. These
 						settings are used to isolate the load line intersections
@@ -203,7 +205,7 @@
 				<listitem>
 					<para>maxNarrowingIterations is analogous to
 						maxWideningIterations. It controls the maximum number of
-						iterations for the narrowing routine. Its' corresponding
+						iterations for the narrowing routine. Its corresponding
 						option is called "MaxWideningIterations".</para>
 				</listitem>
 			</varlistentry>
@@ -298,13 +300,13 @@
 						default,
 						<inlineequation><mathphrase>2 - &#934; = shrinkFactor &#8773; 0.382</mathphrase></inlineequation>.
 						The default shrinkFactor can be determined analytically
-						by constraining the two possible left over intervals
+						by constraining the two possible leftover intervals
 						from a new function evaluation to be of equal width and
 						then assuming that the rule is applied at every
 						iteration. By making sure that both possible leftover
 						intervals are the same size, the default shrinkFactor
 						does the best possible job with finding minima of
-						un-cooperative functions. &#167; 10.2 of
+						uncooperative functions. &#167; 10.2 of
 						<olink targetdoc="self" targetptr="PTVFNRC"/>
 						has a detailed derivation of this factor.</para>
 				</listitem>
