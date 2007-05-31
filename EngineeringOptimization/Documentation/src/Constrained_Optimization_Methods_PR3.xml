@@ -78,13 +78,14 @@
 					</listitem>
 				</varlistentry>
 				<varlistentry>
-					<term>x[i]</term>
+					<term>x[i]</term><term>x[n]</term>
 					<listitem>
 						<para>The x[i], where i takes a value from 1 to n just
 							indicate independent variables. They may be written
 							in any standard way, not just as x[i]. For instance,
 							it would be acceptable for x[1] to be called
-						Bob.</para>
+							Bob. n stands for the total number of independent
+							variables.</para>
 					</listitem>
 				</varlistentry>
 				<varlistentry>
