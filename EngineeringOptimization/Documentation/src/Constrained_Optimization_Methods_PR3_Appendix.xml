@@ -32,7 +32,7 @@
 						evaluation with the ReplaceAll operator,
 						<quote>/.</quote>, shown here in quotation marks. For
 						instance, <command>1 + d /. d -> 9</command>, where
-						<quote>-></quote> is the operator that indicates a rule
+						<quote>-></quote> is the operator that indicates a rule,
 						would give the result of 10. Note that my flowcharts do
 						not use exact Mathematica syntax because it is fairly
 						involved and would require much more explanation. Also
@@ -60,8 +60,8 @@
 						changed to x &lt; y &amp;&amp; y &lt; z, where
 						<quote>&amp;&amp;</quote> stands for a logical And. In
 						the source code, after this process of flattening and
-						splitting are called constraintsList, but the flow
-						charts only use the name constraints.</para>
+						splitting, constraints ir renamed constraintsList, but
+						the flow charts only use the name constraints.</para>
 				</listitem>
 			</varlistentry>
 			<varlistentry>
@@ -96,10 +96,10 @@
 				<term>tau</term><term>gamma</term>
 				<listitem>
 					<para>inverseHessianApprox is an approximation to the
-						inverse Hessian of f. The other terms listed in this
+						inverse Hessian of f that is found in the Variable
+						Metric Method inner loop. The other terms listed in this
 						entry just store intermediate values on the way to
 						calculating a new approximation.
-						That is found in the Variable Metric Method inner loop.
 						The Hessian of f is the matrix of second partial
 						derivatives with respect to its independent variables.
 						The calculation of a new version of the inverse Hessian
