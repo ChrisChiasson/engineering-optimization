@@ -248,7 +248,7 @@ With[{solEqn=Reduce[D[F==objective[5,4][whatever,#2,-2][varSeq],{varList,1}],
 		XMLDocument[prefix<>sol54<>#1<>".xml",
 			DocBookEquation[prefix<>sol54<>#1,
 				XMLChain[XMLElement["phrase",{},
-					{"Problem 5-4 Pseduo Objective Function, \[CapitalPhi], ",
+					{"Problem 5-4 Pseudo Objective Function, \[CapitalPhi], ",
 						"Analytic Minimum Solution with ",
 						ToXML@rpPrimeTitleStyleXMLChain@#2
 						}
