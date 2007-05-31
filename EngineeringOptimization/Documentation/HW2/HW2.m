@@ -375,7 +375,7 @@ export[minimizationPathsNegInvHDotGrad]=
 			DeleteCases[gr[minimizationPathsNegInvHDotGrad],_Opacity,
 				Infinity],
 			Caption->"Because F is a quadratic polynomial, the ideal "<>
-				"search direction is given by the negative of the hessian of "<>
+				"search direction is given by the negative of the Hessian of "<>
 				"F dotted with the gradient of F. That happens to be the "<>
 				"very same method used by Newton to pick a search "<>
 				"direction, so it takes only one step (in the ideal "<>
