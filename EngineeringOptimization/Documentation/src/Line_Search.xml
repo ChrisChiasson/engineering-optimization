@@ -235,7 +235,7 @@
 				this routine is	designed to converge to a specified tolerance.
 				The termination	condition is that both a and c are within xtol
 				from x. Forgive me one final reminder that the variable list for
-				the entire line	search proceedure is located in
+				the entire line	search procedure is located in
 				<olink targetdoc="self" targetptr="Line_Search_Major_Variables"/>.</para>
 			<figure xml:id="pr_1_frameMinimumNarrow_flow_chart">
 				<title>Bracket Narrowing Flow Chart</title>
