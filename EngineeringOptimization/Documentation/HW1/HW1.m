@@ -317,7 +317,7 @@ export[8]=XMLDocument[
 					HoldForm[P[3]==P[1]+(P[2]-P[1])+(P[4]-P[1])],
 					SetIdAttribute->False
 					],
-				". Otherwise, the figure wouldn't necessairily have a ",
+				". Otherwise, the figure wouldn't necessarily have a ",
 				"parallelogram."
 				}]]
 		],

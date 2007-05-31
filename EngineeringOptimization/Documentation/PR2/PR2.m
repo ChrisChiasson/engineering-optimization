@@ -310,7 +310,7 @@ order, (X,Y) coordinates for points, spring constants, and mass weights.",
         tab[constantsByIndex],TitleAbbrev->"Problem Constants",
         Caption->
           "All entries on a particular row correspond to the same index, i. \
-However, variables with the same index do not necessairily correspond to the \
+However, variables with the same index do not necessarily correspond to the \
 same physical location."],PrependDirectory->EODExportDirectory];
 
 methodComparison="method_comparison";
