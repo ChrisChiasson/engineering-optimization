@@ -87,7 +87,7 @@
 					and
 					<xref linkend="hw_3_table_tableau_P_4-4_Augmented_Tableau_in_Canonical_Form"/>.
 					Once the new objective is minimized to zero via the simplex
-					method, the auxillary variables may be eliminated as shown
+					method, the auxilary variables may be eliminated as shown
 					in
 					<xref linkend="hw_3_table_tableau_P_4-4_Augmented_Tableau_After_Optimization"/>
 					and

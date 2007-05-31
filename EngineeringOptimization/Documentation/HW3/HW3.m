@@ -99,7 +99,7 @@ exportTableau[
 				"other entries being 0 and with the the same row having a 0 ",
 				"in all other basis columns. Since the constraint equations ",
 				"can't easily be transformed into a canonical form with basis ",
-				"variables, auxillary variables \[LongDash] ",
+				"variables, auxilary variables \[LongDash] ",
 				ToXML@artificialXMLChain," \[LongDash] must be added."
 				}
 			]
