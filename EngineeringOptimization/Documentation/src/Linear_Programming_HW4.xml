@@ -59,7 +59,7 @@
 					<xi:include href="mout/hw_4_X_2.xml"/>.
 					<xi:include href="mout/hw_4_X_3.xml"/> and
 					<xi:include href="mout/hw_4_X_4.xml"/> are zero because all
-					non	basis variables are zero. By that same rule and use of
+					non-basis variables are zero. By that same rule and use of
 					the equations represented by the tableau rows,
 					<xi:include href="mout/hw_4_X_1.xml"/> is 4,
 					<xi:include href="mout/hw_4_X_2.xml"/> is 6, and the value
