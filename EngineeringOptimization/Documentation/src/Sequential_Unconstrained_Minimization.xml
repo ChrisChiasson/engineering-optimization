@@ -71,7 +71,7 @@
 				<para>The analytical minimas requested in 5-4 part b should be
 					obtainable by using calculus to evaluate the critical points
 					of all four pseudo objective function branches, after
-					eliminating any cricial points that violate either of the
+					eliminating any critical points that violate either of the
 					two Max functions. I asked Mathematica to do this, and the
 					results are in
 					<xref linkend="hw_5_solution_5_4_rpPrime_Equal_1"/>
