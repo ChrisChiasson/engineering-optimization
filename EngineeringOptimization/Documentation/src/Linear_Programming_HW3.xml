@@ -126,16 +126,16 @@
 					its constraints lead to a different domain of optimization.
 					The second constraint in this problem can't be active
 					due to the first. Except for the inital part, the problem
-					follows exactly the same solution steps. as the first.
+					follows exactly the same solution steps as problem 4-4.
 					The problem, as given, is not in canonical form. This
 					time, because one of the excess	variables is negative and
 					its corresponding constraint is	negative, I can just
 					multiply that equation by negative one. However, the
-					equation set must still be augmented with artificial
-					variables like problem 4-4 because another basis variable
-					can't easily be selected. The entire process from initial
-					equations to optimized solution is otherwise the same as
-					problem 4-4. Solution steps are shown in
+					equation set must still be augmented like problem 4-4
+					because another basis variable can't easily be selected. The
+					entire process from initial	equations to optimized solution
+					is otherwise the same as problem 4-4. Solution steps are
+					shown in
 					<xref linkend="hw_3_table_tableau_P_4-5_Initial_Tableau"/>
 					through
 					<xref linkend="hw_3_table_tableau_P_4-5_Canonical_Form_of_Initial_Tableau"/>.</para>

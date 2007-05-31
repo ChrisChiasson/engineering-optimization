@@ -86,7 +86,8 @@
 		methods is presented in
 		<xref linkend="pr_2_method_comparison"/>. The
 		table shows that both variations of my method agree with the
-		reference to at least three significant figures.</para>
+		reference to at least six significant figures (due to the default
+		convergence tolerances).</para>
 	<xi:include href="mout/pr_2_potential_energy.xml"/>
 	<xi:include href="mout/pr_2_method_comparison.xml"/>
 	<section xml:id="Lagrangian_Mechanics_Formulation" condition="animation">

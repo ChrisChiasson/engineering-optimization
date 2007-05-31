@@ -280,7 +280,7 @@ export[prefix<>animStr]=XMLDocument[prefix<>animStr<>".xml",
       TitleAbbrev->"Deformation of Spring-Mass System",
       Caption->XMLElement[
           "para",{},{"Five different ball masses under the influence of \
-gravity and represented by colored balls are attached in a ",
+gravity and represented by colored disks are attached in a ",
             XMLElement["quote",{},{"string"}],
             " via six springs represented by black lines. The left and right \
 ends of the string are fixed. After gravity does its work, the masses hang \
