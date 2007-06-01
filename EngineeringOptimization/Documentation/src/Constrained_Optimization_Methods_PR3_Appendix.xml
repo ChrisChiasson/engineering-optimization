@@ -14,7 +14,7 @@
 			<varlistentry>
 				<term>*New</term>
 				<listitem>
-					<para>I have used a variable naming schere where any
+					<para>I have used a variable naming scheme where any
 					variable name that ends with New is the new value of that
 					variable. This naming convention allows me to continue to
 					use both the new and original values of the variable until
