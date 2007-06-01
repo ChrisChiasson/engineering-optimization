@@ -106,7 +106,7 @@
 						requires a lot of linear algebra. The complete formula
 						is given in the source code and in section &#167; 3.3-3
 						of <olink targetdoc="self" targetptr="GNVNOTED"/>.
-						inverseHessianApprox is acutally called
+						inverseHessianApprox is actually called
 						inverseHessianApproximation in the source code.</para>
 				</listitem>
 			</varlistentry>
