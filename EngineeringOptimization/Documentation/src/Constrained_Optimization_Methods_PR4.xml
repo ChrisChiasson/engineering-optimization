@@ -92,7 +92,7 @@
 					function of x. Across a segment, it increases by an amount
 					proportional to	the square of the segment length. Its value
 					on the right end of a segment is dependent on all the left
-					end boundary condtions except the displacement.</para>
+					end boundary conditions except the displacement.</para>
 			</listitem>
 			<listitem>
 				<para>The transverse displacement is a cubic function of x. The
