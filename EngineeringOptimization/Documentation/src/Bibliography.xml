@@ -173,7 +173,9 @@
 	</biblioentry>
 	<biblioentry xml:id="WWNP">
 		<author>
-			<orgname>Wikipedia</orgname>
+			<!--using personname here because orgname isn't implemented in
+				present stylesheets-->
+			<personname>Wikipedia</personname>
 		</author>
 		<title xl:href="http://www.wikipedia.org/">Wikipedia</title>
 		<subjectset>
@@ -187,7 +189,9 @@
 	</biblioentry>
 	<biblioentry xml:id="WRIMD">
 		<author>
-			<orgname>Wolfram Research, Inc.</orgname>
+			<!--using personname here because orgname isn't implemented in
+				present stylesheets-->
+			<personname>Wolfram Research, Inc.</personname>
 		</author>
 		<title xl:href="http://www.wikipedia.org/">Mathematica 5 Documentation</title>
 		<copyright><year>2003</year></copyright>
