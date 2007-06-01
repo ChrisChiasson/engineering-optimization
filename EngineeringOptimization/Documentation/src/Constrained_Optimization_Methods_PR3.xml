@@ -260,7 +260,7 @@
 				<answer>
 					<para>This is an almost-impossible problem for a local
 						solver, such as my ALM + Variable Metric Method, because
-						the objective function posesses many local minima. To
+						the objective function possesses many local minima. To
 						give an idea of the topology,
 						<xref linkend="pr_3_keane_sample"/> is a plot of Keane's
 						bump problem in two dimensions. The color scale or
