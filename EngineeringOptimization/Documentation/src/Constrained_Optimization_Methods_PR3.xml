@@ -279,7 +279,7 @@
 						<xref linkend="pr_3_keane_three_D_surface"></xref>.</para>
 					<xi:include href="mout/pr_3_keane_three_D_surface.xml"/>
 					<para>Also, because the domain is convex, it is possible to
-						parametize its boundary in a spherical coordinate system
+						parametrize its boundary in a spherical coordinate system
 						with an origin at the centroid of the domain and display
 						the result as a projection, such as
 						<xref linkend="pr_3_keane_unrolled_surface"/>.</para>
@@ -326,7 +326,7 @@
 						<xref linkend="pr_3_f_three_D_surface"></xref>.</para>
 					<xi:include href="mout/pr_3_f_three_D_surface.xml"/>
 					<para>Even though the domain is non-convex it is still
-						possible to parametize its boundary in a spherical
+						possible to parametrize its boundary in a spherical
 						coordinate system with an origin at the centroid of the
 						domain and display the result as a projection, such as
 						<xref linkend="pr_3_f_unrolled_surface"/>.</para>
