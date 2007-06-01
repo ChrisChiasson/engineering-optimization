@@ -797,7 +797,7 @@ components that aren't at play in this problem.
 rep@sigToSigma={sig[x,x]->sigmaXX[x,y],sig[x,y]->sigmaXY[x,y],sig[__]->0}
 
 
-(*coordinates where the maximum von Mises stress occurrs below the top surface*)
+(*coordinates where the maximum von Mises stress occurs below the top surface*)
 (*{x->4.5,base@_->5,height@_->3}*)
 
 
@@ -1178,7 +1178,7 @@ export@GenUC[volume,table]=
 				"number of method iterations until convergence. The ",
 				"optimum row gives the converged minimum volume value. The ",
 				"functions row gives the total number of function evaluations ",
-				"occurring in the course of the optimization. Of these, my ",
+				"occuring in the course of the optimization. Of these, my ",
 				"method obtains the lowest volume at the cost of the highest ",
 				"number of function evaluations. One way to decrease my ",
 				"number of evaluations would be to lower the convergence ",
@@ -1769,7 +1769,7 @@ export@GenUC[gr,von,Mises,stress]=
 				"allowable axial stress magnitude, ",ToXML@preExport[
 					Times@@(maxSigmaX/.{rep@given,rep@variableUnit})],
 				". Notice that, for this design, the maximum von Mises stress ",
-				"on each section occurrs at the top of the left hand end."}
+				"on each section occurs at the top of the left hand end."}
 				]
 			],
 		PrependDirectory->EODExportDirectory

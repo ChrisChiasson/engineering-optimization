@@ -127,7 +127,7 @@
 		magnitude is the axial tension stress that would be required to create
 		the same octahedral shear stress as that of the general stress state it
 		represents. As with the maximum principal stress method, the critical
-		section still occurrs at the left end of a segment, but it is possible
+		section still occurs at the left end of a segment, but it is possible
 		that if the shear is great enough, the critical height could be inside
 		the segment instead of being on its top or bottom surface. The
 		mathematical definition is given in
