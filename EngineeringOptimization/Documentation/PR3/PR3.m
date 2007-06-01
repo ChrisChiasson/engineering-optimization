@@ -443,7 +443,7 @@ export@GenUC[keane,sample]=
 				ToXML@preExport@
 				GenUC[prefix,keane,bump,xpr,X,2,title],
 				" Plot"}],
-			"A contour plot depecting several \
+			"A contour plot depicting several \
 smooth depressions in what would otherwise be a flat \
 plane.",
 			DeleteCases[keane2DSampleContourPlot,
