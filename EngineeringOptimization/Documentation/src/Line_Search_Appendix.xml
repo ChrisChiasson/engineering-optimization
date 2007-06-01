@@ -64,7 +64,7 @@
 						used as the middle abscissa in the bracketing routine. u
 						records the location of the last evaluation in Brent's
 						method. v, w, and x are the abscissas that correspond to
-						the lowest thre ordinates found in Brent's method.
+						the lowest three ordinates found in Brent's method.
 						newAbscissa is the point at which the present iteration
 						will evaluate f. xleft and xright from the command
 						description in the main text give the initial values of
