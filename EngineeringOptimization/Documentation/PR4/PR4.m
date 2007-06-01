@@ -1548,7 +1548,7 @@ export@GenUC[gr,exampleBar]=
 					"shape is shown here, the drawing in ",XMLElement["olink",
 						{"targetdoc"->"self","targetptr"->"GNVNOTED"},{}],
 					" shows each segment length to be equal to the others. It ",
-					"isn't explictly mentioned in ",XMLElement["olink",
+					"isn't explicitly mentioned in ",XMLElement["olink",
 						{"targetdoc"->"self","targetptr"->"GNVNOTED"},{}],
 					"'s analysis, but I think it is assumed all the lengths ",
 					"are equal. In order to compare my optimization results ",
