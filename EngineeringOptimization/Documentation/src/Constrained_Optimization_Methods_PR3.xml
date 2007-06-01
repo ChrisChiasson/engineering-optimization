@@ -141,7 +141,7 @@
 						use of slack variables as in
 						<olink targetdoc="self" targetptr="Linear_Programming_HW3"/>,
 						have instead been eliminated through the use of an
-						equivalent Lagrange multiplier update forumla instead.
+						equivalent Lagrange multiplier update formula instead.
 						The variable list for this code is given in
 						<olink targetdoc="self" targetptr="pr_3_multidimensional_optimization_major_variables"/>.</para>
 				</caption>
