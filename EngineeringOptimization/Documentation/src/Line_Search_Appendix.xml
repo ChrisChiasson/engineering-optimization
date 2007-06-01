@@ -70,7 +70,7 @@
 						description in the main text give the initial values of
 						a and c.</para>
 					<para>Sometimes, newAbscissa is a list with one or zero
-						elements, depending on wether Brent's method needs to
+						elements, depending on whether Brent's method needs to
 						fall back on regular golden section steps instead of
 						perturbed steps. However, newAbscissa is always
 						transformed into a plain number before f is
@@ -266,7 +266,7 @@
 			<varlistentry>
 				<term>reverse</term>
 				<listitem>
-					<para>reverse is a boolean variable that indicates wether
+					<para>reverse is a boolean variable that indicates whether
 						the	direction search should occur in the opposite
 						direction from normal. The "Reverse" option can be used
 						to manually set the value of reverse, though there
