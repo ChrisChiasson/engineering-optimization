@@ -335,9 +335,9 @@ export@GenUC[eqn,displacement]=
 			Caption->
 				XMLChain@XMLElement["para",{},{"From the same beam theory as ",
 					"the equations above, the transverse displacement in the ",
-					"local coordinate system of each beam segment\[LongDash]",
+					"local coordinate system of each beam segment \[LongDash] ",
 					ToXML@preExport@x@i," is zero at each of their left hand ",
-					"ends\[LongDash]is differentially related to the ",
+					"ends \[LongDash] is differentially related to the ",
 					"bending moment and shear functions via these equations. ",
 					"Unlike ",XMLElement["olink",{"targetdoc"->"self",
 						"targetptr"->"GNVNOTED"},{}],", I use ",ToXML@preExport@
@@ -400,8 +400,8 @@ export@GenUC[rep,displacement]=
 				XMLElement["para",{},{"The section displacement solution has ",
 				"two undetermined coefficients, ",ToXML@preExport@c[i,1],
 				" and ",ToXML@preExport@c[i,2]," that happen to also be ",
-				"initial conditions on the left hand end of a section",
-				"\[LongDash]so ",
+				"initial conditions on the left hand end of a section ",
+				"\[LongDash] so ",
 				"they depend on the parameters in the sections before them. ",
 				ToXML@preExport@c[i,1]," and ",ToXML@preExport@c[i,2]," are, ",
 				"respectively, the initial displacement and initial ",
@@ -1328,7 +1328,8 @@ export@GenUC[constraint,values,table]=
 				"constraint values from ",XMLElement["olink",{"targetdoc"->
 					"self","targetptr"->"GNVNOTED"},{}],", at least in the ",
 				"3rd edition, are incorrect and have been corrected in this ",
-				"table\[LongDash]try comparing manually calculated constraint ",
+				"table \[LongDash] try comparing manually calculated ",
+				"constraint ",
 				"8 & 9 values for methods 1 & 2 to those of the text to see ",
 				"what I mean."}
 				],

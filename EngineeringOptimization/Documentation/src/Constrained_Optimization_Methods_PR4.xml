@@ -115,9 +115,9 @@
 		theory used in <olink targetdoc="self" targetptr="GNVNOTED"/>, only the
 		axial stress is important, since it creates the maximum principal stress
 		(in an entire segment) at the top left end of a segment, where the
-		shear stress is zero. However, for ductile materials—the given
+		shear stress is zero. However, for ductile materials — the given
 		properties seem to indicate that the bar is made of steel, which is a
-		ductile material—maximum distortion energy is considered to be a more
+		ductile material — maximum distortion energy is considered to be a more
 		accurate theory for predicting failure, as stated in section 6-5 of
 		<olink targetdoc="self" targetptr="JSCMMED"/>.</para>
 	<para>When using distortion energy theory to predict strength failures, one

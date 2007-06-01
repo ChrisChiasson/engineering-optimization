@@ -585,7 +585,8 @@ ellipsoidal domain are shown on a flat projection.",
 			Caption->"The boundary of the ellipsoidal domain \
 is a parametric surface. If the parameters for the surface \
 are used as independent axes, this is the unrolled plot or \
-projection\[LongDash]like a world map\[LongDash]that results. It is easier to \
+projection \[LongDash] like a world map \[LongDash] that results. \
+It is easier to \
 see the single minimum location on this graph than it is \
 on the others; again, it's the only purple spot.",
 			TitleAbbrev->"3-D Keane Bump Shell Unrolled"
@@ -1124,8 +1125,7 @@ export@GenUC[f,unrolled,surface]=
 			Caption->"The boundary of the spherically \
 capped hyperboloidal domain is a parametric surface. If the \
 parameters for the surface are used as independent axes, \
-this is the unrolled plot or projection\
-\[LongDash]like a world map\[LongDash]that \
+this is the unrolled plot or projection that \
 results. It is easier to see the minimum locations on this \
 graph than it is on the others.",
 			TitleAbbrev->"3-D F Shell Unrolled"
