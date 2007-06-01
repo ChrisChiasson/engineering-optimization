@@ -89,7 +89,7 @@
 			</listitem>
 			<listitem>
 				<para>The slope of the transverse displacement is a quadratic
-					function of x. Across a segment, it increases by an ammount
+					function of x. Across a segment, it increases by an amount
 					proportional to	the square of the segment length. Its value
 					on the right end of a segment is dependent on all the left
 					end boundary condtions except the displacement.</para>

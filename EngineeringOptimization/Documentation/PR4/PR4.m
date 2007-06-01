@@ -383,7 +383,7 @@ the right hand end of any segment is equal to the shear at the left hand end.
 2. The moment is a linear function of axial distance if the shear is constant.
 
 3. The slope of the transverse displacement is a quadratic function of x. It
-increases by an ammount proportional to the square of the segment length. Its
+increases by an amount proportional to the square of the segment length. Its
 value on the right end of a segment is dependent on all the left end  boundary
 conditions except the displacment.
 
