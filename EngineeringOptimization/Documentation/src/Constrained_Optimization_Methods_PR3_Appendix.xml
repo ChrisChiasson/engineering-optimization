@@ -114,7 +114,7 @@
 				<term>initialLagrangeMultiplier</term>
 				<listitem>
 					<para>This is the user-supplied initial value for all
-						Lagrange multipliers. If it isn't specificed, the
+						Lagrange multipliers. If it isn't specified, the
 						default is 0.</para>
 				</listitem>
 			</varlistentry>
