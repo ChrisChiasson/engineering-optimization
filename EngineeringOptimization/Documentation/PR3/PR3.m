@@ -206,7 +206,7 @@ export@GenUC[keane,bump,multidimensional]=
 				"function with ",ToXML@preExport@GenUC[prefix,n],
 				" independent variables called ",ToXML@preExport@
 				GenUC[prefix,X,1]," through ",ToXML@preExport@
-				GenUC[prefix,X,n],". The inequaltiy gives my ",
+				GenUC[prefix,X,n],". The inequality gives my ",
 				"optimization domain for ",ToXML@preExport@
 					GenUC[prefix,keane,bump,xpr,X,3]}]
 			],
@@ -655,7 +655,7 @@ export@GenUC[f,multidimensional]=
 				"'s 3-D objective function with 3 independent ",
 				"variables called ",ToXML@preExport@
 				GenUC[prefix,X,1]," through ",ToXML@preExport@
-				GenUC[prefix,X,3],". The inequaltiy gives my ",
+				GenUC[prefix,X,3],". The inequality gives my ",
 				"optimization domain for F. By inspection, one ",
 				"may see that changing the sign of all ",
 				"independent variable yields no change in the ",
