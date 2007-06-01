@@ -313,7 +313,7 @@
 				<answer>
 					<para>This is a fairly easy problem for a local	solver, such
 						as my ALM + Variable Metric Method, because	the
-						objective function only has two minimia on the given
+						objective function only has two minima on the given
 						domain, and they are both equal in objective
 						value. In other words, as long as the method converges
 						to something, it should be a global minimum. The
