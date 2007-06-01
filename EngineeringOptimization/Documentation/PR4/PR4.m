@@ -582,7 +582,7 @@ export@GenUC[coordinate,conversion]=
 						preExport@moment[x],". Finally, I give i as a simple ",
 					"piecewise function of the overall x. Using all the ",
 					"equations given so far, a large but closed-form solution ",
-					"for the transverse displacement acrsoss the entire beam ",
+					"for the transverse displacement across the entire beam ",
 					"may be written as a function of the segment lengths, the ",
 					"beam cross section properties, and x. Since it is so ",
 					"large, I do not reproduce it here, but I do use it for ",
