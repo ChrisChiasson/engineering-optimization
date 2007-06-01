@@ -192,7 +192,7 @@
 			<varlistentry>
 				<term>penaltyMultiplierGrowthFactor</term>
 				<listitem>
-					<para>This stores the multipler for the penalty multiplier.
+					<para>This stores the multiplier for the penalty multiplier.
 						It defaults to the golden ratio, &#934;, from
 						mathematics;
 						<inlineequation><mathphrase>&#934; = growthFactor &#8773; 1.618</mathphrase></inlineequation>.</para>
