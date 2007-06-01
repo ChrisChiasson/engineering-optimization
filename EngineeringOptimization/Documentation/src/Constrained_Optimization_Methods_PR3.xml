@@ -252,7 +252,7 @@
 			<qandaentry>
 				<question>
 					<para>Minimize the Keane bump problem objective in three
-						dimensions subjsect to an ellipsoidal boundary condiion
+						dimensions subject to an ellipsoidal boundary condiion
 						as shown in
 						<xref linkend="pr_3_keane_bump_multidimensional"/>.</para>
 					<xi:include href="mout/pr_3_keane_bump_multidimensional.xml"/>
