@@ -110,11 +110,22 @@ eqn@6=eqn@5/.rep@2/.rep@8/.rep@3;
 
 (*Rayleigh dissipation*)
 
-eqn[7]=RD==Sum[c*vmag@D[{X[i+1][t],Y[i+1][t]}-{X[i][t],Y[i][t]},t]/2,{i,num@S}];
+cc[h_[i_Integer][t]|i_Integer,h_[i_][t]|i_]:=c
+cc[h_[i_Integer][t]|i_Integer,
+	h_[j_Integer][t]|j_Integer
+	]/;j==i+1||j==i-1:=-c/2
+cc[_,_]:=0
+
+vel@1=D[var@1,t];
+
+eqn[7]=RD==
+	FullSimplify[
+		(vel[1].Outer[cc,var@1,var@1].vel@1)/2
+		];
 
 eqn@8=eqn@7/.rep@2/.rep@6/.rep@8;
 
-(*Lagrangian equation of motion*)
+(*Lagrangian equation of motion (the Lagrangian itself is KE-PE)*)
 
 eqn[9]=HoldForm[D[D[KE-PE,D[q[j],t]],t]-D[KE-PE,q[j]]+D[RD,D[q[j],t]]==Q[j]];
 
