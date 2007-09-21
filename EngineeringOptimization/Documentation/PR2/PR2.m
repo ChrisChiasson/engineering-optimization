@@ -110,10 +110,10 @@ eqn@6=eqn@5/.rep@2/.rep@8/.rep@3;
 
 (*Rayleigh dissipation*)
 
-cc[h_[i_Integer][t]|i_Integer,h_[i_][t]|i_]:=c
+cc[h_[i_Integer][t]|i_Integer,h_[i_][t]|i_]:=2c
 cc[h_[i_Integer][t]|i_Integer,
 	h_[j_Integer][t]|j_Integer
-	]/;j==i+1||j==i-1:=-c/2
+	]/;j==i+1||j==i-1:=-c
 cc[_,_]:=0
 
 vel@1=D[var@1,t];
